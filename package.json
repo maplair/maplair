@@ -10,7 +10,6 @@
     "@vitest/browser-playwright": "5.0.3",
     "@vitest/coverage-v8": "5.0.3",
     "@vitest/ui": "5.0.3",
-    "bundlemon": "^3.1.0",
     "chai": "^6.2.2",
     "eslint": "^10.8.0",
     "eslint-config-mourner": "^5.0.1",
@@ -54,7 +53,6 @@
     "watch": "vp pack --watch",
     "lint": "eslint . --cache",
     "lintfix": "npm run lint -- --fix",
-    "bundlemon": "bundlemon",
     "serve": "cd docs && bundle exec jekyll serve",
     "prepare": "vp config --no-agent"
   },
