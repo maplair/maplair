@@ -8,6 +8,23 @@ authors:
   - given-names: Volodymyr
     family-names: Agafonkin
     email: agafonkin@gmail.com
+  - given-names: Iván
+    family-names: Sánchez Ortega
+  - given-names: Dave
+    family-names: Leaver
+  - given-names: Yohan
+    family-names: Boniface
+  - given-names: Jon
+    family-names: Koops
+  - given-names: Florian
+    family-names: Bischof
+  - given-names: Per
+    family-names: Liedman
+  - given-names: John
+    family-names: Firebaugh
+  - given-names: Simon
+    family-names: Legner
+    email: simon.legner@gmail.com
 repository-code: 'https://github.com/Leaflet/Leaflet'
 url: 'https://maplair.org'
 license: BSD-2-Clause

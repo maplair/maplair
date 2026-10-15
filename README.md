@@ -19,6 +19,13 @@ If you want to **get involved** with Maplair development, check out the [contrib
 Let's make the best mapping library that will ever exist,
 and push the limits of what's possible with online maps!
 
+## Authors
+
+Maplair is a fork of [Leaflet](https://leafletjs.com), created in 2010 by [Volodymyr Agafonkin](https://agafonkin.com).
+Major contributors include Iván Sánchez Ortega, Dave Leaver, Yohan Boniface, Jon Koops,
+Florian Bischof, Per Liedman, John Firebaugh and Simon Legner,
+along with [hundreds of other contributors][contributors].
+
 [![CI](https://github.com/Leaflet/Leaflet/actions/workflows/main.yml/badge.svg)](https://github.com/Leaflet/Leaflet/actions/workflows/main.yml)
 
  [contributors]: https://github.com/Leaflet/Leaflet/graphs/contributors
