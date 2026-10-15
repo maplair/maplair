@@ -3,6 +3,8 @@ layout: tutorial_v2
 title: Working with Map Panes
 ---
 
+<div class="announcement">⚠️ The map tiles of this tutorial and its demo are temporarily broken: they're provided by CARTO, which now requires a key that we don't have for maplair.org yet.</div>
+
 ## What Are Panes?
 
 In Maplair, map panes group layers together implicitly, without the developer knowing about it. This grouping allows web browsers to work with several layers at once in a more efficient way than working with layers individually.
