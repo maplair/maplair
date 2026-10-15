@@ -3,6 +3,8 @@
 Maplair is the leading open-source JavaScript library for **building powerful interactive maps**.
 
 Weighing just about 39 kB of gzipped JS plus 3.1 kB of gzipped CSS code, it has all the mapping [features][] most developers ever need.
+And since Maplair supports tree-shaking, your bundler shakes off the leaves you don't use 🍁
+(a map with just a tile layer comes out about a quarter smaller).
 
 Maplair is designed with *simplicity*, *performance* and *usability* in mind.
 It works efficiently across all major desktop and mobile platforms out of the box,
