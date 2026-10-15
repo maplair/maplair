@@ -35,20 +35,24 @@
 			 * "Timings" track of the browser's performance profiler. Start recording,
 			 * click "Run benchmark", and stop recording when the results appear.
 			 * Frame times are measured with `requestAnimationFrame` while animating.
-			 * Add `?noshadow` to the URL to compare with markers without shadows.
+			 * Add `?noshadow` to the URL to compare with markers without shadows,
+			 * `?culling` to enable the map's `markerCulling` option, and e.g. `?spread=3`
+			 * to place the markers in an area 3 times as wide and high as the view.
 			 */
 
+			const params = new URLSearchParams(location.search);
+
 			const center = new LatLng(50.5, 30.51);
-			const map = new MaplairMap('map').setView(center, 15);
+			const map = new MaplairMap('map', {markerCulling: params.has('culling')}).setView(center, 15);
 
 			new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 18}).addTo(map);
 
 			const markers = new FeatureGroup().addTo(map);
-			const markerOptions = {shadow: !new URLSearchParams(location.search).has('noshadow')};
+			const markerOptions = {shadow: !params.has('noshadow')};
 			const results = document.getElementById('results');
 
 			function randomLatLngs(count) {
-				const bounds = map.getBounds();
+				const bounds = map.getBounds().pad((Number(params.get('spread') ?? 1) - 1) / 2);
 				const s = bounds.getSouth(), n = bounds.getNorth(), w = bounds.getWest(), e = bounds.getEast();
 				return Array.from({length: count}, () => new LatLng(s + Math.random() * (n - s), w + Math.random() * (e - w)));
 			}
