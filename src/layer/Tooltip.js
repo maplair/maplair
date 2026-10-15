@@ -1,6 +1,5 @@
 import {DivOverlay} from './DivOverlay.js';
 import {Point} from '../geometry/Point.js';
-import {MaplairMap} from '../map/Map.js';
 import {Layer} from './Layer.js';
 import * as DomUtil from '../dom/DomUtil.js';
 import * as DomEvent from '../dom/DomEvent.js';
@@ -231,7 +230,8 @@ export class Tooltip extends DivOverlay {
 		return new Point(this._source?._getTooltipAnchor && !this.options.sticky ? this._source._getTooltipAnchor() : [0, 0]);
 	}
 
-	static register() {
+	// Registers this default feature on the map class, called by `MaplairMap` itself.
+	static register(MaplairMap) {
 		// @namespace MaplairMap
 		// @section Methods for Layers and Controls
 		MaplairMap.include({

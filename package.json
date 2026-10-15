@@ -34,11 +34,24 @@
   },
   "type": "module",
   "exports": {
-    ".": "./dist/maplair-src.js",
+    ".": {
+      "import": "./dist/esm/Maplair.js",
+      "default": "./dist/maplair-src.js"
+    },
     "./src/": "./src/",
     "./styles.css": "./dist/maplair.css"
   },
   "style": "dist/maplair.css",
+  "sideEffects": [
+    "*.css",
+    "./dist/maplair*.js",
+    "./src/core/Handler.js",
+    "./src/layer/GeoJSON.js",
+    "./src/map/Map.js",
+    "./dist/esm/core/Handler.js",
+    "./dist/esm/layer/GeoJSON.js",
+    "./dist/esm/map/Map.js"
+  ],
   "files": [
     "dist",
     "src",

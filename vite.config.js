@@ -240,6 +240,8 @@ export default defineConfig({
 			],
 		},
 		{...packOptions, entry: {maplair: 'src/Maplair.js'}, minify: true},
+		// one module per source file, so that bundlers can drop unused modules (see `sideEffects` in package.json)
+		{...packOptions, entry: ['src/Maplair.js'], unbundle: true, outDir: 'dist/esm', banner: undefined},
 		{...globalPackOptions, entry: {'maplair-global-src': 'src/Maplair.js'}},
 		{...globalPackOptions, entry: {'maplair-global': 'src/Maplair.js'}, minify: true},
 	],

@@ -1,4 +1,3 @@
-import {MaplairMap} from '../map/Map.js';
 import {Layer} from './Layer.js';
 import {FeatureGroup} from './FeatureGroup.js';
 import * as Util from '../core/Util.js';
@@ -319,7 +318,8 @@ export class DivOverlay extends Layer {
 		return [0, 0];
 	}
 
-	static register() {
+	// Registers this default feature on the map class, called by `MaplairMap` itself.
+	static register(MaplairMap) {
 		MaplairMap.include({
 			_initOverlay(OverlayClass, content, latlng, options) {
 				let overlay = content;

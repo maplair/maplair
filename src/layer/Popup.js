@@ -3,7 +3,6 @@ import * as DomEvent from '../dom/DomEvent.js';
 import * as DomUtil from '../dom/DomUtil.js';
 import Browser from '../core/Browser.js';
 import {Point} from '../geometry/Point.js';
-import {MaplairMap} from '../map/Map.js';
 import {Layer} from './Layer.js';
 import {Path} from './vector/Path.js';
 import {FeatureGroup} from './FeatureGroup.js';
@@ -344,7 +343,8 @@ export class Popup extends DivOverlay {
 		return new Point(this._source?._getPopupAnchor ? this._source._getPopupAnchor() : [0, 0]);
 	}
 
-	static register() {
+	// Registers this default feature on the map class, called by `MaplairMap` itself.
+	static register(MaplairMap) {
 		/* @namespace MaplairMap
 		 * @section Interaction Options
 		 * @option closePopupOnClick: Boolean = true

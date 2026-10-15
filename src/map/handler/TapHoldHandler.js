@@ -1,4 +1,3 @@
-import {MaplairMap} from '../Map.js';
 import {Handler} from '../../core/Handler.js';
 import * as DomEvent from '../../dom/DomEvent.js';
 import {Point} from '../../geometry/Point.js';
@@ -83,7 +82,8 @@ export class TapHoldHandler extends Handler {
 		e.target.dispatchEvent(simulatedEvent);
 	}
 
-	static register() {
+	// Registers this default feature on the map class, called by `MaplairMap` itself.
+	static register(MaplairMap) {
 		// @namespace MaplairMap
 		// @section Interaction Options
 		MaplairMap.mergeOptions({

@@ -1,4 +1,3 @@
-import {MaplairMap} from '../Map.js';
 import {Handler} from '../../core/Handler.js';
 
 /*
@@ -30,7 +29,8 @@ export class DoubleClickZoomHandler extends Handler {
 		}
 	}
 
-	static register() {
+	// Registers this default feature on the map class, called by `MaplairMap` itself.
+	static register(MaplairMap) {
 		MaplairMap.mergeOptions({
 			// @option doubleClickZoom: Boolean|String = true
 			// Whether the map can be zoomed in by double clicking on it and

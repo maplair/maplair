@@ -1,6 +1,5 @@
 
 import {Control} from './Control.js';
-import {MaplairMap} from '../map/Map.js';
 import * as DomEvent from '../dom/DomEvent.js';
 import * as DomUtil from '../dom/DomUtil.js';
 import {I18n} from '../core/I18n.js';
@@ -127,7 +126,8 @@ export class AttributionControl extends Control {
 		this._container.innerHTML = prefixAndAttribs.join(' <span aria-hidden="true">|</span> ');
 	}
 
-	static register() {
+	// Registers this default feature on the map class, called by `MaplairMap` itself.
+	static register(MaplairMap) {
 		// @namespace MaplairMap
 		// @section Control options
 		// @option attributionControl: Boolean = true

@@ -10,6 +10,21 @@ import * as DomEvent from '../dom/DomEvent.js';
 import * as DomUtil from '../dom/DomUtil.js';
 import {PosAnimation} from '../dom/PosAnimation.js';
 import * as PointerEvents from '../dom/DomEvent.PointerEvents.js';
+import {Control} from '../control/Control.js';
+import {AttributionControl} from '../control/AttributionControl.js';
+import {ZoomControl} from '../control/ZoomControl.js';
+import {Layer} from '../layer/Layer.js';
+import {DivOverlay} from '../layer/DivOverlay.js';
+import {Popup} from '../layer/Popup.js';
+import {Tooltip} from '../layer/Tooltip.js';
+import * as RendererSupport from '../layer/vector/Renderer.getRenderer.js';
+import {BoxZoomHandler} from './handler/BoxZoomHandler.js';
+import {DoubleClickZoomHandler} from './handler/DoubleClickZoomHandler.js';
+import {DragHandler} from './handler/DragHandler.js';
+import {KeyboardHandler} from './handler/KeyboardHandler.js';
+import {PinchZoomHandler} from './handler/PinchZoomHandler.js';
+import {ScrollWheelZoomHandler} from './handler/ScrollWheelZoomHandler.js';
+import {TapHoldHandler} from './handler/TapHoldHandler.js';
 
 /*
  * @class MaplairMap
@@ -1767,6 +1782,40 @@ export class MaplairMap extends Evented {
 
 		this._moveEnd(true);
 	}
+}
+
+// The default features (layers, popups, tooltips, vector renderers, controls
+// and interaction handlers) come with every map: they are registered here
+// rather than by the entry module, so that they are included whenever
+// `MaplairMap` is, while bundlers can still drop other features (e.g. GeoJSON,
+// the layers and scale controls) when an application doesn't use them.
+//
+// Possible tree-shaking optimization: popups, tooltips and the vector renderers
+// (DivOverlay, Popup, Tooltip, RendererSupport; about 25 kB of a minimal map's
+// 100 kB minified) could become optional by registering themselves when their
+// module is imported (without importing this module, to avoid circular imports)
+// instead of here. But then `layer.bindPopup()`/`bindTooltip()` and the map's
+// popup/tooltip methods would only exist in production bundles of apps that
+// actually use the `Popup`/`Tooltip` classes (bundlers drop an unused
+// `import {Tooltip}`), while they would always work in development builds.
+for (const feature of [
+	AttributionControl,
+	Control,
+	DivOverlay,
+	Layer,
+	BoxZoomHandler,
+	DoubleClickZoomHandler,
+	DragHandler,
+	KeyboardHandler,
+	PinchZoomHandler,
+	ScrollWheelZoomHandler,
+	TapHoldHandler,
+	Popup,
+	Tooltip,
+	RendererSupport,
+	ZoomControl
+]) {
+	feature.register(MaplairMap);
 }
 
 export const Map = MaplairMap;

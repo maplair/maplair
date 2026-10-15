@@ -1,4 +1,3 @@
-import {MaplairMap} from '../Map.js';
 import {Handler} from '../../core/Handler.js';
 import {Draggable} from '../../dom/Draggable.js';
 import {LatLngBounds} from '../../geo/LatLngBounds.js';
@@ -183,7 +182,8 @@ export class DragHandler extends Handler {
 		}
 	}
 
-	static register() {
+	// Registers this default feature on the map class, called by `MaplairMap` itself.
+	static register(MaplairMap) {
 		// @namespace MaplairMap
 		// @section Interaction Options
 		MaplairMap.mergeOptions({

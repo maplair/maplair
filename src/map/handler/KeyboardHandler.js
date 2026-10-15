@@ -1,4 +1,3 @@
-import {MaplairMap} from '../Map.js';
 import {Handler} from '../../core/Handler.js';
 import {on, off, stop} from '../../dom/DomEvent.js';
 import {Point} from '../../geometry/Point.js';
@@ -163,7 +162,8 @@ export class KeyboardHandler extends Handler {
 		stop(e);
 	}
 
-	static register() {
+	// Registers this default feature on the map class, called by `MaplairMap` itself.
+	static register(MaplairMap) {
 		// @namespace MaplairMap
 		// @section Keyboard Navigation Options
 		MaplairMap.mergeOptions({

@@ -1,6 +1,5 @@
 
 import {Class} from '../core/Class.js';
-import {MaplairMap} from '../map/Map.js';
 import * as Util from '../core/Util.js';
 import * as DomUtil from '../dom/DomUtil.js';
 
@@ -109,7 +108,8 @@ export class Control extends Class {
 		}
 	}
 
-	static register() {
+	// Registers this default feature on the map class, called by `MaplairMap` itself.
+	static register(MaplairMap) {
 		/* @namespace MaplairMap
 		 * @section Methods for Layers and Controls
 		 */

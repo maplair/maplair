@@ -1,5 +1,4 @@
 import {Evented} from '../core/Events.js';
-import {MaplairMap} from '../map/Map.js';
 import * as Util from '../core/Util.js';
 
 /*
@@ -114,7 +113,8 @@ export class Layer extends Evented {
 		map.fire('layeradd', {layer: this});
 	}
 
-	static register() {
+	// Registers this default feature on the map class, called by `MaplairMap` itself.
+	static register(MaplairMap) {
 		/* @namespace MaplairMap
 		 * @section Layer events
 		 *
