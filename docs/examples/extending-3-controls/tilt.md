@@ -52,7 +52,7 @@ title: Tilt Handler Example
 		}
 	}
 	
-	Map.addInitHook('addHandler', 'tilt', TiltHandler);
+	MaplairMap.addInitHook('addHandler', 'tilt', TiltHandler);
 
 	const map = new MaplairMap('map', {
 		center: [0, 0],

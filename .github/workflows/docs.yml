@@ -29,8 +29,15 @@ jobs:
 
       - run: npm ci
 
+      - name: Build Maplair
+        run: npm run build
+
       - name: Generate API reference
         run: npm run docs
+
+      # the docs site loads the latest build from /dist/
+      - name: Copy build into docs
+        run: cp -r dist docs/dist
 
       - uses: ruby/setup-ruby@v1
         with:
