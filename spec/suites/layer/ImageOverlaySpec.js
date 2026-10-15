@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import {expect} from 'vite-plus/test';
 import {LatLngBounds, MaplairMap, ImageOverlay} from 'maplair';
 import sinon from 'sinon';
 import {createContainer, removeMapContainer} from '../SpecHelper.js';

@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import {expect} from 'vite-plus/test';
 import {Canvas, Circle, CircleMarker, DomEvent, LayerGroup, MaplairMap, Marker, Polygon, Polyline, SVG, Util} from 'maplair';
 import Hand from 'prosthetic-hand';
 import sinon from 'sinon';

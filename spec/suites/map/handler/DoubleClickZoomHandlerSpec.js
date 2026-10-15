@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import {expect} from 'vite-plus/test';
 import {MaplairMap} from 'maplair';
 import UIEventSimulator from 'ui-event-simulator';
 import {createContainer, removeMapContainer} from '../../SpecHelper.js';

@@ -1,6 +1,6 @@
 import {MaplairMap, AttributionControl, Layer} from 'maplair';
 import {createContainer, removeMapContainer} from '../SpecHelper.js';
-import {expect} from 'chai';
+import {expect} from 'vite-plus/test';
 
 describe('AttributionControl', () => {
 	let map, control, container, controlContainer;

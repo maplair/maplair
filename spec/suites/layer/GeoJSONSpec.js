@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import {expect} from 'vite-plus/test';
 import {Circle, CircleMarker, FeatureGroup, GeoJSON, LatLng, Layer, LayerGroup, MaplairMap, Marker, Polygon, Polyline, TileLayer} from 'maplair';
 import {createContainer, removeMapContainer} from '../SpecHelper.js';
 

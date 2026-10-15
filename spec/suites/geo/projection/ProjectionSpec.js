@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import {expect} from 'vite-plus/test';
 import {Projection, LatLng, Point} from 'maplair';
 
 describe('Projection.Mercator', () => {

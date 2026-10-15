@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import {expect} from 'vite-plus/test';
 import {DomUtil, LatLng, MaplairMap, Marker, Point} from 'maplair';
 import Hand from 'prosthetic-hand';
 import sinon from 'sinon';

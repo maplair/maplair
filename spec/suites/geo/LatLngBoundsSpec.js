@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import {expect} from 'vite-plus/test';
 import {LatLngBounds, LatLng} from 'maplair';
 
 describe('LatLngBounds', () => {

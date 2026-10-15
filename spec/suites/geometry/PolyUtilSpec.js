@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import {expect} from 'vite-plus/test';
 import {Bounds, MaplairMap, Point, PolyUtil, Polygon} from 'maplair';
 import sinon from 'sinon';
 

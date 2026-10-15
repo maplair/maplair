@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import {expect} from 'vite-plus/test';
 import {WMSTileLayer} from 'maplair';
 
 describe('WMSTileLayer', () => {

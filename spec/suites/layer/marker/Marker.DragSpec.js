@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import {expect} from 'vite-plus/test';
 import {DomUtil, MaplairMap, Marker, Point} from 'maplair';
 import Hand from 'prosthetic-hand';
 import {createContainer, removeMapContainer, pointerEventType} from '../../SpecHelper.js';

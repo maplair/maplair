@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import {expect} from 'vite-plus/test';
 import {MaplairMap, LatLng, Polyline} from 'maplair';
 import {createContainer, removeMapContainer} from '../../SpecHelper.js';
 

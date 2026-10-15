@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import {expect} from 'vite-plus/test';
 import {Control, DomEvent, DomUtil, MaplairMap} from 'maplair';
 import sinon from 'sinon';
 import UIEventSimulator from 'ui-event-simulator';

@@ -1,4 +1,4 @@
-﻿import {expect} from 'chai';
+﻿import {expect} from 'vite-plus/test';
 import {GeoJSON, Layer, Marker, LayerGroup} from 'maplair';
 
 describe('LayerGroup', () => {

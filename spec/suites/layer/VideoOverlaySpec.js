@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import {expect} from 'vite-plus/test';
 import {LatLngBounds, MaplairMap, VideoOverlay} from 'maplair';
 import {createContainer, removeMapContainer} from '../SpecHelper.js';
 import Hand from 'prosthetic-hand';

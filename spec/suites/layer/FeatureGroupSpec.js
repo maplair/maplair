@@ -1,4 +1,4 @@
-﻿import {expect} from 'chai';
+﻿import {expect} from 'vite-plus/test';
 import {Marker, FeatureGroup, LayerGroup, Util} from 'maplair';
 
 describe('FeatureGroup', () => {

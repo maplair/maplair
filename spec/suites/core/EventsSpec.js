@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import {expect} from 'vite-plus/test';
 import {Class, Evented, FeatureGroup, Marker, Util} from 'maplair';
 import sinon from 'sinon';
 

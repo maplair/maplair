@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import {expect} from 'vite-plus/test';
 import {Bounds, Canvas, CircleMarker, DivIcon, DomEvent, GridLayer, Handler, LatLngBounds, Layer, MaplairMap, Marker, Point, Polygon, TileLayer, Util, LayersControl, LatLng} from 'maplair';
 import sinon from 'sinon';
 import UIEventSimulator from 'ui-event-simulator';

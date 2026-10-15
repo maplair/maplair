@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import {expect} from 'vite-plus/test';
 import {Browser, MaplairMap, Point} from 'maplair';
 import sinon from 'sinon';
 import Hand from 'prosthetic-hand';

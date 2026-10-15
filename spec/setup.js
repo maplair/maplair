@@ -1,6 +1,8 @@
-import {Assertion, util} from 'chai';
+import {chai} from 'vite-plus/test';
 import {DefaultIcon, LatLng, Point} from 'maplair';
 import '../src/maplair.css';
+
+const {Assertion, util} = chai;
 
 util.addMethod(Assertion.prototype, 'near', function (expected, delta = 1) {
 	expected = new Point(expected);

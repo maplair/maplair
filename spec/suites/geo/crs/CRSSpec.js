@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import {expect} from 'vite-plus/test';
 import {CRS, EPSG3395, EPSG3857, EPSG4326, EarthCRS, SimpleCRS, Util, LatLng, LatLngBounds, Point} from 'maplair';
 
 describe('EPSG3857', () => {
