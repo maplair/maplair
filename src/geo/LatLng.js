@@ -72,7 +72,6 @@ export class LatLng {
 			_alt = alt;
 		}
 
-
 		// @property lat: Number
 		// Latitude in degrees
 		this.lat = +_lat;
@@ -118,7 +117,6 @@ export class LatLng {
 		return false;
 	}
 
-
 	// @method equals(otherLatLng: LatLng, maxMargin?: Number): Boolean
 	// Returns `true` if the given `LatLng` point is at the same position (within a small margin of error). The margin of error can be overridden by setting `maxMargin` to a small number.
 	equals(obj, maxMargin) {
@@ -162,14 +160,4 @@ export class LatLng {
 			[this.lat + latAccuracy, this.lng + lngAccuracy]);
 	}
 
-	// @method clone(): LatLng
-	// Returns a copy of the current LatLng.
-	clone() {
-		// to skip the validation in the constructor we need to initialize with 0 and then set the values later
-		const latlng = new LatLng(0, 0);
-		latlng.lat = this.lat;
-		latlng.lng = this.lng;
-		latlng.alt = this.alt;
-		return latlng;
-	}
 };

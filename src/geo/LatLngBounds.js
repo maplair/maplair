@@ -37,14 +37,20 @@ import {LatLng} from './LatLng.js';
 // @alternative
 // @constructor LatLngBounds(latlngs: LatLng[])
 // Creates a `LatLngBounds` object defined by the geographical points it contains. Very useful for zooming the map to fit a particular set of locations with [`fitBounds`](#map-fitbounds).
+
+// @alternative
+// @constructor LatLngBounds(bounds: LatLngBounds)
+// Creates a copy of the given `LatLngBounds` object.
 export class LatLngBounds {
 	constructor(corner1, corner2) { // (LatLng, LatLng) or (LatLng[])
 		if (!corner1) { return; }
 
 		if (corner1 instanceof LatLngBounds) {
-			// We can use the same object, no need to clone it
-			// eslint-disable-next-line no-constructor-return
-			return corner1;
+			if (corner1.isValid()) {
+				this._southWest = new LatLng(corner1._southWest);
+				this._northEast = new LatLng(corner1._northEast);
+			}
+			return;
 		}
 
 		const latlngs = corner2 ? [corner1, corner2] : corner1;

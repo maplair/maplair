@@ -30,14 +30,20 @@ import {Point} from './Point.js';
 // @alternative
 // @constructor Bounds(points: Point[])
 // Creates a Bounds object from the given array of points.
+
+// @alternative
+// @constructor Bounds(bounds: Bounds)
+// Creates a copy of the given Bounds object.
 export class Bounds {
 	constructor(a, b) {
 		if (!a) { return; }
 
 		if (a instanceof Bounds) {
-			// We can use the same object, no need to clone it
-			// eslint-disable-next-line no-constructor-return
-			return a;
+			if (a.isValid()) {
+				this.min = new Point(a.min);
+				this.max = new Point(a.max);
+			}
+			return;
 		}
 
 		const points = b ? [a, b] : a;

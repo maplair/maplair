@@ -30,7 +30,7 @@ describe('ImageOverlay', () => {
 				[30, 40]
 			);
 			const overlay = new ImageOverlay().setBounds(bounds);
-			expect(overlay._bounds).to.equal(bounds);
+			expect(overlay._bounds).to.eql(bounds);
 		});
 	});
 

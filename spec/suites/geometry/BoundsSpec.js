@@ -2,6 +2,21 @@ import {expect} from 'vite-plus/test';
 import {Bounds, Point} from 'maplair';
 
 describe('Bounds', () => {
+	describe('copy constructor', () => {
+		it('copies Bounds instances', () => {
+			const original = new Bounds([[10, 20], [30, 40]]);
+			const copy = new Bounds(original);
+			expect(copy).to.eql(original);
+			expect(copy).not.to.equal(original);
+			copy.extend([50, 60]);
+			expect(original.max).to.eql(new Point(30, 40));
+		});
+
+		it('copies empty Bounds instances', () => {
+			expect(new Bounds(new Bounds()).isValid()).to.be.false;
+		});
+	});
+
 	let a, b, c;
 
 	beforeEach(() => {

@@ -13,6 +13,19 @@ describe('LatLngBounds', () => {
 	});
 
 	describe('constructor', () => {
+		it('copies LatLngBounds instances', () => {
+			const original = new LatLngBounds([[10, 20], [30, 40]]);
+			const copy = new LatLngBounds(original);
+			expect(copy).to.eql(original);
+			expect(copy).not.to.equal(original);
+			copy.extend([50, 60]);
+			expect(original.getNorthEast()).to.eql(new LatLng(30, 40));
+		});
+
+		it('copies empty LatLngBounds instances', () => {
+			expect(new LatLngBounds(new LatLngBounds()).isValid()).to.be.false;
+		});
+
 		it('instantiates either passing two latlngs or an array of latlngs', () => {
 			const b = new LatLngBounds([
 				new LatLng(14, 12),
