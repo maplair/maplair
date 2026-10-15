@@ -290,6 +290,14 @@ Values smaller than <code>1</code> (e.g. <code>0.5</code>) allow for greater gra
 		<td>Whether the map can be zoomed to a rectangular area specified by
 dragging the pointer while pressing the shift key.</td>
 	</tr>
+	<tr id='maplairmap-displace'>
+		<td><code><b>displace</b></code></td>
+		<td><code>Boolean|Object</code></td>
+		<td><code>undefined</code></td>
+		<td>Whether to displace overlapping <a href="#circlemarker"><code>CircleMarker</code></a>s, either <code>true</code> or an object
+overriding the options of <a href="#displacehandler"><code>DisplaceHandler</code></a>. Needs the <a href="#displacehandler"><code>DisplaceHandler</code></a>
+to be added to the map, see there.</td>
+	</tr>
 	<tr id='maplairmap-doubleclickzoom'>
 		<td><code><b>doubleClickZoom</b></code></td>
 		<td><code>Boolean|String</code></td>
@@ -13425,6 +13433,42 @@ which contains the circle radius.</td>
 
 
 <div class='accordion'>
+	<label><span class='expander'>▶</span> Options inherited from <a href='#circlemarker'>CircleMarker</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Option</th>
+		<th>Type</th>
+		<th>Default</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='circle-displace'>
+		<td><code><b>displace</b></code></td>
+		<td><code>Boolean</code></td>
+		<td><code>undefined</code></td>
+		<td>Whether to include this marker in the displacement of the map, see <a href="#displacehandler"><code>DisplaceHandler</code></a>.</td>
+	</tr>
+	<tr id='circle-displaceid'>
+		<td><code><b>displaceId</b></code></td>
+		<td><code>String</code></td>
+		<td><code>undefined</code></td>
+		<td>Stable identifier shared across marker instances that represent the same
+thing on different layers, so that <a href="#displacehandler"><code>DisplaceHandler</code></a> puts them at the same
+displaced position.</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
+
+<div class='accordion'>
 	<label><span class='expander'>▶</span> Options inherited from <a href='#path'>Path</a></label>
 	<div class='accordion-overflow'>
 		<div class='accordion-content'><section >
@@ -14317,6 +14361,20 @@ into &quot;M..L..L..&quot; instructions</td>
 		<td><code>Number</code></td>
 		<td><code>10</code></td>
 		<td>Radius of the circle marker, in CSS pixels</td>
+	</tr>
+	<tr id='circlemarker-displace'>
+		<td><code><b>displace</b></code></td>
+		<td><code>Boolean</code></td>
+		<td><code>undefined</code></td>
+		<td>Whether to include this marker in the displacement of the map, see <a href="#displacehandler"><code>DisplaceHandler</code></a>.</td>
+	</tr>
+	<tr id='circlemarker-displaceid'>
+		<td><code><b>displaceId</b></code></td>
+		<td><code>String</code></td>
+		<td><code>undefined</code></td>
+		<td>Stable identifier shared across marker instances that represent the same
+thing on different layers, so that <a href="#displacehandler"><code>DisplaceHandler</code></a> puts them at the same
+displaced position.</td>
 	</tr>
 </tbody></table>
 
@@ -27064,6 +27122,200 @@ Note that changing the locale does not affect already instantiated objects.</td>
 
 </section>
 
+
+</section><h2 id='displacehandler'>DisplaceHandler</h2><p>Cartographic displacement of overlapping <a href="#circlemarker"><code>CircleMarker</code></a>s: keeps all circle
+markers created with <code>displace: true</code> free of overlap.</p>
+<p>Overlap is a screen space phenomenon: whether two markers cover each other
+depends on their pixel radius and the current zoom level. The displacement is
+therefore computed in projected pixel space and recomputed on every zoom. The
+true position of each marker is kept by the handler, the displaced position is
+applied via <code>setLatLng</code>. Since every run starts over from the true position,
+markers never drift.</p>
+<p><code>maxDistance</code> bounds how far a marker may be moved away from the truth, in
+meters. It is worth noting what such a limit costs at low zoom levels: if a
+marker is 11 km wide on the ground, separating two coincident ones moves each
+of them by some 6 km, so a limit below that leaves them overlapping.</p>
+<p>Unlike the default handlers, it isn't added to every map, so that bundlers can
+drop it from applications that don't use it. Add it to the map class (or to a
+single map with <code>DisplaceHandler.addTo(map, 'displace')</code>), then enable it with
+the map option <code>displace</code>, which is either <code>true</code> or an object overriding the
+handler's options. It can be toggled at runtime via <code>map.displace.enable()</code> /
+<code>map.displace.disable()</code>; disabling restores the true positions.</p>
+
+<section>
+<h3 id='displacehandler-example'>Usage example</h3>
+
+<section >
+
+
+
+
+
+<pre><code class="language-js">import { CircleMarker, DisplaceHandler, MaplairMap } from 'maplair';
+
+MaplairMap.addInitHook('addHandler', 'displace', DisplaceHandler);
+
+const map = new MaplairMap('map', {displace: { maxDistance: 10_000} });
+new CircleMarker(latlng, { displace: true, radius: 6 }).addTo(map);
+</code></pre>
+
+
+
+</section>
+
+
+</section><section>
+<h3 id='displacehandler-option'>Options</h3>
+
+<section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Option</th>
+		<th>Type</th>
+		<th>Default</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='displacehandler-gap'>
+		<td><code><b>gap</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>2</code></td>
+		<td>Additional pixel distance between the outlines of two markers.</td>
+	</tr>
+	<tr id='displacehandler-iterations'>
+		<td><code><b>iterations</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>80</code></td>
+		<td>Maximum number of relaxation passes per relayout.</td>
+	</tr>
+	<tr id='displacehandler-maxdistance'>
+		<td><code><b>maxDistance</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>Infinity</code></td>
+		<td>Maximum distance in meters a marker may be moved away from its true
+position. Markers which would have to move further stay overlapping.
+Meters rather than pixels, since the point of the limit is to bound the
+geographic error. A limit in meters also scales itself: it only bites at
+the zoom levels where a pixel is worth a lot of ground.</td>
+	</tr>
+</tbody></table>
+
+</section>
+
+
+</section><section>
+<h3 id=''>Methods</h3>
+
+
+
+
+<div class='accordion'>
+	<label><span class='expander'>▶</span> Methods inherited from <a href='#handler'>Handler</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Method</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='displacehandler-enable'>
+		<td><code><b>enable</b>()</code></td>
+		<td><code>this</code></td>
+		<td><p>Enables the handler</p>
+</td>
+	</tr>
+	<tr id='displacehandler-disable'>
+		<td><code><b>disable</b>()</code></td>
+		<td><code>this</code></td>
+		<td><p>Disables the handler</p>
+</td>
+	</tr>
+	<tr id='displacehandler-enabled'>
+		<td><code><b>enabled</b>()</code></td>
+		<td><code>Boolean</code></td>
+		<td><p>Returns <code>true</code> if the handler is enabled</p>
+</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
+
+<div class='accordion'>
+	<label><span class='expander'>▶</span> Extension methods inherited from <a href='#handler'>Handler</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Method</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='displacehandler-addhooks'>
+		<td><code><b>addHooks</b>()</code></td>
+		<td><code></code></td>
+		<td><p>Called when the handler is enabled, should add event hooks.</p>
+</td>
+	</tr>
+	<tr id='displacehandler-removehooks'>
+		<td><code><b>removeHooks</b>()</code></td>
+		<td><code></code></td>
+		<td><p>Called when the handler is disabled, should remove the event hooks added previously.</p>
+</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
+
+</section><section>
+<h3 id=''>Functions</h3>
+
+
+
+
+<div class='accordion'>
+	<label><span class='expander'>▶</span> There is static function which can be called without instantiating Handler: inherited from <a href='#handler'>Handler</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Function</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='displacehandler-addto'>
+		<td><code><b>addTo</b>(<nobr>&lt;<a href='#maplairmap'>MaplairMap</a>&gt;</nobr> <i>map</i>, <nobr>&lt;String&gt;</nobr> <i>name</i>)</code></td>
+		<td><code>this</code></td>
+		<td>Adds a new Handler to the given map with the given name.</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
 
 </section><h2 id='noconflict'>noConflict</h2><p><strong>This is only available when Maplair is not imported as a module!</strong></p>
 <p>This method restores the <code>L</code> global variable to the original value
