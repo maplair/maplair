@@ -75,7 +75,7 @@ The choice is yours.
 
 #### I'm building a commercial app that I plan to sell. Can I use Maplair in it?
 
-You're welcome to do so, as the code is published under the very permissive [2-clause BSD License](https://github.com/Leaflet/Leaflet/blob/main/LICENSE).
+You're welcome to do so, as the code is published under the very permissive [2-clause BSD License](https://github.com/maplair/maplair/blob/main/LICENSE).
 Just make sure to attribute the use of the library somewhere in the app UI or the distribution
 (e.g. keep the Maplair link on the map, or mention the use on the About page or a Readme file, etc.) and you'll be fine.
 
@@ -106,7 +106,7 @@ Another essential read is [Advocating Simplicity in Open Source](http://blog.uni
 
 #### I have thousands of markers on my map. How do I make it faster and more usable?
 
-Check out the [Maplair.markercluster](https://github.com/Leaflet/Leaflet.markercluster) plugin. It's amazing.
+Check out the [Leaflet.markercluster](https://github.com/Leaflet/Leaflet.markercluster) plugin. It's amazing.
 
 #### I have vector data with many thousands of points on my map. Any performance tips?
 

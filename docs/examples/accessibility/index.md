@@ -95,7 +95,7 @@ If you find an accessibility issue in a plugin,
 please report it to the plugin's author.
 
 An example of a plugin that can enhance the experience for your users is the
-[Maplair.fullscreen](https://github.com/Leaflet/Leaflet.fullscreen)
+[Leaflet.fullscreen](https://github.com/Leaflet/Leaflet.fullscreen)
 plugin.
 By allowing users to enter into fullscreen mode,
 they can explore the map in isolation,

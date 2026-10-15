@@ -12,9 +12,9 @@ body:
           required: false
         - label: I'm sure this is an issue with Maplair, not with my app or other dependencies (Angular, Cordova, React, etc.).
           required: false
-        - label: I've searched through the [current issues](https://github.com/Leaflet/Leaflet/issues) to make sure this hasn't been reported yet.
+        - label: I've searched through the [current issues](https://github.com/maplair/maplair/issues) to make sure this hasn't been reported yet.
           required: false
-        - label: I agree to follow the [Code of Conduct](https://github.com/Leaflet/Leaflet/blob/main/CODE_OF_CONDUCT.md) that this project adheres to.
+        - label: I agree to follow the [Code of Conduct](https://github.com/maplair/maplair/blob/main/CODE_OF_CONDUCT.md) that this project adheres to.
           required: true
 
   - type: textarea

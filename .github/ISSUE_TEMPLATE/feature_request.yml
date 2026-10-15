@@ -10,9 +10,9 @@ body:
       options:
         - label: I've searched through the [plugins](https://maplair.org/plugins.html) to make sure this feature isn't already available, or think it shouldn't require a plugin.
           required: false
-        - label: I've searched through the [current issues](https://github.com/Leaflet/Leaflet/issues) to make sure this feature hasn't been requested already.
+        - label: I've searched through the [current issues](https://github.com/maplair/maplair/issues) to make sure this feature hasn't been requested already.
           required: false
-        - label: I agree to follow the [Code of Conduct](https://github.com/Leaflet/Leaflet/blob/main/CODE_OF_CONDUCT.md) that this project adheres to.
+        - label: I agree to follow the [Code of Conduct](https://github.com/maplair/maplair/blob/main/CODE_OF_CONDUCT.md) that this project adheres to.
           required: true
 
   - type: textarea

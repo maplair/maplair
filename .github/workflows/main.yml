@@ -104,7 +104,7 @@ jobs:
   publish-artifacts:
     permissions:
       contents: write
-    if: github.repository_owner == 'Maplair' && github.ref == 'refs/heads/main'
+    if: github.repository_owner == 'maplair' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -134,7 +134,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   publish-npm:
-    if: github.repository_owner == 'Maplair' && startsWith(github.ref, 'refs/tags/v')
+    if: github.repository_owner == 'maplair' && startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

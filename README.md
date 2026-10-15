@@ -26,15 +26,15 @@ Major contributors include Iván Sánchez Ortega, Dave Leaver, Yohan Boniface, J
 Florian Bischof, Per Liedman, John Firebaugh and Simon Legner,
 along with [hundreds of other contributors][contributors].
 
-[![CI](https://github.com/Leaflet/Leaflet/actions/workflows/main.yml/badge.svg)](https://github.com/Leaflet/Leaflet/actions/workflows/main.yml)
+[![CI](https://github.com/maplair/maplair/actions/workflows/main.yml/badge.svg)](https://github.com/maplair/maplair/actions/workflows/main.yml)
 
- [contributors]: https://github.com/Leaflet/Leaflet/graphs/contributors
+ [contributors]: https://github.com/maplair/maplair/graphs/contributors
  [features]: https://maplair.org/#features
  [plugins]: https://maplair.org/plugins.html
  [well-documented]: https://maplair.org/reference.html "Maplair API reference"
- [source code]: https://github.com/Leaflet/Leaflet "Maplair GitHub repository"
- [hosted on GitHub]: http://github.com/Leaflet/Leaflet
- [contribute]: https://github.com/Leaflet/Leaflet/blob/main/CONTRIBUTING.md "A guide to contributing to Maplair"
+ [source code]: https://github.com/maplair/maplair "Maplair GitHub repository"
+ [hosted on GitHub]: https://github.com/maplair/maplair
+ [contribute]: https://github.com/maplair/maplair/blob/main/CONTRIBUTING.md "A guide to contributing to Maplair"
  [official website]: https://maplair.org
  [download page]: https://maplair.org/download.html
 

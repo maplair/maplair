@@ -20,12 +20,12 @@ bodyclass: download-page
 		<td>Prerelease version, released on August 16, 2025.</td>
 	</tr>
 		<tr>
-		<td><a href="https://github.com/Leaflet/Leaflet/releases/download/dev/leaflet.zip">Development Snapshot</a> / (<a href="https://github.com/Leaflet/Leaflet/releases/tag/dev" target="_blank">Single files</a>)</td>
+		<td><a href="https://github.com/maplair/maplair/releases/download/dev/maplair.zip">Development Snapshot</a> / (<a href="https://github.com/maplair/maplair/releases/tag/dev" target="_blank">Single files</a>)</td>
 		<td>In-progress version, developed on the <code>main</code> branch.</td>
 	</tr>
 </table>
 
-[View Changelog](https://github.com/Leaflet/Leaflet/blob/main/CHANGELOG.md)
+[View Changelog](https://github.com/maplair/maplair/blob/main/CHANGELOG.md)
 
 Note that the main version can contain incompatible changes,
 so please read the changelog carefully when upgrading to it.
@@ -139,8 +139,8 @@ You will find a copy of the Maplair release files in `node_modules/maplair/dist`
 
 These download packages above only contain the library itself.
 If you want to download the full source code, including unit tests, files for debugging, build scripts, etc.,
-you can <a href="https://github.com/Leaflet/Leaflet/releases">download it</a>
-from the <a href="https://github.com/Leaflet/Leaflet">GitHub repository</a>.
+you can <a href="https://github.com/maplair/maplair/releases">download it</a>
+from the <a href="https://github.com/maplair/maplair">GitHub repository</a>.
 
 ### Building Maplair from the Source
 

@@ -17,13 +17,13 @@ You can help the project tremendously by discovering and [reporting bugs](#repor
 [improving documentation](#improving-documentation);
 helping others on [Stack Overflow](https://stackoverflow.com/questions/tagged/leaflet),
 [GIS Stack Exchange](https://gis.stackexchange.com/questions/tagged/leaflet)
-and [GitHub issues](https://github.com/Leaflet/Leaflet/issues);
+and [GitHub issues](https://github.com/maplair/maplair/issues);
 tweeting to [@MaplairJS](http://twitter.com/LeafletJS);
 and spreading the word about Maplair among your colleagues and friends.
 
 ## Reporting Bugs
 
-Before reporting a bug on the project's [issues page](https://github.com/Leaflet/Leaflet/issues),
+Before reporting a bug on the project's [issues page](https://github.com/maplair/maplair/issues),
 first make sure that your issue is caused by Maplair, not your application code
 (e.g. passing incorrect arguments to methods, etc.).
 Second, search the already reported issues for similar cases,
@@ -53,7 +53,7 @@ So bugfixes, performance optimizations and small improvements that don't add a l
 are much more likely to get accepted quickly.
 
 Before sending a pull request with a new feature, check if it's been discussed before already
-on [GitHub issues](https://github.com/Leaflet/Leaflet/issues)
+on [GitHub issues](https://github.com/maplair/maplair/issues)
 and ask yourself two questions:
 
  1. Are you sure that this new feature is important enough to justify its presence in the Maplair core?
@@ -155,7 +155,7 @@ and is automatically generated from a set of HTML and Markdown files by [Jekyll]
 
 The easiest way to make little improvements such as fixing typos without even leaving the browser
 is by editing one of the files with the online GitHub editor:
-browse the [`docs/ directory`](https://github.com/Leaflet/Leaflet/tree/main/docs),
+browse the [`docs/ directory`](https://github.com/maplair/maplair/tree/main/docs),
 choose a certain file for editing, click the Edit button, make changes and follow instructions from there.
 Once it gets merged, the changes will immediately appear on the website.
 
@@ -206,5 +206,5 @@ Report any issues to agafonkin@gmail.com or ivan@sanchezortega.es.
 ## Thank You
 
 Not only does your contribution to Maplair and its community earn our gratitude, but it also makes you AWESOME.
-Join [this approved list of awesome people](https://github.com/Leaflet/Leaflet/graphs/contributors)
+Join [this approved list of awesome people](https://github.com/maplair/maplair/graphs/contributors)
 and help us push the limits of what's possible with online maps!

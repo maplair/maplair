@@ -25,6 +25,6 @@ authors:
   - given-names: Simon
     family-names: Legner
     email: simon.legner@gmail.com
-repository-code: 'https://github.com/Leaflet/Leaflet'
+repository-code: 'https://github.com/maplair/maplair'
 url: 'https://maplair.org'
 license: BSD-2-Clause
