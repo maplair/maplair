@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Maplair debug page - Markers Perf</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
+		<link rel="stylesheet" href="../../dist/maplair.css" />
+		<link rel="stylesheet" href="../css/screen.css" />
+		<script type="importmap">
+			{
+				"imports": {
+					"maplair": "../../dist/maplair-src.js"
+				}
+			}
+		</script>
+		<style>
+			#controls { margin: 1em 0; }
+			#results { font: 13px monospace; white-space: pre; }
+		</style>
+	</head>
+	<body>
+		<div id="map"></div>
+		<div id="controls">
+			Markers: <input id="count" type="number" value="1000" min="1" step="100" />
+			<button id="run">Run benchmark</button>
+		</div>
+		<div id="results"></div>
+		<script type="module">
+			import {MaplairMap, TileLayer, FeatureGroup, LatLng, Marker} from 'maplair';
+
+			/*
+			 * Profiles the map with a number of markers (1000 by default).
+			 *
+			 * Each step is recorded with `performance.measure()`, so it shows up in the
+			 * "Timings" track of the browser's performance profiler. Start recording,
+			 * click "Run benchmark", and stop recording when the results appear.
+			 * Frame times are measured with `requestAnimationFrame` while animating.
+			 */
+
+			const center = new LatLng(50.5, 30.51);
+			const map = new MaplairMap('map').setView(center, 15);
+
+			new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 18}).addTo(map);
+
+			const markers = new FeatureGroup().addTo(map);
+			const results = document.getElementById('results');
+
+			function randomLatLngs(count) {
+				const bounds = map.getBounds();
+				const s = bounds.getSouth(), n = bounds.getNorth(), w = bounds.getWest(), e = bounds.getEast();
+				return Array.from({length: count}, () => new LatLng(s + Math.random() * (n - s), w + Math.random() * (e - w)));
+			}
+
+			// Measures a synchronous or asynchronous step, recording it for the profiler.
+			async function measure(name, fn) {
+				performance.mark(`${name}:start`);
+				const t0 = performance.now();
+				const frames = await fn();
+				const duration = performance.now() - t0;
+				performance.measure(name, `${name}:start`);
+				return {step: name, 'duration (ms)': duration.toFixed(1), ...frames};
+			}
+
+			// Runs an animated map action and collects frame times until the map stops moving.
+			function animate(action) {
+				return new Promise((resolve) => {
+					const frameTimes = [];
+					let last = performance.now(), running = true;
+					function frame(now) {
+						frameTimes.push(now - last);
+						last = now;
+						if (running) { requestAnimationFrame(frame); }
+					}
+					requestAnimationFrame(frame);
+					map.once('moveend', () => {
+						running = false;
+						const sorted = frameTimes.toSorted((a, b) => a - b);
+						resolve({
+							frames: frameTimes.length,
+							'avg frame (ms)': (frameTimes.reduce((a, b) => a + b, 0) / frameTimes.length).toFixed(1),
+							'p95 frame (ms)': sorted[Math.floor(sorted.length * 0.95)].toFixed(1),
+							'max frame (ms)': sorted.at(-1).toFixed(1)
+						});
+					});
+					action();
+				});
+			}
+
+			async function run() {
+				const count = Number(document.getElementById('count').value);
+				markers.clearLayers();
+				map.setView(center, 15, {animate: false});
+				results.textContent = 'running…';
+
+				const steps = [];
+				steps.push(await measure(`add ${count} markers`, () => {
+					for (const latlng of randomLatLngs(count)) {
+						new Marker(latlng).bindPopup(`${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}`).addTo(markers);
+					}
+				}));
+				steps.push(await measure('zoom in (animated)', () => animate(() => map.zoomIn())));
+				steps.push(await measure('zoom out (animated)', () => animate(() => map.zoomOut())));
+				steps.push(await measure('pan (animated)', () => animate(() => map.panBy([300, 200]))));
+				steps.push(await measure('flyTo (animated)', () => animate(() => map.flyTo(center, 13, {duration: 1}))));
+				steps.push(await measure('open/close all popups', () => {
+					markers.eachLayer(marker => marker.openPopup().closePopup());
+				}));
+				steps.push(await measure(`remove ${count} markers`, () => { markers.clearLayers(); }));
+
+				console.table(steps);
+				const cols = Object.keys(Object.assign({}, ...steps));
+				results.textContent = [cols.join('\t'), ...steps.map(s => cols.map(c => s[c] ?? '').join('\t'))].join('\n');
+				document.body.dataset.done = 'true';
+			}
+
+			document.getElementById('run').addEventListener('click', run);
+			if (new URLSearchParams(location.search).has('autorun')) { run(); }
+		</script>
+	</body>
+</html>
