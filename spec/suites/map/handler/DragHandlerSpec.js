@@ -134,7 +134,7 @@ describe('DragHandler', () => {
 			});
 
 			const originalCenter = new LatLng(0, 0);
-			map.setView(originalCenter.clone(), 1);
+			map.setView(new LatLng(originalCenter), 1);
 
 			const spy = vi.fn();
 			map.on('drag', spy);
@@ -269,7 +269,7 @@ describe('DragHandler', () => {
 				inertia: false
 			});
 			const originalCenter = new LatLng(0, 0);
-			map.setView(originalCenter.clone(), 1);
+			map.setView(new LatLng(originalCenter), 1);
 
 			map.on('pointerdown', () => {
 				map.dragging.disable();

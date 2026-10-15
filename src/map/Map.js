@@ -860,7 +860,7 @@ export class MaplairMap extends Evented {
 		this._checkIfLoaded();
 
 		if (this._lastCenter && !this._moved()) {
-			return this._lastCenter.clone();
+			return new LatLng(this._lastCenter);
 		}
 		return this.layerPointToLatLng(this._getCenterLayerPoint());
 	}
@@ -934,7 +934,7 @@ export class MaplairMap extends Evented {
 
 			this._sizeChanged = false;
 		}
-		return this._size.clone();
+		return new Point(this._size);
 	}
 
 	// @method getPixelBounds(center?: LatLng, zoom?: Number): Bounds

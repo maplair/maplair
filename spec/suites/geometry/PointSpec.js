@@ -96,9 +96,10 @@ describe('Point', () => {
 	});
 
 	describe('Point creation', () => {
-		it('leaves Point instances as is', () => {
+		it('copies Point instances', () => {
 			const p = new Point(50, 30);
-			expect(new Point(p)).to.equal(p);
+			expect(new Point(p)).to.eql(p);
+			expect(new Point(p)).not.to.equal(p);
 		});
 
 		it('creates a point out of three arguments', () => {

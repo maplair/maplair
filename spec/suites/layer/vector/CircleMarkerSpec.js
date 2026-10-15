@@ -84,8 +84,8 @@ describe('CircleMarker', () => {
 
 			expect(eventArgs).to.not.equal(null);
 			expect(eventArgs.oldLatLng).to.equal(beforeLatLng);
-			expect(eventArgs.latlng).to.equal(afterLatLng);
-			expect(marker.getLatLng()).to.equal(afterLatLng);
+			expect(eventArgs.latlng).to.eql(afterLatLng);
+			expect(marker.getLatLng()).to.eql(afterLatLng);
 		});
 	});
 
