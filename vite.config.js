@@ -11,9 +11,13 @@ const touch = process.env.VITE_TOUCH === '1';
 // viewport so behavior is identical between touch and non-touch runs.
 const viewport = {width: 1280, height: 720};
 
+// Maplair was forked from Leaflet in 2026
+const year = new Date().getFullYear();
+const maplairYears = year > 2026 ? `2026-${year}` : '2026';
+
 const banner = `/* @preserve
  * Maplair ${pkg.version}, a JS library for interactive maps. https://maplair.org
- * (c) 2010-${new Date().getFullYear()} Volodymyr Agafonkin, (c) 2010-2011 CloudMade
+ * (c) ${maplairYears} Maplair contributors, (c) 2010-2026 Volodymyr Agafonkin, (c) 2010-2011 CloudMade
  */
 `;
 
