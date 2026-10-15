@@ -316,7 +316,8 @@ export default defineConfig({
 	},
 	test: {
 		globals: true,
-		include: ['spec/suites/**/*Spec.js'],
+		include: ['spec/suites/**/*Spec.js', 'plugins/markercluster/spec/suites/**/*.js'],
+		exclude: ['plugins/markercluster/spec/suites/SpecHelper.js'],
 		setupFiles: ['spec/setup.js'],
 		// Bound individual test/hook/teardown durations so a stuck spec fails
 		// fast with a useful stack instead of hanging the whole worker. Long

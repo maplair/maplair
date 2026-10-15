@@ -1,4 +1,6 @@
-﻿describe('addLayer adding multiple markers', function () {
+import '../setup.js';
+
+describe('addLayer adding multiple markers', function () {
 	/////////////////////////////
 	// SETUP FOR EACH TEST
 	/////////////////////////////
@@ -125,7 +127,7 @@
 
 	it('unspiderfies before adding a new Marker', function () {
 
-		group = new L.MarkerClusterGroup();
+		var group = new L.MarkerClusterGroup();
 
 		var marker = new L.Marker([1.5, 1.5]);
 		var marker2 = new L.Marker([1.5, 1.5]);

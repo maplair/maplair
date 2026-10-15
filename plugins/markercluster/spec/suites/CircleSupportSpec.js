@@ -1,4 +1,6 @@
-﻿describe('support for Circle elements', function () {
+import '../setup.js';
+
+describe('support for Circle elements', function () {
 	/////////////////////////////
 	// SETUP FOR EACH TEST
 	/////////////////////////////

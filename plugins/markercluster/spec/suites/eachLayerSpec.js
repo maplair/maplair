@@ -1,4 +1,6 @@
-﻿describe('eachLayer', function () {
+import '../setup.js';
+
+describe('eachLayer', function () {
 	/////////////////////////////
 	// SETUP FOR EACH TEST
 	/////////////////////////////

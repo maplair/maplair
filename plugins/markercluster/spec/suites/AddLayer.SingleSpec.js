@@ -1,4 +1,6 @@
-﻿describe('addLayer adding a single marker', function () {
+import '../setup.js';
+
+describe('addLayer adding a single marker', function () {
 	/////////////////////////////
 	// SETUP FOR EACH TEST
 	/////////////////////////////

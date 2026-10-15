@@ -1,3 +1,5 @@
+import '../setup.js';
+
 describe('quickhull', function () {
 	describe('getDistant', function () {
 		it('zero distance', function () {

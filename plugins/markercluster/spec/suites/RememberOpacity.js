@@ -1,3 +1,5 @@
+import '../setup.js';
+
 describe('Remember opacity', function () {
 	/////////////////////////////
 	// SETUP FOR EACH TEST

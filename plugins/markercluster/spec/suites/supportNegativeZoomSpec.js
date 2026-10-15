@@ -1,4 +1,6 @@
-﻿describe('things behave correctly with negative minZoom', function () {
+import '../setup.js';
+
+describe('things behave correctly with negative minZoom', function () {
 	/////////////////////////////
 	// SETUP FOR EACH TEST
 	/////////////////////////////

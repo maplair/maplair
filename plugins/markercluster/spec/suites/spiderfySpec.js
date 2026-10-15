@@ -1,4 +1,6 @@
-﻿describe('spiderfy', function () {
+import '../setup.js';
+
+describe('spiderfy', function () {
 	/////////////////////////////
 	// SETUP FOR EACH TEST
 	/////////////////////////////
@@ -110,7 +112,7 @@
 
 		expect(zoom).to.be.lessThan(10);
 
-		cluster.fireEvent('click', null, true);
+		cluster.fire('click', null, true);
 
 		clock.tick(1000);
 
@@ -143,7 +145,7 @@
 
 		expect(zoom).to.be.lessThan(10);
 
-		cluster.fireEvent('click', null, true);
+		cluster.fire('click', null, true);
 
 		clock.tick(1000);
 
@@ -171,7 +173,7 @@
 
 	});
 
-	it('adds then removes class "leaflet-cluster-anim" from mapPane on spiderfy', function () {
+	it('adds then removes class "maplair-cluster-anim" from mapPane on spiderfy', function () {
 
 		group = new L.MarkerClusterGroup();
 
@@ -183,15 +185,15 @@
 
 		marker.__parent.spiderfy();
 
-		expect(map._panes.mapPane.className).to.contain('leaflet-cluster-anim');
+		expect(map._panes.mapPane.className).to.contain('maplair-cluster-anim');
 
 		clock.tick(1000);
 
-		expect(map._panes.mapPane.className).to.not.contain('leaflet-cluster-anim');
+		expect(map._panes.mapPane.className).to.not.contain('maplair-cluster-anim');
 
 	});
 
-	it('adds then removes class "leaflet-cluster-anim" from mapPane on unspiderfy', function () {
+	it('adds then removes class "maplair-cluster-anim" from mapPane on unspiderfy', function () {
 
 		group = new L.MarkerClusterGroup();
 
@@ -207,11 +209,11 @@
 
 		marker.__parent.unspiderfy();
 
-		expect(map._panes.mapPane.className).to.contain('leaflet-cluster-anim');
+		expect(map._panes.mapPane.className).to.contain('maplair-cluster-anim');
 
 		clock.tick(1000);
 
-		expect(map._panes.mapPane.className).to.not.contain('leaflet-cluster-anim');
+		expect(map._panes.mapPane.className).to.not.contain('maplair-cluster-anim');
 
 	});
 
@@ -245,7 +247,7 @@
 
 	});
 
-	it('does not leave class "leaflet-cluster-anim" on mapPane when group is removed while spiderfied', function () {
+	it('does not leave class "maplair-cluster-anim" on mapPane when group is removed while spiderfied', function () {
 
 		group = new L.MarkerClusterGroup();
 
@@ -261,7 +263,7 @@
 
 		map.removeLayer(group);
 
-		expect(map._panes.mapPane.className).to.not.contain('leaflet-cluster-anim');
+		expect(map._panes.mapPane.className).to.not.contain('maplair-cluster-anim');
 
 	});
 

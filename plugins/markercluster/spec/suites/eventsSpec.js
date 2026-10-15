@@ -1,4 +1,6 @@
-﻿describe('events', function() {
+import '../setup.js';
+
+describe('events', function() {
 	/////////////////////////////
 	// SETUP FOR EACH TEST
 	/////////////////////////////

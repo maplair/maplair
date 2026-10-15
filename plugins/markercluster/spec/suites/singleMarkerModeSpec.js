@@ -1,3 +1,5 @@
+import '../setup.js';
+
 describe('singleMarkerMode option', function () {
 	/////////////////////////////
 	// SETUP FOR EACH TEST
@@ -18,8 +20,8 @@ describe('singleMarkerMode option', function () {
 			[2, 2]
 		]));
 
-		defaultIcon = new L.Icon.Default();
-	    clusterIcon = new L.Icon.Default();
+		defaultIcon = new L.DefaultIcon();
+	    clusterIcon = new L.DefaultIcon();
 		marker = L.marker([1.5, 1.5]);
 		marker.setIcon(defaultIcon);
 	});

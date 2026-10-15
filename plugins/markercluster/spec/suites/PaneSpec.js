@@ -1,3 +1,5 @@
+import '../setup.js';
+
 describe('Map pane selection', function() {
 	/////////////////////////////
 	// SETUP FOR EACH TEST

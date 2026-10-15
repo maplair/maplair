@@ -1,3 +1,5 @@
+import '../setup.js';
+
 describe('non-integer min/max zoom', function () {
 	/////////////////////////////
 	// SETUP FOR EACH TEST

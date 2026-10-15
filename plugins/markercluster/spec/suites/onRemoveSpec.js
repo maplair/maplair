@@ -1,4 +1,6 @@
-﻿describe('onRemove', function () {
+import '../setup.js';
+
+describe('onRemove', function () {
 	/////////////////////////////
 	// SETUP FOR EACH TEST
 	/////////////////////////////

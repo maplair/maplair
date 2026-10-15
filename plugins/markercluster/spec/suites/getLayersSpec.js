@@ -1,4 +1,6 @@
-﻿describe('getLayers', function () {
+import '../setup.js';
+
+describe('getLayers', function () {
 	/////////////////////////////
 	// SETUP FOR EACH TEST
 	/////////////////////////////

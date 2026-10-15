@@ -1,4 +1,6 @@
-﻿describe('refreshClusters', function () {
+import '../setup.js';
+
+describe('refreshClusters', function () {
 	/////////////////////////////
 	// SETUP FOR EACH TEST
 	/////////////////////////////

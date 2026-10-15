@@ -1,4 +1,6 @@
-﻿describe('getBounds', function() {
+import '../setup.js';
+
+describe('getBounds', function() {
 	/////////////////////////////
 	// SETUP FOR EACH TEST
 	/////////////////////////////

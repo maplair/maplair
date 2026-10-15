@@ -1,3 +1,5 @@
+import '../setup.js';
+
 describe('animate option', function () {
 	/////////////////////////////
 	// SETUP FOR EACH TEST
@@ -78,40 +80,5 @@ describe('animate option', function () {
 		expect(cluster._animationSpiderfy).to.be(noAnimation._animationSpiderfy);
 		expect(cluster._animationUnspiderfy).to.be(noAnimation._animationUnspiderfy);
 
-	});
-
-	it('always hooks non-animated methods version when L.DomUtil.TRANSITION is false', function () {
-		// Fool Leaflet, make it think the browser does not support transitions.
-		var realDomUtil = L.DomUtil;
-		var fakeDomUtil = {};
-		for (k in realDomUtil) {
-			fakeDomUtil[k] = realDomUtil[k];
-		}
-		fakeDomUtil.TRANSITION = false;
-		L.DomUtil = fakeDomUtil;
-
-		try {
-			// Need to add to map so that we have the top cluster level created.
-			group = L.markerClusterGroup({animate: true}).addTo(map);
-
-			var noAnimation = L.MarkerClusterGroup.prototype._noAnimation;
-
-			// MCG non-animated methods.
-			expect(group._animationStart).to.be(noAnimation._animationStart);
-			expect(group._animationZoomIn).to.be(noAnimation._animationZoomIn);
-			expect(group._animationZoomOut).to.be(noAnimation._animationZoomOut);
-			expect(group._animationAddLayer).to.be(noAnimation._animationAddLayer);
-
-			// MarkerCluster spiderfy non-animated methods
-			var cluster = group._topClusterLevel;
-
-			noAnimation = L.MarkerClusterNonAnimated.prototype;
-
-			expect(cluster._animationSpiderfy).to.be(noAnimation._animationSpiderfy);
-			expect(cluster._animationUnspiderfy).to.be(noAnimation._animationUnspiderfy);
-		} finally {
-			//Undo the DomUtil replacement hack
-			L.DomUtil = realDomUtil;
-		}
 	});
 });

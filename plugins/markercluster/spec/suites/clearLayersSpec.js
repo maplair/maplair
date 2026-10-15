@@ -1,4 +1,6 @@
-﻿describe('clearLayer', function () {
+import '../setup.js';
+
+describe('clearLayer', function () {
 	/////////////////////////////
 	// SETUP FOR EACH TEST
 	/////////////////////////////

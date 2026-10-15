@@ -1,4 +1,6 @@
-﻿describe('onAdd', function () {
+import '../setup.js';
+
+describe('onAdd', function () {
 	/////////////////////////////
 	// SETUP FOR EACH TEST
 	/////////////////////////////

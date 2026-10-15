@@ -1,3 +1,5 @@
+import '../setup.js';
+
 describe('getVisibleParent', function () {
 	/////////////////////////////
 	// SETUP FOR EACH TEST

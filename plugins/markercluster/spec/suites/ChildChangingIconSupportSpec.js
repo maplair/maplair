@@ -1,4 +1,6 @@
-﻿describe('support child markers changing icon', function () {
+import '../setup.js';
+
+describe('support child markers changing icon', function () {
 	/////////////////////////////
 	// SETUP FOR EACH TEST
 	/////////////////////////////

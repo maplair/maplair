@@ -1,3 +1,5 @@
+import '../setup.js';
+
 describe('Option removeOutsideVisibleBounds', function () {
 	/////////////////////////////
 	// SETUP FOR EACH TEST
@@ -5,7 +7,7 @@ describe('Option removeOutsideVisibleBounds', function () {
 	var marker1, marker2, marker3, marker4, marker5, markers, div, map, group, clock, realBrowser;
 
 	beforeEach(function () {
-		realBrowser = L.Browser;
+		realBrowser = L.Browser.mobile;
 		clock = sinon.useFakeTimers();
 
 		marker1 = L.marker([1.5, -0.4]); // 2 screens width away.
@@ -29,7 +31,7 @@ describe('Option removeOutsideVisibleBounds', function () {
 		]));
 
 		// Add all markers once to map then remove them immediately so that their icon is null (instead of undefined).
-		for (i = 0; i < markers.length; i++) {
+		for (var i = 0; i < markers.length; i++) {
 			map.removeLayer(markers[i].addTo(map));
 		}
 	});
@@ -56,12 +58,7 @@ describe('Option removeOutsideVisibleBounds', function () {
 	}
 
 	function setBrowserToMobile() {
-		var fakeBrowser = {};
-		for (k in realBrowser) {
-			fakeBrowser[k] = realBrowser[k];
-		}
-		fakeBrowser.mobile = true;
-		L.Browser = fakeBrowser;
+		L.Browser.mobile = true;
 	}
 
 	/////////////////////////////
@@ -93,7 +90,7 @@ describe('Option removeOutsideVisibleBounds', function () {
 			expect(marker5._icon).to.be(null);
 		}
 		finally {
-			L.Browser = realBrowser;
+			L.Browser.mobile = realBrowser;
 		}
 	});
 
@@ -123,7 +120,7 @@ describe('Option removeOutsideVisibleBounds', function () {
 	];
 
 	function moveMarkersAndMapToMaxLat(latLngs, isSouth) {
-		for (i = 0; i < markers.length; i++) {
+		for (var i = 0; i < markers.length; i++) {
 			if (isSouth) {
 				markers[i].setLatLng([-latLngs[i][0], latLngs[i][1]]);
 			} else {
@@ -144,7 +141,7 @@ describe('Option removeOutsideVisibleBounds', function () {
 
 		var mapZoom = map.getZoom();
 
-		for (i = 0; i < markers.length; i++) {
+		for (var i = 0; i < markers.length; i++) {
 			try {
 				expect(markers[i].__parent._zoom).to.be.below(mapZoom);
 			} catch (e) {
@@ -217,7 +214,7 @@ describe('Option removeOutsideVisibleBounds', function () {
 			expect(marker5._icon).to.be(null);
 		}
 		finally {
-			L.Browser = realBrowser;
+			L.Browser.mobile = realBrowser;
 		}
 	});
 
@@ -242,7 +239,7 @@ describe('Option removeOutsideVisibleBounds', function () {
 			expect(marker5._icon).to.be(null);
 		}
 		finally {
-			L.Browser = realBrowser;
+			L.Browser.mobile = realBrowser;
 		}
 	});
 });

@@ -1,4 +1,6 @@
-﻿describe('addLayers adding multiple markers', function () {
+import '../setup.js';
+
+describe('addLayers adding multiple markers', function () {
 	/////////////////////////////
 	// SETUP FOR EACH TEST
 	/////////////////////////////

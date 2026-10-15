@@ -1,3 +1,5 @@
+import '../setup.js';
+
 describe('unspiderfy', function () {
 	/////////////////////////////
 	// SETUP FOR EACH TEST

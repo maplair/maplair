@@ -1,4 +1,6 @@
-﻿describe('adding non point data works', function () {
+import '../setup.js';
+
+describe('adding non point data works', function () {
 	/////////////////////////////
 	// SETUP FOR EACH TEST
 	/////////////////////////////

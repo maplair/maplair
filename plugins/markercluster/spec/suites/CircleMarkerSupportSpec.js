@@ -1,4 +1,6 @@
-﻿describe('support for CircleMarker elements', function () {
+import '../setup.js';
+
+describe('support for CircleMarker elements', function () {
 	/////////////////////////////
 	// SETUP FOR EACH TEST
 	/////////////////////////////

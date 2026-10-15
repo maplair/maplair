@@ -1,4 +1,6 @@
-﻿describe('removeLayer', function () {
+import '../setup.js';
+
+describe('removeLayer', function () {
 	/////////////////////////////
 	// SETUP FOR EACH TEST
 	/////////////////////////////

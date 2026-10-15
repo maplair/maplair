@@ -1,3 +1,5 @@
+import '../setup.js';
+
 describe('L#noConflict', function() {
 	it('restores the previous L value and returns Leaflet namespace', function(){
 

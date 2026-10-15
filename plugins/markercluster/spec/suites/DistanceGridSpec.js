@@ -1,4 +1,6 @@
-﻿describe('distance grid', function () {
+import '../setup.js';
+
+describe('distance grid', function () {
 	it('addObject', function () {
 		var grid = new L.DistanceGrid(100),
 		    obj = {};

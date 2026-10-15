@@ -1,3 +1,5 @@
+import '../setup.js';
+
 describe('disableClusteringAtZoom option', function () {
 	/////////////////////////////
 	// SETUP FOR EACH TEST
@@ -28,7 +30,7 @@ describe('disableClusteringAtZoom option', function () {
 		div.remove();
 		clock.restore();
 		
-		div, map, group, clock = null;
+		div = map = group = clock = null;
 	});
 
 	/////////////////////////////

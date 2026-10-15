@@ -1,11 +1,13 @@
-﻿describe('zoomAnimation', function () {
+import '../setup.js';
+
+describe('zoomAnimation', function () {
 	/////////////////////////////
 	// SETUP FOR EACH TEST
 	/////////////////////////////
 	var div, map, group, clock, realBrowser;
 
 	beforeEach(function () {
-		realBrowser = L.Browser;
+		realBrowser = L.Browser.mobile;
 		clock = sinon.useFakeTimers();
 
 		div = document.createElement('div');
@@ -36,12 +38,7 @@
 	});
 
 	function setBrowserToMobile() {
-		var fakeBrowser = {};
-		for (k in realBrowser) {
-			fakeBrowser[k] = realBrowser[k];
-		}
-		fakeBrowser.mobile = true;
-		L.Browser = fakeBrowser;
+		L.Browser.mobile = true;
 	}
 
 	/////////////////////////////
@@ -167,7 +164,7 @@
 
 			expect(parentCluster._icon.parentNode).to.be(map._panes.markerPane);
 
-			parentCluster.fireEvent('click', null, true);
+			parentCluster.fire('click', null, true);
 
 			//Run the the animation
 			clock.tick(1000);
@@ -179,7 +176,7 @@
 			expect(map._panes.markerPane.childNodes.length).to.be(2); // The bottomMarker + cluster for the 10 above markers.
 		}
 		finally {
-			L.Browser = realBrowser;
+			L.Browser.mobile = realBrowser;
 		}
 	});
 

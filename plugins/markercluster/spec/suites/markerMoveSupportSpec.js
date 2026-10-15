@@ -1,3 +1,5 @@
+import '../setup.js';
+
 describe('moving markers', function () {
 	/////////////////////////////
 	// SETUP FOR EACH TEST
