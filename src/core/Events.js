@@ -121,8 +121,9 @@ export class Evented extends Class {
 		}
 
 		this._events ??= {};
-		this._events[type] ??= [];
-		this._events[type].push(newListener);
+		// a Set keeps the listeners in order, and allows removing them in constant time
+		this._events[type] ??= new Set();
+		this._events[type].add(newListener);
 
 		if (contexts) {
 			contexts.set(context, newListener);
@@ -179,15 +180,14 @@ export class Evented extends Class {
 			if (!contexts.size) {
 				this._listenerIndex[type].delete(fn);
 			}
-			const index = listeners.indexOf(listener);
 			if (this._firingCount) {
 				// set the removed listener to noop so that's not called if remove happens in fire
 				listener.fn = Util.falseFn;
 
-				/* copy array in case events are being fired */
-				this._events[type] = listeners = listeners.slice();
+				/* copy listeners in case events are being fired */
+				this._events[type] = listeners = new Set(listeners);
 			}
-			listeners.splice(index, 1);
+			listeners.delete(listener);
 		}
 	}
 
@@ -247,7 +247,7 @@ export class Evented extends Class {
 			context = undefined;
 		}
 
-		if (this._events?.[type]?.length) {
+		if (this._events?.[type]?.size) {
 			if (this._listens(type, _fn, context) !== false) {
 				return true;
 			}
@@ -264,15 +264,15 @@ export class Evented extends Class {
 		return false;
 	}
 
-	// returns the index (number) or false
+	// returns whether the given listener (or any listener, if no `fn` is given) is registered
 	_listens(type, fn, context) {
 		if (!this._events) {
 			return false;
 		}
 
-		const listeners = this._events[type] ?? [];
+		const listeners = this._events[type];
 		if (!fn) {
-			return !!listeners.length;
+			return !!listeners?.size;
 		}
 
 		if (context === this) {
@@ -280,8 +280,7 @@ export class Evented extends Class {
 			context = undefined;
 		}
 
-		const listener = this._listenerIndex?.[type]?.get(fn)?.get(context);
-		return listener ? listeners.indexOf(listener) : false;
+		return !!this._listenerIndex?.[type]?.get(fn)?.has(context);
 
 	}
 
