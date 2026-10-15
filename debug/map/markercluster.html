@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Maplair debug page - Marker clustering</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
+		<link rel="stylesheet" href="../../dist/maplair.css" />
+		<link rel="stylesheet" href="../../dist/maplair-markercluster.css" />
+		<link rel="stylesheet" href="../../dist/maplair-markercluster-default.css" />
+		<link rel="stylesheet" href="../css/screen.css" />
+		<script type="importmap">
+			{
+				"imports": {
+					"maplair": "../../dist/maplair-src.js",
+					"maplair/markercluster": "../../dist/maplair-markercluster-src.js"
+				}
+			}
+		</script>
+		<script src="../../plugins/markercluster/example/realworld.388.js"></script>
+	</head>
+	<body>
+		<div id="map"></div>
+		<p>Hover over a cluster to see the bounds of its markers, click a cluster to zoom to those bounds.</p>
+		<script type="module">
+			import {MaplairMap, Marker, TileLayer} from 'maplair';
+			import {MarkerClusterGroup} from 'maplair/markercluster';
+
+			const tiles = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				maxZoom: 18,
+				attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Points © 2012 LINZ'
+			});
+
+			const map = new MaplairMap('map', {center: [-37.82, 175.24], zoom: 13, layers: [tiles]});
+
+			const markers = new MarkerClusterGroup();
+			for (const [lat, lng, title] of addressPoints) {
+				markers.addLayer(new Marker([lat, lng], {title}).bindPopup(title));
+			}
+			map.addLayer(markers);
+
+			markers.on('clusterclick', e => console.log('clusterclick', e.layer.getChildCount()));
+		</script>
+	</body>
+</html>

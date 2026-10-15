@@ -5,6 +5,30 @@ Provides Beautiful Animated Marker Clustering functionality for [Leaflet](http:/
 
 *Requires Leaflet 1.0.0*
 
+> [!NOTE]
+> This is the Maplair port of Leaflet.markercluster, included in [Maplair](https://maplair.org).
+> Import it from the `maplair` package (bundlers drop it when unused) or on its own:
+>
+> ```js
+> import {MaplairMap, Marker} from 'maplair';
+> import {MarkerClusterGroup} from 'maplair/markercluster';
+> import 'maplair/markercluster.css';
+> import 'maplair/markercluster-default.css';
+>
+> const markers = new MarkerClusterGroup();
+> markers.addLayer(new Marker([51.5, -0.09]));
+> map.addLayer(markers);
+> ```
+>
+> Without a bundler, use `dist/maplair-markercluster.js` (ES module importing `maplair`)
+> or `dist/maplair-markercluster-global.js` (adds the classes to the global `L` of `dist/maplair-global.js`),
+> along with `dist/maplair-markercluster.css` and `dist/maplair-markercluster-default.css`.
+>
+> Differences to Leaflet.markercluster 1.5:
+> - Create groups with `new MarkerClusterGroup()`, there's no `L.markerClusterGroup()` factory.
+> - `clustermouseover`/`clustermouseout` are now `clusterpointerover`/`clusterpointerout`.
+> - CSS classes are prefixed `maplair-` instead of `leaflet-` (e.g. `maplair-cluster-anim`, `maplair-cluster-spider-leg`).
+
 ![cluster map example](example/map.png)
 
 For a Leaflet 0.7 compatible version, [use the leaflet-0.7 branch](https://github.com/Leaflet/Leaflet.markercluster/tree/leaflet-0.7)<br>
