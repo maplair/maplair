@@ -35,6 +35,7 @@
 			 * "Timings" track of the browser's performance profiler. Start recording,
 			 * click "Run benchmark", and stop recording when the results appear.
 			 * Frame times are measured with `requestAnimationFrame` while animating.
+			 * Add `?noshadow` to the URL to compare with markers without shadows.
 			 */
 
 			const center = new LatLng(50.5, 30.51);
@@ -43,6 +44,7 @@
 			new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 18}).addTo(map);
 
 			const markers = new FeatureGroup().addTo(map);
+			const markerOptions = {shadow: !new URLSearchParams(location.search).has('noshadow')};
 			const results = document.getElementById('results');
 
 			function randomLatLngs(count) {
@@ -96,7 +98,7 @@
 				const steps = [];
 				steps.push(await measure(`add ${count} markers`, () => {
 					for (const latlng of randomLatLngs(count)) {
-						new Marker(latlng).bindPopup(`${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}`).addTo(markers);
+						new Marker(latlng, markerOptions).bindPopup(`${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}`).addTo(markers);
 					}
 				}));
 				steps.push(await measure('zoom in (animated)', () => animate(() => map.zoomIn())));
