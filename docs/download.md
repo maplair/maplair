@@ -12,12 +12,12 @@ bodyclass: download-page
 		<th>Description</th>
 	</tr>
 	<tr>
-		<td><a href="https://github.com/Leaflet/Leaflet/releases/download/v1.9.4/leaflet.zip">Maplair 1.9.4</a></td>
-		<td>Stable version, released on May 18, 2023.</td>
+		<td><a href="https://github.com/maplair/maplair/releases/tag/v4.0.0-alpha.1">Maplair 4.0.0-alpha.1</a></td>
+		<td>Prerelease version, released on October 15, 2026 (<a href="2026/10/15/maplair-4.0.0-alpha.html">what's new</a>).</td>
 	</tr>
 	<tr>
-		<td><a href="https://github.com/Leaflet/Leaflet/releases/download/v2.0.0-alpha.1/leaflet.zip">Maplair 2.0.0-alpha.1</a></td>
-		<td>Prerelease version, released on August 16, 2025.</td>
+		<td><a href="https://github.com/Leaflet/Leaflet/releases/download/v1.9.4/leaflet.zip">Leaflet 1.9.4</a></td>
+		<td>Stable version of Leaflet, which Maplair is a fork of, released on May 18, 2023.</td>
 	</tr>
 		<tr>
 		<td><a href="https://github.com/maplair/maplair/releases/download/dev/maplair.zip">Development Snapshot</a> / (<a href="https://github.com/maplair/maplair/releases/tag/dev" target="_blank">Single files</a>)</td>
