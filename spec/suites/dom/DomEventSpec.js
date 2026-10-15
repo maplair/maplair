@@ -517,6 +517,15 @@ describe('DomEvent', () => {
 	});
 
 	describe('#stopPropagation', () => {
+		it('stops propagation of events from other windows (e.g. iframes)', () => {
+			const iframe = document.createElement('iframe');
+			document.body.appendChild(iframe);
+			const event = new iframe.contentWindow.Event('click', {bubbles: true});
+			DomEvent.stopPropagation(event);
+			expect(event.cancelBubble).to.be.true;
+			iframe.remove();
+		});
+
 		it('stops propagation of the given event', () => {
 			const child = document.createElement('div');
 			el.appendChild(child);

@@ -164,7 +164,8 @@ function removeOne(obj, type, fn, context, id) {
 // ```
 export function stopPropagation(e) {
 
-	if (e instanceof Event) {
+	// feature detection rather than `instanceof Event`, which fails for events from other windows (e.g. iframes)
+	if (e.stopPropagation) {
 		e.stopPropagation();
 	} else if (e.originalEvent) {  // In case of Maplair event.
 		e.originalEvent._stopped = true;
