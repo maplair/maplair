@@ -164,12 +164,13 @@ function removeOne(obj, type, fn, context, id) {
 // ```
 export function stopPropagation(e) {
 
-	if (e.stopPropagation) {
+	if (e instanceof Event) {
 		e.stopPropagation();
 	} else if (e.originalEvent) {  // In case of Maplair event.
 		e.originalEvent._stopped = true;
 	} else {
-		e.cancelBubble = true;
+		// custom Maplair event
+		console.debug('Unsupported event', e);
 	}
 
 	return this;
