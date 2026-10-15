@@ -11,7 +11,6 @@
     "@vitest/ui": "5.0.3",
     "chai": "^6.2.2",
     "eslint-plugin-baseline-js": "^0.7.0",
-    "http-server": "^14.1.1",
     "leafdoc": "^2.4.0",
     "playwright": "^1.62.0",
     "prosthetic-hand": "^2.2.2",
@@ -38,7 +37,7 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "debug": "http-server -c-1",
+    "debug": "vp dev",
     "docs": "node ./build/docs.js",
     "test": "vp test watch --project=chromium",
     "test:ui": "vp test watch --project=chromium --ui --browser.headless=false",
