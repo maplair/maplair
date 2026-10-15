@@ -78,7 +78,7 @@ yarn install
 
 If you're not yet familiar with the way GitHub works (forking, pull requests, etc.),
 be sure to check out the awesome [article about forking](https://help.github.com/articles/fork-a-repo)
-on the GitHub Help website &mdash; it will get you started quickly.
+on the GitHub Help website — it will get you started quickly.
 
 You should always write each batch of changes (feature, bugfix, etc.) in **its own topic branch**.
 Please do not commit to the `main` branch of your fork — otherwise your unrelated changes will go into the same pull request.

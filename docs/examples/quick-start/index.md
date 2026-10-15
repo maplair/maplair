@@ -172,6 +172,6 @@ function onMapClick(e) {
 map.on('click', onMapClick);
 ```
 
-Try clicking on the map and you will see the coordinates in a popup. <a target="_blank" href="example.html">View the full example &rarr;</a>
+Try clicking on the map and you will see the coordinates in a popup. <a target="_blank" href="example.html">View the full example →</a>
 
 Now you've learned Maplair basics and can start building map apps straight away! Don't forget to take a look at the detailed <a href="/reference.html">documentation</a> or <a href="../../examples.html">other examples</a>.

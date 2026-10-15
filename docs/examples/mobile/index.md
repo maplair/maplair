@@ -69,6 +69,6 @@ Excellent! But it would also be nice to show an error message if the geolocation
 
 If you have `setView` option set to true and the geolocation failed, it will set the view to the whole world.
 
-Now the example is complete --- try it on your mobile phone: [View the full example &rarr;](example.html)
+Now the example is complete --- try it on your mobile phone: [View the full example →](example.html)
 
 Next steps would be to take a look at the detailed [documentation](/reference.html) and browse [other examples](../../examples.html).

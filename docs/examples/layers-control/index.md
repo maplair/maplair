@@ -90,5 +90,5 @@ layerControl.addOverlay(parks, "Parks");
 </code></pre>
 
 
-Now let's [view the result on a separate page &rarr;](example.html)
+Now let's [view the result on a separate page →](example.html)
 

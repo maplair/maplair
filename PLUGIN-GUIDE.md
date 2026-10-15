@@ -28,7 +28,7 @@ This guide lists a number of best practices for publishing a Maplair plugin that
 
 The best place to put your Maplair plugin is a separate [GitHub](http://github.com) repository.
 If you create a collection of plugins for different uses,
-don't put them in one repo &mdash;
+don't put them in one repo —
 it's usually easier to work with small, self-contained plugins in individual repositories.
 
 ### Name
@@ -38,11 +38,11 @@ Just make sure to include the word "Maplair" in the name so that it's obvious th
 
 ### Demo
 
-The most essential thing to do when publishing a plugin is to include a demo that showcases what the plugin does &mdash;
+The most essential thing to do when publishing a plugin is to include a demo that showcases what the plugin does —
 it's usually the first thing people will look for.
 
 The easiest way to put up a demo is using [GitHub Pages](http://pages.github.com/).
-A good [starting point](https://help.github.com/articles/creating-project-pages-manually) is creating a `gh-pages` branch in your repo and adding an `index.html` page to it  &mdash;
+A good [starting point](https://help.github.com/articles/creating-project-pages-manually) is creating a `gh-pages` branch in your repo and adding an `index.html` page to it  —
 after pushing, it'll be published as `http://<user>.github.io/<repo>`.
 
 ### Readme
@@ -73,7 +73,7 @@ You can either put it in the repo as a `LICENSE` file or just link to the licens
 ### File Structure
 
 Keep the file structure clean and simple,
-don't pile up lots of files in one place  &mdash;
+don't pile up lots of files in one place  —
 make it easy for a new person to find their way in your repo.
 
 A barebones repo for a simple plugin would look like this:

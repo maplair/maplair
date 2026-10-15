@@ -17,7 +17,7 @@ The main place for all important Maplair-related news, tutorials, tips and devel
 	</div>
 	<div class="post-info">
 		<h3 class="post-title"><a href="{{ post.url }}">{{ post.title }}</a></h3>
-		<p>{{ post.description }} <span class="quiet">&hellip;</span></p>
+		<p>{{ post.description }} <span class="quiet">…</span></p>
 	</div>
 </div>
 {% unless forloop.last %}<hr />{% endunless %}

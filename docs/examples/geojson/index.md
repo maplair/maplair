@@ -138,7 +138,7 @@ new GeoJSON(someGeojsonFeature, {
 	}
 }).addTo(map);</code></pre>
 
-<p>We could also set the <code>style</code> property in this example &mdash; Maplair is smart enough to apply styles to GeoJSON points if you create a vector layer like circle inside the <code>pointToLayer</code> function.</p>
+<p>We could also set the <code>style</code> property in this example — Maplair is smart enough to apply styles to GeoJSON points if you create a vector layer like circle inside the <code>pointToLayer</code> function.</p>
 
 <h4>onEachFeature</h4>
 

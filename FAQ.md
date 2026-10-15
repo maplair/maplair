@@ -66,7 +66,7 @@ Alternatively, you can [extract](https://github.com/mapbox/mbutil) the tiled ima
 #### I have an app that gets lots of hits a day, and I want to switch from Google/Bing/whatever to Maplair. Is there a fee for using it?
 
 Maplair, unlike Google Maps and other all-in-one solutions, is just a JavaScript library.
-It's free to use, but doesn't provide map imagery on its own &mdash;
+It's free to use, but doesn't provide map imagery on its own —
 you have to choose a tile service to combine with it.
 
 There are [plenty of options](#what-map-tiles-can-i-use-with-maplair-is-it-limited-to-openstreetmap) for a tile service,
@@ -123,7 +123,7 @@ and [GIS Cloud](http://www.giscloud.com/)
 (they all work great with Maplair).
 What they do under the hood is serving rendered data as image tiles,
 along with additional data to enable interactivity like hovering shapes
-(e.g. done using [UTFGrid](https://www.mapbox.com/developers/utfgrid/) &mdash;
+(e.g. done using [UTFGrid](https://www.mapbox.com/developers/utfgrid/) —
 Maplair [has a nice plugin](https://github.com/danzel/Leaflet.utfgrid) for it).
 
 
