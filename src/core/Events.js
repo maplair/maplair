@@ -69,6 +69,7 @@ export class Evented extends Class {
 		if (!arguments.length) {
 			// clear all listeners if called without arguments
 			delete this._events;
+			delete this._listenerIndex;
 
 		} else if (typeof types === 'object') {
 			for (const [type, f] of Object.entries(types)) {
@@ -103,14 +104,15 @@ export class Evented extends Class {
 			return;
 		}
 
-		// check if fn already there
-		if (this._listens(type, fn, context) !== false) {
-			return;
-		}
-
 		if (context === this) {
 			// Less memory footprint.
 			context = undefined;
+		}
+
+		// check if fn already there
+		const contexts = this._getListenerIndex(type).get(fn);
+		if (contexts?.has(context)) {
+			return;
 		}
 
 		const newListener = {fn, ctx: context};
@@ -121,6 +123,20 @@ export class Evented extends Class {
 		this._events ??= {};
 		this._events[type] ??= [];
 		this._events[type].push(newListener);
+
+		if (contexts) {
+			contexts.set(context, newListener);
+		} else {
+			this._listenerIndex[type].set(fn, new Map([[context, newListener]]));
+		}
+	}
+
+	// Listeners of the given event type, indexed by function and context, so that
+	// adding and removing listeners doesn't need to scan all listeners of the type
+	// (e.g. each marker listens to the map's `zoom` events with the same function).
+	_getListenerIndex(type) {
+		this._listenerIndex ??= {};
+		return (this._listenerIndex[type] ??= new Map());
 	}
 
 	_off(type, fn, context) {
@@ -143,6 +159,7 @@ export class Evented extends Class {
 			}
 			// clear all listeners for a type if function isn't specified
 			delete this._events[type];
+			delete this._listenerIndex?.[type];
 			return;
 		}
 
@@ -152,9 +169,17 @@ export class Evented extends Class {
 		}
 
 		// find fn and remove it
-		const index = this._listens(type, fn, context);
-		if (index !== false) {
-			const listener = listeners[index];
+		if (context === this) {
+			context = undefined;
+		}
+		const contexts = this._listenerIndex?.[type]?.get(fn),
+		listener = contexts?.get(context);
+		if (listener) {
+			contexts.delete(context);
+			if (!contexts.size) {
+				this._listenerIndex[type].delete(fn);
+			}
+			const index = listeners.indexOf(listener);
 			if (this._firingCount) {
 				// set the removed listener to noop so that's not called if remove happens in fire
 				listener.fn = Util.falseFn;
@@ -255,8 +280,8 @@ export class Evented extends Class {
 			context = undefined;
 		}
 
-		const index = listeners.findIndex(l => l.fn === fn && l.ctx === context);
-		return index === -1 ? false : index;
+		const listener = this._listenerIndex?.[type]?.get(fn)?.get(context);
+		return listener ? listeners.indexOf(listener) : false;
 
 	}
 
