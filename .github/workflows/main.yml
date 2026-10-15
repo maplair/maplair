@@ -133,8 +133,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  # Stages the release on npm (trusted publishing via OIDC, no token), where a
+  # maintainer approves it with 2FA: `npm stage list`, `npm stage approve <id>`
   publish-npm:
     if: github.repository_owner == 'maplair' && startsWith(github.ref, 'refs/tags/v')
+    needs: [build-docs, lint, test, test-ssr]
+    permissions:
+      contents: read
+      id-token: write # for npm trusted publishing
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -143,15 +149,16 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: npm
           registry-url: https://registry.npmjs.org
+          package-manager-cache: false # no caches in release builds
+
+      - name: Use npm with staged publishing
+        run: npm install --global npm@^11.15.0
 
       - run: npm ci
       - run: npm run build
 
-      - name: Publish to NPM
+      - name: Stage release on npm
         run: |
           TAG=$(echo $GITHUB_REF_NAME | grep -oP '^v\d+\.\d+\.\d+-?\K(\w+)?')
-          npm publish --tag ${TAG:-latest}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          npm stage publish --tag ${TAG:-latest}

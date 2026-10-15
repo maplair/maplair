@@ -6,6 +6,8 @@
 - [ ] Run `npm version <patch | minor | major>` (this will bump the version in `package.json` and create a new tag).
 - [ ] Run `git push --follow-tags` to push the commit created by NPM to Github (together with the tag).
 - [ ] Wait for the CI to complete and follow the logs to make sure it runs successfully.
+- [ ] Approve the release staged on npm by the CI, with 2FA: `npm stage list maplair` and `npm stage approve <stage-id>`, or on npmjs.com.
+  For a pre-release, which is published with its pre-release tag (e.g. `alpha`), also run `npm dist-tag add maplair@X.X.X latest` while there's no stable version yet.
 - [ ] Verify that the release was correctly published to NPM by checking:
   - [ ] [Maplair NPM package page](https://www.npmjs.com/package/maplair)
   - [ ] files on [Maplair jsDelivr page](https://cdn.jsdelivr.net/npm/maplair@latest/)
