@@ -261,11 +261,11 @@ export class Popup extends DivOverlay {
 		style.maxWidth = `${this.options.maxWidth}px`;
 		style.minWidth = `${this.options.minWidth}px`;
 
-		const height = this._containerHeight ?? container.offsetHeight,
-		maxHeight = this.options.maxHeight,
+		const maxHeight = this.options.maxHeight,
 		scrolledClass = 'maplair-popup-scrolled';
 
-		if (maxHeight && height > maxHeight) {
+		// only measure the height (forcing a layout) if needed
+		if (maxHeight && (this._containerHeight ?? container.offsetHeight) > maxHeight) {
 			style.height = `${maxHeight}px`;
 			container.classList.add(scrolledClass);
 		} else {
@@ -274,6 +274,9 @@ export class Popup extends DivOverlay {
 
 		this._containerWidth = this._container.offsetWidth;
 		this._containerHeight = this._container.offsetHeight;
+		// read along with the size, so that _adjustPan doesn't force another style
+		// recalculation and layout after the popup has been positioned
+		this._containerMarginBottom = parseInt(getComputedStyle(this._container).marginBottom, 10) || 0;
 	}
 
 	_animateZoom(e) {
@@ -294,7 +297,7 @@ export class Popup extends DivOverlay {
 		}
 
 		const map = this._map,
-		marginBottom = parseInt(getComputedStyle(this._container).marginBottom, 10) || 0,
+		marginBottom = this._containerMarginBottom ?? (parseInt(getComputedStyle(this._container).marginBottom, 10) || 0),
 		containerHeight = this._containerHeight + marginBottom,
 		containerWidth = this._containerWidth,
 		layerPos = new Point(this._containerLeft, -containerHeight - this._containerBottom);
