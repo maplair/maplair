@@ -20,9 +20,7 @@
     "eslint-plugin-html": "^8.1.4",
     "eslint-plugin-import-x": "^4.17.1",
     "http-server": "^14.1.1",
-    "husky": "^9.1.7",
     "leafdoc": "^2.4.0",
-    "lint-staged": "^17.1.0",
     "playwright": "^1.62.0",
     "prosthetic-hand": "^2.2.2",
     "rollup": "^4.62.2",
@@ -61,7 +59,7 @@
     "lintfix": "npm run lint -- --fix",
     "bundlemon": "bundlemon",
     "serve": "cd docs && bundle exec jekyll serve",
-    "prepare": "husky"
+    "prepare": "vp config --no-agent"
   },
   "repository": {
     "type": "git",
@@ -71,8 +69,5 @@
     "gis",
     "map"
   ],
-  "license": "BSD-2-Clause",
-  "lint-staged": {
-    "*.(js|mjs|md)": "eslint --cache --fix"
-  }
+  "license": "BSD-2-Clause"
 }

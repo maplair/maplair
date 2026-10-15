@@ -19,6 +19,9 @@ export default defineConfig({
 			maplair: fileURLToPath(new URL('./src/Maplair.js', import.meta.url)),
 		},
 	},
+	staged: {
+		'*.{js,mjs,md}': 'eslint --cache --fix',
+	},
 	test: {
 		globals: true,
 		include: ['spec/suites/**/*Spec.js'],
