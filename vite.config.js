@@ -1,6 +1,7 @@
 import {fileURLToPath} from 'node:url';
 import {defineConfig} from 'vite-plus';
 import {playwright} from 'vite-plus/test/browser-playwright';
+import pkg from './package.json' with {type: 'json'};
 
 const touch = process.env.VITE_TOUCH === '1';
 
@@ -10,7 +11,60 @@ const touch = process.env.VITE_TOUCH === '1';
 // viewport so behavior is identical between touch and non-touch runs.
 const viewport = {width: 1280, height: 720};
 
+const banner = `/* @preserve
+ * Maplair ${pkg.version}, a JS library for interactive maps. https://leafletjs.com
+ * (c) 2010-${new Date().getFullYear()} Volodymyr Agafonkin, (c) 2010-2011 CloudMade
+ */
+`;
+
+/** Options shared by all library bundles built with `vp pack`. */
+const packOptions = {
+	platform: 'browser',
+	target: false,
+	sourcemap: true,
+	banner,
+	clean: false,
+	dts: false,
+	exports: false,
+	publint: false,
+	attw: false,
+	outExtensions: () => ({js: '.js'}),
+};
+
+/**
+ * Builds the UMD bundle exposing `L` as a global. Rolldown has no `noConflict`
+ * option (unlike Rollup), so wrap the bundle to remember the previous global `L`
+ * and add `L.noConflict()` to restore it when loaded via a plain script tag.
+ */
+const globalPackOptions = {
+	...packOptions,
+	format: 'umd',
+	globalName: 'L',
+	outputOptions: {
+		entryFileNames: '[name].js',
+		postBanner: `${banner}(function (previousL) {`,
+		postFooter: `if (!(typeof exports === 'object' && typeof module !== 'undefined') && !(typeof define === 'function' && define.amd)) {
+	var L = globalThis.L;
+	L.noConflict = function () { globalThis.L = previousL; return L; };
+}
+})(globalThis.L);`,
+	},
+};
+
 export default defineConfig({
+	pack: [
+		{
+			...packOptions,
+			entry: {'maplair-src': 'src/Maplair.js'},
+			copy: [
+				'src/maplair.css',
+				{from: 'src/images/{logo,layers,marker-icon,marker-shadow}.svg', to: 'dist/images'},
+			],
+		},
+		{...packOptions, entry: {maplair: 'src/Maplair.js'}, minify: true},
+		{...globalPackOptions, entry: {'maplair-global-src': 'src/Maplair.js'}},
+		{...globalPackOptions, entry: {'maplair-global': 'src/Maplair.js'}, minify: true},
+	],
 	build: {
 		assetsInlineLimit: 0,
 	},
