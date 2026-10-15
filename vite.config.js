@@ -12,7 +12,7 @@ const touch = process.env.VITE_TOUCH === '1';
 const viewport = {width: 1280, height: 720};
 
 const banner = `/* @preserve
- * Maplair ${pkg.version}, a JS library for interactive maps. https://leafletjs.com
+ * Maplair ${pkg.version}, a JS library for interactive maps. https://maplair.org
  * (c) 2010-${new Date().getFullYear()} Volodymyr Agafonkin, (c) 2010-2011 CloudMade
  */
 `;

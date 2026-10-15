@@ -91,7 +91,7 @@ Check out [this awesome cheatsheet](https://github.com/tmcw/mapmakers-cheatsheet
 
 #### Why is there still no feature X in Maplair?
 
-First of all, did you check out the [Maplair plugins page](http://leafletjs.com/plugins.html)?
+First of all, did you check out the [Maplair plugins page](https://maplair.org/plugins.html)?
 It lists about a hundred plugins doing all kinds of crazy stuff,
 and there's a high possibility that it has what you're looking for.
 
@@ -113,7 +113,7 @@ Check out the [Maplair.markercluster](https://github.com/Leaflet/Leaflet.markerc
 Maplair generally does a pretty good job of handling heavy vector data
 with its real-time clipping and simplification algorithms,
 but the browser technology still has its limits.
-Try [switching from SVG to Canvas as the default rendering back-end](http://leafletjs.com/reference.html#global),
+Try [switching from SVG to Canvas as the default rendering back-end](https://maplair.org/reference.html#global),
 it may help considerably (depends on the app and the data).
 
 If you still have too much data to render, you'll have to use some help of a server-side service
@@ -131,7 +131,7 @@ Maplair [has a nice plugin](https://github.com/danzel/Leaflet.utfgrid) for it).
 
 #### I downloaded the Maplair source but didn't find `maplair.js` there. Why is that?
 
-You can download the built versions using links from the [download page](http://leafletjs.com/download.html).
+You can download the built versions using links from the [download page](https://maplair.org/download.html).
 It even includes the latest build of the development version (`main` branch),
 updated automatically on each commit to the repo.
 

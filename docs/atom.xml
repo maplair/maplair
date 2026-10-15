@@ -6,11 +6,11 @@ title: Maplair Developer Blog Atom Feed
 
 	<title>Maplair Dev Blog</title>
 
-	<link href="https://leafletjs.com/atom.xml" rel="self"/>
-	<link href="https://leafletjs.com"/>
+	<link href="https://maplair.org/atom.xml" rel="self"/>
+	<link href="https://maplair.org"/>
 
 	<updated>{{ site.time | date_to_xmlschema }}</updated>
-	<id>https://leafletjs.com/</id>
+	<id>https://maplair.org/</id>
 
 	<author>
 		<name>Volodymyr Agafonkin</name>
@@ -19,9 +19,9 @@ title: Maplair Developer Blog Atom Feed
 	{% for post in site.posts %}
 	<entry>
 		<title>{{ post.title }}</title>
-		<link href="https://leafletjs.com{{ post.url }}"/>
+		<link href="https://maplair.org{{ post.url }}"/>
 		<updated>{{ post.date | date_to_xmlschema }}</updated>
-		<id>https://leafletjs.com{{ post.id }}</id>
+		<id>https://maplair.org{{ post.id }}</id>
 		<content type="html">{{ post.content | xml_escape }}</content>
 	</entry>
 	{% endfor %}

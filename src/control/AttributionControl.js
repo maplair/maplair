@@ -30,7 +30,7 @@ export class AttributionControl extends Control {
 
 			// @option prefix: String|false = 'Maplair'
 			// The HTML text shown before the attributions. Pass `false` to disable.
-			prefix: `<a target="_blank" href="https://leafletjs.com" title="A JavaScript library for interactive maps">${ukrainianFlag}Maplair</a>`
+			prefix: `<a target="_blank" href="https://maplair.org" title="A JavaScript library for interactive maps">${ukrainianFlag}Maplair</a>`
 		});
 	}
 

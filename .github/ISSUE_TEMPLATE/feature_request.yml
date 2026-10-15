@@ -8,7 +8,7 @@ body:
       description: >
         Please confirm the following:
       options:
-        - label: I've searched through the [plugins](https://leafletjs.com/plugins.html) to make sure this feature isn't already available, or think it shouldn't require a plugin.
+        - label: I've searched through the [plugins](https://maplair.org/plugins.html) to make sure this feature isn't already available, or think it shouldn't require a plugin.
           required: false
         - label: I've searched through the [current issues](https://github.com/Leaflet/Leaflet/issues) to make sure this feature hasn't been requested already.
           required: false

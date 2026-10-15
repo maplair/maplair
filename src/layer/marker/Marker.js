@@ -42,12 +42,12 @@ export class Marker extends Layer {
 
 			// @option title: String = ''
 			// Text for the browser tooltip that appear on marker hover (no tooltip by default).
-			// [Useful for accessibility](https://leafletjs.com/examples/accessibility/#markers-must-be-labelled).
+			// [Useful for accessibility](https://maplair.org/examples/accessibility/#markers-must-be-labelled).
 			title: '',
 
 			// @option alt: String = 'Marker'
 			// Text for the `alt` attribute of the icon image.
-			// [Useful for accessibility](https://leafletjs.com/examples/accessibility/#markers-must-be-labelled).
+			// [Useful for accessibility](https://maplair.org/examples/accessibility/#markers-must-be-labelled).
 			alt: 'Marker',
 
 			// @option zIndexOffset: Number = 0

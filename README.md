@@ -22,12 +22,12 @@ and push the limits of what's possible with online maps!
 [![CI](https://github.com/Leaflet/Leaflet/actions/workflows/main.yml/badge.svg)](https://github.com/Leaflet/Leaflet/actions/workflows/main.yml)
 
  [contributors]: https://github.com/Leaflet/Leaflet/graphs/contributors
- [features]: http://leafletjs.com/#features
- [plugins]: http://leafletjs.com/plugins.html
- [well-documented]: http://leafletjs.com/reference.html "Maplair API reference"
+ [features]: https://maplair.org/#features
+ [plugins]: https://maplair.org/plugins.html
+ [well-documented]: https://maplair.org/reference.html "Maplair API reference"
  [source code]: https://github.com/Leaflet/Leaflet "Maplair GitHub repository"
  [hosted on GitHub]: http://github.com/Leaflet/Leaflet
  [contribute]: https://github.com/Leaflet/Leaflet/blob/main/CONTRIBUTING.md "A guide to contributing to Maplair"
- [official website]: http://leafletjs.com
- [download page]: http://leafletjs.com/download.html
+ [official website]: https://maplair.org
+ [download page]: https://maplair.org/download.html
 

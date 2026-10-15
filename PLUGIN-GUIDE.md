@@ -1,7 +1,7 @@
 # Maplair Plugin Authoring Guide
 
 One of the greatest things about Maplair is its powerful plugin ecosystem.
-The [Maplair plugins page](http://leafletjs.com/plugins.html) lists dozens of awesome plugins, and more are being added every week.
+The [Maplair plugins page](https://maplair.org/plugins.html) lists dozens of awesome plugins, and more are being added every week.
 
 This guide lists a number of best practices for publishing a Maplair plugin that meets the quality standards of Maplair itself.
 
@@ -222,7 +222,7 @@ to ensure that they are published to NPM.
 
 ## Adding to the plugins list
 
-Once your plugin is published, it is a good idea to add it to the [Maplair plugins list](http://leafletjs.com/plugins.html). To do so:
+Once your plugin is published, it is a good idea to add it to the [Maplair plugins list](https://maplair.org/plugins.html). To do so:
 
 * [Fork](https://help.github.com/articles/fork-a-repo/) the Maplair repo.
 * In the `docs/_plugins/` folder, copy the `template.md` file and add it to a category folder. Then put the information and links about your plugin into the new plugin file.

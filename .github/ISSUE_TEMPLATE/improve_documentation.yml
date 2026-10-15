@@ -19,7 +19,7 @@ body:
       description: >
         For existing content, please provide one or more URLs of documents that need updating.
         You may also provide [permalinks](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-a-permanent-link-to-a-code-snippet) to the relevant source code.
-      placeholder: e.g. "https://leafletjs.com/reference.html#map-example"
+      placeholder: e.g. "https://maplair.org/reference.html#map-example"
     validations:
       required: false
 

@@ -8,7 +8,7 @@ body:
       description: >
         Please confirm the following:
       options:
-        - label: I've looked at the [documentation](https://leafletjs.com/reference.html) to make sure the behavior isn't documented and expected.
+        - label: I've looked at the [documentation](https://maplair.org/reference.html) to make sure the behavior isn't documented and expected.
           required: false
         - label: I'm sure this is an issue with Maplair, not with my app or other dependencies (Angular, Cordova, React, etc.).
           required: false
@@ -51,7 +51,7 @@ body:
     attributes:
       label: Minimal example reproducing the issue
       description: |
-        Please create an example using the [Maplair Editor](https://leafletjs.com/edit.html) or any other suitable online code editor.
+        Please create an example using the [Maplair Editor](https://maplair.org/edit.html) or any other suitable online code editor.
         **This example should be as simple as possible, and should not rely on any third-party code!**
       placeholder: Link to your example here
     validations:
@@ -61,7 +61,7 @@ body:
     attributes:
       label: Environment
       description: |
-        Please fill in the Maplair [version](https://leafletjs.com/reference.html#version) and the name and versions of the affected browser(s), OS(es), and platform(s).
+        Please fill in the Maplair [version](https://maplair.org/reference.html#version) and the name and versions of the affected browser(s), OS(es), and platform(s).
         Example:
           - Maplair version: 1.7.1, 1.8.0-beta.0
           - Browser (with version): Chrome 99.0.4844.82, Firefox 98.0.1
