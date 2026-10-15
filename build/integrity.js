@@ -1,13 +1,15 @@
 // This script calculates the integrity hashes of the files in dist/ , and
 // **overwrites** the values in the documentation.
+import {createHash} from 'node:crypto';
 import {readFileSync, writeFileSync} from 'node:fs';
 import https from 'node:https';
-import ssri from 'ssri';
 import pkg from '../package.json' with {type: 'json'};
 
 const getIntegrity = path => new Promise((resolve) => {
 	https.get(`https://cdn.jsdelivr.net/npm/leaflet@${pkg.version}/dist/${path}`, (res) => {
-		ssri.fromStream(res, {algorithms: ['sha256']}).then(integrity => resolve(integrity.toString()));
+		const hash = createHash('sha256');
+		res.on('data', chunk => hash.update(chunk));
+		res.on('end', () => resolve(`sha256-${hash.digest('base64')}`));
 	});
 });
 
