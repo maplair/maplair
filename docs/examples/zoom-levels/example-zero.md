@@ -10,10 +10,10 @@ title: Zoom Level Zero Example
 		maxZoom: 0
 	});
 
-	const cartodbAttribution = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, © <a href="https://carto.com/attribution">CARTO</a>';
+	const osmAttribution = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
-	const positron = new TileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png?key={{site.cartocdn_key}}', {
-		attribution: cartodbAttribution
+	const osm = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		attribution: osmAttribution
 	}).addTo(map);
 
 	map.setView([0, 0], 0);

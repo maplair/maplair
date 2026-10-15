@@ -33,8 +33,8 @@ title: Pixel Origin Examples
 		zoom: 1
 	});
 
-	const positron = new TileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png?key={{site.cartocdn_key}}', {
-		attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, © <a href="https://carto.com/attribution">CARTO</a>'
+	const osm = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 	}).addTo(map);
 
 	const marker = new Marker(trd).addTo(map);
