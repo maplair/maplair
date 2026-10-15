@@ -31,23 +31,38 @@ describe('Class', () => {
 			const spy1 = vi.fn(),
 			spy2 = vi.fn();
 
-			class Class1 extends Class {}
-			class Class2 extends Class1 {}
+			class Class1 extends Class {
+				constructor() {
+					super();
+					this.callInitHooks(Class1);
+				}
+			}
+			class Class2 extends Class1 {
+				constructor() {
+					super();
+					this.callInitHooks(Class2);
+				}
+			}
 
 			Class1.addInitHook(spy1);
 			Class2.addInitHook(spy2);
 
 			new Class2();
 
-			expect(spy1).toHaveBeenCalled();
-			expect(spy2).toHaveBeenCalled();
+			expect(spy1).toHaveBeenCalledOnce();
+			expect(spy2).toHaveBeenCalledOnce();
 		});
 
 		it('does not call child constructor hooks', () => {
 			const spy1 = vi.fn(),
 			spy2 = vi.fn();
 
-			class Class1 extends Class {}
+			class Class1 extends Class {
+				constructor() {
+					super();
+					this.callInitHooks(Class1);
+				}
+			}
 			class Class2 extends Class1 {}
 
 			Class1.addInitHook(spy1);
@@ -57,6 +72,123 @@ describe('Class', () => {
 
 			expect(spy1).toHaveBeenCalled();
 			expect(spy2).not.toHaveBeenCalled();
+		});
+	});
+
+	describe('#callInitHooks', () => {
+		it('runs the hooks of a class at the end of its constructor, parent classes first', () => {
+			const calls = [];
+
+			class Parent extends Class {
+				constructor() {
+					super();
+					this.parentReady = true;
+					this.callInitHooks(Parent);
+				}
+			}
+			class Child extends Parent {
+				constructor() {
+					super();
+					this.childReady = true;
+					this.callInitHooks(Child);
+				}
+			}
+
+			Child.addInitHook(function () { calls.push(['child', this.parentReady, this.childReady]); });
+			Parent.addInitHook(function () { calls.push(['parent', this.parentReady, this.childReady]); });
+
+			new Child();
+
+			expect(calls).to.eql([['parent', true, undefined], ['child', true, true]]);
+		});
+
+		it('runs the hooks of classes without own constructor along with their subclass', () => {
+			const calls = [];
+
+			class Base extends Class {}
+			class Middle extends Base {}
+			class Leaf extends Middle {
+				constructor() {
+					super();
+					this.ready = true;
+					this.callInitHooks(Leaf);
+				}
+			}
+
+			Base.addInitHook(function () { calls.push(['base', this.ready]); });
+			Middle.addInitHook(function () { calls.push(['middle', this.ready]); });
+			Leaf.addInitHook(function () { calls.push(['leaf', this.ready]); });
+
+			new Leaf();
+
+			expect(calls).to.eql([['base', true], ['middle', true], ['leaf', true]]);
+		});
+
+		it('runs the remaining hooks of all classes without argument', () => {
+			const spy1 = vi.fn(),
+			spy2 = vi.fn();
+
+			class Class1 extends Class {
+				constructor() {
+					super();
+					this.callInitHooks(Class1);
+				}
+			}
+			class Class2 extends Class1 {
+				constructor() {
+					super();
+					this.callInitHooks();
+				}
+			}
+
+			Class1.addInitHook(spy1);
+			Class2.addInitHook(spy2);
+
+			new Class2();
+
+			expect(spy1).toHaveBeenCalledOnce();
+			expect(spy2).toHaveBeenCalledOnce();
+		});
+
+		it('doesn\'t run hooks twice', () => {
+			const spy = vi.fn();
+
+			class Class1 extends Class {
+				constructor() {
+					super();
+					this.callInitHooks(Class1);
+					this.callInitHooks(Class1);
+				}
+			}
+			class Class2 extends Class1 {
+				constructor() {
+					super();
+					this.callInitHooks();
+					this.callInitHooks(Class1);
+				}
+			}
+
+			Class1.addInitHook(spy);
+
+			new Class2();
+
+			expect(spy).toHaveBeenCalledOnce();
+		});
+
+		it('supports method name and arguments', () => {
+			class Class1 extends Class {
+				constructor() {
+					super();
+					this.callInitHooks(Class1);
+				}
+				setFoo(foo) {
+					this.foo = foo;
+				}
+			}
+
+			Class1.addInitHook('setFoo', 42);
+
+			expect(new Class1().foo).to.equal(42);
 		});
 	});
 

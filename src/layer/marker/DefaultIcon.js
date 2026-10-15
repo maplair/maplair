@@ -34,6 +34,11 @@ export class DefaultIcon extends Icon {
 		});
 	}
 
+	constructor(...args) {
+		super(...args);
+		this.callInitHooks(DefaultIcon);
+	}
+
 	_getIconUrl(name) {
 		// only detect once
 		if (!DefaultIcon.imagePath) {

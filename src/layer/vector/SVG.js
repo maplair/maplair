@@ -33,6 +33,11 @@ import {splitWords, stamp} from '../../core/Util.js';
 // @constructor SVG(options?: Renderer options)
 // Creates a SVG renderer with the given options.
 export class SVG extends Renderer {
+	constructor(...args) {
+		super(...args);
+		this.callInitHooks(SVG);
+	}
+
 
 	_initContainer() {
 		this._container = SVG.create('svg');

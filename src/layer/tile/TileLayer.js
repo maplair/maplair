@@ -89,8 +89,8 @@ export class TileLayer extends GridLayer {
 		});
 	}
 
-	initialize(url, options) {
-		super.initialize(options);
+	constructor(url, options) {
+		super(options);
 
 		this._url = url;
 
@@ -137,6 +137,8 @@ export class TileLayer extends GridLayer {
 		}
 
 		this.on('tileunload', this._onTileRemove);
+
+		this.callInitHooks(TileLayer);
 	}
 
 	// @method setUrl(url: String, noRedraw?: Boolean): this

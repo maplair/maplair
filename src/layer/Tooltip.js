@@ -94,6 +94,11 @@ export class Tooltip extends DivOverlay {
 		});
 	}
 
+	constructor(...args) {
+		super(...args);
+		this.callInitHooks(Tooltip);
+	}
+
 	onAdd(map) {
 		super.onAdd(map);
 		this.setOpacity(this.options.opacity);

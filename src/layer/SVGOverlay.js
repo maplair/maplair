@@ -25,6 +25,11 @@ import * as Util from '../core/Util.js';
 // Instantiates an image overlay object given an SVG element and the geographical bounds it is tied to.
 // A viewBox attribute is required on the SVG element to zoom in and out properly.
 export class SVGOverlay extends ImageOverlay {
+	constructor(...args) {
+		super(...args);
+		this.callInitHooks(SVGOverlay);
+	}
+
 	_initImage() {
 		const el = this._image = this._url;
 

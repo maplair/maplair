@@ -25,10 +25,12 @@ import * as Util from '../../core/Util.js';
 
 export class Renderer extends BlanketOverlay {
 
-	initialize(options) {
-		super.initialize({...options, continuous: false});
+	constructor(options) {
+		super({...options, continuous: false});
 		Util.stamp(this);
 		this._layers ??= {};
+
+		this.callInitHooks(Renderer);
 	}
 
 	onAdd(map) {

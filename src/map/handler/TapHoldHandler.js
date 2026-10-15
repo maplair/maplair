@@ -12,6 +12,11 @@ import * as PointerEvents from '../../dom/DomEvent.PointerEvents.js';
 const tapHoldDelay = 600;
 
 export class TapHoldHandler extends Handler {
+	constructor(...args) {
+		super(...args);
+		this.callInitHooks(TapHoldHandler);
+	}
+
 	addHooks() {
 		DomEvent.on(this._map._container, 'pointerdown', this._onDown, this);
 	}

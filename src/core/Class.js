@@ -55,50 +55,43 @@ export class Class {
 			this[fn](...args);
 		};
 
-		if (!Object.hasOwn(this.prototype, '_initHooks')) { // do not use ??= here
-			this.prototype._initHooks = [];
+		if (!Object.hasOwn(this, '_initHooks')) { // do not use ??= here, which would find the parent class' hooks
+			this._initHooks = [];
 		}
-		this.prototype._initHooks.push(init);
+		this._initHooks.push(init);
 		return this;
 	}
 
-	constructor(...args) {
-		this._initHooksCalled = false;
-
+	constructor() {
 		Util.setOptions(this);
-
-		// call the constructor
-		if (this.initialize) {
-			this.initialize(...args);
-		}
-
-		// call all constructor hooks
-		this.callInitHooks();
 	}
 
-	callInitHooks() {
-		if (this._initHooksCalled) {
-			return;
+	// @method callInitHooks(cls?: Function): this
+	// Runs the [constructor hooks](#class-constructor-hooks) of the given class and
+	// of its parent classes, which haven't run yet for this object. Classes call it
+	// at the end of their constructor, e.g. `this.callInitHooks(MyClass)`.
+	// Without `cls`, runs the hooks of all classes of this object.
+	callInitHooks(cls = this.constructor) {
+		const done = this._initHooksCalledFor;
+		if (done && (done === cls || done.prototype instanceof cls)) {
+			return this; // the hooks of `cls` already ran
 		}
 
-		// collect all prototypes in chain
-		const prototypes = [];
-		let current = this;
-
-		while ((current = Object.getPrototypeOf(current)) !== null) {
-			prototypes.push(current);
+		// parent classes first; stop at the class whose hooks (and whose parent
+		// classes' hooks) already ran, e.g. in the constructor of a parent class
+		const classes = [];
+		for (let c = cls; c && c !== Function.prototype && c !== done; c = Object.getPrototypeOf(c)) {
+			classes.unshift(c);
 		}
+		this._initHooksCalledFor = cls;
 
-		// reverse so the parent prototype is first
-		prototypes.reverse();
-
-		// call init hooks on each prototype
-		for (const proto of prototypes) {
-			for (const hook of proto._initHooks ?? []) {
-				hook.call(this);
+		for (const c of classes) {
+			if (Object.hasOwn(c, '_initHooks')) {
+				for (const hook of c._initHooks) {
+					hook.call(this);
+				}
 			}
 		}
-
-		this._initHooksCalled = true;
+		return this;
 	}
 }

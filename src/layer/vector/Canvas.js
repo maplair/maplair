@@ -46,6 +46,11 @@ export class Canvas extends Renderer {
 		});
 	}
 
+	constructor(...args) {
+		super(...args);
+		this.callInitHooks(Canvas);
+	}
+
 	getEvents() {
 		const events = super.getEvents();
 		events.viewprereset = this._onViewPreReset;

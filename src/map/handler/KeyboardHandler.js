@@ -17,11 +17,13 @@ export class KeyboardHandler extends Handler {
 		zoomOut: ['Minus', 'NumpadSubtract', 'Digit6', 'Slash']
 	};
 
-	initialize(map) {
-		super.initialize(map);
+	constructor(map) {
+		super(map);
 
 		this._setPanDelta(map.options.keyboardPanDelta);
 		this._setZoomDelta(map.options.zoomDelta);
+
+		this.callInitHooks(KeyboardHandler);
 	}
 
 	addHooks() {

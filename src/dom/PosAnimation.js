@@ -32,6 +32,10 @@ import * as DomUtil from '../dom/DomUtil.js';
  */
 
 export class PosAnimation extends Evented {
+	constructor(...args) {
+		super(...args);
+		this.callInitHooks(PosAnimation);
+	}
 
 	// @method run(el: HTMLElement, newPos: Point, duration?: Number, easeLinearity?: Number)
 	// Run an animation of a given element to a new position, optionally setting

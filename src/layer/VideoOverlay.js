@@ -57,6 +57,11 @@ export class VideoOverlay extends ImageOverlay {
 		});
 	}
 
+	constructor(...args) {
+		super(...args);
+		this.callInitHooks(VideoOverlay);
+	}
+
 	_initImage() {
 		const wasElementSupplied = this._url.tagName === 'VIDEO';
 		const vid = this._image = wasElementSupplied ? this._url : DomUtil.create('video');

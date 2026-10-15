@@ -86,8 +86,11 @@ export class Icon extends Class {
 		});
 	}
 
-	initialize(options) {
+	constructor(options) {
+		super();
 		setOptions(this, options);
+
+		this.callInitHooks(Icon);
 	}
 
 	// @method createIcon(oldIcon?: HTMLElement): HTMLElement

@@ -20,6 +20,10 @@ describe('Marker.Drag', () => {
 	});
 
 	class MyMarker extends Marker {
+		constructor(...args) {
+			super(...args);
+			this.callInitHooks();
+		}
 		_getPosition() {
 			return DomUtil.getPosition(this.dragging._draggable._element);
 		}

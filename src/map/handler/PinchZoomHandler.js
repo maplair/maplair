@@ -7,6 +7,11 @@ import * as PointerEvents from '../../dom/DomEvent.PointerEvents.js';
  */
 
 export class PinchZoomHandler extends Handler {
+	constructor(...args) {
+		super(...args);
+		this.callInitHooks(PinchZoomHandler);
+	}
+
 	addHooks() {
 		this._map._container.classList.add('maplair-touch-zoom');
 		DomEvent.on(this._map._container, 'pointerdown', this._onPointerStart, this);

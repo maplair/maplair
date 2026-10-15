@@ -35,6 +35,11 @@ export class ZoomControl extends Control {
 		});
 	}
 
+	constructor(...args) {
+		super(...args);
+		this.callInitHooks(ZoomControl);
+	}
+
 	onAdd(map) {
 		const zoomName = 'maplair-control-zoom',
 		container = DomUtil.create('div', `${zoomName} maplair-bar`),

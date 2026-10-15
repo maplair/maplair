@@ -45,6 +45,11 @@ export class DivIcon extends Icon {
 		});
 	}
 
+	constructor(...args) {
+		super(...args);
+		this.callInitHooks(DivIcon);
+	}
+
 	createIcon(oldIcon) {
 		const div = (oldIcon && oldIcon.tagName === 'DIV') ? oldIcon : document.createElement('div'),
 		options = this.options;

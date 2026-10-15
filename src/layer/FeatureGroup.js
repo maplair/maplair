@@ -25,6 +25,11 @@ import {LatLngBounds} from '../geo/LatLngBounds.js';
 // @constructor FeatureGroup(layers?: Layer[], options?: Object)
 // Create a feature group, optionally given an initial set of layers and an `options` object.
 export class FeatureGroup extends LayerGroup {
+	constructor(...args) {
+		super(...args);
+		this.callInitHooks(FeatureGroup);
+	}
+
 
 	addLayer(layer) {
 		if (this.hasLayer(layer)) {

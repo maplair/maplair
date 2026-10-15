@@ -8,6 +8,11 @@ import {Handler} from '../../core/Handler.js';
 // @section Interaction Options
 
 export class DoubleClickZoomHandler extends Handler {
+	constructor(...args) {
+		super(...args);
+		this.callInitHooks(DoubleClickZoomHandler);
+	}
+
 	addHooks() {
 		this._map.on('dblclick', this._onDoubleClick, this);
 	}

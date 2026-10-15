@@ -66,9 +66,12 @@ export class Polyline extends Path {
 		});
 	}
 
-	initialize(latlngs, options) {
+	constructor(latlngs, options) {
+		super();
 		Util.setOptions(this, options);
 		this._setLatLngs(latlngs);
+
+		this.callInitHooks(Polyline);
 	}
 
 	// @method getLatLngs(): LatLng[]

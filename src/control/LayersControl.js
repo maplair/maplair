@@ -86,8 +86,8 @@ export class LayersControl extends Control {
 		});
 	}
 
-	initialize(baseLayers, overlays, options) {
-		super.initialize(options);
+	constructor(baseLayers, overlays, options) {
+		super(options);
 
 		this._layerControlInputs = [];
 		this._layers = [];
@@ -102,6 +102,8 @@ export class LayersControl extends Control {
 		for (const [name, layer] of Object.entries(overlays ?? {})) {
 			this._addLayer(layer, name, true);
 		}
+
+		this.callInitHooks(LayersControl);
 	}
 
 	onAdd(map) {

@@ -47,6 +47,11 @@ export class ScaleControl extends Control {
 		});
 	}
 
+	constructor(...args) {
+		super(...args);
+		this.callInitHooks(ScaleControl);
+	}
+
 	onAdd(map) {
 		const className = 'maplair-control-scale',
 		container = DomUtil.create('div', className),

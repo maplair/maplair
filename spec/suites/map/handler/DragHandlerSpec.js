@@ -53,6 +53,10 @@ describe('DragHandler', () => {
 	});
 
 	class MyMap extends MaplairMap {
+		constructor(...args) {
+			super(...args);
+			this.callInitHooks();
+		}
 		_getPosition() {
 			return DomUtil.getPosition(this.dragging._draggable._element);
 		}

@@ -35,8 +35,11 @@ export class BlanketOverlay extends Layer {
 		});
 	}
 
-	initialize(options) {
+	constructor(options) {
+		super();
 		Util.setOptions(this, options);
+
+		this.callInitHooks(BlanketOverlay);
 	}
 
 	onAdd() {

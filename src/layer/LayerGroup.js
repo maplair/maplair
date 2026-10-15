@@ -23,7 +23,8 @@ import * as Util from '../core/Util.js';
 // Create a layer group, optionally given an initial set of layers and an `options` object.
 export class LayerGroup extends Layer {
 
-	initialize(layers, options) { // for compatibility of code using `LayerGroup.extend`
+	constructor(layers, options) { // for compatibility of code using `LayerGroup.extend`
+		super();
 		Util.setOptions(this, options);
 
 		this._layers = {};
@@ -31,6 +32,8 @@ export class LayerGroup extends Layer {
 		for (const layer of layers ?? []) {
 			this.addLayer(layer);
 		}
+
+		this.callInitHooks(LayerGroup);
 	}
 
 	// @method addLayer(layer: Layer): this

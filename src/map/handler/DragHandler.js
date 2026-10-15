@@ -9,6 +9,11 @@ import {Point} from '../../geometry/Point.js';
  */
 
 export class DragHandler extends Handler {
+	constructor(...args) {
+		super(...args);
+		this.callInitHooks(DragHandler);
+	}
+
 	addHooks() {
 		if (!this._draggable) {
 			const map = this._map;

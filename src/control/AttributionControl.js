@@ -33,14 +33,16 @@ export class AttributionControl extends Control {
 		});
 	}
 
-	initialize(options) {
-		super.initialize(options);
+	constructor(options) {
+		super(options);
 		if (this.options.prefix === null) {
 			const title = I18n.translate('A JavaScript library for interactive maps');
 			this.options.prefix = `<a target="_blank" href="https://maplair.org" title="${title}">${mapleLeaf}Maplair</a>`;
 		}
 
 		this._attributions = {};
+
+		this.callInitHooks(AttributionControl);
 	}
 
 	onAdd(map) {

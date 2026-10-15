@@ -168,7 +168,8 @@ export class MaplairMap extends Evented {
 		});
 	}
 
-	initialize(id, options) { // (HTMLElement or String, Object)
+	constructor(id, options) { // (HTMLElement or String, Object)
+		super();
 		options = Util.setOptions(this, options);
 
 		// Make sure to assign internal flags at the beginning,
@@ -195,7 +196,7 @@ export class MaplairMap extends Evented {
 			this.setView(new LatLng(options.center), options.zoom, {reset: true});
 		}
 
-		this.callInitHooks();
+		this.callInitHooks(MaplairMap);
 
 		this._zoomAnimated = this.options.zoomAnimation;
 

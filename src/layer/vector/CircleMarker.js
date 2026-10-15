@@ -27,10 +27,13 @@ export class CircleMarker extends Path {
 		});
 	}
 
-	initialize(latlng, options) {
+	constructor(latlng, options) {
+		super();
 		Util.setOptions(this, options);
 		this._latlng = new LatLng(latlng);
 		this._radius = this.options.radius;
+
+		this.callInitHooks(CircleMarker);
 	}
 
 	// @method setLatLng(latLng: LatLng): this

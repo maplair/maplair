@@ -153,8 +153,11 @@ export class GridLayer extends Layer {
 		});
 	}
 
-	initialize(options) {
+	constructor(options) {
+		super();
 		Util.setOptions(this, options);
+
+		this.callInitHooks(GridLayer);
 	}
 
 	onAdd() {

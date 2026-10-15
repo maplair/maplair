@@ -59,6 +59,11 @@ export class Polygon extends Polyline {
 		});
 	}
 
+	constructor(...args) {
+		super(...args);
+		this.callInitHooks(Polygon);
+	}
+
 	isEmpty() {
 		return !this._latlngs.length || !this._latlngs[0].length;
 	}

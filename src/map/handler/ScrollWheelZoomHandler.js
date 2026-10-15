@@ -6,6 +6,11 @@ import * as DomEvent from '../../dom/DomEvent.js';
  */
 
 export class ScrollWheelZoomHandler extends Handler {
+	constructor(...args) {
+		super(...args);
+		this.callInitHooks(ScrollWheelZoomHandler);
+	}
+
 	addHooks() {
 		DomEvent.on(this._map._container, 'wheel', this._onWheelScroll, this);
 

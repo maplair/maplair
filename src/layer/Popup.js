@@ -138,6 +138,11 @@ export class Popup extends DivOverlay {
 		});
 	}
 
+	constructor(...args) {
+		super(...args);
+		this.callInitHooks(Popup);
+	}
+
 	// @namespace Popup
 	// @method openOn(map: MaplairMap): this
 	// Alternative to `map.openPopup(popup)`.
