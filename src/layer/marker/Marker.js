@@ -325,8 +325,9 @@ export class Marker extends Layer {
 	}
 
 	_updateZIndex(offset) {
-		if (this._icon) {
-			this._icon.style.zIndex = this._zIndex + offset;
+		const zIndex = String(this._zIndex + offset);
+		if (this._icon && this._icon.style.zIndex !== zIndex) {
+			this._icon.style.zIndex = zIndex;
 		}
 	}
 

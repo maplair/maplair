@@ -54,7 +54,11 @@ export function toBack(el) {
 export function setTransform(el, offset, scale) {
 	const pos = offset ?? new Point(0, 0);
 
-	el.style.transform = `translate3d(${pos.x}px,${pos.y}px,0)${scale ? ` scale(${scale})` : ''}`;
+	// same format as browsers serialize it, so that unchanged positions can be skipped
+	const transform = `translate3d(${pos.x}px, ${pos.y}px, 0px)${scale ? ` scale(${scale})` : ''}`;
+	if (el.style.transform !== transform) {
+		el.style.transform = transform;
+	}
 }
 
 const positions = new WeakMap();
