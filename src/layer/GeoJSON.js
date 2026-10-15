@@ -41,7 +41,7 @@ export class GeoJSON extends FeatureGroup {
 	 * @aka GeoJSON options
 	 *
 	 * @option pointToLayer: Function = *
-	 * A `Function` defining how GeoJSON points spawn Leaflet layers. It is internally
+	 * A `Function` defining how GeoJSON points spawn Maplair layers. It is internally
 	 * called when data is added, passing the GeoJSON point feature and its `LatLng`.
 	 * The default is to spawn a default `Marker`:
 	 * ```js

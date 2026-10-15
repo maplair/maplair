@@ -5,7 +5,7 @@ title: Overlays
 
 ## Overlays
 
-There are 3 overlays in the Leaflet API: 
+There are 3 overlays in the Maplair API: 
 - [`ImageOverlay`](/reference.html#imageoverlay): Raster Layer, Extends [`Layer`](/reference.html#layer)
 - [`VideoOverlay`](/reference.html#videooverlay): Raster Layer, Extends [`ImageOverlay`](/reference.html#imageoverlay)
 - [`SVGOverlay`](/reference.html#svgoverlay): Vector Layer, Extends [`ImageOverlay`](/reference.html#imageoverlay)
@@ -24,10 +24,10 @@ const imageOverlay = new ImageOverlay(imageUrl, latLngBounds, options);
 
 #### Creating a Map
 
-First of all, create a Leaflet map and add a background `TileLayer` in the usual way:
+First of all, create a Maplair map and add a background `TileLayer` in the usual way:
 
 ```
-const map = new LeafletMap('map').setView([37.8, -96], 4);
+const map = new MaplairMap('map').setView([37.8, -96], 4);
 
 const osm = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 	maxZoom: 19,
@@ -90,14 +90,14 @@ To display this video:
 <source src="https://www.mapbox.com/bites/00188/patricia_nasa.mp4" type="video/mp4">
 </video>
 
-If a video can be shown in a webpage in this way, then Leaflet can display it inside a map. It is important that the videos are prepared in such a way that they will fit the map: The video should have a "north-up" orientation, and its proportions should fit the map. If not, it will look out of place.
+If a video can be shown in a webpage in this way, then Maplair can display it inside a map. It is important that the videos are prepared in such a way that they will fit the map: The video should have a "north-up" orientation, and its proportions should fit the map. If not, it will look out of place.
 
 #### Creating a Map
 
-First of all, create a Leaflet map and add a background `TileLayer` in the usual way:
+First of all, create a Maplair map and add a background `TileLayer` in the usual way:
 
 ```
-const map = new LeafletMap('map').setView([37.8, -96], 4);
+const map = new MaplairMap('map').setView([37.8, -96], 4);
 
 const osm = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 	maxZoom: 19,
@@ -146,7 +146,7 @@ And just like that, you'll get the video on your map:
 
 You can find other options of `VideoOverlay` in the [documentation](/reference.html#videooverlay).
 
-Video overlays behave like any other Leaflet layer - you can add and remove them, let the user select from several videos using a [layers control](../layers-control/), etc.
+Video overlays behave like any other Maplair layer - you can add and remove them, let the user select from several videos using a [layers control](../layers-control/), etc.
 
 
 #### A Bit of Control over the Video

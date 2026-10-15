@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {Bounds, Point} from 'leaflet';
+import {Bounds, Point} from 'maplair';
 
 describe('Bounds', () => {
 	let a, b, c;

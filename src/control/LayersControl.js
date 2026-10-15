@@ -169,14 +169,14 @@ export class LayersControl extends Control {
 	expand() {
 		clearTimeout(this._collapseDelayTimeout);
 
-		this._container.classList.add('leaflet-control-layers-expanded');
+		this._container.classList.add('maplair-control-layers-expanded');
 		this._section.style.height = null;
 		const acceptableHeight = this._map.getSize().y - (this._container.offsetTop + 50);
 		if (acceptableHeight < this._section.clientHeight) {
-			this._section.classList.add('leaflet-control-layers-scrollbar');
+			this._section.classList.add('maplair-control-layers-scrollbar');
 			this._section.style.height = `${acceptableHeight}px`;
 		} else {
-			this._section.classList.remove('leaflet-control-layers-scrollbar');
+			this._section.classList.remove('maplair-control-layers-scrollbar');
 		}
 		this._checkDisabledLayers();
 		return this;
@@ -192,19 +192,19 @@ export class LayersControl extends Control {
 			if (this.options.collapseDelay > 0) {
 				// Collapse delayed
 				this._collapseDelayTimeout = setTimeout(() => {
-					this._container.classList.remove('leaflet-control-layers-expanded');
+					this._container.classList.remove('maplair-control-layers-expanded');
 				}, this.options.collapseDelay);
 				return this;
 			}
 
 			// Collapse immediately
-			this._container.classList.remove('leaflet-control-layers-expanded');
+			this._container.classList.remove('maplair-control-layers-expanded');
 		}
 		return this;
 	}
 
 	_initLayout() {
-		const className = 'leaflet-control-layers',
+		const className = 'maplair-control-layers',
 		container = this._container = DomUtil.create('div', className),
 		collapsed = this.options.collapsed;
 
@@ -316,7 +316,7 @@ export class LayersControl extends Control {
 
 		const obj = this._getLayer(Util.stamp(e.target));
 
-		// @namespace LeafletMap
+		// @namespace MaplairMap
 		// @section Layer events
 		// @event baselayerchange: LayersControlEvent
 		// Fired when the base layer is changed through the [layers control](#control-layers).
@@ -340,10 +340,10 @@ export class LayersControl extends Control {
 
 		const input = document.createElement('input');
 		input.type = obj.overlay ? 'checkbox' : 'radio';
-		input.className = 'leaflet-control-layers-selector';
+		input.className = 'maplair-control-layers-selector';
 		input.defaultChecked = checked;
 		if (!obj.overlay) {
-			input.name = `leaflet-base-layers_${Util.stamp(this)}`;
+			input.name = `maplair-base-layers_${Util.stamp(this)}`;
 		}
 
 		this._layerControlInputs.push(input);

@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {LineUtil, LeafletMap, LatLng, Polygon} from 'leaflet';
+import {LineUtil, MaplairMap, LatLng, Polygon} from 'maplair';
 import {createContainer, removeMapContainer} from '../../SpecHelper.js';
 
 describe('Polygon', () => {
@@ -7,7 +7,7 @@ describe('Polygon', () => {
 
 	beforeEach(() => {
 		container = createContainer();
-		map = new LeafletMap(container, {center: [55.8, 37.6], zoom: 6});
+		map = new MaplairMap(container, {center: [55.8, 37.6], zoom: 6});
 	});
 
 	afterEach(() => {

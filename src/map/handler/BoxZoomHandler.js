@@ -1,4 +1,4 @@
-import {LeafletMap} from '../Map.js';
+import {MaplairMap} from '../Map.js';
 import {Handler} from '../../core/Handler.js';
 import * as DomUtil from '../../dom/DomUtil.js';
 import * as DomEvent from '../../dom/DomEvent.js';
@@ -10,9 +10,9 @@ import {Bounds} from '../../geometry/Bounds.js';
  * (zoom to a selected bounding box), enabled by default.
  */
 
-// @namespace LeafletMap
+// @namespace MaplairMap
 // @section Interaction Options
-LeafletMap.mergeOptions({
+MaplairMap.mergeOptions({
 	// @option boxZoom: Boolean = true
 	// Whether the map can be zoomed to a rectangular area specified by
 	// dragging the pointer while pressing the shift key.
@@ -83,8 +83,8 @@ export class BoxZoomHandler extends Handler {
 		if (!this._moved) {
 			this._moved = true;
 
-			this._box = DomUtil.create('div', 'leaflet-zoom-box', this._container);
-			this._container.classList.add('leaflet-crosshair');
+			this._box = DomUtil.create('div', 'maplair-zoom-box', this._container);
+			this._container.classList.add('maplair-crosshair');
 
 			this._map.fire('boxzoomstart');
 		}
@@ -103,7 +103,7 @@ export class BoxZoomHandler extends Handler {
 	_finish() {
 		if (this._moved) {
 			this._box.remove();
-			this._container.classList.remove('leaflet-crosshair');
+			this._container.classList.remove('maplair-crosshair');
 		}
 
 		DomUtil.enableTextSelection();
@@ -149,4 +149,4 @@ export class BoxZoomHandler extends Handler {
 // @section Handlers
 // @property boxZoom: Handler
 // Box (shift-drag with pointer) zoom handler.
-LeafletMap.addInitHook('addHandler', 'boxZoom', BoxZoomHandler);
+MaplairMap.addInitHook('addHandler', 'boxZoom', BoxZoomHandler);

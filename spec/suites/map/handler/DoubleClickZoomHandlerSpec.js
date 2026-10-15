@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {LeafletMap} from 'leaflet';
+import {MaplairMap} from 'maplair';
 import UIEventSimulator from 'ui-event-simulator';
 import {createContainer, removeMapContainer} from '../../SpecHelper.js';
 
@@ -8,7 +8,7 @@ describe('DoubleClickZoomHandler', () => {
 
 	beforeEach(() => {
 		container = createContainer();
-		map = new LeafletMap(container, {
+		map = new MaplairMap(container, {
 			center: [0, 0],
 			zoom: 3,
 			zoomAnimation: false
@@ -60,7 +60,7 @@ describe('DoubleClickZoomHandler', () => {
 
 	it('can be disabled using doubleClickZoom: false', (done) => {
 		map.remove();
-		map = new LeafletMap(container, {
+		map = new MaplairMap(container, {
 			center: [0, 0],
 			zoom: 3,
 			doubleClickZoom: false,

@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {LeafletMap, BoxZoomHandler} from 'leaflet';
+import {MaplairMap, BoxZoomHandler} from 'maplair';
 import sinon from 'sinon';
 import UIEventSimulator from 'ui-event-simulator';
 import {createContainer, removeMapContainer, pointerEventType} from '../../SpecHelper.js';
@@ -11,7 +11,7 @@ describe('BoxZoomHandler', () => {
 
 	beforeEach(() => {
 		container = createContainer();
-		map = new LeafletMap(container, {
+		map = new MaplairMap(container, {
 			center: [0, 0],
 			zoom: 3,
 			zoomAnimation: false
@@ -52,8 +52,8 @@ describe('BoxZoomHandler', () => {
 
 		expect(boxStartSpy.calledOnce).to.be.true;
 		expect(boxEndSpy.called).to.be.false;
-		expect(map.getContainer().classList.contains('leaflet-crosshair')).to.be.true;
-		expect(map.getContainer().querySelectorAll('.leaflet-zoom-box').length).to.equal(1);
+		expect(map.getContainer().classList.contains('maplair-crosshair')).to.be.true;
+		expect(map.getContainer().querySelectorAll('.maplair-zoom-box').length).to.equal(1);
 
 		// fire keydown event ESC to cancel boxZoom
 		UIEventSimulator.fire('keydown', document, {
@@ -62,8 +62,8 @@ describe('BoxZoomHandler', () => {
 
 		await (new Promise((res) => { setTimeout(res, 1); }));
 
-		expect(map.getContainer().classList.contains('leaflet-crosshair')).to.be.false;
-		expect(map.getContainer().querySelectorAll('.leaflet-zoom-box').length).to.equal(0);
+		expect(map.getContainer().classList.contains('maplair-crosshair')).to.be.false;
+		expect(map.getContainer().querySelectorAll('.maplair-zoom-box').length).to.equal(0);
 
 		finger.unshift().up();
 		await hand.run();
@@ -173,7 +173,7 @@ describe('BoxZoomHandler', () => {
 
 	it('zooms out when dragged box is larger than map', async () => {
 
-		const smallMap = new LeafletMap(createContainer('75px', '75px'), {
+		const smallMap = new MaplairMap(createContainer('75px', '75px'), {
 			center: [0, 0],
 			zoom: 10,
 			zoomAnimation: false

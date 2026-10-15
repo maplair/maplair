@@ -45,11 +45,11 @@
 
 [Layer|onAdd();onRemove();getEvents();getAttribution();beforeAdd()]
 
-[Evented] ^- [LeafletMap|addHandler();addControl();removeControl();addLayer();removeLayer()]
-[LeafletMap] contains -.--> [Layer]
-[LeafletMap] contains -.--> [Control]
-[LeafletMap] contains -.--> [Handler]
-[LeafletMap] has one -.--> [CRS]
+[Evented] ^- [MaplairMap|addHandler();addControl();removeControl();addLayer();removeLayer()]
+[MaplairMap] contains -.--> [Layer]
+[MaplairMap] contains -.--> [Control]
+[MaplairMap] contains -.--> [Handler]
+[MaplairMap] has one -.--> [CRS]
 
 [Class] ^- [Handler|addHooks();removeHooks()]
 [Handler] ^- [BoxZoomHandler;DoubleClickZoomHandler;DragHandler;KeyboardHandler;ScrollWheelZoomHandler;TapHandler;PinchZoomHandler]

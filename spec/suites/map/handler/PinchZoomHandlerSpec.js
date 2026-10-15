@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {LatLng, LeafletMap, Polygon, Rectangle} from 'leaflet';
+import {LatLng, MaplairMap, Polygon, Rectangle} from 'maplair';
 import Hand from 'prosthetic-hand';
 import sinon from 'sinon';
 import {createContainer, removeMapContainer, pointerEventType} from '../../SpecHelper.js';
@@ -9,7 +9,7 @@ describe('PinchZoomHandler', () => {
 
 	beforeEach(() => {
 		container = createContainer();
-		map = new LeafletMap(container, {
+		map = new MaplairMap(container, {
 			pinchZoom: true,
 			inertia: false,
 			zoomAnimation: false	// If true, the test has to wait extra 250msec
@@ -136,7 +136,7 @@ describe('PinchZoomHandler', () => {
 	it.skipIfNotTouch('PinchZoom works with disabled map dragging', (done) => {
 		map.remove();
 
-		map = new LeafletMap(container, {
+		map = new MaplairMap(container, {
 			pinchZoom: true,
 			inertia: false,
 			zoomAnimation: false,	// If true, the test has to wait extra 250msec,
@@ -166,7 +166,7 @@ describe('PinchZoomHandler', () => {
 	it.skipIfNotTouch('Layer is rendered correctly while pinch zoom when zoomAnim is true', async () => {
 		map.remove();
 
-		map = new LeafletMap(container, {
+		map = new MaplairMap(container, {
 			pinchZoom: true,
 			inertia: false,
 			zoomAnimation: true
@@ -226,7 +226,7 @@ describe('PinchZoomHandler', () => {
 	it.skipIfNotTouch('Layer is rendered correctly while pinch zoom when zoomAnim is false', async () => {
 		map.remove();
 
-		map = new LeafletMap(container, {
+		map = new MaplairMap(container, {
 			pinchZoom: true,
 			inertia: false,
 			zoomAnimation: false
@@ -277,7 +277,7 @@ describe('PinchZoomHandler', () => {
 		const warnSpy = sinon.spy(console, 'warn');
 
 		const localContainer = createContainer();
-		const localMap = new LeafletMap(localContainer, {
+		const localMap = new MaplairMap(localContainer, {
 			touchZoom: false
 		});
 
@@ -294,7 +294,7 @@ describe('PinchZoomHandler', () => {
 		const warnSpy = sinon.spy(console, 'warn');
 
 		const localContainer = createContainer();
-		const localMap = new LeafletMap(localContainer, {
+		const localMap = new MaplairMap(localContainer, {
 			touchZoom: true,
 			pinchZoom: false
 		});

@@ -2,14 +2,14 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>Leaflet debug page - Opacity</title>
+		<title>Maplair debug page - Opacity</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
-		<link rel="stylesheet" href="../../dist/leaflet.css" />
+		<link rel="stylesheet" href="../../dist/maplair.css" />
 		<link rel="stylesheet" href="../css/screen.css" />
 		<script type="importmap">
 			{
 				"imports": {
-					"leaflet": "../../dist/leaflet-src.js"
+					"maplair": "../../dist/maplair-src.js"
 				}
 			}
 		</script>
@@ -67,19 +67,19 @@
 			<div id="map6" class="map"></div>
 		</div>
 		<script type="module">
-			import {LeafletMap, TileLayer} from 'leaflet';
+			import {MaplairMap, TileLayer} from 'maplair';
 
 			const mapopts = {
 				center: [35, -122],
 				zoom : 5
 			};
 
-			const map1 = new LeafletMap('map1', mapopts);
-			const map2 = new LeafletMap('map2', mapopts);
-			const map3 = new LeafletMap('map3', mapopts);
-			const map4 = new LeafletMap('map4', mapopts);
-			const map5 = new LeafletMap('map5', mapopts);
-			const map6 = new LeafletMap('map6', mapopts);
+			const map1 = new MaplairMap('map1', mapopts);
+			const map2 = new MaplairMap('map2', mapopts);
+			const map3 = new MaplairMap('map3', mapopts);
+			const map4 = new MaplairMap('map4', mapopts);
+			const map5 = new MaplairMap('map5', mapopts);
+			const map6 = new MaplairMap('map6', mapopts);
 
 			// CASE 1: no opacity set on any layers
 			// OSM Basemap

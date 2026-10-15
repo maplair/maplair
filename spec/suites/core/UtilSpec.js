@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {Util} from 'leaflet';
+import {Util} from 'maplair';
 import sinon from 'sinon';
 
 describe('Util', () => {

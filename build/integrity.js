@@ -11,23 +11,23 @@ const getIntegrity = path => new Promise((resolve) => {
 	});
 });
 
-const integrityUglified = await getIntegrity('leaflet.js');
-const integritySrc = await getIntegrity('leaflet-src.js');
-const integrityUglifiedGlobal = await getIntegrity('leaflet-global.js');
-const integritySrcGlobal = await getIntegrity('leaflet-global-src.js');
-const integrityCss = await getIntegrity('leaflet.css');
+const integrityUglified = await getIntegrity('maplair.js');
+const integritySrc = await getIntegrity('maplair-src.js');
+const integrityUglifiedGlobal = await getIntegrity('maplair-global.js');
+const integritySrcGlobal = await getIntegrity('maplair-global-src.js');
+const integrityCss = await getIntegrity('maplair.css');
 
 console.log(`Integrity hashes for ${pkg.version}:`);
-console.log(`dist/leaflet.js:            ${integrityUglified}`);
-console.log(`dist/leaflet-src.js:        ${integritySrc}`);
-console.log(`dist/leaflet-global.js:     ${integrityUglifiedGlobal}`);
-console.log(`dist/leaflet-global-src.js: ${integritySrcGlobal}`);
-console.log(`dist/leaflet.css:           ${integrityCss}`);
+console.log(`dist/maplair.js:            ${integrityUglified}`);
+console.log(`dist/maplair-src.js:        ${integritySrc}`);
+console.log(`dist/maplair-global.js:     ${integrityUglifiedGlobal}`);
+console.log(`dist/maplair-global-src.js: ${integritySrcGlobal}`);
+console.log(`dist/maplair.css:           ${integrityCss}`);
 
 let docConfig = readFileSync('docs/_config.yml', 'utf8');
 
 docConfig = docConfig
-	.replace(/latest_leaflet_version:.*/,  `latest_leaflet_version: ${pkg.version}`)
+	.replace(/latest_maplair_version:.*/,  `latest_maplair_version: ${pkg.version}`)
 	.replace(/integrity_hash_source:.*/,   `integrity_hash_source: "${integritySrc}"`)
 	.replace(/integrity_hash_uglified:.*/, `integrity_hash_uglified: "${integrityUglified}"`)
 	.replace(/integrity_hash_global_source:.*/,   `integrity_hash_global_source: "${integritySrcGlobal}"`)

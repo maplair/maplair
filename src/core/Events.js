@@ -15,7 +15,7 @@ import * as Util from './Util.js';
  * } );
  * ```
  *
- * Leaflet deals with event listeners by reference, so if you want to add a listener and then remove it, define it as a function:
+ * Maplair deals with event listeners by reference, so if you want to add a listener and then remove it, define it as a function:
  *
  * ```js
  * function onClick(e) { ... }
@@ -93,7 +93,7 @@ export class Evented extends Class {
 
 	// attach listener (without syntactic sugar now)
 	_on(type, fn, context, _once) {
-		// To be removed in leaflet 3
+		// To be removed in maplair 3
 		if (Evented.__REMOVED_EVENTS.includes(type)) {
 			console.error(`The event ${type} has been removed. Use the PointerEvent variant instead.`);
 		}

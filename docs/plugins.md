@@ -30,9 +30,9 @@ table.plugins th:hover {
 }
 </style>
 
-## Leaflet Plugins database
+## Maplair Plugins database
 
-While Leaflet is meant to be as lightweight as possible, and focuses on a core set of features, an easy way to extend its functionality is to use third-party plugins. Thanks to the awesome community behind Leaflet, there are literally hundreds of nice plugins to choose from.
+While Maplair is meant to be as lightweight as possible, and focuses on a core set of features, an easy way to extend its functionality is to use third-party plugins. Thanks to the awesome community behind Maplair, there are literally hundreds of nice plugins to choose from.
 
 ---
 
@@ -205,7 +205,7 @@ The following plugins provide new ways of displaying overlay data information.
 
 ### Markers & renderers
 
-These plugins provide new markers or news ways of converting abstract data into images in your screen. Leaflet users versed in GIS also know these as symbolizers.
+These plugins provide new markers or news ways of converting abstract data into images in your screen. Maplair users versed in GIS also know these as symbolizers.
 
 {% include plugin_category_table.html category="markers-renderers" %}
 
@@ -329,7 +329,7 @@ Show the geographical coordinates under the mouse cursor in different ways.
 
 ### Events
 
-These plugins extend Leaflet event handling.
+These plugins extend Maplair event handling.
 
 {% include plugin_category_table.html category="events" %}
 
@@ -344,15 +344,15 @@ Buttons, sliders, toolbars, sidebars, and panels.
 Print or export your map.
 
 <!--
-- Saving a Leaflet Map to a PNG Example using Javascript and PHP https://github.com/tegansnyder/Leaflet-Save-Map-to-PNG
-- Get a PNG from a Leaflet map and export it in PDF https://github.com/chrissom/leaflet-pdf
+- Saving a Maplair Map to a PNG Example using Javascript and PHP https://github.com/tegansnyder/Leaflet-Save-Map-to-PNG
+- Get a PNG from a Maplair map and export it in PDF https://github.com/chrissom/leaflet-pdf
 -->
 
 {% include plugin_category_table.html category="print-export" %}
 
 ### Geolocation
 
-Plugins that extend Leaflet's geolocation capabilities.
+Plugins that extend Maplair's geolocation capabilities.
 
 {% include plugin_category_table.html category="geolocation" %}
 
@@ -390,13 +390,13 @@ Plugin developers: please keep future plugins in individual repositories.
 
 ### Frameworks & build systems
 
-Ease your development integrating Leaflet into a development framework or automating some of the javascript/CSS work for complex applications.
+Ease your development integrating Maplair into a development framework or automating some of the javascript/CSS work for complex applications.
 
 {% include plugin_category_table.html category="frameworks-build-systems" %}
 
 ### 3<sup>rd</sup> party integration
 
-The following plugins integrate Leaflet into third party services or websites.
+The following plugins integrate Maplair into third party services or websites.
 
 {% include plugin_category_table.html category="3rd-party-integration" %}
 
@@ -404,7 +404,7 @@ The following plugins integrate Leaflet into third party services or websites.
 
 ## Develop your own
 
-Leaflet keeps it simple. If you can think of a feature that is not required by all Leaflet users, and you can write the JavaScript code in a reusable way, you've got yourself a Leaflet plugin already.
+Maplair keeps it simple. If you can think of a feature that is not required by all Maplair users, and you can write the JavaScript code in a reusable way, you've got yourself a Maplair plugin already.
 
 There are no hard requirements on how to create your own plugin, but all developers are encouraged to read the recommendations in the [plugin guide](https://github.com/Leaflet/Leaflet/blob/main/PLUGIN-GUIDE.md).
 

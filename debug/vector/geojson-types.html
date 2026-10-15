@@ -2,20 +2,20 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<title>Leaflet debug page - GeoJSON</title>
+		<title>Maplair debug page - GeoJSON</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
-		<link rel="stylesheet" href="../../dist/leaflet.css" />
+		<link rel="stylesheet" href="../../dist/maplair.css" />
 		<script type="importmap">
 			{
 				"imports": {
-					"leaflet": "../../dist/leaflet-src.js"
+					"maplair": "../../dist/maplair-src.js"
 				}
 			}
 		</script>
 	</head>
 	<body>
 		<script type="module">
-			import {GeoJSON, LeafletMap, TileLayer} from 'leaflet';
+			import {GeoJSON, MaplairMap, TileLayer} from 'maplair';
 
 			const features = [
 				{
@@ -172,7 +172,7 @@
 				div.style.width = '800px';
 				div.style.height = '600px';
 				document.body.appendChild(div);
-				const map = new LeafletMap(div).setView([0.0, 0.0], 4);
+				const map = new MaplairMap(div).setView([0.0, 0.0], 4);
 				new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 				const geojson = new GeoJSON(feature).addTo(map)
 				map.fitBounds(geojson.getBounds());

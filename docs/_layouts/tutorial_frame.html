@@ -5,18 +5,18 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	{% capture title %}{% if page.title %}{{ page.title }} - {% elsif post.title %}{{ post.title }} - {% endif %}{% endcapture %}
-	<title>{{ title }}Leaflet</title>
+	<title>{{ title }}Maplair</title>
 	{% capture root %}{% if page.root %}{{ page.root }}{% else %}{{ layout.root }}{% endif %}{% endcapture %}
 	<link rel="shortcut icon" type="image/x-icon" href="{{ root }}docs/images/favicon.ico" />
 
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_leaflet_version}}/dist/leaflet.css" integrity="{{site.integrity_hash_css}}" crossorigin=""/>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_maplair_version}}/dist/maplair.css" integrity="{{site.integrity_hash_css}}" crossorigin=""/>
 	<script type="importmap">
 		{
 			"imports": {
-				"leaflet": "https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_leaflet_version}}/dist/leaflet.js"
+				"maplair": "https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_maplair_version}}/dist/maplair.js"
 			},
 			"integrity": {
-				"https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_leaflet_version}}/dist/leaflet.js": "{{site.integrity_hash_uglified}}"
+				"https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_maplair_version}}/dist/maplair.js": "{{site.integrity_hash_uglified}}"
 			}
 		}
 	</script>
@@ -26,7 +26,7 @@
 			height: 100%;
 			margin: 0;
 		}
-		.leaflet-container {
+		.maplair-container {
 			height: 400px;
 			width: 600px;
 			max-width: 100%;

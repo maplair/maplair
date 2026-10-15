@@ -12,7 +12,7 @@ import {PosAnimation} from '../dom/PosAnimation.js';
 import * as PointerEvents from '../dom/DomEvent.PointerEvents.js';
 
 /*
- * @class LeafletMap
+ * @class MaplairMap
  * @inherits Evented
  *
  * The central class of the API — it is used to create a map on a page and manipulate it.
@@ -21,7 +21,7 @@ import * as PointerEvents from '../dom/DomEvent.PointerEvents.js';
  *
  * ```js
  * // initialize the map on the "map" div with a given center and zoom
- * const map = new LeafletMap('map', {
+ * const map = new MaplairMap('map', {
  * 	center: [51.505, -0.09],
  * 	zoom: 13
  * });
@@ -30,14 +30,14 @@ import * as PointerEvents from '../dom/DomEvent.PointerEvents.js';
  */
 
 // @section
-// @constructor LeafletMap(id: String, options?: LeafletMap options)
+// @constructor MaplairMap(id: String, options?: MaplairMap options)
 // Instantiates a map object given the DOM ID of a `<div>` element
-// and optionally an object literal with `LeafletMap options`.
+// and optionally an object literal with `MaplairMap options`.
 //
 // @alternative
-// @constructor LeafletMap(el: HTMLElement, options?: LeafletMap options)
+// @constructor MaplairMap(el: HTMLElement, options?: MaplairMap options)
 // Instantiates a map object given an instance of a `<div>` HTML element
-// and optionally an object literal with `LeafletMap options`.
+// and optionally an object literal with `MaplairMap options`.
 //
 // @alternative
 // @constructor Map(id: String, options?: Map options)
@@ -48,7 +48,7 @@ import * as PointerEvents from '../dom/DomEvent.PointerEvents.js';
 // @constructor Map(el: HTMLElement, options?: Map options)
 // Instantiates a map object given an instance of a `<div>` HTML element
 // and optionally an object literal with `Map options`.
-export class LeafletMap extends Evented {
+export class MaplairMap extends Evented {
 
 	static {
 		this.setDefaultOptions({
@@ -355,7 +355,7 @@ export class LeafletMap extends Evented {
 
 		// animate pan unless browser prefers reduced motion or animate: false specified
 		if (!Browser.reducedMotion && options.animate !== false) {
-			this._mapPane.classList.add('leaflet-pan-anim');
+			this._mapPane.classList.add('maplair-pan-anim');
 
 			const newPos = this._getMapPanePos().subtract(offset).round();
 			this._panAnim.run(this._mapPane, newPos, options.duration || 0.25, options.easeLinearity);
@@ -683,7 +683,7 @@ export class LeafletMap extends Evented {
 	}
 
 	_handleGeolocationError(error) {
-		if (!this._container._leaflet_id) { return; }
+		if (!this._container._maplair_id) { return; }
 
 		const c = error.code,
 		message = error.message ||
@@ -704,7 +704,7 @@ export class LeafletMap extends Evented {
 	}
 
 	_handleGeolocationResponse(pos) {
-		if (!this._container._leaflet_id) { return; }
+		if (!this._container._maplair_id) { return; }
 
 		const lat = pos.coords.latitude,
 		lng = pos.coords.longitude,
@@ -760,11 +760,11 @@ export class LeafletMap extends Evented {
 		this._initEvents(true);
 		if (this.options.maxBounds) { this.off('moveend', this._panInsideMaxBounds); }
 
-		if (this._containerId !== this._container._leaflet_id) {
+		if (this._containerId !== this._container._maplair_id) {
 			throw new Error('Map container is being reused by another instance');
 		}
 
-		delete this._container._leaflet_id;
+		delete this._container._maplair_id;
 		delete this._containerId;
 
 		if (this._locationWatchId !== undefined) {
@@ -820,7 +820,7 @@ export class LeafletMap extends Evented {
 	// then returns it. The pane is created as a child of `container`, or
 	// as a child of the main map pane if not set.
 	createPane(name, container) {
-		const className = `leaflet-pane${name ? ` leaflet-${name.replace('Pane', '')}-pane` : ''}`,
+		const className = `maplair-pane${name ? ` maplair-${name.replace('Pane', '')}-pane` : ''}`,
 		pane = DomUtil.create('div', className, container || this._mapPane);
 
 		if (name) {
@@ -1104,7 +1104,7 @@ export class LeafletMap extends Evented {
 
 		if (!container) {
 			throw new Error('Map container not found.');
-		} else if (container._leaflet_id) {
+		} else if (container._maplair_id) {
 			throw new Error('Map container is already initialized.');
 		}
 
@@ -1119,11 +1119,11 @@ export class LeafletMap extends Evented {
 
 		this._fadeAnimated = this.options.fadeAnimation;
 
-		const classes = ['leaflet-container', 'leaflet-touch'];
+		const classes = ['maplair-container', 'maplair-touch'];
 
-		if (Browser.retina) { classes.push('leaflet-retina'); }
-		if (Browser.safari) { classes.push('leaflet-safari'); }
-		if (this._fadeAnimated) { classes.push('leaflet-fade-anim'); }
+		if (Browser.retina) { classes.push('maplair-retina'); }
+		if (Browser.safari) { classes.push('maplair-safari'); }
+		if (this._fadeAnimated) { classes.push('maplair-fade-anim'); }
 
 		container.classList.add(...classes);
 
@@ -1179,8 +1179,8 @@ export class LeafletMap extends Evented {
 		this.createPane('popupPane');
 
 		if (!this.options.markerZoomAnimation) {
-			panes.markerPane.classList.add('leaflet-zoom-hide');
-			panes.shadowPane.classList.add('leaflet-zoom-hide');
+			panes.markerPane.classList.add('maplair-zoom-hide');
+			panes.shadowPane.classList.add('maplair-zoom-hide');
 		}
 	}
 
@@ -1402,14 +1402,14 @@ export class LeafletMap extends Evented {
 
 	_isClickDisabled(el) {
 		while (el && el !== this._container) {
-			if (el['_leaflet_disable_click'] || !el.parentNode) { return true; }
+			if (el['_maplair_disable_click'] || !el.parentNode) { return true; }
 			el = el.parentNode;
 		}
 	}
 
 	_handleDOMEvent(e) {
 		const el = e.target ?? e.srcElement;
-		if (!this._loaded || el['_leaflet_disable_events'] || e.type === 'click' && this._isClickDisabled(el)) {
+		if (!this._loaded || el['_maplair_disable_events'] || e.type === 'click' && this._isClickDisabled(el)) {
 			return;
 		}
 
@@ -1467,7 +1467,7 @@ export class LeafletMap extends Evented {
 		for (const t of targets) {
 			t.fire(type, data, true);
 			if (data.originalEvent._stopped ||
-				(t.options.bubblingPointerEvents === false && LeafletMap._pointerEvents.includes(type))) { return; }
+				(t.options.bubblingPointerEvents === false && MaplairMap._pointerEvents.includes(type))) { return; }
 		}
 	}
 
@@ -1612,7 +1612,7 @@ export class LeafletMap extends Evented {
 	}
 
 	_onPanTransitionEnd() {
-		this._mapPane.classList.remove('leaflet-pan-anim');
+		this._mapPane.classList.remove('maplair-pan-anim');
 		this.fire('moveend');
 	}
 
@@ -1629,7 +1629,7 @@ export class LeafletMap extends Evented {
 	}
 
 	_createAnimProxy() {
-		this._proxy = DomUtil.create('div', 'leaflet-proxy leaflet-zoom-animated');
+		this._proxy = DomUtil.create('div', 'maplair-proxy maplair-zoom-animated');
 		this._panes.mapPane.appendChild(this._proxy);
 
 		this.on('zoomanim', this._animateProxyZoom, this);
@@ -1687,7 +1687,7 @@ export class LeafletMap extends Evented {
 	}
 
 	_nothingToAnimate() {
-		return !this._container.getElementsByClassName('leaflet-zoom-animated').length;
+		return !this._container.getElementsByClassName('maplair-zoom-animated').length;
 	}
 
 	_tryAnimatedZoom(center, zoom, options) {
@@ -1727,7 +1727,7 @@ export class LeafletMap extends Evented {
 			this._animateToCenter = center;
 			this._animateToZoom = zoom;
 
-			this._mapPane.classList.add('leaflet-zoom-anim');
+			this._mapPane.classList.add('maplair-zoom-anim');
 		}
 
 		// @section Other Events
@@ -1752,7 +1752,7 @@ export class LeafletMap extends Evented {
 	_onZoomTransitionEnd() {
 		if (!this._animatingZoom) { return; }
 
-		this._mapPane?.classList.remove('leaflet-zoom-anim');
+		this._mapPane?.classList.remove('maplair-zoom-anim');
 
 		this._animatingZoom = false;
 
@@ -1769,4 +1769,4 @@ export class LeafletMap extends Evented {
 	}
 }
 
-export const Map = LeafletMap;
+export const Map = MaplairMap;

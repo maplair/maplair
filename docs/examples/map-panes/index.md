@@ -5,7 +5,7 @@ title: Working with Map Panes
 
 ## What Are Panes?
 
-In Leaflet, map panes group layers together implicitly, without the developer knowing about it. This grouping allows web browsers to work with several layers at once in a more efficient way than working with layers individually.
+In Maplair, map panes group layers together implicitly, without the developer knowing about it. This grouping allows web browsers to work with several layers at once in a more efficient way than working with layers individually.
 
 Map panes use the [z-index CSS property](https://developer.mozilla.org/docs/Web/CSS/z-index) to always show some layers on top of others. The [default order](/reference.html#map-pane) is:
 
@@ -15,7 +15,7 @@ Map panes use the [z-index CSS property](https://developer.mozilla.org/docs/Web/
 * `Marker` icons
 * `Popup`s
 
-This is why, in Leaflet maps, popups always show "on top" of other layers, markers always show on top of tile layers, etc.
+This is why, in Maplair maps, popups always show "on top" of other layers, markers always show on top of tile layers, etc.
 
 Custom map panes offer the capability to customize this order.
 
@@ -50,7 +50,7 @@ Labels on top of basemap
 </div>
 </div>
 
-If we create a Leaflet map with these two tile layers, any marker or polygon will show on top of both, but having the labels on top [looks much nicer](http://blog.cartodb.com/let-your-labels-shine/). How can we do that?
+If we create a Maplair map with these two tile layers, any marker or polygon will show on top of both, but having the labels on top [looks much nicer](http://blog.cartodb.com/let-your-labels-shine/). How can we do that?
 
 {% include frame.html url="example.html" %}
 
@@ -61,7 +61,7 @@ We can use the defaults for the basemap tiles and some overlays like GeoJSON lay
 Custom map panes are created on a per-map basis, so first create a map instance and the pane:
 
 
-    const map = new LeafletMap('map');
+    const map = new MaplairMap('map');
     map.createPane('labels');
 
 

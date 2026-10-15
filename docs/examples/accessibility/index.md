@@ -9,12 +9,12 @@ title: Accessible Maps
 is the inclusive practice of ensuring no barriers exist
 that would prevent interactions or information access.
 
-This guide to Leaflet accessibility can help you create maps that are usable
+This guide to Maplair accessibility can help you create maps that are usable
 to persons of a wide range of abilities.
 
 ### Preserve useful defaults
 
-Leaflet comes with a set of useful defaults.
+Maplair comes with a set of useful defaults.
 
 The map container and markers are keyboard operable by default,
 this enables users who are unable to use a pointing device.
@@ -30,7 +30,7 @@ or
 
 <pre><code class="javascript">const marker = new Marker([50.4501, 30.5234],
   {alt: 'Kyiv'}).addTo(map) // "Kyiv" is the <a href="https://www.w3.org/TR/accname-1.1/#dfn-accessible-name"><em>accessible name</em></a> of this marker
-  .bindPopup('Kyiv, Ukraine is the birthplace of Leaflet!');</code></pre>
+  .bindPopup('Kyiv, Ukraine is the birthplace of Maplair!');</code></pre>
 
 Resulting in markers that are discernible to
 [screen reader](https://en.wikipedia.org/wiki/Screen_reader)
@@ -95,7 +95,7 @@ If you find an accessibility issue in a plugin,
 please report it to the plugin's author.
 
 An example of a plugin that can enhance the experience for your users is the
-[Leaflet.fullscreen](https://github.com/Leaflet/Leaflet.fullscreen)
+[Maplair.fullscreen](https://github.com/Leaflet/Leaflet.fullscreen)
 plugin.
 By allowing users to enter into fullscreen mode,
 they can explore the map in isolation,
@@ -104,9 +104,9 @@ this is especially helpful to keyboard and screen reader users
 (as they are less likely to unintentionally navigate outside the map),
 but also mobile users in general.
 
-### Use an up-to-date version of Leaflet
+### Use an up-to-date version of Maplair
 
-Leaflet is constantly improving accessibility.
+Maplair is constantly improving accessibility.
 Use the latest stable
 [version](/download.html)
 for the greatest features!

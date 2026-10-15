@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {CircleMarker, FeatureGroup, LayerGroup, LeafletMap, Marker, Polygon, Polyline, Rectangle, Tooltip} from 'leaflet';
+import {CircleMarker, FeatureGroup, LayerGroup, MaplairMap, Marker, Polygon, Polyline, Rectangle, Tooltip} from 'maplair';
 import Hand from 'prosthetic-hand';
 import sinon from 'sinon';
 import UIEventSimulator from 'ui-event-simulator';
@@ -11,7 +11,7 @@ describe('Tooltip', () => {
 
 	beforeEach(() => {
 		container = createContainer();
-		map = new LeafletMap(container);
+		map = new MaplairMap(container);
 		map.setView(center, 6);
 	});
 
@@ -181,16 +181,16 @@ describe('Tooltip', () => {
 		expect(spy.calledOnce).to.be.true;
 	});
 
-	it('has class leaflet-interactive', () => {
+	it('has class maplair-interactive', () => {
 		const layer = new Marker(center).addTo(map);
 		layer.bindTooltip('Tooltip', {permanent: true, interactive: true});
-		expect(layer._tooltip._container.classList.contains('leaflet-interactive')).to.be.true;
+		expect(layer._tooltip._container.classList.contains('maplair-interactive')).to.be.true;
 	});
 
-	it('has not class leaflet-interactive', () => {
+	it('has not class maplair-interactive', () => {
 		const layer = new Marker(center).addTo(map);
 		layer.bindTooltip('Tooltip', {permanent: true});
-		expect(layer._tooltip._container.classList.contains('leaflet-interactive')).to.be.false;
+		expect(layer._tooltip._container.classList.contains('maplair-interactive')).to.be.false;
 	});
 
 	it('can be forced on left direction', () => {
@@ -588,12 +588,12 @@ describe('Tooltip', () => {
 			.bindTooltip('Tooltip that will be unbinded')
 			.openTooltip();
 
-		expect(marker.getElement()._leaflet_focus_handler).to.be.not.undefined;
+		expect(marker.getElement()._maplair_focus_handler).to.be.not.undefined;
 
 		marker.unbindTooltip();
 
 		expect(() => UIEventSimulator.fire('focus', marker.getElement())).to.not.throw();
-		expect(marker.getElement()._leaflet_focus_handler).to.be.undefined;
+		expect(marker.getElement()._maplair_focus_handler).to.be.undefined;
 	});
 
 	it('removes focus listeners after unbinding tooltip from FeatureGroup', () => {
@@ -605,11 +605,11 @@ describe('Tooltip', () => {
 			.bindTooltip('Tooltip that will be unbinded in two seconds')
 			.openTooltip();
 
-		expect(marker.getElement()._leaflet_focus_handler).to.be.not.undefined;
+		expect(marker.getElement()._maplair_focus_handler).to.be.not.undefined;
 
 		layergroup.unbindTooltip();
 
 		expect(() => UIEventSimulator.fire('focus', marker.getElement())).to.not.throw();
-		expect(marker.getElement()._leaflet_focus_handler).to.be.undefined;
+		expect(marker.getElement()._maplair_focus_handler).to.be.undefined;
 	});
 });

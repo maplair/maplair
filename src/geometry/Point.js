@@ -11,14 +11,14 @@ import {formatNum} from '../core/Util.js';
  * const point = new Point(200, 300);
  * ```
  *
- * All Leaflet methods and options that accept `Point` objects also accept them in a simple Array form (unless noted otherwise), so these lines are equivalent:
+ * All Maplair methods and options that accept `Point` objects also accept them in a simple Array form (unless noted otherwise), so these lines are equivalent:
  *
  * ```js
  * map.panBy([200, 300]);
  * map.panBy(new Point(200, 300));
  * ```
  *
- * Note that `Point` does not inherit from Leaflet's `Class` object,
+ * Note that `Point` does not inherit from Maplair's `Class` object,
  * which means new classes can't inherit from it, and new methods
  * can't be added to it with the `include` function.
  */

@@ -1,7 +1,7 @@
 /*
  * @namespace Util
  *
- * Various utility functions, used by Leaflet internally.
+ * Various utility functions, used by Maplair internally.
  */
 
 // @property lastId: Number
@@ -11,10 +11,10 @@ export let lastId = 0;
 // @function stamp(obj: Object): Number
 // Returns the unique ID of an object, assigning it one if it doesn't have it.
 export function stamp(obj) {
-	if (!('_leaflet_id' in obj)) {
-		obj['_leaflet_id'] = ++lastId;
+	if (!('_maplair_id' in obj)) {
+		obj['_maplair_id'] = ++lastId;
 	}
-	return obj._leaflet_id;
+	return obj._maplair_id;
 }
 
 // @function throttle(fn: Function, time: Number, context: Object): Function

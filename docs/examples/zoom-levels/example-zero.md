@@ -3,9 +3,9 @@ layout: tutorial_frame
 title: Zoom Level Zero Example
 ---
 <script type="module">
-	import {LeafletMap, TileLayer} from 'leaflet';
+	import {MaplairMap, TileLayer} from 'maplair';
 
-	const map = new LeafletMap('map', {
+	const map = new MaplairMap('map', {
 		minZoom: 0,
 		maxZoom: 0
 	});

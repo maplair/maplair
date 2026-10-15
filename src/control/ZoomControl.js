@@ -1,6 +1,6 @@
 
 import {Control} from './Control.js';
-import {LeafletMap} from '../map/Map.js';
+import {MaplairMap} from '../map/Map.js';
 import * as DomUtil from '../dom/DomUtil.js';
 import * as DomEvent from '../dom/DomEvent.js';
 
@@ -44,8 +44,8 @@ export class ZoomControl extends Control {
 	}
 
 	onAdd(map) {
-		const zoomName = 'leaflet-control-zoom',
-		container = DomUtil.create('div', `${zoomName} leaflet-bar`),
+		const zoomName = 'maplair-control-zoom',
+		container = DomUtil.create('div', `${zoomName} maplair-bar`),
 		options = this.options;
 
 		this._zoomInButton  = this._createButton(options.zoomInText, options.zoomInTitle,
@@ -109,7 +109,7 @@ export class ZoomControl extends Control {
 
 	_updateDisabled() {
 		const map = this._map,
-		className = 'leaflet-disabled';
+		className = 'maplair-disabled';
 
 		this._zoomInButton.classList.remove(className);
 		this._zoomOutButton.classList.remove(className);
@@ -127,15 +127,15 @@ export class ZoomControl extends Control {
 	}
 }
 
-// @namespace LeafletMap
+// @namespace MaplairMap
 // @section Control options
 // @option zoomControl: Boolean = true
 // Whether a [zoom control](#control-zoom) is added to the map by default.
-LeafletMap.mergeOptions({
+MaplairMap.mergeOptions({
 	zoomControl: true
 });
 
-LeafletMap.addInitHook(function () {
+MaplairMap.addInitHook(function () {
 	if (this.options.zoomControl) {
 		// @section Controls
 		// @property zoomControl: ZoomControl

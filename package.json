@@ -1,5 +1,5 @@
 {
-  "name": "leaflet",
+  "name": "maplair",
   "version": "2.0.0-alpha.1",
   "homepage": "https://leafletjs.com/",
   "description": "JavaScript library for mobile-friendly interactive maps",
@@ -34,14 +34,14 @@
   },
   "type": "module",
   "exports": {
-    ".": "./dist/leaflet-src.js",
-    "./styles.css": "./dist/leaflet.css"
+    ".": "./dist/maplair-src.js",
+    "./styles.css": "./dist/maplair.css"
   },
-  "style": "dist/leaflet.css",
+  "style": "dist/maplair.css",
   "files": [
     "dist",
     "src",
-    "!dist/leaflet.zip",
+    "!dist/maplair.zip",
     "!*.leafdoc",
     "CHANGELOG.md"
   ],

@@ -2,14 +2,14 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>Leaflet debug page - Tile Opacity</title>
+		<title>Maplair debug page - Tile Opacity</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
-		<link rel="stylesheet" href="../../dist/leaflet.css" />
+		<link rel="stylesheet" href="../../dist/maplair.css" />
 		<link rel="stylesheet" href="../css/screen.css" />
 		<script type="importmap">
 			{
 				"imports": {
-					"leaflet": "../../dist/leaflet-src.js"
+					"maplair": "../../dist/maplair-src.js"
 				}
 			}
 		</script>
@@ -17,9 +17,9 @@
 	<body>
 		<div id="map"></div>
 		<script type="module">
-			import {LeafletMap, WMSTileLayer, LatLngBounds, LatLng} from 'leaflet';
+			import {MaplairMap, WMSTileLayer, LatLngBounds, LatLng} from 'maplair';
 
-			const map = new LeafletMap('map');
+			const map = new MaplairMap('map');
 			const nexrad = new WMSTileLayer('https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi', {
 				layers: 'nexrad-n0r-900913',
 				format: 'image/png',

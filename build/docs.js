@@ -1,7 +1,7 @@
 import LeafDoc from 'leafdoc';
 import {writeFileSync} from 'node:fs';
 
-console.log('Building Leaflet documentation with Leafdoc ...');
+console.log('Building Maplair documentation with Leafdoc ...');
 
 const doc = new LeafDoc({
 	templateDir: 'build/leafdoc-templates',
@@ -13,7 +13,7 @@ const doc = new LeafDoc({
 // too proud of the little leaves around the code.
 // doc.setLeadingChar('@');
 
-// Leaflet uses a couple of non-standard documentable things. They are not
+// Maplair uses a couple of non-standard documentable things. They are not
 // important enough to be classes/namespaces of their own, and should
 // just be listed in a table like the rest of documentables:
 doc.registerDocumentable('pane', 'Map panes');

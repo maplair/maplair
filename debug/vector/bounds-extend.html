@@ -2,14 +2,14 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<title>Leaflet debug page - Bounds Extend</title>
+		<title>Maplair debug page - Bounds Extend</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
-		<link rel="stylesheet" href="../../dist/leaflet.css" />
+		<link rel="stylesheet" href="../../dist/maplair.css" />
 		<link rel="stylesheet" href="../css/screen.css" />
 		<script type="importmap">
 			{
 				"imports": {
-					"leaflet": "../../dist/leaflet-src.js"
+					"maplair": "../../dist/maplair-src.js"
 				}
 			}
 		</script>
@@ -19,7 +19,7 @@
 		<button type="button" id="extendBounds">Extend the bounds of the center rectangle with the upper right rectangle</button>
 		<button type="button" id="extendLatLng">Extend the bounds of the center rectangle with the lower left marker</button>
 		<script type="module">
-			import {TileLayer, LatLngBounds, LatLng, LeafletMap, Rectangle, Marker} from 'leaflet';
+			import {TileLayer, LatLngBounds, LatLng, MaplairMap, Rectangle, Marker} from 'maplair';
 
 			const bounds1 = new LatLngBounds(
 				new LatLng(54.559322, -5.767822),
@@ -34,7 +34,7 @@
 			let bounds3 = null;
 
 			const osm = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 18});
-			const map = new LeafletMap('map', {
+			const map = new MaplairMap('map', {
 				layers: [osm],
 				center: bounds1.getCenter(),
 				zoom: 7

@@ -1,5 +1,5 @@
 ﻿import {expect} from 'chai';
-import {Marker, FeatureGroup, LayerGroup, Util} from 'leaflet';
+import {Marker, FeatureGroup, LayerGroup, Util} from 'maplair';
 
 describe('FeatureGroup', () => {
 	describe('#_propagateEvent', () => {

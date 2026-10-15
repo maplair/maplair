@@ -34,7 +34,7 @@ event parent.
 @miniclass KeyboardEvent (Event objects)
 @inherits Event
 @property originalEvent: DOMEvent
-The original [DOM `KeyboardEvent`](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent) that triggered this Leaflet event.
+The original [DOM `KeyboardEvent`](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent) that triggered this Maplair event.
 
 @miniclass PointerEvent (Event objects)
 @inherits Event
@@ -45,7 +45,7 @@ Pixel coordinates of the point where the pointer event occurred relative to the 
 @property containerPoint: Point
 Pixel coordinates of the point where the pointer event occurred relative to the map сontainer.
 @property originalEvent: DOMEvent
-The original [DOM `MouseEvent`](https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent) or [DOM `PointerEvent`](https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent) that triggered this Leaflet event.
+The original [DOM `MouseEvent`](https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent) or [DOM `PointerEvent`](https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent) that triggered this Maplair event.
 
 @miniclass LocationEvent (Event objects)
 @inherits Event

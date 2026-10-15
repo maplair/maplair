@@ -5,9 +5,9 @@ title: GeoJSON Example
 <script src="sample-geojson.js" type="text/javascript"></script>
 
 <script type="module">
-	import {LeafletMap, TileLayer, Marker, Icon, GeoJSON, CircleMarker} from 'leaflet';
+	import {MaplairMap, TileLayer, Marker, Icon, GeoJSON, CircleMarker} from 'maplair';
 
-	const map = new LeafletMap('map').setView([39.74739, -105], 13);
+	const map = new MaplairMap('map').setView([39.74739, -105], 13);
 
 	const tiles = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		maxZoom: 19,
@@ -22,7 +22,7 @@ title: GeoJSON Example
 	});
 
 	function onEachFeature(feature, layer) {
-		let popupContent = `<p>I started out as a GeoJSON ${feature.geometry.type}, but now I'm a Leaflet vector!</p>`;
+		let popupContent = `<p>I started out as a GeoJSON ${feature.geometry.type}, but now I'm a Maplair vector!</p>`;
 
 		if (feature.properties && feature.properties.popupContent) {
 			popupContent += feature.properties.popupContent;

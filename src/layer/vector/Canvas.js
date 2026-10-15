@@ -17,7 +17,7 @@ const DASH_SEPARATOR_RE = /[, ]+/;
  * Use Canvas by default for all paths in the map:
  *
  * ```js
- * const map = new LeafletMap('map', {
+ * const map = new MaplairMap('map', {
  * 	renderer: new Canvas()
  * });
  * ```
@@ -25,7 +25,7 @@ const DASH_SEPARATOR_RE = /[, ]+/;
  * Use a Canvas renderer with extra padding for specific vector geometries:
  *
  * ```js
- * const map = new LeafletMap('map');
+ * const map = new MaplairMap('map');
  * const myRenderer = new Canvas({ padding: 0.5 });
  * const line = new Polyline( coordinates, { renderer: myRenderer } );
  * const circle =  new Circle( center, { renderer: myRenderer, radius: 100 } );
@@ -77,7 +77,7 @@ export class Canvas extends Renderer {
 		DomEvent.on(container, 'pointermove', this._onPointerMove, this);
 		DomEvent.on(container, 'click dblclick pointerdown pointerup contextmenu', this._onClick, this);
 		DomEvent.on(container, 'pointerout', this._handlePointerOut, this);
-		container['_leaflet_disable_events'] = true;
+		container['_maplair_disable_events'] = true;
 
 		this._ctx = container.getContext('2d');
 	}
@@ -367,7 +367,7 @@ export class Canvas extends Renderer {
 		const layer = this._hoveredLayer;
 		if (layer) {
 			// if we're leaving the layer, fire pointerout
-			this._container.classList.remove('leaflet-interactive');
+			this._container.classList.remove('maplair-interactive');
 			this._fireEvent([layer], e, 'pointerout');
 			this._hoveredLayer = null;
 			this._pointerHoverThrottled = false;
@@ -392,7 +392,7 @@ export class Canvas extends Renderer {
 			this._handlePointerOut(e);
 
 			if (candidateHoveredLayer) {
-				this._container.classList.add('leaflet-interactive'); // change cursor
+				this._container.classList.add('maplair-interactive'); // change cursor
 				this._fireEvent([candidateHoveredLayer], e, 'pointerover');
 				this._hoveredLayer = candidateHoveredLayer;
 			}

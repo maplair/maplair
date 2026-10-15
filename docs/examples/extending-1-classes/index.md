@@ -1,21 +1,21 @@
 ---
 layout: tutorial_v2
-title: Extending Leaflet, Class Theory
+title: Extending Maplair, Class Theory
 ---
 
-## Extending Leaflet
+## Extending Maplair
 
-Leaflet has literally hundreds of plugins. These expand the capabilities of Leaflet: sometimes in a generic way, sometimes in a very use-case-specific way. Part of the reason there are so many plugins is that Leaflet is easy to extend. This tutorial will cover the most commonly used ways of doing so.
+Maplair has literally hundreds of plugins. These expand the capabilities of Maplair: sometimes in a generic way, sometimes in a very use-case-specific way. Part of the reason there are so many plugins is that Maplair is easy to extend. This tutorial will cover the most commonly used ways of doing so.
 
 Please note that this tutorial assumes you have a good grasp of [JavaScript](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting), and especially [JavaScript classes](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_classes).
 
-## Leaflet architecture
+## Maplair architecture
 
-Let's have a look at a simplified UML Class diagram for Leaflet. There are more than 60 classes, so the diagram is a bit big. Luckily we can make a zoomable image with an `ImageOverlay`:
+Let's have a look at a simplified UML Class diagram for Maplair. There are more than 60 classes, so the diagram is a bit big. Luckily we can make a zoomable image with an `ImageOverlay`:
 
 {% include frame.html url="class-diagram.html" %}
 
-From a technical point of view, Leaflet can be extended in different ways:
+From a technical point of view, Maplair can be extended in different ways:
 
 * The most common: creating a new subclass of `Layer`, `Handler` or `Control`.
 	* Layers move when the map is moved/zoomed
@@ -24,15 +24,15 @@ From a technical point of view, Leaflet can be extended in different ways:
 * Including more, or replacing functionality (methods, fields) of an existing class with `Class.include()`
 * Using `Class.addInitHook()` to run additional constructor code.
 
-## Extending Leaflet Classes
+## Extending Maplair Classes
 
 JavaScript is a bit of a weird language. It's not really object-oriented in the traditional sense, but handles inheritance using a [prototype chain](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain). Only at a later point during its lifetime [syntax was added](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes) to allow more 'class-like' inheritance.
 
-Because Leaflet was created before any standardized class syntax existed, it comes with its own implementation for classes in the form of a base class called `Class`. Almost all classes in Leaflet extend from `Class`, as well as most classes you'll find in plugins. It also contains various utility methods to further modify class behavior.
+Because Maplair was created before any standardized class syntax existed, it comes with its own implementation for classes in the form of a base class called `Class`. Almost all classes in Maplair extend from `Class`, as well as most classes you'll find in plugins. It also contains various utility methods to further modify class behavior.
 
 ### Creating a subclass
 
-`Class`, or other built-in Leaflet classes derived from it (such as `Layer`, `Handler`, `Control`, etc.), can be extended in the same manner as any other JavaScript class, by using the [`extends`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/extends) keyword. However, unlike regular JavaScript classes, Leaflet classes do not support the [`constructor()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/constructor) method. Instead, constructor logic should go into a special `initialize()` method to preserve backwards compatibility with older versions of Leaflet:
+`Class`, or other built-in Maplair classes derived from it (such as `Layer`, `Handler`, `Control`, etc.), can be extended in the same manner as any other JavaScript class, by using the [`extends`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/extends) keyword. However, unlike regular JavaScript classes, Maplair classes do not support the [`constructor()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/constructor) method. Instead, constructor logic should go into a special `initialize()` method to preserve backwards compatibility with older versions of Maplair:
 
 
 ```js
@@ -46,7 +46,7 @@ class RotateMarker extends Marker {
 
 ### Naming conventions
 
-When creating Leaflet classes, adhere to these conventions:
+When creating Maplair classes, adhere to these conventions:
 
 * Class names should be in `UpperCamelCase`.
 * Method and property names should be in `lowerCamelCase`.
@@ -98,7 +98,7 @@ console.log(cube.options.depth); // Outputs "1"
 
 ### `Class.include()`
 
-Leaflet provides `.include()` to add or override methods in existing classes. This is useful for monkey-patching or adding functionality to base classes:
+Maplair provides `.include()` to add or override methods in existing classes. This is useful for monkey-patching or adding functionality to base classes:
 
 ```js
 class MyLayer extends Layer {

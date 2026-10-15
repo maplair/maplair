@@ -1,11 +1,11 @@
 ---
 layout: tutorial_v2
-title: Using GeoJSON with Leaflet
+title: Using GeoJSON with Maplair
 ---
 
-<h2>Using GeoJSON with Leaflet</h2>
+<h2>Using GeoJSON with Maplair</h2>
 
-<p>GeoJSON is a very popular data format among many GIS technologies and services — it's simple, lightweight, straightforward, and Leaflet is quite good at handling it. In this example, you'll learn how to create and interact with map vectors created from <a href="https://tools.ietf.org/html/rfc7946">GeoJSON</a> objects.</p>
+<p>GeoJSON is a very popular data format among many GIS technologies and services — it's simple, lightweight, straightforward, and Maplair is quite good at handling it. In this example, you'll learn how to create and interact with map vectors created from <a href="https://tools.ietf.org/html/rfc7946">GeoJSON</a> objects.</p>
 
 {% include frame.html url="example.html" %}
 
@@ -15,7 +15,7 @@ title: Using GeoJSON with Leaflet
 
 <blockquote>GeoJSON is a format for encoding a variety of geographic data structures […]. A GeoJSON object may represent a region of space (a Geometry), a spatially bounded entity (a Feature), or a list of Features (a FeatureCollection). GeoJSON supports the following geometry types: Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon, and GeometryCollection. Features in GeoJSON contain a Geometry object and additional properties, and a FeatureCollection contains a list of Features.</blockquote>
 
-<p>Leaflet supports all of the GeoJSON types above, but <a href="https://tools.ietf.org/html/rfc7946#section-3.2">Features</a> and <a href="https://tools.ietf.org/html/rfc7946#section-3.3">FeatureCollections</a> work best as they allow you to describe features with a set of properties. We can even use these properties to style our Leaflet vectors. Here's an example of a simple GeoJSON feature:</p>
+<p>Maplair supports all of the GeoJSON types above, but <a href="https://tools.ietf.org/html/rfc7946#section-3.2">Features</a> and <a href="https://tools.ietf.org/html/rfc7946#section-3.3">FeatureCollections</a> work best as they allow you to describe features with a set of properties. We can even use these properties to style our Maplair vectors. Here's an example of a simple GeoJSON feature:</p>
 
 <pre><code>const geojsonFeature = {
 	"type": "Feature",
@@ -138,7 +138,7 @@ new GeoJSON(someGeojsonFeature, {
 	}
 }).addTo(map);</code></pre>
 
-<p>We could also set the <code>style</code> property in this example &mdash; Leaflet is smart enough to apply styles to GeoJSON points if you create a vector layer like circle inside the <code>pointToLayer</code> function.</p>
+<p>We could also set the <code>style</code> property in this example &mdash; Maplair is smart enough to apply styles to GeoJSON points if you create a vector layer like circle inside the <code>pointToLayer</code> function.</p>
 
 <h4>onEachFeature</h4>
 

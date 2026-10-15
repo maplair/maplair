@@ -26,7 +26,7 @@ import Browser from '../../core/Browser.js';
  * new Marker([50.505, 30.57], {icon: myIcon}).addTo(map);
  * ```
  *
- * `DefaultIcon` extends `Icon` and is the blue icon Leaflet uses for markers by default.
+ * `DefaultIcon` extends `Icon` and is the blue icon Maplair uses for markers by default.
  *
  */
 
@@ -136,7 +136,7 @@ export class Icon extends Class {
 		const anchorPosition = name === 'shadow' && options.shadowAnchor || options.iconAnchor || size && size.divideBy(2, true);
 		const anchor = Point.validate(anchorPosition) && new Point(anchorPosition);
 
-		img.className = `leaflet-marker-${name} ${options.className || ''}`;
+		img.className = `maplair-marker-${name} ${options.className || ''}`;
 
 		if (anchor) {
 			img.style.marginLeft = `${-anchor.x}px`;

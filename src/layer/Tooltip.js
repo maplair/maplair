@@ -1,6 +1,6 @@
 import {DivOverlay} from './DivOverlay.js';
 import {Point} from '../geometry/Point.js';
-import {LeafletMap} from '../map/Map.js';
+import {MaplairMap} from '../map/Map.js';
 import {Layer} from './Layer.js';
 import * as DomUtil from '../dom/DomUtil.js';
 import * as DomEvent from '../dom/DomEvent.js';
@@ -45,7 +45,7 @@ import {FeatureGroup} from './FeatureGroup.js';
  * marker.bindTooltip(el);
  * ```
  *
- * Note about tooltip offset. Leaflet takes two options in consideration
+ * Note about tooltip offset. Maplair takes two options in consideration
  * for computing tooltip offsetting:
  * - the `offset` Tooltip option: it defaults to [0, 0], and it's specific to one tooltip.
  *   Add a positive x offset to move the tooltip to the right, and a positive y offset to
@@ -100,7 +100,7 @@ export class Tooltip extends DivOverlay {
 		super.onAdd(map);
 		this.setOpacity(this.options.opacity);
 
-		// @namespace LeafletMap
+		// @namespace MaplairMap
 		// @section Tooltip events
 		// @event tooltipopen: TooltipEvent
 		// Fired when a tooltip is opened in the map.
@@ -120,7 +120,7 @@ export class Tooltip extends DivOverlay {
 	onRemove(map) {
 		super.onRemove(map);
 
-		// @namespace LeafletMap
+		// @namespace MaplairMap
 		// @section Tooltip events
 		// @event tooltipclose: TooltipEvent
 		// Fired when a tooltip in the map is closed.
@@ -148,13 +148,13 @@ export class Tooltip extends DivOverlay {
 	}
 
 	_initLayout() {
-		const prefix = 'leaflet-tooltip',
-		className = `${prefix} ${this.options.className || ''} leaflet-zoom-${this._zoomAnimated ? 'animated' : 'hide'}`;
+		const prefix = 'maplair-tooltip',
+		className = `${prefix} ${this.options.className || ''} maplair-zoom-${this._zoomAnimated ? 'animated' : 'hide'}`;
 
 		this._contentNode = this._container = DomUtil.create('div', className);
 
 		this._container.setAttribute('role', 'tooltip');
-		this._container.setAttribute('id', `leaflet-tooltip-${Util.stamp(this)}`);
+		this._container.setAttribute('id', `maplair-tooltip-${Util.stamp(this)}`);
 	}
 
 	_updateLayout() {}
@@ -200,12 +200,12 @@ export class Tooltip extends DivOverlay {
 		pos = pos.subtract(new Point(subX, subY, true)).add(offset).add(anchor);
 
 		container.classList.remove(
-			'leaflet-tooltip-right',
-			'leaflet-tooltip-left',
-			'leaflet-tooltip-top',
-			'leaflet-tooltip-bottom'
+			'maplair-tooltip-right',
+			'maplair-tooltip-left',
+			'maplair-tooltip-top',
+			'maplair-tooltip-bottom'
 		);
-		container.classList.add(`leaflet-tooltip-${direction}`);
+		container.classList.add(`maplair-tooltip-${direction}`);
 		DomUtil.setPosition(container, pos);
 	}
 
@@ -234,9 +234,9 @@ export class Tooltip extends DivOverlay {
 
 }
 
-// @namespace LeafletMap
+// @namespace MaplairMap
 // @section Methods for Layers and Controls
-LeafletMap.include({
+MaplairMap.include({
 
 	// @method openTooltip(tooltip: Tooltip): this
 	// Opens the specified tooltip.
@@ -406,10 +406,10 @@ Layer.include({
 			const toggle = remove ? DomEvent.off : DomEvent.on;
 			if (!remove) {
 				// Remove focus listener, if already existing
-				el._leaflet_focus_handler && DomEvent.off(el, 'focus', el._leaflet_focus_handler, this);
+				el._maplair_focus_handler && DomEvent.off(el, 'focus', el._maplair_focus_handler, this);
 
 				// eslint-disable-next-line camelcase
-				el._leaflet_focus_handler = () => {
+				el._maplair_focus_handler = () => {
 					if (this._tooltip) {
 						this._tooltip._source = layer;
 						this.openTooltip();
@@ -417,11 +417,11 @@ Layer.include({
 				};
 			}
 
-			el._leaflet_focus_handler && toggle(el, 'focus', el._leaflet_focus_handler, this);
+			el._maplair_focus_handler && toggle(el, 'focus', el._maplair_focus_handler, this);
 			toggle(el, 'blur', this.closeTooltip, this);
 
 			if (remove) {
-				delete el._leaflet_focus_handler;
+				delete el._maplair_focus_handler;
 			}
 		}
 	},

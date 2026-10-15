@@ -4,9 +4,9 @@ title: Basic States Example
 ---
 <script type="text/javascript" src="us-states.js"></script>
 <script type="module">
-	import {LeafletMap, TileLayer, GeoJSON} from 'leaflet';
+	import {MaplairMap, TileLayer, GeoJSON} from 'maplair';
 
-	const map = new LeafletMap('map').setView([37.8, -96], 4);
+	const map = new MaplairMap('map').setView([37.8, -96], 4);
 
 	const tiles = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		maxZoom: 19,

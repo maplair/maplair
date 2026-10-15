@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {LatLng} from 'leaflet';
+import {LatLng} from 'maplair';
 
 describe('LatLng', () => {
 	describe('constructor', () => {

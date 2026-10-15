@@ -2,20 +2,20 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>Leaflet edit</title>
+        <title>Maplair edit</title>
     </head>
     <body>
         <script>
 
             const config = {
                 provider: 'plunker',
-                title: 'Leaflet',
-                description: "Leaflet example",
+                title: 'Maplair',
+                description: "Maplair example",
                 html: '<div id="map"></div>',
                 cssFile: 'https://cdn.jsdelivr.net/npm/leaflet/dist/leaflet.css',
                 css: 'body {\n\tmargin: 0;\n}\nhtml, body, #map {\n\theight: 100%\n}',
                 jsFile: 'https://cdn.jsdelivr.net/npm/leaflet/dist/leaflet-src.js',
-                js: "import {LeafletMap, TileLayer, Marker} from 'leaflet';\n\nconst map = new LeafletMap('map', {\n\tcenter: [0, 0],\n\tzoom: 0\n});\n\nnew TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {\n\t'attribution': 'Map data © <a href=\"https://openstreetmap.org\">OpenStreetMap</a> contributors'\n}).addTo(map);\n\nnew Marker(map.getCenter()).addTo(map);"
+                js: "import {MaplairMap, TileLayer, Marker} from 'maplair';\n\nconst map = new MaplairMap('map', {\n\tcenter: [0, 0],\n\tzoom: 0\n});\n\nnew TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {\n\t'attribution': 'Map data © <a href=\"https://openstreetmap.org\">OpenStreetMap</a> contributors'\n}).addTo(map);\n\nnew Marker(map.getCenter()).addTo(map);"
             };
 
             const hash = location.hash.substring(1);
@@ -52,10 +52,10 @@
             if (config.provider === 'plunker') {
                 form = createForm('https://plnkr.co/edit/?p=preview');
                 form.createInput('description', config.description);
-                form.createInput('files[index.html]', `<!DOCTYPE html>\n<html>\n\t<head>\n\t\t<title>Leaflet</title>\n\t\t<meta charset="utf-8" />\n\t\t<meta name="viewport" content="width=device-width, initial-scale=1.0" />\n\t\t<link type="text/css" rel="stylesheet" href="${config.cssFile}" />\n\t\t<link type="text/css" rel="stylesheet" href="style.css" />\n\t</head>\n\t<body>\n\t\t${config.html}\n\t\t<script type="importmap">\n\t\t\t{\n\t\t\t\t"imports": {\n\t\t\t\t\t"leaflet": "${config.jsFile}"\n\t\t\t\t}\n\t\t\t}\n\t\t<\/script>\n\t\t<script type="module" src="script.js"><\/script>\n\t</body>\n</html>`);
+                form.createInput('files[index.html]', `<!DOCTYPE html>\n<html>\n\t<head>\n\t\t<title>Maplair</title>\n\t\t<meta charset="utf-8" />\n\t\t<meta name="viewport" content="width=device-width, initial-scale=1.0" />\n\t\t<link type="text/css" rel="stylesheet" href="${config.cssFile}" />\n\t\t<link type="text/css" rel="stylesheet" href="style.css" />\n\t</head>\n\t<body>\n\t\t${config.html}\n\t\t<script type="importmap">\n\t\t\t{\n\t\t\t\t"imports": {\n\t\t\t\t\t"maplair": "${config.jsFile}"\n\t\t\t\t}\n\t\t\t}\n\t\t<\/script>\n\t\t<script type="module" src="script.js"><\/script>\n\t</body>\n</html>`);
                 form.createInput('files[style.css]', config.css);
                 form.createInput('files[script.js]', config.js);
-                form.createInput('tags[0]', 'leaflet');
+                form.createInput('tags[0]', 'maplair');
                 form.createInput('tags[1]', 'map');
                 form.createInput('tags[2]', 'gis');
                 form.createInput('private', false);
@@ -67,7 +67,7 @@
                     title: config.title,
                     description: config.description,
                     private: false,
-                    tags: ["leaflet", "map", "gis"],
+                    tags: ["maplair", "map", "gis"],
                     editors: "001",
                     layout: "top",
                     head: '<meta name="viewport" content="width=device-width, initial-scale=1.0">',

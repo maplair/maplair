@@ -1,4 +1,4 @@
-import {LeafletMap} from '../Map.js';
+import {MaplairMap} from '../Map.js';
 import {Handler} from '../../core/Handler.js';
 import * as DomEvent from '../../dom/DomEvent.js';
 import * as PointerEvents from '../../dom/DomEvent.PointerEvents.js';
@@ -7,9 +7,9 @@ import * as PointerEvents from '../../dom/DomEvent.PointerEvents.js';
  * Handler.PinchZoom is used by Map to add pinch zoom on supported mobile browsers.
  */
 
-// @namespace LeafletMap
+// @namespace MaplairMap
 // @section Interaction Options
-LeafletMap.mergeOptions({
+MaplairMap.mergeOptions({
 	// @section Touch interaction options
 	// @option pinchZoom: Boolean|String = *
 	// Whether the map can be zoomed by touch-dragging with two fingers. If
@@ -26,12 +26,12 @@ LeafletMap.mergeOptions({
 
 export class PinchZoomHandler extends Handler {
 	addHooks() {
-		this._map._container.classList.add('leaflet-touch-zoom');
+		this._map._container.classList.add('maplair-touch-zoom');
 		DomEvent.on(this._map._container, 'pointerdown', this._onPointerStart, this);
 	}
 
 	removeHooks() {
-		this._map._container.classList.remove('leaflet-touch-zoom');
+		this._map._container.classList.remove('maplair-touch-zoom');
 		DomEvent.off(this._map._container, 'pointerdown', this._onPointerStart, this);
 		DomEvent.off(this._map._container, 'pointermove', this._onPointerMove, this);
 		DomEvent.off(this._map._container, 'pointerup pointercancel', this._onPointerEnd, this);
@@ -130,14 +130,14 @@ export class PinchZoomHandler extends Handler {
 // @section Handlers
 // @property pinchZoom: Handler
 // Pinch zoom handler.
-LeafletMap.addInitHook('addHandler', 'pinchZoom', PinchZoomHandler);
+MaplairMap.addInitHook('addHandler', 'pinchZoom', PinchZoomHandler);
 
 // Deprecated - Backward compatibility touchZoom
-LeafletMap.addInitHook(function () {
+MaplairMap.addInitHook(function () {
 	this.touchZoom = this.pinchZoom;
 
 	if (this.options.touchZoom !== undefined) {
-		// To be removed in leaflet 3
+		// To be removed in maplair 3
 		console.warn('Map: touchZoom option is deprecated and will be removed in future versions. Use pinchZoom instead.');
 		this.options.pinchZoom = this.options.touchZoom;
 		delete this.options.touchZoom;

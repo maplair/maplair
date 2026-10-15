@@ -2,14 +2,14 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>Leaflet debug page - Custom Panes</title>
+		<title>Maplair debug page - Custom Panes</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
-		<link rel="stylesheet" href="../../dist/leaflet.css" />
+		<link rel="stylesheet" href="../../dist/maplair.css" />
 		<link rel="stylesheet" href="../css/screen.css" />
 		<script type="importmap">
 			{
 				"imports": {
-					"leaflet": "../../dist/leaflet-src.js"
+					"maplair": "../../dist/maplair-src.js"
 				}
 			}
 		</script>
@@ -31,11 +31,11 @@
 			<div id="mapSvg"></div>
 		</div>
 		<script type="module">
-			import {TileLayer, LeafletMap, Marker, CircleMarker} from 'leaflet';
+			import {TileLayer, MaplairMap, Marker, CircleMarker} from 'maplair';
 
 			function makeMap(container, options) {
 				const osm = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 18});
-				const map = new LeafletMap(container, options)
+				const map = new MaplairMap(container, options)
 					.setView([50.5, 30.51], 15)
 					.addLayer(osm);
 

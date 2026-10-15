@@ -1,17 +1,17 @@
 ---
 layout: tutorial_frame
-title: Leaflet Class Diagram
+title: Maplair Class Diagram
 css: "#map {
             width: 100vw;
             height: 100%;
         }"
 ---
 <script type="module">
-	import {LeafletMap, SimpleCRS, ImageOverlay} from 'leaflet';
+	import {MaplairMap, SimpleCRS, ImageOverlay} from 'maplair';
 
 	const bounds = [[0, 0], [1570, 1910]];
 
-	const map = new LeafletMap('map', {
+	const map = new MaplairMap('map', {
 		crs: SimpleCRS,
 		maxZoom: 0,
 		minZoom: -4,

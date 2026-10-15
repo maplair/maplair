@@ -16,7 +16,7 @@ export default defineConfig({
 	},
 	resolve: {
 		alias: {
-			leaflet: fileURLToPath(new URL('./src/Leaflet.js', import.meta.url)),
+			maplair: fileURLToPath(new URL('./src/Maplair.js', import.meta.url)),
 		},
 	},
 	test: {

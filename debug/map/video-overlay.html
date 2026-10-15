@@ -2,14 +2,14 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>Leaflet debug page - Video Overlay</title>
+		<title>Maplair debug page - Video Overlay</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
-		<link rel="stylesheet" href="../../dist/leaflet.css" />
+		<link rel="stylesheet" href="../../dist/maplair.css" />
 		<link rel="stylesheet" href="../css/screen.css" />
 		<script type="importmap">
 			{
 				"imports": {
-					"leaflet": "../../dist/leaflet-src.js"
+					"maplair": "../../dist/maplair-src.js"
 				}
 			}
 		</script>
@@ -17,9 +17,9 @@
 	<body>
 		<div id="map"></div>
 		<script type="module">
-			import {LeafletMap, TileLayer, LatLngBounds, VideoOverlay, Control, DomEvent, DomUtil} from 'leaflet';
+			import {MaplairMap, TileLayer, LatLngBounds, VideoOverlay, Control, DomEvent, DomUtil} from 'maplair';
 
-			const map = new LeafletMap('map');
+			const map = new MaplairMap('map');
 			new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 19}).addTo(map);
 
 			const bounds = new LatLngBounds([[32, -130], [13, -100]]);

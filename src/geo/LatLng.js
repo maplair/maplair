@@ -12,7 +12,7 @@ import {LatLngBounds} from './LatLngBounds.js';
  * const latlng = new LatLng(50.5, 30.5);
  * ```
  *
- * All Leaflet methods that accept LatLng objects also accept them in a simple Array form and simple object form (unless noted otherwise), so these lines are equivalent:
+ * All Maplair methods that accept LatLng objects also accept them in a simple Array form and simple object form (unless noted otherwise), so these lines are equivalent:
  *
  * ```
  * map.panTo([50, 30]);
@@ -21,7 +21,7 @@ import {LatLngBounds} from './LatLngBounds.js';
  * map.panTo(new LatLng(50, 30));
  * ```
  *
- * Note that `LatLng` does not inherit from Leaflet's `Class` object,
+ * Note that `LatLng` does not inherit from Maplair's `Class` object,
  * which means new classes can't inherit from it, and new methods
  * can't be added to it with the `include` function.
  */

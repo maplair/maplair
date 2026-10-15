@@ -1,17 +1,17 @@
 ---
 layout: tutorial_v2
-title: Extending Leaflet, Handlers and Controls
+title: Extending Maplair, Handlers and Controls
 ---
 
 <br>
 
-This tutorial assumes you've read the [theory of Leaflet class inheritance](./extending-1-classes.html).
+This tutorial assumes you've read the [theory of Maplair class inheritance](./extending-1-classes.html).
 
-In Leaflet, a "layer" is anything that moves with the map. In contraposition to that, a "control" is a HTML element that remains static relative to the map container, and a "handler" is a piece of invisible code that changes the map's behaviour.
+In Maplair, a "layer" is anything that moves with the map. In contraposition to that, a "control" is a HTML element that remains static relative to the map container, and a "handler" is a piece of invisible code that changes the map's behaviour.
 
 ## Handlers
 
-Map handlers are a new concept in Leaflet 1.0, and their function is to process DOM events from the browser (like `click`, `dblclick` or `mousewheel`) and change the state of the map.
+Map handlers are a new concept in Maplair 1.0, and their function is to process DOM events from the browser (like `click`, `dblclick` or `mousewheel`) and change the state of the map.
 
 Handlers are relatively simple: they just need an `addHooks()` method (which runs when the handler is enabled in a map) and a `removeHooks()`, which runs when the handler is disabled. A skeleton for handlers is:
 
@@ -56,13 +56,13 @@ Our handler can now be enabled by running `map.tilt.enable()` and disabled by `m
 
 Moreover, if the map has a property named the same as the handler, then that handler will be enabled by default if that options is `true`, so this will enable our handler by default:
 
-	const map = new LeafletMap('mapDiv', { tilt: true });
+	const map = new MaplairMap('mapDiv', { tilt: true });
 
 To see this example, you'll need a mobile browser which [supports the `deviceorientation` event](http://caniuse.com/#search=deviceorientation) - and even so, this event is particularly flaky and ill-specified, so beware.
 
 {% include frame.html url="tilt.html" %}
 
-Depending on the type of event, a map handler can attach event listeners to the `document`, the `window`, or the container of the `LeafletMap` it's attached to.
+Depending on the type of event, a map handler can attach event listeners to the `document`, the `window`, or the container of the `MaplairMap` it's attached to.
 
 ## Controls
 
@@ -99,4 +99,4 @@ If your custom control consists of more than one HTML element (like `ZoomControl
 
 ## Publishing Your Plugin
 
-If you have understood everything so far, you're ready to make some Leaflet plugins! But make sure to read the [`PLUGIN-GUIDE.md` file](https://github.com/Leaflet/Leaflet/blob/main/PLUGIN-GUIDE.md), as it contains some tips and good practices about naming and publishing your plugin.
+If you have understood everything so far, you're ready to make some Maplair plugins! But make sure to read the [`PLUGIN-GUIDE.md` file](https://github.com/Leaflet/Leaflet/blob/main/PLUGIN-GUIDE.md), as it contains some tips and good practices about naming and publishing your plugin.

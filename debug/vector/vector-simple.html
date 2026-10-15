@@ -2,14 +2,14 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<title>Leaflet debug page - Vector Simple</title>
+		<title>Maplair debug page - Vector Simple</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
-		<link rel="stylesheet" href="../../dist/leaflet.css" />
+		<link rel="stylesheet" href="../../dist/maplair.css" />
 		<link rel="stylesheet" href="../css/mobile.css" />
 		<script type="importmap">
 			{
 				"imports": {
-					"leaflet": "../../dist/leaflet-src.js"
+					"maplair": "../../dist/maplair-src.js"
 				}
 			}
 		</script>
@@ -17,9 +17,9 @@
 	<body>
 		<div id="map"></div>
 		<script type="module">
-			import {LeafletMap, TileLayer, Marker, Circle, Polygon} from 'leaflet';
+			import {MaplairMap, TileLayer, Marker, Circle, Polygon} from 'maplair';
 
-			const map = new LeafletMap('map')
+			const map = new MaplairMap('map')
 				.setView([51.505, -0.09], 13);
 
 			map.addLayer(new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 18}));

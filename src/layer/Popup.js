@@ -3,7 +3,7 @@ import * as DomEvent from '../dom/DomEvent.js';
 import * as DomUtil from '../dom/DomUtil.js';
 import Browser from '../core/Browser.js';
 import {Point} from '../geometry/Point.js';
-import {LeafletMap} from '../map/Map.js';
+import {MaplairMap} from '../map/Map.js';
 import {Layer} from './Layer.js';
 import {Path} from './vector/Path.js';
 import {FeatureGroup} from './FeatureGroup.js';
@@ -83,7 +83,7 @@ export class Popup extends DivOverlay {
 			// If set, creates a scrollable container of the given height
 			// inside a popup if its content exceeds it.
 			// The scrollable container can be styled using the
-			// `leaflet-popup-scrolled` CSS class selector.
+			// `maplair-popup-scrolled` CSS class selector.
 			maxHeight: null,
 
 			// @option autoPan: Boolean = true
@@ -144,7 +144,7 @@ export class Popup extends DivOverlay {
 	}
 
 	// @namespace Popup
-	// @method openOn(map: LeafletMap): this
+	// @method openOn(map: MaplairMap): this
 	// Alternative to `map.openPopup(popup)`.
 	// Adds the popup to the map and closes the previous one.
 	openOn(map) {
@@ -161,7 +161,7 @@ export class Popup extends DivOverlay {
 	onAdd(map) {
 		super.onAdd(map);
 
-		// @namespace LeafletMap
+		// @namespace MaplairMap
 		// @section Popup events
 		// @event popupopen: PopupEvent
 		// Fired when a popup is opened in the map
@@ -184,7 +184,7 @@ export class Popup extends DivOverlay {
 	onRemove(map) {
 		super.onRemove(map);
 
-		// @namespace LeafletMap
+		// @namespace MaplairMap
 		// @section Popup events
 		// @event popupclose: PopupEvent
 		// Fired when a popup in the map is closed
@@ -217,8 +217,8 @@ export class Popup extends DivOverlay {
 	}
 
 	_initLayout() {
-		const prefix = 'leaflet-popup',
-		container = this._container = DomUtil.create('div', `${prefix} ${this.options.className || ''} leaflet-zoom-animated`);
+		const prefix = 'maplair-popup',
+		container = this._container = DomUtil.create('div', `${prefix} ${this.options.className || ''} maplair-zoom-animated`);
 
 		const wrapper = this._wrapper = DomUtil.create('div', `${prefix}-content-wrapper`, container);
 		this._contentNode = DomUtil.create('div', `${prefix}-content`, wrapper);
@@ -269,7 +269,7 @@ export class Popup extends DivOverlay {
 
 		const height = this._containerHeight ?? container.offsetHeight,
 		maxHeight = this.options.maxHeight,
-		scrolledClass = 'leaflet-popup-scrolled';
+		scrolledClass = 'maplair-popup-scrolled';
 
 		if (maxHeight && height > maxHeight) {
 			style.height = `${maxHeight}px`;
@@ -328,7 +328,7 @@ export class Popup extends DivOverlay {
 			dy = containerPos.y - paddingTL.y;
 		}
 
-		// @namespace LeafletMap
+		// @namespace MaplairMap
 		// @section Popup events
 		// @event autopanstart: Event
 		// Fired when the map starts autopanning when opening a popup.
@@ -352,19 +352,19 @@ export class Popup extends DivOverlay {
 }
 
 
-/* @namespace LeafletMap
+/* @namespace MaplairMap
  * @section Interaction Options
  * @option closePopupOnClick: Boolean = true
  * Set it to `false` if you don't want popups to close when user clicks the map.
  */
-LeafletMap.mergeOptions({
+MaplairMap.mergeOptions({
 	closePopupOnClick: true
 });
 
 
-// @namespace LeafletMap
+// @namespace MaplairMap
 // @section Methods for Layers and Controls
-LeafletMap.include({
+MaplairMap.include({
 	// @method openPopup(popup: Popup): this
 	// Opens the specified popup while closing the previously opened (to make sure only one is opened at one time for usability).
 	// @alternative

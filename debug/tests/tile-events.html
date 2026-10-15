@@ -2,9 +2,9 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<title>Leaflet debug page - Tile Events</title>
+		<title>Maplair debug page - Tile Events</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
-		<link rel="stylesheet" href="../../dist/leaflet.css" />
+		<link rel="stylesheet" href="../../dist/maplair.css" />
 		<link rel="stylesheet" href="../css/screen.css" />
 		<style>
 			#map {
@@ -31,7 +31,7 @@
 		<script type="importmap">
 			{
 				"imports": {
-					"leaflet": "../../dist/leaflet-src.js"
+					"maplair": "../../dist/maplair-src.js"
 				}
 			}
 		</script>
@@ -86,7 +86,7 @@
 		<div><button id="nul">NUL</button>(image overlay)</div>
 		<div><button id="stop">stop</button></div>
 		<script type="module">
-			import {LeafletMap, TileLayer, GridLayer, Point, DomUtil} from 'leaflet';
+			import {MaplairMap, TileLayer, GridLayer, Point, DomUtil} from 'maplair';
 
 			const kyiv = [50.5, 30.5];
 			const lnd = [51.51, -0.12];
@@ -98,7 +98,7 @@
 				[40.12, -3.31],
 			];
 
-			const map = new LeafletMap('map', {
+			const map = new MaplairMap('map', {
 				center: [35, -122],
 				zoom: 5.75,
 				zoomSnap: 0.25,
@@ -138,12 +138,12 @@
 
 			grid.on('tileload tileunload tileerror tileloadstart load', (ev) => {
 				document.getElementById(`grid-${ev.type}`).innerHTML = ++gridCounts[ev.type];
-				document.getElementById('grid-visible').innerHTML = grid._container.querySelectorAll('.leaflet-tile').length;
+				document.getElementById('grid-visible').innerHTML = grid._container.querySelectorAll('.maplair-tile').length;
 			});
 
 			positron.on('tileload tileunload tileerror tileloadstart load', (ev) => {
 				document.getElementById(`positron-${ev.type}`).innerHTML = ++positronCounts[ev.type];
-				document.getElementById('positron-visible').innerHTML = positron._container.querySelectorAll('.leaflet-tile').length;
+				document.getElementById('positron-visible').innerHTML = positron._container.querySelectorAll('.maplair-tile').length;
 			});
 
 			map.addLayer(positron);

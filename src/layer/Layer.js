@@ -1,5 +1,5 @@
 import {Evented} from '../core/Events.js';
-import {LeafletMap} from '../map/Map.js';
+import {MaplairMap} from '../map/Map.js';
 import * as Util from '../core/Util.js';
 
 /*
@@ -7,7 +7,7 @@ import * as Util from '../core/Util.js';
  * @inherits Evented
  * @aka ILayer
  *
- * A set of methods from the Layer base class that all Leaflet layers use.
+ * A set of methods from the Layer base class that all Maplair layers use.
  * Inherits all methods, options and events from `Evented`.
  *
  * @example
@@ -47,7 +47,7 @@ export class Layer extends Evented {
 	/* @section
 	 * Classes extending `Layer` will inherit the following methods:
 	 *
-	 * @method addTo(map: LeafletMap|LayerGroup): this
+	 * @method addTo(map: MaplairMap|LayerGroup): this
 	 * Adds the layer to the given map or layer group.
 	 */
 	addTo(map) {
@@ -61,7 +61,7 @@ export class Layer extends Evented {
 		return this.removeFrom(this._map || this._mapToAdd);
 	}
 
-	// @method removeFrom(map: LeafletMap): this
+	// @method removeFrom(map: MaplairMap): this
 	// Removes the layer from the given map
 	//
 	// @alternative
@@ -121,10 +121,10 @@ export class Layer extends Evented {
  *
  * Every layer should extend from `Layer` and (re-)implement the following methods.
  *
- * @method onAdd(map: LeafletMap): this
+ * @method onAdd(map: MaplairMap): this
  * Should contain code that creates DOM elements for the layer, adds them to `map panes` where they should belong and puts listeners on relevant map events. Called on [`map.addLayer(layer)`](#map-addlayer).
  *
- * @method onRemove(map: LeafletMap): this
+ * @method onRemove(map: MaplairMap): this
  * Should contain all clean up code that removes the layer's elements from the DOM and removes listeners previously added in [`onAdd`](#layer-onadd). Called on [`map.removeLayer(layer)`](#map-removelayer).
  *
  * @method getEvents(): Object
@@ -133,12 +133,12 @@ export class Layer extends Evented {
  * @method getAttribution(): String
  * This optional method should return a string containing HTML to be shown on the `Attribution control` whenever the layer is visible.
  *
- * @method beforeAdd(map: LeafletMap): this
+ * @method beforeAdd(map: MaplairMap): this
  * Optional method. Called on [`map.addLayer(layer)`](#map-addlayer), before the layer is added to the map, before events are initialized, without waiting until the map is in a usable state. Use for early initialization only.
  */
 
 
-/* @namespace LeafletMap
+/* @namespace MaplairMap
  * @section Layer events
  *
  * @event layeradd: LayerEvent
@@ -149,7 +149,7 @@ export class Layer extends Evented {
  *
  * @section Methods for Layers and Controls
  */
-LeafletMap.include({
+MaplairMap.include({
 	// @method addLayer(layer: Layer): this
 	// Adds the given layer to the map
 	addLayer(layer) {

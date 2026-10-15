@@ -5,7 +5,7 @@ import {Point} from '../geometry/Point.js';
  * @namespace DomUtil
  *
  * Utility functions to work with the [DOM](https://developer.mozilla.org/docs/Web/API/Document_Object_Model)
- * tree, used by Leaflet internally.
+ * tree, used by Maplair internally.
  *
  * Most functions expecting or returning a `HTMLElement` also work for
  * SVG elements. The only difference is that classes refer to CSS classes
@@ -62,7 +62,7 @@ const positions = new WeakMap();
 // @function setPosition(el: HTMLElement, position: Point)
 // Sets the position of `el` to coordinates specified by `position`,
 // using CSS translate or top/left positioning depending on the browser
-// (used by Leaflet internally to position its layers).
+// (used by Maplair internally to position its layers).
 export function setPosition(el, point) {
 	positions.set(el, point);
 	setTransform(el, point);
@@ -83,7 +83,7 @@ let prevUserSelect;
 
 // @function disableTextSelection()
 // Prevents the user from selecting text in the document. Used internally
-// by Leaflet to override the behaviour of any click-and-drag interaction on
+// by Maplair to override the behaviour of any click-and-drag interaction on
 // the map. Affects drag interactions on the whole document.
 export function disableTextSelection() {
 	const value = documentStyle[userSelectProp];
@@ -122,7 +122,7 @@ export function enableImageDrag() {
 let _outlineElement, _outlineStyle;
 // @function preventOutline(el: HTMLElement)
 // Makes the [outline](https://developer.mozilla.org/docs/Web/CSS/outline)
-// of the element `el` invisible. Used internally by Leaflet to prevent
+// of the element `el` invisible. Used internally by Maplair to prevent
 // focusable elements from displaying an outline when the user performs a
 // drag interaction on them.
 export function preventOutline(element) {

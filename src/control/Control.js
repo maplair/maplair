@@ -1,6 +1,6 @@
 
 import {Class} from '../core/Class.js';
-import {LeafletMap} from '../map/Map.js';
+import {MaplairMap} from '../map/Map.js';
 import * as Util from '../core/Util.js';
 import * as DomUtil from '../dom/DomUtil.js';
 
@@ -60,7 +60,7 @@ export class Control extends Class {
 		return this._container;
 	}
 
-	// @method addTo(map: LeafletMap): this
+	// @method addTo(map: MaplairMap): this
 	// Adds the control to the given map.
 	addTo(map) {
 		this.remove();
@@ -70,7 +70,7 @@ export class Control extends Class {
 		pos = this.getPosition(),
 		corner = map._controlCorners[pos];
 
-		container.classList.add('leaflet-control');
+		container.classList.add('maplair-control');
 
 		if (pos.includes('bottom')) {
 			corner.insertBefore(container, corner.firstChild);
@@ -116,17 +116,17 @@ export class Control extends Class {
  *
  * Every control should extend from `Control` and (re-)implement the following methods.
  *
- * @method onAdd(map: LeafletMap): HTMLElement
+ * @method onAdd(map: MaplairMap): HTMLElement
  * Should return the container DOM element for the control and add listeners on relevant map events. Called on [`control.addTo(map)`](#control-addTo).
  *
- * @method onRemove(map: LeafletMap)
+ * @method onRemove(map: MaplairMap)
  * Optional method. Should contain all clean up code that removes the listeners previously added in [`onAdd`](#control-onadd). Called on [`control.remove()`](#control-remove).
  */
 
-/* @namespace LeafletMap
+/* @namespace MaplairMap
  * @section Methods for Layers and Controls
  */
-LeafletMap.include({
+MaplairMap.include({
 	// @method addControl(control: Control): this
 	// Adds the given control to the map
 	addControl(control) {
@@ -143,7 +143,7 @@ LeafletMap.include({
 
 	_initControlPos() {
 		const corners = this._controlCorners = {},
-		l = 'leaflet-',
+		l = 'maplair-',
 		container = this._controlContainer = DomUtil.create('div', `${l}control-container`, this._container);
 
 		function createCorner(vSide, hSide) {

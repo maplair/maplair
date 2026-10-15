@@ -1,4 +1,4 @@
-import {LeafletMap} from '../Map.js';
+import {MaplairMap} from '../Map.js';
 import {Handler} from '../../core/Handler.js';
 import * as DomEvent from '../../dom/DomEvent.js';
 import {Point} from '../../geometry/Point.js';
@@ -12,9 +12,9 @@ import * as PointerEvents from '../../dom/DomEvent.PointerEvents.js';
 
 const tapHoldDelay = 600;
 
-// @namespace LeafletMap
+// @namespace MaplairMap
 // @section Interaction Options
-LeafletMap.mergeOptions({
+MaplairMap.mergeOptions({
 	// @section Touch interaction options
 	// @option tapHold: Boolean
 	// Enables simulation of `contextmenu` event, default is `true` for mobile Safari.
@@ -101,4 +101,4 @@ export class TapHoldHandler extends Handler {
 // @section Handlers
 // @property tapHold: Handler
 // Long tap handler to simulate `contextmenu` event (useful in mobile Safari).
-LeafletMap.addInitHook('addHandler', 'tapHold', TapHoldHandler);
+MaplairMap.addInitHook('addHandler', 'tapHold', TapHoldHandler);

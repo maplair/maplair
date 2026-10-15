@@ -5,9 +5,9 @@ customMapContainer: "true"
 ---
 <div id='map' style='width: 600px; height: 400px;'></div>
 <script type="module">
-	import {LeafletMap, TileLayer, Marker, Circle, Polygon, Popup} from 'leaflet';
+	import {MaplairMap, TileLayer, Marker, Circle, Polygon, Popup} from 'maplair';
 
-	const map = new LeafletMap('map').setView([51.505, -0.09], 13);
+	const map = new MaplairMap('map').setView([51.505, -0.09], 13);
 
 	const tiles = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		maxZoom: 19,

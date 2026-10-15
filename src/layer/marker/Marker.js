@@ -216,7 +216,7 @@ export class Marker extends Layer {
 
 	_initIcon() {
 		const options = this.options,
-		classToAdd = `leaflet-zoom-${this._zoomAnimated ? 'animated' : 'hide'}`;
+		classToAdd = `maplair-zoom-${this._zoomAnimated ? 'animated' : 'hide'}`;
 
 		const icon = options.icon.createIcon(this._icon);
 		let addIcon = false;
@@ -340,7 +340,7 @@ export class Marker extends Layer {
 
 		if (!this.options.interactive) { return; }
 
-		this._icon.classList.add('leaflet-interactive');
+		this._icon.classList.add('maplair-interactive');
 
 		this.addInteractiveTarget(this._icon);
 

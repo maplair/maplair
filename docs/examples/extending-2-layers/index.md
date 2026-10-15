@@ -1,17 +1,17 @@
 ---
 layout: tutorial_v2
-title: Extending Leaflet, New Layers
+title: Extending Maplair, New Layers
 ---
 
 <br>
 
-This tutorial assumes you've read the [theory of Leaflet class inheritance](./extending-1-classes.html).
+This tutorial assumes you've read the [theory of Maplair class inheritance](./extending-1-classes.html).
 
-In Leaflet, a "layer" is anything that moves around when the map is moved around. Before seeing how to create them from scratch, it's easier to explain how to do simple extensions.
+In Maplair, a "layer" is anything that moves around when the map is moved around. Before seeing how to create them from scratch, it's easier to explain how to do simple extensions.
 
 ## "Extension Methods"
 
-A few of the Leaflet classes have so-called "extension methods": entry points for writing code for sub-classes.
+A few of the Maplair classes have so-called "extension methods": entry points for writing code for sub-classes.
 
 One of them is `TileLayer.getTileUrl()`. This method is called internally by `TileLayer` whenever a new tile needs to know which image to load. By making a subclass of `TileLayer` and rewriting its `getTileUrl()` function, we can create custom behaviour.
 
@@ -41,9 +41,9 @@ Normally, `getTileUrl()` receives the tile coordinates (as `coords.x`, `coords.y
 
 Another extension method is `GridLayer.createTile()`. Where `TileLayer` assumes that there is a grid of images (as `<img>` elements), `GridLayer` doesn't assume that - it allows creating grids of any kind of [HTML Elements](https://developer.mozilla.org/en-US/docs/Web/HTML/Element).
 
-`GridLayer` allows creating grids of `<img>`s, but grids of [`<div>`s](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/div), [`<canvas>`es](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas) or [`<picture>`s](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/picture) (or anything) are possible. `createTile()` just has to return an instance of [`HTMLElement`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement) given the tile coordinates. Knowing how to manipulate elements in the [DOM](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Introduction) is important here: Leaflet expects instances of `HTMLElement`, so elements created with libraries like jQuery will be problematic.
+`GridLayer` allows creating grids of `<img>`s, but grids of [`<div>`s](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/div), [`<canvas>`es](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas) or [`<picture>`s](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/picture) (or anything) are possible. `createTile()` just has to return an instance of [`HTMLElement`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement) given the tile coordinates. Knowing how to manipulate elements in the [DOM](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Introduction) is important here: Maplair expects instances of `HTMLElement`, so elements created with libraries like jQuery will be problematic.
 
-An example of a custom `GridLayer` is showing the tile coordinates in a `<div>`. This is particularly useful when debugging the internals of Leaflet, and for understanding how the tile coordinates work:
+An example of a custom `GridLayer` is showing the tile coordinates in a `<div>`. This is particularly useful when debugging the internals of Maplair, and for understanding how the tile coordinates work:
 
 ```js
 class DebugCoordsGridLayer extends GridLayer {
@@ -107,14 +107,14 @@ class CanvasCirclesGridLayer extends GridLayer {
 
 ## The Pixel Origin
 
-Creating custom `Layer`s is possible, but needs a deeper knowledge of how Leaflet positions HTML elements. The abridged version is:
+Creating custom `Layer`s is possible, but needs a deeper knowledge of how Maplair positions HTML elements. The abridged version is:
 
-* The `LeafletMap` container has "map panes", which are `<div>`s.
+* The `MaplairMap` container has "map panes", which are `<div>`s.
 * `Layer`s are HTML elements inside a map pane
 * The map transforms all `LatLng`s to coordinates in the map's CRS, and from that into absolute "pixel coordinates" (the origin of the CRS is the same as the origin of the pixel coordinates)
-* When the `LeafletMap` is ready (has a center `LatLng` and a zoom level), the absolute pixel coordinates of the top-left corner become the "pixel origin"
+* When the `MaplairMap` is ready (has a center `LatLng` and a zoom level), the absolute pixel coordinates of the top-left corner become the "pixel origin"
 * Each `Layer` is offset from its map pane according to the pixel origin and the absolute pixel coordinates of the layer's `LatLng`s
-* The pixel origin is reset after each `zoomend` or `viewreset` event on the `LeafletMap`, and every `Layer` has to recalculate its position (if needed)
+* The pixel origin is reset after each `zoomend` or `viewreset` event on the `MaplairMap`, and every `Layer` has to recalculate its position (if needed)
 * The pixel origin is *not* reset when panning the map around; instead, the whole panes are repositioned.
 
 This might be a bit overwhelming, so consider the following explanatory map:
@@ -168,7 +168,7 @@ class CustomLayer extends Layer {
 }
 ```
 
-How to exactly position the HTML elements for a layer depends on the specifics of the layer, but this introduction should help you to read Leaflet's layer code, and create new layers.
+How to exactly position the HTML elements for a layer depends on the specifics of the layer, but this introduction should help you to read Maplair's layer code, and create new layers.
 
 ### Using the Parent's `onAdd`
 

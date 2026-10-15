@@ -3,9 +3,9 @@ layout: tutorial_frame
 title: WMS Example 1
 ---
 <script type="module">
-	import {LeafletMap, CRS, WMSTileLayer} from 'leaflet';
+	import {MaplairMap, CRS, WMSTileLayer} from 'maplair';
 
-	const map = new LeafletMap('map', {
+	const map = new MaplairMap('map', {
 		center: [-17, -67],
 		zoom: 3
 	});

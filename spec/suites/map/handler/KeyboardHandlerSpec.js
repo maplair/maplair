@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {LeafletMap, Popup} from 'leaflet';
+import {MaplairMap, Popup} from 'maplair';
 import sinon from 'sinon';
 import UIEventSimulator from 'ui-event-simulator';
 import {createContainer, removeMapContainer} from '../../SpecHelper.js';
@@ -18,12 +18,12 @@ describe('KeyboardHandler', () => {
 
 	beforeEach(() => {
 		container = createContainer();
-		map = new LeafletMap(container, {
+		map = new MaplairMap(container, {
 			zoomAnimation: false	// If true, the test has to wait extra 250msec
 		});
 
 		// make keyboard-caused panning instant to cut down on test running time
-		map.panBy = function (offset) { return LeafletMap.prototype.panBy.call(this, offset, {animate: false}); };
+		map.panBy = function (offset) { return MaplairMap.prototype.panBy.call(this, offset, {animate: false}); };
 
 		map.setView([0, 0], 5);
 

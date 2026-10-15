@@ -1,9 +1,9 @@
 ---
 layout: tutorial_v2
-title: Leaflet on Mobile
+title: Maplair on Mobile
 ---
 
-## Leaflet on Mobile
+## Maplair on Mobile
 
 In this example, you'll learn how to create a fullscreen map tuned for mobile devices like iPhone, iPad or Android phones, and how to easily detect and use the current user location.
 
@@ -32,7 +32,7 @@ Also, we need to tell the mobile browser to disable unwanted scaling of the page
 We'll now initialize the map in the JavaScript code like we did in the [quick start guide](../quick-start/), showing the whole world:
 
 ```javascript
-const map =  new LeafletMap('map').fitWorld();
+const map =  new MaplairMap('map').fitWorld();
 
 new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 	maxZoom: 19,
@@ -42,7 +42,7 @@ new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 ### Geolocation
 
-Leaflet has a very handy shortcut for zooming the map view to the detected location --- `locate` method with the `setView` option, replacing the usual `setView` method in the code:
+Maplair has a very handy shortcut for zooming the map view to the detected location --- `locate` method with the `setView` option, replacing the usual `setView` method in the code:
 
 	map.locate({setView: true, maxZoom: 16});
 

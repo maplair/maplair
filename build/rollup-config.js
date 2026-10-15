@@ -5,7 +5,7 @@ import {defineConfig} from 'rollup';
 import pkg from '../package.json' with {type: 'json'};
 
 const STATIC_ASSETS = [
-	'leaflet.css',
+	'maplair.css',
 	'images/logo.svg',
 	'images/layers.svg',
 	'images/marker-icon.svg',
@@ -24,7 +24,7 @@ const staticAssetsPlugin = {
 };
 
 const banner = `/* @preserve
- * Leaflet ${pkg.version}, a JS library for interactive maps. https://leafletjs.com
+ * Maplair ${pkg.version}, a JS library for interactive maps. https://leafletjs.com
  * (c) 2010-${new Date().getFullYear()} Volodymyr Agafonkin, (c) 2010-2011 CloudMade
  */
 `;
@@ -48,7 +48,7 @@ const umdOptions = {
 };
 
 export default defineConfig({
-	input: './src/Leaflet.js',
+	input: './src/Maplair.js',
 	plugins: [json()],
 	output: [
 		{
@@ -58,16 +58,16 @@ export default defineConfig({
 		},
 		{
 			...commonOptions,
-			file: './dist/leaflet.js',
+			file: './dist/maplair.js',
 			plugins: [terser()],
 		},
 		{
 			...umdOptions,
-			file: './dist/leaflet-global-src.js',
+			file: './dist/maplair-global-src.js',
 		},
 		{
 			...umdOptions,
-			file: './dist/leaflet-global.js',
+			file: './dist/maplair-global.js',
 			plugins: [terser()],
 		}
 	]

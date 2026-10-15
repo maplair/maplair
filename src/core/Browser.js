@@ -1,7 +1,7 @@
 /*
  * @namespace Browser
  *
- * A namespace with static properties for browser/feature detection used by Leaflet internally.
+ * A namespace with static properties for browser/feature detection used by Maplair internally.
  *
  * @example
  *

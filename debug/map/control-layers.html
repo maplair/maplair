@@ -2,14 +2,14 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>Leaflet debug page - Control Layers</title>
+		<title>Maplair debug page - Control Layers</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
-		<link rel="stylesheet" href="../../dist/leaflet.css" />
+		<link rel="stylesheet" href="../../dist/maplair.css" />
 		<link rel="stylesheet" href="../css/screen.css" />
 		<script type="importmap">
 			{
 				"imports": {
-					"leaflet": "../../dist/leaflet-src.js"
+					"maplair": "../../dist/maplair-src.js"
 				}
 			}
 		</script>
@@ -22,7 +22,7 @@
 			}
 		</style>
 		<script type="module">
-			import {LeafletMap, TileLayer, LayersControl, Circle, Polygon, GeoJSON} from 'leaflet';
+			import {MaplairMap, TileLayer, LayersControl, Circle, Polygon, GeoJSON} from 'maplair';
 
 			class GrayscaleTileLayer extends TileLayer {
 				createTile(...args) {
@@ -32,7 +32,7 @@
 				}
 			}
 
-			const map = new LeafletMap('map').setView([50.5, 0], 5);
+			const map = new MaplairMap('map').setView([50.5, 0], 5);
 			const tileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 			const regularTiles = new TileLayer(tileUrl).addTo(map);
 			const blackAndWhiteTiles = new GrayscaleTileLayer(tileUrl);

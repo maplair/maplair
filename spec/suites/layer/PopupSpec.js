@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {DivIcon, DomUtil, FeatureGroup, DefaultIcon, LeafletMap, Marker, Point, Polygon, Popup} from 'leaflet';
+import {DivIcon, DomUtil, FeatureGroup, DefaultIcon, MaplairMap, Marker, Point, Polygon, Popup} from 'maplair';
 import Hand from 'prosthetic-hand';
 import sinon from 'sinon';
 import UIEventSimulator from 'ui-event-simulator';
@@ -11,7 +11,7 @@ describe('Popup', () => {
 
 	beforeEach(() => {
 		container = createContainer();
-		map = new LeafletMap(container);
+		map = new MaplairMap(container);
 		map.setView(center, 6);
 	});
 

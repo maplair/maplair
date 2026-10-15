@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {DefaultIcon, LeafletMap, Marker, Browser} from 'leaflet';
+import {DefaultIcon, MaplairMap, Marker, Browser} from 'maplair';
 import {createContainer, removeMapContainer} from '../../SpecHelper.js';
 
 describe('DefaultIcon', () => {
@@ -7,7 +7,7 @@ describe('DefaultIcon', () => {
 
 	beforeEach(() => {
 		container = createContainer();
-		map = new LeafletMap(container);
+		map = new MaplairMap(container);
 
 		map.setView([0, 0], 0);
 		new Marker([0, 0]).addTo(map);

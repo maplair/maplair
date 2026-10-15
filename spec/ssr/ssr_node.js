@@ -1,2 +1,2 @@
-import {version} from '../../dist/leaflet-src.js';
+import {version} from '../../dist/maplair-src.js';
 console.log(version);

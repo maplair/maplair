@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {DomUtil, GridLayer, LeafletMap, Point, Util} from 'leaflet';
+import {DomUtil, GridLayer, MaplairMap, Point, Util} from 'maplair';
 import sinon from 'sinon';
 import {createContainer, removeMapContainer} from '../../SpecHelper.js';
 
@@ -12,7 +12,7 @@ describe('GridLayer', () => {
 
 	beforeEach(() => {
 		container = createContainer();
-		map = new LeafletMap(container);
+		map = new MaplairMap(container);
 		container.style.width = '800px';
 		container.style.height = '600px';
 	});
@@ -36,7 +36,7 @@ describe('GridLayer', () => {
 
 		it('works when map has fadeAnimated=false (IE8 is exempt)', (done) => {
 			map.remove();
-			map = new LeafletMap(container, {fadeAnimation: false}).setView([0, 0], 0);
+			map = new MaplairMap(container, {fadeAnimation: false}).setView([0, 0], 0);
 
 			const grid = new GridLayer().setOpacity(0.5).addTo(map);
 			grid.on('load', () => {
@@ -94,7 +94,7 @@ describe('GridLayer', () => {
 
 		it('removes tiles for unused zoom levels', (done) => {
 			map.remove();
-			map = new LeafletMap(container, {fadeAnimation: false});
+			map = new MaplairMap(container, {fadeAnimation: false});
 			map.setView([0, 0], 1);
 
 			const grid = new GridLayer();
@@ -195,10 +195,10 @@ describe('GridLayer', () => {
 				map.addLayer(grid);
 			});
 
-			it('does not add the .leaflet-tile-loaded class to tile elements', (done) => {
+			it('does not add the .maplair-tile-loaded class to tile elements', (done) => {
 				let count = 0;
 				grid.on('tileerror', (e) => {
-					if (!e.tile.classList.contains('leaflet-tile-loaded')) {
+					if (!e.tile.classList.contains('maplair-tile-loaded')) {
 						count++;
 					}
 					if (keys.length === 4) {

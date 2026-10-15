@@ -1,4 +1,4 @@
-## Releasing a new version of Leaflet
+## Releasing a new version of Maplair
 
 - [ ] Ensure all https://github.com/Leaflet/Leaflet/labels/blocker issues and pull requests are resolved.
 - [ ] Update [the changelog](https://github.com/Leaflet/Leaflet/blob/main/CHANGELOG.md) since last release and commit.
@@ -7,9 +7,9 @@
 - [ ] Run `git push --follow-tags` to push the commit created by NPM to Github (together with the tag).
 - [ ] Wait for the CI to complete and follow the logs to make sure it runs successfully.
 - [ ] Verify that the release was correctly published to NPM by checking:
-  - [ ] [Leaflet NPM package page](https://www.npmjs.com/package/leaflet)
-  - [ ] files on [Leaflet jsDelivr page](https://cdn.jsdelivr.net/npm/leaflet@latest/)
-- [ ] Make a new release on [Leaflet's GitHub release page](https://github.com/Leaflet/Leaflet/releases/) with the most important parts of the changelog
+  - [ ] [Maplair NPM package page](https://www.npmjs.com/package/leaflet)
+  - [ ] files on [Maplair jsDelivr page](https://cdn.jsdelivr.net/npm/leaflet@latest/)
+- [ ] Make a new release on [Maplair's GitHub release page](https://github.com/Leaflet/Leaflet/releases/) with the most important parts of the changelog
 - [ ] Download TGZ archive from https://registry.npmjs.org/leaflet/-/leaflet-X.X.X.tgz (where `X.X.X` is the new version number) and upload it as an "asset" of the GitHub release.
 
 ### Updating docs after the release

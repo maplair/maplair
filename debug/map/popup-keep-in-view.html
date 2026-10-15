@@ -2,14 +2,14 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>Leaflet debug page - Popup Keep in View</title>
+		<title>Maplair debug page - Popup Keep in View</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
-		<link rel="stylesheet" href="../../dist/leaflet.css" />
+		<link rel="stylesheet" href="../../dist/maplair.css" />
 		<link rel="stylesheet" href="../css/screen.css" />
 		<script type="importmap">
 			{
 				"imports": {
-					"leaflet": "../../dist/leaflet-src.js"
+					"maplair": "../../dist/maplair-src.js"
 				}
 			}
 		</script>
@@ -24,13 +24,13 @@
 			<button id="movePopup">Move last popup</button>
 		</div>
 		<script type="module">
-			import {TileLayer, LeafletMap, LatLng, Popup} from 'leaflet';
+			import {TileLayer, MaplairMap, LatLng, Popup} from 'maplair';
 
 			const osmUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 			const osm = new TileLayer(osmUrl, {maxZoom: 18});
 
 			const center = [50.5, 30.51];
-			const map = new LeafletMap('map')
+			const map = new MaplairMap('map')
 				.setView(center, 15)
 				.addLayer(osm);
 

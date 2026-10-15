@@ -9,7 +9,7 @@ export {PointerEvents};
 
 /*
  * @namespace DomEvent
- * Utility functions to work with the [DOM events](https://developer.mozilla.org/docs/Web/API/Event), used by Leaflet internally.
+ * Utility functions to work with the [DOM events](https://developer.mozilla.org/docs/Web/API/Event), used by Maplair internally.
  */
 
 // Inspired by John Resig, Dean Edwards and YUI addEvent implementations.
@@ -38,7 +38,7 @@ export function on(obj, types, fn, context) {
 	return this;
 }
 
-const eventsKey = '_leaflet_events';
+const eventsKey = '_maplair_events';
 
 // @function off(el: HTMLElement, types: String, fn: Function, context?: Object): this
 // Removes a previously added listener function.
@@ -166,7 +166,7 @@ export function stopPropagation(e) {
 
 	if (e.stopPropagation) {
 		e.stopPropagation();
-	} else if (e.originalEvent) {  // In case of Leaflet event.
+	} else if (e.originalEvent) {  // In case of Maplair event.
 		e.originalEvent._stopped = true;
 	} else {
 		e.cancelBubble = true;
@@ -189,7 +189,7 @@ export function disableScrollPropagation(el) {
 // while still allowing the native DOM click event to propagate normally.
 export function disableClickPropagation(el) {
 	on(el, 'pointerdown dblclick contextmenu', stopPropagation);
-	el['_leaflet_disable_click'] = true;
+	el['_maplair_disable_click'] = true;
 	return this;
 }
 

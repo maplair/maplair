@@ -3,9 +3,9 @@ layout: tutorial_frame
 title: SVG Overlay Tutorial
 ---
 <script type="module">
-	import {LeafletMap, TileLayer, LatLngBounds, SVGOverlay} from 'leaflet';
+	import {MaplairMap, TileLayer, LatLngBounds, SVGOverlay} from 'maplair';
 
-	const map = new LeafletMap('map');
+	const map = new MaplairMap('map');
 
 	const tiles = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		maxZoom: 19,

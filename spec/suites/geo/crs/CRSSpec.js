@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {CRS, EPSG3395, EPSG3857, EPSG4326, EarthCRS, SimpleCRS, Util, LatLng, LatLngBounds, Point} from 'leaflet';
+import {CRS, EPSG3395, EPSG3857, EPSG4326, EarthCRS, SimpleCRS, Util, LatLng, LatLngBounds, Point} from 'maplair';
 
 describe('EPSG3857', () => {
 	const crs = EPSG3857;

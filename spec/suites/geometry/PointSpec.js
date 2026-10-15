@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {Point} from 'leaflet';
+import {Point} from 'maplair';
 
 describe('Point', () => {
 	describe('constructor', () => {

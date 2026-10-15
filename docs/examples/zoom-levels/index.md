@@ -26,7 +26,7 @@ title: Zoom Levels
 
 ## Zoom Levels
 
-Leaflet works with [latitude](https://en.wikipedia.org/wiki/Latitude), [longitude](https://en.wikipedia.org/wiki/Longitude) and "zoom level".
+Maplair works with [latitude](https://en.wikipedia.org/wiki/Latitude), [longitude](https://en.wikipedia.org/wiki/Longitude) and "zoom level".
 
 Lower zoom levels means that the map shows entire continents, while higher zoom
 levels means that the map can show details of a city.
@@ -37,7 +37,7 @@ To understand how zoom levels work, first we need a basic introduction to <i>geo
 
 Let's have a look at a simple map locked at zoom zero:
 
-	const map = new LeafletMap('map', {
+	const map = new MaplairMap('map', {
 		minZoom: 0,
 		maxZoom: 0
 	});
@@ -79,7 +79,7 @@ introduction to the topic:
 Things like geodesy, map projections and coordinate systems are hard, *very hard*
 (and out of scope for this tutorial). Assuming that the earth is a square is not
 always the right thing to do, but most of the time works fine enough, makes things
-simpler, and allows Leaflet (and other map libraries) to be fast.
+simpler, and allows Maplair (and other map libraries) to be fast.
 
 ## Powers of Two
 
@@ -142,7 +142,7 @@ One of the disadvantages of using a cylindrical projection is that the scale is 
 constant, and measuring distances or sizes is not reliable, specially at low zoom levels.
 
 In [technical terms](https://en.wikipedia.org/wiki/Map_projection#Projections_by_preservation_of_a_metric_property),
-the cylindrical projection that Leaflet uses is <i>conformal</i> (preserves shapes),
+the cylindrical projection that Maplair uses is <i>conformal</i> (preserves shapes),
 but not <i>equidistant</i> (does not preserve distances), and not <i>equal-area</i>
 (does not preserve areas, as things near the equator appear smaller than they are).
 
@@ -168,7 +168,7 @@ At high zoom levels, the scale changes very little, and is not noticeable.
 
 ## Controlling the Zoom
 
-A leaflet map has several ways to control the zoom level shown, but the most obvious
+A maplair map has several ways to control the zoom level shown, but the most obvious
 one is [`setZoom()`](/reference.html#map-setzoom). For example, `map.setZoom(0);`
 will set the zoom level of `map` to `0`.
 
@@ -198,7 +198,7 @@ Other ways of setting the zoom are:
 
 ## Fractional Zoom
 
-A feature introduced in Leaflet 1.0.0 was the concept of <em>fractional zoom</em>.
+A feature introduced in Maplair 1.0.0 was the concept of <em>fractional zoom</em>.
 Before this, the zoom level of the map could be only an integer number (`0`, `1`, `2`, and so on);
 but now you can use fractional numbers like `1.5` or `1.25`.
 
@@ -215,21 +215,21 @@ If you set a value of `0.1`, the valid zoom levels of the map will be `0`, `0.1`
 
 The following example uses a `zoomSnap` value of `0.25`:
 
-	const map = new LeafletMap('map', {
+	const map = new MaplairMap('map', {
 		zoomSnap: 0.25
 	});
 
 {% include frame.html url="example-fractional.html" %}
 
-As you can see, Leaflet will only load the tiles for zoom levels `0` or `1`, and will scale them
+As you can see, Maplair will only load the tiles for zoom levels `0` or `1`, and will scale them
 as needed.
 
-Leaflet will <em>snap</em> the zoom level to the closest valid one. For example,
+Maplair will <em>snap</em> the zoom level to the closest valid one. For example,
 if you have `zoomSnap: 0.25` and you try to do `map.setZoom(0.8)`, the zoom will
 snap back to `0.75`. The same happens with `map.fitBounds(bounds)`, or when ending
 a pinch-zoom gesture on a touchscreen.
 
-`zoomSnap` can be set to zero. This means that Leaflet will <strong>not</strong>
+`zoomSnap` can be set to zero. This means that Maplair will <strong>not</strong>
 snap the zoom level.
 
 There is another important map option related to `zoomSnap`: [the `zoomDelta` option](/reference.html#map-zoomdelta).
@@ -242,7 +242,7 @@ option controls how fast the mousewheel zooms in or out.
 
 Here is an example with `zoomSnap` set to zero:
 
-	const map = new LeafletMap('map', {
+	const map = new MaplairMap('map', {
 		zoomDelta: 0.25,
 		zoomSnap: 0
 	});

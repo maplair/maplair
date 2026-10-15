@@ -9,7 +9,7 @@ import {LatLngBounds} from '../geo/LatLngBounds.js';
 
 /* @function clipPolygon(points: Point[], bounds: Bounds, round?: Boolean): Point[]
  * Clips the polygon geometry defined by the given `points` by the given bounds (using the [Sutherland-Hodgman algorithm](https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm)).
- * Used by Leaflet to only show polygon points that are on the screen or near, increasing
+ * Used by Maplair to only show polygon points that are on the screen or near, increasing
  * performance. Note that polygon points needs different algorithm for clipping
  * than polyline, so there's a separate method for it.
  */

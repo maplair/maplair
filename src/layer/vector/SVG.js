@@ -14,7 +14,7 @@ import {splitWords, stamp} from '../../core/Util.js';
  * Use SVG by default for all paths in the map:
  *
  * ```js
- * const map = new LeafletMap('map', {
+ * const map = new MaplairMap('map', {
  * 	renderer: new SVG()
  * });
  * ```
@@ -22,7 +22,7 @@ import {splitWords, stamp} from '../../core/Util.js';
  * Use a SVG renderer with extra padding for specific vector geometries:
  *
  * ```js
- * const map = new LeafletMap('map');
+ * const map = new MaplairMap('map');
  * const myRenderer = new SVG({ padding: 0.5 });
  * const line = new Polyline( coordinates, { renderer: myRenderer } );
  * const circle = new Circle( center, { renderer: myRenderer, radius: 100 } );
@@ -93,7 +93,7 @@ export class SVG extends Renderer {
 		}
 
 		if (layer.options.interactive) {
-			path.classList.add('leaflet-interactive');
+			path.classList.add('maplair-interactive');
 		}
 
 		this._updateStyle(layer);

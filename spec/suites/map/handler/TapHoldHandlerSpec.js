@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {Browser, LeafletMap, Point} from 'leaflet';
+import {Browser, MaplairMap, Point} from 'maplair';
 import sinon from 'sinon';
 import Hand from 'prosthetic-hand';
 import UIEventSimulator from 'ui-event-simulator';
@@ -16,7 +16,7 @@ describe('TapHoldHandler', () => {
 
 	beforeEach(() => {
 		container = createContainer();
-		map = new LeafletMap(container, {
+		map = new MaplairMap(container, {
 			center: [51.505, -0.09],
 			zoom: 13,
 			tapHold: true

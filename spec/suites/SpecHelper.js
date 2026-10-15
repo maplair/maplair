@@ -1,4 +1,4 @@
-import {DomEvent} from 'leaflet';
+import {DomEvent} from 'maplair';
 
 const runAsTouchBrowser = import.meta.env.VITE_TOUCH === '1';
 

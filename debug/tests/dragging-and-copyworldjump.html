@@ -2,14 +2,14 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>Leaflet debug page - Dragging and 'copyWorldJump'</title>
+		<title>Maplair debug page - Dragging and 'copyWorldJump'</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
-		<link rel="stylesheet" href="../../dist/leaflet.css" />
+		<link rel="stylesheet" href="../../dist/maplair.css" />
 		<link rel="stylesheet" href="../css/screen.css" />
 		<script type="importmap">
 			{
 				"imports": {
-					"leaflet": "../../dist/leaflet-src.js"
+					"maplair": "../../dist/maplair-src.js"
 				}
 			}
 		</script>
@@ -25,7 +25,7 @@
 		<div id="map1" style="height: 300px; width: 400px; float:left;"></div>
 		<div id="map2" style="height: 300px; width: 400px; float:left; margin-left: 10px;"></div>
 		<script type="module">
-			import {TileLayer, Marker, LeafletMap, LatLng} from 'leaflet';
+			import {TileLayer, Marker, MaplairMap, LatLng} from 'maplair';
 
 			function addLayerAndMarker(map) {
 				new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -35,14 +35,14 @@
 				new Marker([50.5, 30.5]).addTo(map);
 			}
 
-			const map1 = new LeafletMap('map1', {
+			const map1 = new MaplairMap('map1', {
 				center : new LatLng(45.50144, -122.67599),
 				zoom : 0,
 				dragging : true,
 				worldCopyJump : true
 			});
 
-			const map2 = new LeafletMap('map2', {
+			const map2 = new MaplairMap('map2', {
 				center: new LatLng(45.50144, -122.67599),
 				zoom: 0,
 				dragging: false,

@@ -3,9 +3,9 @@ layout: tutorial_frame
 title: SimpleCRS Example
 ---
 <script type="module">
-	import {LeafletMap, SimpleCRS, ImageOverlay} from 'leaflet';
+	import {MaplairMap, SimpleCRS, ImageOverlay} from 'maplair';
 
-	const map = new LeafletMap('map', {
+	const map = new MaplairMap('map', {
 		crs: SimpleCRS
 	});
 

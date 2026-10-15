@@ -31,9 +31,9 @@ The game has a built-in square coordinate system, as can be seen in the corners.
 
 **CRS** stands for [coordinate reference system](https://en.wikipedia.org/wiki/Spatial_reference_system), a term used by geographers to explain what the coordinates mean in a coordinate vector. For example, `[15, 60]` represents a point in the Indian Ocean if using latitude-longitude on the earth, or the solar system Krueger-Z in our starmap.
 
-A Leaflet map has one CRS (and *one* CRS *only*), that can be changed when creating the map. For our game map we'll use `SimpleCRS`, which represents a square grid:
+A Maplair map has one CRS (and *one* CRS *only*), that can be changed when creating the map. For our game map we'll use `SimpleCRS`, which represents a square grid:
 
-	const map = new LeafletMap('map', {
+	const map = new MaplairMap('map', {
 		crs: SimpleCRS
 	});
 
@@ -53,11 +53,11 @@ This example doesn't quite work, as we cannot see the whole map after doing a `f
 
 ## Common Gotchas in SimpleCRS Maps
 
-In the default Leaflet CRS, `EarthCRS`, 360 degrees of longitude are mapped to 256 horizontal pixels (at zoom level 0) and approximately 170 degrees of latitude are mapped to 256 vertical pixels (at zoom level 0).
+In the default Maplair CRS, `EarthCRS`, 360 degrees of longitude are mapped to 256 horizontal pixels (at zoom level 0) and approximately 170 degrees of latitude are mapped to 256 vertical pixels (at zoom level 0).
 
 In a `SimpleCRS`, one horizontal map unit is mapped to one horizontal pixel, and *idem* with vertical. This means that the whole map is about 1000x1000 pixels big and won't fit in our HTML container. Luckily, we can set `minZoom` to values lower than zero:
 
-	const map = new LeafletMap('map', {
+	const map = new MaplairMap('map', {
 		crs: SimpleCRS,
 		minZoom: -5
 	});
@@ -81,11 +81,11 @@ While we're at it, let's add some markers:
 
 ### This is not the `LatLng` You're Looking for
 
-You'll notice that Sol is at coordinates `[145,175]` instead of `[175,145]`, and the same happens with the map center. Coordinates in `SimpleCRS` take the form of `[y, x]` instead of `[x, y]`, in the same way Leaflet uses `[lat, lng]` instead of `[lng, lat]`.
+You'll notice that Sol is at coordinates `[145,175]` instead of `[175,145]`, and the same happens with the map center. Coordinates in `SimpleCRS` take the form of `[y, x]` instead of `[x, y]`, in the same way Maplair uses `[lat, lng]` instead of `[lng, lat]`.
 
-<small>(In technical terms, Leaflet prefers to use [`[northing, easting]`](https://en.wikipedia.org/wiki/Easting_and_northing) over `[easting, northing]` - the first coordinate in a coordinate pair points "north" and the second points "east")</small>
+<small>(In technical terms, Maplair prefers to use [`[northing, easting]`](https://en.wikipedia.org/wiki/Easting_and_northing) over `[easting, northing]` - the first coordinate in a coordinate pair points "north" and the second points "east")</small>
 
-The debate about whether `[lng, lat]` or `[lat, lng]` or `[y, x]` or `[x, y]` [is not new, and there is no clear consensus](http://www.macwright.org/lonlat/). This lack of consensus is why Leaflet has a class named `LatLng` instead of the more confusion-prone `Coordinate`.
+The debate about whether `[lng, lat]` or `[lat, lng]` or `[y, x]` or `[x, y]` [is not new, and there is no clear consensus](http://www.macwright.org/lonlat/). This lack of consensus is why Maplair has a class named `LatLng` instead of the more confusion-prone `Coordinate`.
 
 If working with `[y, x]` coordinates with something named `LatLng` doesn't make much sense to you, you can easily create wrappers for them:
 

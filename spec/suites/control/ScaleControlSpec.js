@@ -1,8 +1,8 @@
-import {LeafletMap, ScaleControl} from 'leaflet';
+import {MaplairMap, ScaleControl} from 'maplair';
 
 describe('ScaleControl', () => {
 	it('can be added to an unloaded map', () => {
-		const map = new LeafletMap(document.createElement('div'));
+		const map = new MaplairMap(document.createElement('div'));
 		new ScaleControl().addTo(map);
 	});
 });

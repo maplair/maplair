@@ -4,19 +4,19 @@
 	{% capture title %}{% if page.title %}{{ page.title }} - {% elsif post.title %}{{ post.title }} - {% endif %}{% endcapture %}
 
 	{% if title != '' %}
-	<title>{{ title }}Leaflet</title>
+	<title>{{ title }}Maplair</title>
 	{% else %}
-	<title>Leaflet - a JavaScript library for interactive maps</title>
+	<title>Maplair - a JavaScript library for interactive maps</title>
 	{% endif %}
 	
 	<meta charset="utf-8" />
 	{% if title == '' %}
-	<meta property="og:title" content="Leaflet — an open-source JavaScript library for interactive maps" />
-	<meta property="og:description" content="Leaflet is a modern, lightweight open-source JavaScript library for building powerful interactive maps." />
+	<meta property="og:title" content="Maplair — an open-source JavaScript library for interactive maps" />
+	<meta property="og:description" content="Maplair is a modern, lightweight open-source JavaScript library for building powerful interactive maps." />
 	<meta property="og:image" content="{{ root }}docs/images/logo.png" />
-	<meta property="og:image:alt" content="Leaflet">
-	<meta itemprop="name" content="Leaflet">
-	<meta itemprop="description" content="Leaflet — a modern, lightweight open-source JavaScript library for building powerful interactive maps.">
+	<meta property="og:image:alt" content="Maplair">
+	<meta itemprop="name" content="Maplair">
+	<meta itemprop="description" content="Maplair — a modern, lightweight open-source JavaScript library for building powerful interactive maps.">
 	<meta itemprop="image" content="{{ root }}docs/images/logo.png">
 	{% endif %}
 
@@ -31,7 +31,7 @@
 
 	<link rel="shortcut icon" type="image/x-icon" href="{{ root }}docs/images/favicon.ico" />
 
-	<link href="https://leafletjs.com/atom.xml" type="application/atom+xml" rel="alternate" title="Leaflet Dev Blog Atom Feed" />
+	<link href="https://leafletjs.com/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
 
 	<link rel="stylesheet" href="{{ root }}docs/css/normalize.css" />
 	<link rel="stylesheet" href="{{ root }}docs/css/main.css" />
@@ -44,15 +44,15 @@
 	<script src="{{ root }}docs/highlight/highlight.pack.js"></script>
 	<link rel="stylesheet" href="{{ root }}docs/highlight/styles/github-gist.css" />
 
-	<!-- Leaflet -->
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_leaflet_version}}/dist/leaflet.css" integrity="{{site.integrity_hash_css}}" crossorigin=""/>
+	<!-- Maplair -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_maplair_version}}/dist/maplair.css" integrity="{{site.integrity_hash_css}}" crossorigin=""/>
 	<script type="importmap">
 		{
 			"imports": {
-				"leaflet": "https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_leaflet_version}}/dist/leaflet.js"
+				"maplair": "https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_maplair_version}}/dist/maplair.js"
 			},
 			"integrity": {
-				"https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_leaflet_version}}/dist/leaflet.js": "{{site.integrity_hash_uglified}}"
+				"https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_maplair_version}}/dist/maplair.js": "{{site.integrity_hash_uglified}}"
 			}
 		}
 	</script>
@@ -70,7 +70,7 @@
 <body{% if page.bodyclass %} class="{{ page.bodyclass }}"{% endif %}>
 
 <header>
-	<h1><a href="https://leafletjs.com/"><img src="{{ root }}docs/images/logo.png" alt="Leaflet" width="300" /></a></h1>
+	<h1><a href="https://leafletjs.com/"><img src="{{ root }}docs/images/logo.png" alt="Maplair" width="300" /></a></h1>
 	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
 </header>
 
@@ -133,10 +133,10 @@
 	</div>
 
 	<nav class="ext-links">
-	  <a class="ext-link mastodon" href="https://mapstodon.space/@leaflet" title="Follow @leaflet@mapstodon.space on Mastodon"><img alt="Follow @leaflet@mapstodon.space on Mastodon" src="{{root}}docs/images/mastodon.svg" width="46" /></a>
-	  <a class="ext-link twitter" href="https://twitter.com/LeafletJS" title="Follow LeafletJS on X"><img alt="Follow LeafletJS on X" src="{{root}}docs/images/x-round.svg" width="46" /></a>
+	  <a class="ext-link mastodon" href="https://mapstodon.space/@leaflet" title="Follow @maplair@mapstodon.space on Mastodon"><img alt="Follow @maplair@mapstodon.space on Mastodon" src="{{root}}docs/images/mastodon.svg" width="46" /></a>
+	  <a class="ext-link twitter" href="https://twitter.com/LeafletJS" title="Follow MaplairJS on X"><img alt="Follow MaplairJS on X" src="{{root}}docs/images/x-round.svg" width="46" /></a>
 	  <a class="ext-link github" href="http://github.com/Leaflet/Leaflet" title="View Source on GitHub"><img alt="View Source on GitHub" src="{{root}}docs/images/github-round.svg" width="46" /></a>
-	  <a class="ext-link forum" href="https://stackoverflow.com/questions/tagged/leaflet" title="Ask for help on Stack Overflow"><img alt="Leaflet questions on Stack Overflow" src="{{root}}docs/images/forum-round.svg" width="46" /></a>
+	  <a class="ext-link forum" href="https://stackoverflow.com/questions/tagged/leaflet" title="Ask for help on Stack Overflow"><img alt="Maplair questions on Stack Overflow" src="{{root}}docs/images/forum-round.svg" width="46" /></a>
 	</nav>
 
 	<button id="back-to-top" title="Scroll back to top">

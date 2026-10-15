@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {Projection, LatLng, Point} from 'leaflet';
+import {Projection, LatLng, Point} from 'maplair';
 
 describe('Projection.Mercator', () => {
 	const p = Projection.Mercator;

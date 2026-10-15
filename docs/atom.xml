@@ -1,10 +1,10 @@
 ---
-title: Leaflet Developer Blog Atom Feed
+title: Maplair Developer Blog Atom Feed
 ---
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-	<title>Leaflet Dev Blog</title>
+	<title>Maplair Dev Blog</title>
 
 	<link href="https://leafletjs.com/atom.xml" rel="self"/>
 	<link href="https://leafletjs.com"/>

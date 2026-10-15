@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {Class, Evented, FeatureGroup, Marker, Util} from 'leaflet';
+import {Class, Evented, FeatureGroup, Marker, Util} from 'maplair';
 import sinon from 'sinon';
 
 describe('Events', () => {
@@ -276,7 +276,7 @@ describe('Events', () => {
 
 			obj.on('test', spy, foo2);
 
-			obj.off('test', spy, foo); // Decrements test_idx to 0, even though event listener isn't registered with foo's _leaflet_id
+			obj.off('test', spy, foo); // Decrements test_idx to 0, even though event listener isn't registered with foo's _maplair_id
 			obj.off('test', spy, foo2);  // Doesn't get removed
 
 			obj.on('test', spy2, foo);

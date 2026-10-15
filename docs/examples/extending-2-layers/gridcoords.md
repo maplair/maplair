@@ -3,9 +3,9 @@ layout: tutorial_frame
 title: Grid Coordinates Example
 ---
 <script type="module">
-	import {LeafletMap, GridLayer} from 'leaflet';
+	import {MaplairMap, GridLayer} from 'maplair';
 
-	const map = new LeafletMap('map', {
+	const map = new MaplairMap('map', {
 		center: [0, 0],
 		zoom: 0
 	});

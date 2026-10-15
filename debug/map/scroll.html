@@ -2,14 +2,14 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>Leaflet debug page - Scroll</title>
+		<title>Maplair debug page - Scroll</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
-		<link rel="stylesheet" href="../../dist/leaflet.css" />
+		<link rel="stylesheet" href="../../dist/maplair.css" />
 		<link rel="stylesheet" href="../css/screen.css" />
 		<script type="importmap">
 			{
 				"imports": {
-					"leaflet": "../../dist/leaflet-src.js"
+					"maplair": "../../dist/maplair-src.js"
 				}
 			}
 		</script>
@@ -23,13 +23,13 @@
 			</div>
 		</div>
 		<script type="module">
-			import {TileLayer, LatLng, LeafletMap, Popup} from 'leaflet';
+			import {TileLayer, LatLng, MaplairMap, Popup} from 'maplair';
 
 			const osmUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 			const osm = new TileLayer(osmUrl, {maxZoom: 18});
 			const latlng = new LatLng(50.5, 30.51);
 
-			const map = new LeafletMap('map', {center: latlng, zoom: 15, layers: [osm]});
+			const map = new MaplairMap('map', {center: latlng, zoom: 15, layers: [osm]});
 
 			let s = '';
 			for (let i = 0; i < 100; i++) {

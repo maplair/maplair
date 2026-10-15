@@ -7,7 +7,7 @@ import {LatLngBounds} from '../geo/LatLngBounds.js';
 /*
  * @namespace LineUtil
  *
- * Various utility functions for polyline points processing, used by Leaflet internally to make polylines lightning-fast.
+ * Various utility functions for polyline points processing, used by Maplair internally to make polylines lightning-fast.
  */
 
 // Simplify polyline with vertex reduction and Douglas-Peucker simplification.
@@ -17,7 +17,7 @@ import {LatLngBounds} from '../geo/LatLngBounds.js';
 // Dramatically reduces the number of points in a polyline while retaining
 // its shape and returns a new array of simplified points, using the
 // [Ramer-Douglas-Peucker algorithm](https://en.wikipedia.org/wiki/Ramer-Douglas-Peucker_algorithm).
-// Used for a huge performance boost when processing/displaying Leaflet polylines for
+// Used for a huge performance boost when processing/displaying Maplair polylines for
 // each zoom level and also reducing visual noise. tolerance affects the amount of
 // simplification (lesser value means higher quality but slower and with more points).
 // Also released as a separated micro-library [Simplify.js](https://mourner.github.io/simplify-js/).
@@ -114,7 +114,7 @@ let _lastCode;
 // @function clipSegment(a: Point, b: Point, bounds: Bounds, useLastCode?: Boolean, round?: Boolean): Point[]|Boolean
 // Clips the segment a to b by rectangular bounds with the
 // [Cohen-Sutherland algorithm](https://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland_algorithm)
-// (modifying the segment points directly!). Used by Leaflet to only show polyline
+// (modifying the segment points directly!). Used by Maplair to only show polyline
 // points that are on the screen or near, increasing performance.
 export function clipSegment(a, b, bounds, useLastCode, round) {
 	let codeA = useLastCode ? _lastCode : _getBitCode(a, bounds),

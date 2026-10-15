@@ -44,7 +44,7 @@ export class BlanketOverlay extends Layer {
 			this._initContainer(); // defined by renderer implementations
 
 			// always keep transform-origin as 0 0, #8794
-			this._container.classList.add('leaflet-zoom-animated');
+			this._container.classList.add('maplair-zoom-animated');
 		}
 
 		this.getPane().appendChild(this._container);

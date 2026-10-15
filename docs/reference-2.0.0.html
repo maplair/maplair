@@ -4,9 +4,9 @@ title: Documentation
 bodyclass: api-page
 ---
 
-<h2>Leaflet API reference</h2>
+<h2>Maplair API reference</h2>
 
-<p>This reference reflects <strong>Leaflet 2.0.0</strong>. Check <a href='reference-versions.html'>this list</a> if you are using a different version of Leaflet.</p>
+<p>This reference reflects <strong>Maplair 2.0.0</strong>. Check <a href='reference-versions.html'>this list</a> if you are using a different version of Maplair.</p>
 
 <div id="toc" class="clearfix">
 	<div class="toc-col map-col">
@@ -3884,7 +3884,7 @@ marker.bindPopup(el);
 		<td>If set, creates a scrollable container of the given height
 inside a popup if its content exceeds it.
 The scrollable container can be styled using the
-<code>leaflet-popup-scrolled</code> CSS class selector.</td>
+<code>maplair-popup-scrolled</code> CSS class selector.</td>
 	</tr>
 	<tr id='popup-autopan'>
 		<td><code><b>autoPan</b></code></td>
@@ -4727,7 +4727,7 @@ The verification can optionally be propagated, it will return <code>true</code> 
 el.textContent = untrustedString;
 marker.bindTooltip(el);
 </code></pre>
-<p>Note about tooltip offset. Leaflet takes two options in consideration
+<p>Note about tooltip offset. Maplair takes two options in consideration
 for computing tooltip offsetting:</p>
 <ul>
 <li>the <code>offset</code> Tooltip option: it defaults to [0, 0], and it's specific to one tooltip.
@@ -17811,7 +17811,7 @@ GeoJSON data and display it on the map. Extends <a href="#featuregroup"><code>Fe
 		<td><code><b>pointToLayer</b></code></td>
 		<td><code>Function</code></td>
 		<td><code>*</code></td>
-		<td>A <code>Function</code> defining how GeoJSON points spawn Leaflet layers. It is internally
+		<td>A <code>Function</code> defining how GeoJSON points spawn Maplair layers. It is internally
 called when data is added, passing the GeoJSON point feature and its <a href="#latlng"><code>LatLng</code></a>.
 The default is to spawn a default <a href="#marker"><code>Marker</code></a>:
 <pre><code class="language-js">function(geoJsonPoint, latlng) {
@@ -18715,7 +18715,7 @@ GridLayer can be extended to create a tiled grid of HTML elements like <code>&lt
 <pre><code class="language-js">const CanvasLayer = GridLayer.extend({
     createTile: function(coords){
         // create a &lt;canvas&gt; element for drawing
-        const tile = DomUtil.create('canvas', 'leaflet-tile');
+        const tile = DomUtil.create('canvas', 'maplair-tile');
 
         // setup tile width and height according to the options
         const size = this.getTileSize();
@@ -18745,7 +18745,7 @@ GridLayer can be extended to create a tiled grid of HTML elements like <code>&lt
         const error;
 
         // create a &lt;canvas&gt; element for drawing
-        const tile = DomUtil.create('canvas', 'leaflet-tile');
+        const tile = DomUtil.create('canvas', 'maplair-tile');
 
         // setup tile width and height according to the options
         const size = this.getTileSize();
@@ -19515,13 +19515,13 @@ The verification can optionally be propagated, it will return <code>true</code> 
 
 <pre><code>const latlng = new LatLng(50.5, 30.5);
 </code></pre>
-<p>All Leaflet methods that accept LatLng objects also accept them in a simple Array form and simple object form (unless noted otherwise), so these lines are equivalent:</p>
+<p>All Maplair methods that accept LatLng objects also accept them in a simple Array form and simple object form (unless noted otherwise), so these lines are equivalent:</p>
 <pre><code>map.panTo([50, 30]);
 map.panTo({lat: 50, lng: 30});
 map.panTo({lat: 50, lon: 30});
 map.panTo(new LatLng(50, 30));
 </code></pre>
-<p>Note that <a href="#latlng"><code>LatLng</code></a> does not inherit from Leaflet's <a href="#class"><code>Class</code></a> object,
+<p>Note that <a href="#latlng"><code>LatLng</code></a> does not inherit from Maplair's <a href="#class"><code>Class</code></a> object,
 which means new classes can't inherit from it, and new methods
 can't be added to it with the <code>include</code> function.</p>
 
@@ -19706,14 +19706,14 @@ Returns <code>true</code> if the LatLng object can be properly initialized.</td>
 corner2 = new LatLng(40.774, -74.125),
 bounds = new LatLngBounds(corner1, corner2);
 </code></pre>
-<p>All Leaflet methods that accept LatLngBounds objects also accept them in a simple Array form (unless noted otherwise), so the bounds example above can be passed like this:</p>
+<p>All Maplair methods that accept LatLngBounds objects also accept them in a simple Array form (unless noted otherwise), so the bounds example above can be passed like this:</p>
 <pre><code class="language-js">map.fitBounds([
 	[40.712, -74.227],
 	[40.774, -74.125]
 ]);
 </code></pre>
 <p>Caution: if the area crosses the antimeridian (often confused with the International Date Line), you must specify corners <em>outside</em> the [-180, 180] degrees longitude range.</p>
-<p>Note that <a href="#latlngbounds"><code>LatLngBounds</code></a> does not inherit from Leaflet's <a href="#class"><code>Class</code></a> object,
+<p>Note that <a href="#latlngbounds"><code>LatLngBounds</code></a> does not inherit from Maplair's <a href="#class"><code>Class</code></a> object,
 which means new classes can't inherit from it, and new methods
 can't be added to it with the <code>include</code> function.</p>
 
@@ -19899,11 +19899,11 @@ Negative values will retract the bounds.</p>
 
 <pre><code class="language-js">const point = new Point(200, 300);
 </code></pre>
-<p>All Leaflet methods and options that accept <a href="#point"><code>Point</code></a> objects also accept them in a simple Array form (unless noted otherwise), so these lines are equivalent:</p>
+<p>All Maplair methods and options that accept <a href="#point"><code>Point</code></a> objects also accept them in a simple Array form (unless noted otherwise), so these lines are equivalent:</p>
 <pre><code class="language-js">map.panBy([200, 300]);
 map.panBy(new Point(200, 300));
 </code></pre>
-<p>Note that <a href="#point"><code>Point</code></a> does not inherit from Leaflet's <a href="#class"><code>Class</code></a> object,
+<p>Note that <a href="#point"><code>Point</code></a> does not inherit from Maplair's <a href="#class"><code>Class</code></a> object,
 which means new classes can't inherit from it, and new methods
 can't be added to it with the <code>include</code> function.</p>
 
@@ -20127,10 +20127,10 @@ each coordinate of <code>scale</code>.</p>
 p2 = new Point(40, 60),
 bounds = new Bounds(p1, p2);
 </code></pre>
-<p>All Leaflet methods that accept <a href="#bounds"><code>Bounds</code></a> objects also accept them in a simple Array form (unless noted otherwise), so the bounds example above can be passed like this:</p>
+<p>All Maplair methods that accept <a href="#bounds"><code>Bounds</code></a> objects also accept them in a simple Array form (unless noted otherwise), so the bounds example above can be passed like this:</p>
 <pre><code class="language-js">otherBounds.intersects([[10, 10], [40, 60]]);
 </code></pre>
-<p>Note that <a href="#bounds"><code>Bounds</code></a> does not inherit from Leaflet's <a href="#class"><code>Class</code></a> object,
+<p>Note that <a href="#bounds"><code>Bounds</code></a> does not inherit from Maplair's <a href="#class"><code>Class</code></a> object,
 which means new classes can't inherit from it, and new methods
 can't be added to it with the <code>include</code> function.</p>
 
@@ -20334,7 +20334,7 @@ Negative values will retract the bounds.</p>
 
 new Marker([50.505, 30.57], {icon: myIcon}).addTo(map);
 </code></pre>
-<p><a href="#icon-default"><code>Icon.Default</code></a> extends <a href="#icon"><code>Icon</code></a> and is the blue icon Leaflet uses for markers by default.</p>
+<p><a href="#icon-default"><code>Icon.Default</code></a> extends <a href="#icon"><code>Icon</code></a> and is the blue icon Maplair uses for markers by default.</p>
 
 
 
@@ -20508,7 +20508,7 @@ styled according to the options.</p>
 
 
 <div class='section-comments'>A trivial subclass of <a href="#icon"><code>Icon</code></a>, represents the icon to use in <a href="#marker"><code>Marker</code></a>s when
-no icon is specified. Points to the blue marker image distributed with Leaflet
+no icon is specified. Points to the blue marker image distributed with Maplair
 releases.
 <p>In order to customize the default icon, just change the properties of <code>Icon.Default.prototype.options</code>
 (which is a set of <a href="#icon-option"><code>Icon options</code></a>).</p>
@@ -20553,7 +20553,7 @@ element instead of an image. Inherits from <a href="#icon"><code>Icon</code></a>
 
 new Marker([50.505, 30.57], {icon: myIcon}).addTo(map);
 </code></pre>
-<p>By default, it has a 'leaflet-div-icon' CSS class and is styled as a little white square with a shadow.</p>
+<p>By default, it has a 'maplair-div-icon' CSS class and is styled as a little white square with a shadow.</p>
 
 
 
@@ -20945,7 +20945,7 @@ styled according to the options.</p>
 	<tr id='control-attribution-prefix'>
 		<td><code><b>prefix</b></code></td>
 		<td><code>String|false</code></td>
-		<td><code>&#x27;Leaflet&#x27;</code></td>
+		<td><code>&#x27;Maplair&#x27;</code></td>
 		<td>The HTML text shown before the attributions. Pass <code>false</code> to disable.</td>
 	</tr>
 </tbody></table>
@@ -21442,7 +21442,7 @@ By default, it sorts layers alphabetically by their name.</td>
 	</div>
 </div>
 
-</section><h2 id='browser'>Browser</h2><p>A namespace with static properties for browser/feature detection used by Leaflet internally.</p>
+</section><h2 id='browser'>Browser</h2><p>A namespace with static properties for browser/feature detection used by Maplair internally.</p>
 
 <section>
 <h3 id='browser-example'>Usage example</h3>
@@ -21528,7 +21528,7 @@ Note: pointer events will be preferred (if available), and processed for all <co
 </section>
 
 
-</section><h2 id='util'>Util</h2><p>Various utility functions, used by Leaflet internally.</p>
+</section><h2 id='util'>Util</h2><p>Various utility functions, used by Maplair internally.</p>
 
 <section>
 <h3 id='util-function'>Functions</h3>
@@ -21635,7 +21635,7 @@ mobile devices (by setting image <code>src</code> to this string).</td>
 
 </section><h2 id='transformation'>Transformation</h2><p>Represents an affine transformation: a set of coefficients <code>a</code>, <code>b</code>, <code>c</code>, <code>d</code>
 for transforming a point of a form <code>(x, y)</code> into <code>(a*x + b, c*y + d)</code> and doing
-the reverse. Used by Leaflet in its projections code.</p>
+the reverse. Used by Maplair in its projections code.</p>
 
 <section>
 <h3 id='transformation-example'>Usage example</h3>
@@ -21720,7 +21720,7 @@ by the given scale. Only accepts actual <a href="#point"><code>Point</code></a> 
 </section>
 
 
-</section><h2 id='lineutil'>LineUtil</h2><p>Various utility functions for polyline points processing, used by Leaflet internally to make polylines lightning-fast.</p>
+</section><h2 id='lineutil'>LineUtil</h2><p>Various utility functions for polyline points processing, used by Maplair internally to make polylines lightning-fast.</p>
 
 <section>
 <h3 id='lineutil-function'>Functions</h3>
@@ -21743,7 +21743,7 @@ by the given scale. Only accepts actual <a href="#point"><code>Point</code></a> 
 		<td>Dramatically reduces the number of points in a polyline while retaining
 its shape and returns a new array of simplified points, using the
 <a href="https://en.wikipedia.org/wiki/Ramer-Douglas-Peucker_algorithm">Ramer-Douglas-Peucker algorithm</a>.
-Used for a huge performance boost when processing/displaying Leaflet polylines for
+Used for a huge performance boost when processing/displaying Maplair polylines for
 each zoom level and also reducing visual noise. tolerance affects the amount of
 simplification (lesser value means higher quality but slower and with more points).
 Also released as a separated micro-library <a href="https://mourner.github.io/simplify-js/">Simplify.js</a>.</td>
@@ -21763,7 +21763,7 @@ Also released as a separated micro-library <a href="https://mourner.github.io/si
 		<td><code>Point[]|Boolean</code></td>
 		<td>Clips the segment a to b by rectangular bounds with the
 <a href="https://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland_algorithm">Cohen-Sutherland algorithm</a>
-(modifying the segment points directly!). Used by Leaflet to only show polyline
+(modifying the segment points directly!). Used by Maplair to only show polyline
 points that are on the screen or near, increasing performance.</td>
 	</tr>
 	<tr id='lineutil-isflat'>
@@ -21802,7 +21802,7 @@ points that are on the screen or near, increasing performance.</td>
 		<td><code><b>clipPolygon</b>(<nobr>&lt;Point[]&gt;</nobr> <i>points</i>, <nobr>&lt;<a href='#bounds'>Bounds</a>&gt;</nobr> <i>bounds</i>, <nobr>&lt;Boolean&gt;</nobr> <i>round?</i>)</code></td>
 		<td><code>Point[]</code></td>
 		<td>Clips the polygon geometry defined by the given <code>points</code> by the given bounds (using the <a href="https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm">Sutherland-Hodgman algorithm</a>).
-Used by Leaflet to only show polygon points that are on the screen or near, increasing
+Used by Maplair to only show polygon points that are on the screen or near, increasing
 performance. Note that polygon points needs different algorithm for clipping
 than polyline, so there's a separate method for it.</td>
 	</tr>
@@ -21821,7 +21821,7 @@ than polyline, so there's a separate method for it.</td>
 </section>
 
 
-</section><h2 id='domevent'>DomEvent</h2><p>Utility functions to work with the <a href="https://developer.mozilla.org/docs/Web/API/Event">DOM events</a>, used by Leaflet internally.</p>
+</section><h2 id='domevent'>DomEvent</h2><p>Utility functions to work with the <a href="https://developer.mozilla.org/docs/Web/API/Event">DOM events</a>, used by Maplair internally.</p>
 
 <section>
 <h3 id='domevent-function'>Functions</h3>
@@ -21981,7 +21981,7 @@ Note: This function should be not necessary to call, as the pointers are automat
 
 
 </section><h2 id='domutil'>DomUtil</h2><p>Utility functions to work with the <a href="https://developer.mozilla.org/docs/Web/API/Document_Object_Model">DOM</a>
-tree, used by Leaflet internally.</p>
+tree, used by Maplair internally.</p>
 <p>Most functions expecting or returning a <code>HTMLElement</code> also work for
 SVG elements. The only difference is that classes refer to CSS classes
 in HTML and SVG classes in SVG.</p>
@@ -22034,7 +22034,7 @@ browser doesn't support 3D CSS transforms.</td>
 		<td><code></code></td>
 		<td>Sets the position of <code>el</code> to coordinates specified by <code>position</code>,
 using CSS translate or top/left positioning depending on the browser
-(used by Leaflet internally to position its layers).</td>
+(used by Maplair internally to position its layers).</td>
 	</tr>
 	<tr id='domutil-getposition'>
 		<td><code><b>getPosition</b>(<nobr>&lt;HTMLElement&gt;</nobr> <i>el</i>)</code></td>
@@ -22045,7 +22045,7 @@ using CSS translate or top/left positioning depending on the browser
 		<td><code><b>disableTextSelection</b>()</code></td>
 		<td><code></code></td>
 		<td>Prevents the user from selecting text in the document. Used internally
-by Leaflet to override the behaviour of any click-and-drag interaction on
+by Maplair to override the behaviour of any click-and-drag interaction on
 the map. Affects drag interactions on the whole document.</td>
 	</tr>
 	<tr id='domutil-enabletextselection'>
@@ -22067,7 +22067,7 @@ the map. Affects drag interactions on the whole document.</td>
 		<td><code><b>preventOutline</b>(<nobr>&lt;HTMLElement&gt;</nobr> <i>el</i>)</code></td>
 		<td><code></code></td>
 		<td>Makes the <a href="https://developer.mozilla.org/docs/Web/CSS/outline">outline</a>
-of the element <code>el</code> invisible. Used internally by Leaflet to prevent
+of the element <code>el</code> invisible. Used internally by Maplair to prevent
 focusable elements from displaying an outline when the user performs a
 drag interaction on them.</td>
 	</tr>
@@ -22612,7 +22612,7 @@ The verification can optionally be propagated, it will return <code>true</code> 
 	</div>
 </div>
 
-</section><h2 id='class'>Class</h2><p>Class powers the OOP facilities of Leaflet and is used to create almost all of the Leaflet classes documented here.</p>
+</section><h2 id='class'>Class</h2><p>Class powers the OOP facilities of Maplair and is used to create almost all of the Maplair classes documented here.</p>
 <p>In addition to implementing a simple classical inheritance model, it introduces several special properties for convenient code organization — options, includes and statics.</p>
 
 <section>
@@ -22773,7 +22773,7 @@ MyClass.FOO; // 'bar'
 
 
 
-<p>If you're a plugin developer, you often need to add additional initialization code to existing classes (e.g. editing hooks for <a href="#polyline"><code>Polyline</code></a>). Leaflet comes with a way to do it easily using the <code>addInitHook</code> method:</p>
+<p>If you're a plugin developer, you often need to add additional initialization code to existing classes (e.g. editing hooks for <a href="#polyline"><code>Polyline</code></a>). Maplair comes with a way to do it easily using the <code>addInitHook</code> method:</p>
 <pre><code class="language-js">MyClass.addInitHook(() =&gt; {
     // ... do something in constructor additionally
     // e.g. add event listeners, set custom properties etc.
@@ -22844,7 +22844,7 @@ Returns a Javascript function that is a class constructor (to be called with <co
 	alert(e.latlng);
 } );
 </code></pre>
-<p>Leaflet deals with event listeners by reference, so if you want to add a listener and then remove it, define it as a function:</p>
+<p>Maplair deals with event listeners by reference, so if you want to add a listener and then remove it, define it as a function:</p>
 <pre><code class="language-js">function onClick(e) { ... }
 
 map.on('click', onClick);
@@ -22975,7 +22975,7 @@ The verification can optionally be propagated, it will return <code>true</code> 
 </section>
 
 
-</section><h2 id='layer'>Layer</h2><p>A set of methods from the Layer base class that all Leaflet layers use.
+</section><h2 id='layer'>Layer</h2><p>A set of methods from the Layer base class that all Maplair layers use.
 Inherits all methods, options and events from <a href="#evented"><code>Evented</code></a>.</p>
 
 <section>
@@ -24267,7 +24267,7 @@ Only accepts actual <a href="#latlng"><code>LatLng</code></a> instances, not arr
 		<td><code><a href='#latlng'>LatLng</a></code></td>
 		<td><p>The inverse of <code>project</code>. Projects a 2D point into a geographical location.
 Only accepts actual <a href="#point"><code>Point</code></a> instances, not arrays.</p>
-<p>Note that the projection instances do not inherit from Leaflet's <a href="#class"><code>Class</code></a> object,
+<p>Note that the projection instances do not inherit from Maplair's <a href="#class"><code>Class</code></a> object,
 and can't be instantiated. Also, new classes can't inherit from them,
 and methods can't be added to them with the <code>include</code> function.</p>
 </td>
@@ -24309,7 +24309,7 @@ and methods can't be added to them with the <code>include</code> function.</p>
 
 
 
-<div class='section-comments'>Leaflet comes with a set of already defined Projections out of the box:</div>
+<div class='section-comments'>Maplair comes with a set of already defined Projections out of the box:</div>
 
 <table><thead>
 	<tr>
@@ -24505,7 +24505,7 @@ Map's <code>crs</code> option.</td>
 	<tr id='crs-crs-epsg4326'>
 		<td><code><b>CRS.EPSG4326</b></code></td>
 		<td>A common CRS among GIS enthusiasts. Uses simple Equirectangular projection.
-<p>Leaflet complies with the <a href="https://wiki.osgeo.org/wiki/Tile_Map_Service_Specification#global-geodetic">TMS coordinate scheme for EPSG:4326</a>.
+<p>Maplair complies with the <a href="https://wiki.osgeo.org/wiki/Tile_Map_Service_Specification#global-geodetic">TMS coordinate scheme for EPSG:4326</a>.
 If you are using a <a href="#tilelayer"><code>TileLayer</code></a> with this CRS, ensure that there are two 256x256 pixel tiles covering the
 whole earth at zoom level zero, and that the tile coordinate origin is (-180,+90),
 or (-180,-90) for <a href="#tilelayer"><code>TileLayer</code></a>s with <a href="#tilelayer-tms">the <code>tms</code> option</a> set.</p></td>
@@ -24516,10 +24516,10 @@ or (-180,-90) for <a href="#tilelayer"><code>TileLayer</code></a>s with <a href=
 geographical points into pixel (screen) coordinates and back (and to
 coordinates in other units for <a href="https://en.wikipedia.org/wiki/Web_Map_Service">WMS</a> services). See
 <a href="https://en.wikipedia.org/wiki/Spatial_reference_system">spatial reference system</a>.
-<p>Leaflet defines the most usual CRSs by default. If you want to use a
+<p>Maplair defines the most usual CRSs by default. If you want to use a
 CRS not defined by default, take a look at the
-<a href="https://github.com/kartena/Proj4Leaflet">Proj4Leaflet</a> plugin.</p>
-<p>Note that the CRS instances do not inherit from Leaflet's <a href="#class"><code>Class</code></a> object,
+<a href="https://github.com/kartena/Proj4Leaflet">Proj4Maplair</a> plugin.</p>
+<p>Note that the CRS instances do not inherit from Maplair's <a href="#class"><code>Class</code></a> object,
 and can't be instantiated. Also, new classes can't inherit from them,
 and methods can't be added to them with the <code>include</code> function.</p></td>
 	</tr>
@@ -25720,7 +25720,7 @@ event parent.</td>
 	<tr id='keyboardevent-originalevent'>
 		<td><code><b>originalEvent</b></code></td>
 		<td><code>DOMEvent</code></td>
-		<td>The original <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent">DOM <code>KeyboardEvent</code></a> that triggered this Leaflet event.</td>
+		<td>The original <a href="https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent">DOM <code>KeyboardEvent</code></a> that triggered this Maplair event.</td>
 	</tr>
 </tbody></table>
 
@@ -25806,7 +25806,7 @@ event parent.</td>
 	<tr id='pointerevent-originalevent'>
 		<td><code><b>originalEvent</b></code></td>
 		<td><code>DOMEvent</code></td>
-		<td>The original <a href="https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent">DOM <code>MouseEvent</code></a> or <a href="https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent">DOM <code>PointerEvent</code></a> that triggered this Leaflet event.</td>
+		<td>The original <a href="https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent">DOM <code>MouseEvent</code></a> or <a href="https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent">DOM <code>PointerEvent</code></a> that triggered this Maplair event.</td>
 	</tr>
 </tbody></table>
 
@@ -26799,23 +26799,23 @@ event parent.</td>
 	</div>
 </div>
 
-</section><h2 id='noconflict'>noConflict</h2><p><strong>This is only available when Leaflet is not imported as a module!</strong></p>
+</section><h2 id='noconflict'>noConflict</h2><p><strong>This is only available when Maplair is not imported as a module!</strong></p>
 <p>This method restores the <code>L</code> global variable to the original value
-it had before Leaflet inclusion, and returns the real Leaflet
+it had before Maplair inclusion, and returns the real Maplair
 namespace so you can put it elsewhere, like this:</p>
 <pre><code class="language-html">&lt;script src='libs/l.js'&gt;
 &lt;!-- L points to some other library --&gt;
 
-&lt;script src='leaflet.js'&gt;
-&lt;!-- you include Leaflet, it replaces the L variable to Leaflet namespace --&gt;
+&lt;script src='maplair.js'&gt;
+&lt;!-- you include Maplair, it replaces the L variable to Maplair namespace --&gt;
 
 &lt;script&gt;
-const Leaflet = L.noConflict();
-// now L points to that other library again, and you can use Leaflet.Map etc.
+const Maplair = L.noConflict();
+// now L points to that other library again, and you can use Maplair.Map etc.
 &lt;/script&gt;
 </code></pre>
 
-<h2 id='version'>version</h2><p>A constant that represents the Leaflet version in use.</p>
+<h2 id='version'>version</h2><p>A constant that represents the Maplair version in use.</p>
 <pre><code class="language-js">L.version; // contains &quot;1.0.0&quot; (or whatever version is currently in use)
 </code></pre>
 

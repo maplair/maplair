@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {Point, Transformation} from 'leaflet';
+import {Point, Transformation} from 'maplair';
 
 describe('Transformation', () => {
 	let t, p;

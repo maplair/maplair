@@ -2,14 +2,14 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>Leaflet debug page - Detached DOM Memory Leak</title>
+		<title>Maplair debug page - Detached DOM Memory Leak</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
-		<link rel="stylesheet" href="../../dist/leaflet.css" />
+		<link rel="stylesheet" href="../../dist/maplair.css" />
 		<link rel="stylesheet" href="../css/screen.css" />
 		<script type="importmap">
 			{
 				"imports": {
-					"leaflet": "../../dist/leaflet-src.js"
+					"maplair": "../../dist/maplair-src.js"
 				}
 			}
 		</script>
@@ -19,7 +19,7 @@
 		<button id="start">Start</button>
 		<button id="stop">Stop</button>
 		<script type="module">
-			import {TileLayer, LeafletMap} from 'leaflet';
+			import {TileLayer, MaplairMap} from 'maplair';
 
 			let map;
 			let mapDiv;
@@ -44,7 +44,7 @@
 				mapDiv.style.width = '200px';
 				document.getElementsByTagName('body')[0].appendChild(mapDiv);
 				// attach map to div
-				map = new LeafletMap(randomDivId).setView([51.505, -0.09], 13);
+				map = new MaplairMap(randomDivId).setView([51.505, -0.09], 13);
 				map.addLayer(osm);
 			}
 

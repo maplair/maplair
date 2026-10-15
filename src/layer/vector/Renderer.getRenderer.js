@@ -1,9 +1,9 @@
-import {LeafletMap} from '../../map/Map.js';
+import {MaplairMap} from '../../map/Map.js';
 import {Canvas} from './Canvas.js';
 import {SVG} from './SVG.js';
 
-LeafletMap.include({
-	// @namespace LeafletMap; @method getRenderer(layer: Path): Renderer
+MaplairMap.include({
+	// @namespace MaplairMap; @method getRenderer(layer: Path): Renderer
 	// Returns the instance of `Renderer` that should be used to render the given
 	// `Path`. It will ensure that the `renderer` options of the map and paths
 	// are respected, and that the renderers do exist on the map.
@@ -38,7 +38,7 @@ LeafletMap.include({
 	},
 
 	_createRenderer(options) {
-		// @namespace LeafletMap; @option preferCanvas: Boolean = false
+		// @namespace MaplairMap; @option preferCanvas: Boolean = false
 		// Whether `Path`s should be rendered on a `Canvas` renderer.
 		// By default, all `Path`s are rendered in a `SVG` renderer.
 		return (this.options.preferCanvas && new Canvas(options)) || new SVG(options);

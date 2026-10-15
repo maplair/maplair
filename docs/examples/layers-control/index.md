@@ -26,7 +26,7 @@ Easy enough! Now you have a `cities` layer that combines your city markers into 
 
 ### Layers Control
 
-Leaflet has a nice little control that allows your users to control which layers they see on your map. In addition to showing you how to use it, we'll also show you another handy use for layer groups.
+Maplair has a nice little control that allows your users to control which layers they see on your map. In addition to showing you how to use it, we'll also show you another handy use for layer groups.
 
 There are two types of layers: (1) base layers that are mutually exclusive (only one can be visible on your map at a time), e.g. tile layers, and (2) overlays, which are all the other stuff you put over the base layers. In this example, we want to have two base layers (OpenStreetMap 'osm' and OpenStreetMap.Hot `osmHOT` base map) to switch between, and an overlay to switch on and off: the city markers we created earlier.
 
@@ -41,7 +41,7 @@ const osmHOT = new TileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.
 	maxZoom: 19,
 	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'});
 
-const map = new LeafletMap('map', {
+const map = new MaplairMap('map', {
 	center: [39.73, -104.99],
 	zoom: 10,
 	layers: [osm, cities]

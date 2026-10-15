@@ -4,10 +4,10 @@
   "files": [
     {
       "maxSize": "40kB",
-      "path": "leaflet.js"
+      "path": "maplair.js"
     }, {
       "maxSize": "3.2kB",
-      "path": "leaflet.css"
+      "path": "maplair.css"
     }
   ],
   "reportOutput": [

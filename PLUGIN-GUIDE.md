@@ -1,9 +1,9 @@
-# Leaflet Plugin Authoring Guide
+# Maplair Plugin Authoring Guide
 
-One of the greatest things about Leaflet is its powerful plugin ecosystem.
-The [Leaflet plugins page](http://leafletjs.com/plugins.html) lists dozens of awesome plugins, and more are being added every week.
+One of the greatest things about Maplair is its powerful plugin ecosystem.
+The [Maplair plugins page](http://leafletjs.com/plugins.html) lists dozens of awesome plugins, and more are being added every week.
 
-This guide lists a number of best practices for publishing a Leaflet plugin that meets the quality standards of Leaflet itself.
+This guide lists a number of best practices for publishing a Maplair plugin that meets the quality standards of Maplair itself.
 
 1. [Presentation](#presentation)
 	- [Repository](#repository)
@@ -26,15 +26,15 @@ This guide lists a number of best practices for publishing a Leaflet plugin that
 
 ### Repository
 
-The best place to put your Leaflet plugin is a separate [GitHub](http://github.com) repository.
+The best place to put your Maplair plugin is a separate [GitHub](http://github.com) repository.
 If you create a collection of plugins for different uses,
 don't put them in one repo &mdash;
 it's usually easier to work with small, self-contained plugins in individual repositories.
 
 ### Name
 
-Most existing plugins follow the convention of naming plugins (and repos) like this: `leaflet-my-plugin-name`.
-Just make sure to include the word "Leaflet" in the name so that it's obvious that it's a Leaflet plugin.
+Most existing plugins follow the convention of naming plugins (and repos) like this: `maplair-my-plugin-name`.
+Just make sure to include the word "Maplair" in the name so that it's obvious that it's a Maplair plugin.
 
 ### Demo
 
@@ -53,7 +53,7 @@ At a minimum it should contain the following items:
 - name of the plugin
 - a simple, concise description of what it does
 - requirements
-	- Leaflet version
+	- Maplair version
 	- other external dependencies (if any)
 	- browser / device compatibility
 - links to demos
@@ -101,7 +101,7 @@ package.json
 Everyone's tastes are different, but it's important to be consistent with whatever conventions you choose for your plugin.
 
 For a good starting point, check out [Airbnb JavaScript Guide](https://github.com/airbnb/javascript).
-Leaflet follows pretty much the same conventions
+Maplair follows pretty much the same conventions
 except for using smart tabs (hard tabs for indentation, spaces for alignment)
 and putting a space after the `function` keyword.
 
@@ -109,8 +109,8 @@ and putting a space after the `function` keyword.
 
 * Never expose global variables in your plugin.
 * If you inherit one of the existing classes or have a new class, export it and make it available via import.
-* If you want to add new methods to Leaflet classes, you can do it like this: `Marker.include({myPlugin: …})`.
-* Make your plugin importable like this: `import MyPlugin from 'leaflet-my-plugin'`.
+* If you want to add new methods to Maplair classes, you can do it like this: `Marker.include({myPlugin: …})`.
+* Make your plugin importable like this: `import MyPlugin from 'maplair-my-plugin'`.
 
 
 Function, method, property and factory names should be in `camelCase`.<br>
@@ -130,7 +130,7 @@ marker.myPlugin('bla', {
 });
 ```
 
-And most importantly, keep it simple. Leaflet is all about *simplicity*.
+And most importantly, keep it simple. Maplair is all about *simplicity*.
 
 ## Content Accessibility
 
@@ -182,20 +182,20 @@ NPM (Node Packaged Modules) is a package manager and code repository for JavaScr
 
 NPM has an excellent [developers guide](https://docs.npmjs.com/using-npm/developers.html) to help you through the process.
 
-When you publish your plugin you should add a dependency on `leaflet` to your `package.json` file. This will automatically install Leaflet when your package is installed.
+When you publish your plugin you should add a dependency on `maplair` to your `package.json` file. This will automatically install Maplair when your package is installed.
 
-Here is an example of a `package.json` file for a Leaflet plugin.
+Here is an example of a `package.json` file for a Maplair plugin.
 
 ```json
 {
-  "name": "my-leaflet-plugin",
+  "name": "my-maplair-plugin",
   "version": "1.0.0",
-  "description": "A simple leaflet plugin.",
+  "description": "A simple maplair plugin.",
   "main": "my-plugin.js",
   "author": "You",
   "license": "IST",
   "peerDependencies": {
-    "leaflet": "^1.0.0"
+    "maplair": "^1.0.0"
   }
 }
 ```
@@ -207,7 +207,7 @@ trigger a build/minification just before publishing your package with a
 
 ```json
 {
-  "name": "my-leaflet-plugin",
+  "name": "my-maplair-plugin",
   ...
   "scripts": {
     "prepublish": "grunt build"
@@ -222,12 +222,12 @@ to ensure that they are published to NPM.
 
 ## Adding to the plugins list
 
-Once your plugin is published, it is a good idea to add it to the [Leaflet plugins list](http://leafletjs.com/plugins.html). To do so:
+Once your plugin is published, it is a good idea to add it to the [Maplair plugins list](http://leafletjs.com/plugins.html). To do so:
 
-* [Fork](https://help.github.com/articles/fork-a-repo/) the Leaflet repo.
+* [Fork](https://help.github.com/articles/fork-a-repo/) the Maplair repo.
 * In the `docs/_plugins/` folder, copy the `template.md` file and add it to a category folder. Then put the information and links about your plugin into the new plugin file.
 * Commit the code to your fork.
-* [Open a pull request](https://help.github.com/articles/creating-a-pull-request/) from your fork to Leaflet's original repo.
+* [Open a pull request](https://help.github.com/articles/creating-a-pull-request/) from your fork to Maplair's original repo.
 
-Once the pull request is done, a Leaflet maintainer will have a quick look at your
+Once the pull request is done, a Maplair maintainer will have a quick look at your
 plugin and, if everything looks right, your plugin will appear in the list shortly thereafter.

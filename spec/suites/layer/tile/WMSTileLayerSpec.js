@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {WMSTileLayer} from 'leaflet';
+import {WMSTileLayer} from 'maplair';
 
 describe('WMSTileLayer', () => {
 	describe('constructor', () => {

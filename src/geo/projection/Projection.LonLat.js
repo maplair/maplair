@@ -5,7 +5,7 @@ import {Point} from '../../geometry/Point.js';
 /*
  * @namespace Projection
  * @section
- * Leaflet comes with a set of already defined Projections out of the box:
+ * Maplair comes with a set of already defined Projections out of the box:
  *
  * @projection Projection.LonLat
  *

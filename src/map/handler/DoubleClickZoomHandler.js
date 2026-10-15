@@ -1,14 +1,14 @@
-import {LeafletMap} from '../Map.js';
+import {MaplairMap} from '../Map.js';
 import {Handler} from '../../core/Handler.js';
 
 /*
  * Handler.DoubleClickZoom is used to handle double-click zoom on the map, enabled by default.
  */
 
-// @namespace LeafletMap
+// @namespace MaplairMap
 // @section Interaction Options
 
-LeafletMap.mergeOptions({
+MaplairMap.mergeOptions({
 	// @option doubleClickZoom: Boolean|String = true
 	// Whether the map can be zoomed in by double clicking on it and
 	// zoomed out by double clicking while holding shift. If passed
@@ -52,4 +52,4 @@ export class DoubleClickZoomHandler extends Handler {
 //
 // @property doubleClickZoom: Handler
 // Double click zoom handler.
-LeafletMap.addInitHook('addHandler', 'doubleClickZoom', DoubleClickZoomHandler);
+MaplairMap.addInitHook('addHandler', 'doubleClickZoom', DoubleClickZoomHandler);

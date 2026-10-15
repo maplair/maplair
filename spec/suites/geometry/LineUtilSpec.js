@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {Bounds, LineUtil, LeafletMap, LatLng, Point, Polyline} from 'leaflet';
+import {Bounds, LineUtil, MaplairMap, LatLng, Point, Polyline} from 'maplair';
 import sinon from 'sinon';
 
 describe('LineUtil', () => {
@@ -113,7 +113,7 @@ describe('LineUtil', () => {
 	describe('#polylineCenter', () => {
 		let map, crs;
 		beforeEach(() => {
-			map = new LeafletMap(document.createElement('div'), {center: [55.8, 37.6], zoom: 6, zoomAnimation: false});
+			map = new MaplairMap(document.createElement('div'), {center: [55.8, 37.6], zoom: 6, zoomAnimation: false});
 			crs = map.options.crs;
 		});
 

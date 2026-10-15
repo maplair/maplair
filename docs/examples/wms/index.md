@@ -12,32 +12,32 @@ iframe {
 
 <br/>
 
-WMS, short for [*web map service*](https://en.wikipedia.org/wiki/Web_Map_Service), is a popular way of publishing maps by professional GIS software (and seldomly used by non-GISers). This format is similar to map tiles, but more generic and not so well optimized for use in web maps. A WMS image is defined by the coordinates of its corners - a calculation that Leaflet does under the hood.
+WMS, short for [*web map service*](https://en.wikipedia.org/wiki/Web_Map_Service), is a popular way of publishing maps by professional GIS software (and seldomly used by non-GISers). This format is similar to map tiles, but more generic and not so well optimized for use in web maps. A WMS image is defined by the coordinates of its corners - a calculation that Maplair does under the hood.
 
-TMS stands for [*tiled map service*](https://en.wikipedia.org/wiki/Tile_Map_Service), and is a map tiling standard more focused on web maps, very similar to the map tiles that Leaflet expects in a `TileLayer`.
+TMS stands for [*tiled map service*](https://en.wikipedia.org/wiki/Tile_Map_Service), and is a map tiling standard more focused on web maps, very similar to the map tiles that Maplair expects in a `TileLayer`.
 
 WMTS, for [*web map tile service*](https://en.wikipedia.org/wiki/Web_Map_Tile_Service), is the standard protocol for map tiles and serves map tiles directly usable in a `TileLayer`.
 
 
-## WMS in Leaflet
+## WMS in Maplair
 
 When somebody publishes a WMS service, most likely they link to something called a `GetCapabilities` document. For this tutorial, we'll use the WMS offered by [*Mundialis*](https://www.mundialis.de) at http://ows.mundialis.de/services/service? . The service capabilities are described at the following URL:
 
 	http://ows.mundialis.de/services/service?request=GetCapabilities
 
-Leaflet does not understand WMS `GetCapabilities` documents. Instead, you have to create a `WMSTileLayer` layer, provide the base WMS URL, and specify whatever WMS options you need.
+Maplair does not understand WMS `GetCapabilities` documents. Instead, you have to create a `WMSTileLayer` layer, provide the base WMS URL, and specify whatever WMS options you need.
 
 The base WMS URL is simply the `GetCapabilities` URL, without any parameters, like so:
 
 	http://ows.mundialis.de/services/service?
 
-And the way to use that in a Leaflet map is simply:
+And the way to use that in a Maplair map is simply:
 
-	const map = new LeafletMap(mapDiv, mapOptions);
+	const map = new MaplairMap(mapDiv, mapOptions);
 
 	const wmsLayer = new WMSTileLayer('http://ows.mundialis.de/services/service?', wmsOptions).addTo(map);
 
-An instance of `WMSTileLayer` needs at least one option: `layers`. Be careful, as the concept of "layer" in Leaflet is different from the concept of "layer" in WMS!
+An instance of `WMSTileLayer` needs at least one option: `layers`. Be careful, as the concept of "layer" in Maplair is different from the concept of "layer" in WMS!
 
 WMS servers define a set of *layers* in the service. These are defined in the `GetCapabilities` XML document, which most times is tedious and difficult to understand. Usually it's a good idea to use software such as [QGIS to see what layers are available in a WMS server](https://www.qgistutorials.com/en/docs/3/working_with_wms.html) to see the layer names available:
 
@@ -69,7 +69,7 @@ For the example WMS server we're using, there is a `TOPO-WMS` WMS layer showing 
 		layers: 'TOPO-WMS,OSM-Overlay-WMS'
 	}).addTo(map);
 
-Note this will request *one* image to the WMS server. This is different than creating a `WMSTileLayer` for the topography, another one for the places, and adding them both to the map. In the first case, there is one image request and it's the WMS server who decides how to compose (put on top of each other) the image. In the second case, there would be two image requests and it's the Leaflet code running in the web browser who decides how to compose them.
+Note this will request *one* image to the WMS server. This is different than creating a `WMSTileLayer` for the topography, another one for the places, and adding them both to the map. In the first case, there is one image request and it's the WMS server who decides how to compose (put on top of each other) the image. In the second case, there would be two image requests and it's the Maplair code running in the web browser who decides how to compose them.
 
 If we combine this with the [layers control](/examples/layers-control.html), then we can build a simple map to see the difference:
 
@@ -102,13 +102,13 @@ Change to the "Topography, then places" option, so you can see the places "on to
 
 ### Notes to GIS Users of WMS Services
 
-From a GIS point of view, WMS handling in Leaflet is quite basic. There's no `GetCapabilities` support, no legend support, and no `GetFeatureInfo` support.
+From a GIS point of view, WMS handling in Maplair is quite basic. There's no `GetCapabilities` support, no legend support, and no `GetFeatureInfo` support.
 
-`WMSTileLayer` has extra options, which can be found in [Leaflet's API documentation](/reference.html#tilelayer-wms). Any option not described there will be passed to the WMS server in the `getImage` URLs.
+`WMSTileLayer` has extra options, which can be found in [Maplair's API documentation](/reference.html#tilelayer-wms). Any option not described there will be passed to the WMS server in the `getImage` URLs.
 
-Also note that Leaflet supports very few [coordinate systems](https://en.wikipedia.org/wiki/Spatial_reference_system): `CRS:3857`, `CRS:3395` and `CRS:4326` (See the documentation for `CRS`). If your WMS service doesn't serve images in those coordinate systems, you might need to use [Proj4Leaflet](https://github.com/kartena/Proj4Leaflet) to use a different coordinate system in Leaflet. Other than that, just use the right CRS when initializing your map, and any WMS layers added will use it:
+Also note that Maplair supports very few [coordinate systems](https://en.wikipedia.org/wiki/Spatial_reference_system): `CRS:3857`, `CRS:3395` and `CRS:4326` (See the documentation for `CRS`). If your WMS service doesn't serve images in those coordinate systems, you might need to use [Proj4Maplair](https://github.com/kartena/Proj4Leaflet) to use a different coordinate system in Maplair. Other than that, just use the right CRS when initializing your map, and any WMS layers added will use it:
 
-	const map = new LeafletMap('map', {
+	const map = new MaplairMap('map', {
 		crs: EPSG4326
 	});
 
@@ -119,9 +119,9 @@ Also note that Leaflet supports very few [coordinate systems](https://en.wikiped
 {% include frame.html url="wms-example-crs.html" %}
 	
 	
-## TMS in Leaflet
+## TMS in Maplair
 
-Leaflet doesn't have explicit support for TMS services, but the tile naming structure is so similar to the common `TileLayer` naming scheme, that displaying a TMS service is almost trivial.
+Maplair doesn't have explicit support for TMS services, but the tile naming structure is so similar to the common `TileLayer` naming scheme, that displaying a TMS service is almost trivial.
 
 Let's consider a TMS server with the following endpoint:
 
@@ -143,7 +143,7 @@ And use the `tms:true` option when instantiating the layers, like so:
 	}).addTo(map);
 
 
-In Leaflet you also have the option to use `{-y}` in the URL instead of a `tms: true` option, e.g.:
+In Maplair you also have the option to use `{-y}` in the URL instead of a `tms: true` option, e.g.:
 
 	const layer = new TileLayer('http://base_url/tms/1.0.0/tileset/{z}/{x}/{-y}.png');
 

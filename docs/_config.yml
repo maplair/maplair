@@ -5,9 +5,9 @@ markdown: kramdown
 kramdown:
   entity_output: as_input
 
-latest_leaflet_version: 2.0.0-alpha.1
+latest_maplair_version: 2.0.0-alpha.1
 
-# Integrity hashes for both leaflet.js and leaflet-src.js
+# Integrity hashes for both maplair.js and maplair-src.js
 # These will be shown in the downloads page
 # See https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity
 integrity_hash_css: "sha256-P+hWJNlpL+GBSRYC7cdsDbQH91URmpDeOzLp7DbFRtE="
@@ -17,7 +17,7 @@ integrity_hash_global_source: "sha256-SnNOWrUASCy0Jw4FGryafJamqNk15qDnW00Y/biE2d
 integrity_hash_global_uglified: "sha256-lJUxSvvKo54k90cTx9u9DCAP1MtAEqnLmx6Sx3no03c="
 
 # Starting september 2026, Carto required a token/key for the raster tiles
-# The one provided in the Leaflet repo only works for the www.leafletjs.com domain
+# The one provided in the Maplair repo only works for the www.leafletjs.com domain
 cartocdn_key: "cb1_2i38_1_bb6349bf813f7d7c3fe79a8c"
 
 collections:

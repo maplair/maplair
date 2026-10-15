@@ -84,7 +84,7 @@ export class ImageOverlay extends Layer {
 		}
 
 		if (this.options.interactive) {
-			this._image.classList.add('leaflet-interactive');
+			this._image.classList.add('maplair-interactive');
 			this.addInteractiveTarget(this._image);
 		}
 
@@ -195,8 +195,8 @@ export class ImageOverlay extends Layer {
 		const wasElementSupplied = this._url.tagName === 'IMG';
 		const img = this._image = wasElementSupplied ? this._url : DomUtil.create('img');
 
-		img.classList.add('leaflet-image-layer');
-		if (this._zoomAnimated) { img.classList.add('leaflet-zoom-animated'); }
+		img.classList.add('maplair-image-layer');
+		if (this._zoomAnimated) { img.classList.add('maplair-zoom-animated'); }
 		if (this.options.className) { img.classList.add(...Util.splitWords(this.options.className)); }
 
 		img.onselectstart = Util.falseFn;

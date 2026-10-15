@@ -42,7 +42,7 @@ export class MarkerDrag extends Handler {
 			dragend: this._onDragEnd
 		}, this).enable();
 
-		icon.classList.add('leaflet-marker-draggable');
+		icon.classList.add('maplair-marker-draggable');
 	}
 
 	removeHooks() {
@@ -53,7 +53,7 @@ export class MarkerDrag extends Handler {
 			dragend: this._onDragEnd
 		}, this).disable();
 
-		this._marker._icon?.classList.remove('leaflet-marker-draggable');
+		this._marker._icon?.classList.remove('maplair-marker-draggable');
 	}
 
 	moved() {

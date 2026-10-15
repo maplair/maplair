@@ -1,4 +1,4 @@
-import {LeafletMap} from '../map/Map.js';
+import {MaplairMap} from '../map/Map.js';
 import {Layer} from './Layer.js';
 import {FeatureGroup} from './FeatureGroup.js';
 import * as Util from '../core/Util.js';
@@ -56,7 +56,7 @@ export class DivOverlay extends Layer {
 		}
 	}
 
-	// @method openOn(map: LeafletMap): this
+	// @method openOn(map: MaplairMap): this
 	// Adds the overlay to the map.
 	// Alternative to `map.openPopup(popup)`/`.openTooltip(tooltip)`.
 	openOn(map) {
@@ -119,7 +119,7 @@ export class DivOverlay extends Layer {
 		this.bringToFront();
 
 		if (this.options.interactive) {
-			this._container.classList.add('leaflet-interactive');
+			this._container.classList.add('maplair-interactive');
 			this.addInteractiveTarget(this._container);
 		}
 	}
@@ -133,7 +133,7 @@ export class DivOverlay extends Layer {
 		}
 
 		if (this.options.interactive) {
-			this._container.classList.remove('leaflet-interactive');
+			this._container.classList.remove('maplair-interactive');
 			this.removeInteractiveTarget(this._container);
 		}
 	}
@@ -321,7 +321,7 @@ export class DivOverlay extends Layer {
 
 }
 
-LeafletMap.include({
+MaplairMap.include({
 	_initOverlay(OverlayClass, content, latlng, options) {
 		let overlay = content;
 		if (!(overlay instanceof OverlayClass)) {

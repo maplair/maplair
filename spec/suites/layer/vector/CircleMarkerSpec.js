@@ -1,5 +1,5 @@
 ﻿import {expect} from 'chai';
-import {CircleMarker, LatLng, LeafletMap, Point} from 'leaflet';
+import {CircleMarker, LatLng, MaplairMap, Point} from 'maplair';
 import {createContainer, removeMapContainer} from '../../SpecHelper.js';
 
 describe('CircleMarker', () => {
@@ -7,7 +7,7 @@ describe('CircleMarker', () => {
 
 	beforeEach(() => {
 		container = createContainer();
-		map = new LeafletMap(container);
+		map = new MaplairMap(container);
 		map.setView([0, 0], 1);
 	});
 

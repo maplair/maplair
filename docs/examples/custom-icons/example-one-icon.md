@@ -3,8 +3,8 @@ layout: tutorial_frame
 title: Single Custom Icon Example
 ---
 <script type="module">
-	import {LeafletMap, TileLayer, Marker, Icon} from 'leaflet';
-	const map = new LeafletMap('map').setView([51.5, -0.09], 13);
+	import {MaplairMap, TileLayer, Marker, Icon} from 'maplair';
+	const map = new MaplairMap('map').setView([51.5, -0.09], 13);
 
 	new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

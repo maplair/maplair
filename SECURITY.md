@@ -2,7 +2,7 @@
 
 ## Reporting a Vulnerability
 
-Leaflet takes security vulnerabilities very seriously and appreciates your responsible disclosure efforts. We will make every effort to acknowledge your contributions and handle them promptly.
+Maplair takes security vulnerabilities very seriously and appreciates your responsible disclosure efforts. We will make every effort to acknowledge your contributions and handle them promptly.
 To report a security issue, please send your report to agafonkin@gmail.com.
 
 ## Other Communication

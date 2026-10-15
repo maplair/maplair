@@ -72,7 +72,7 @@ export class Draggable extends Evented {
 	_onDown(e) {
 		this._moved = false;
 
-		if (this._element.classList.contains('leaflet-zoom-anim')) { return; }
+		if (this._element.classList.contains('maplair-zoom-anim')) { return; }
 
 		if (PointerEvents.getPointers().length !== 1) {
 			// Finish dragging to avoid conflict with touchZoom
@@ -138,10 +138,10 @@ export class Draggable extends Evented {
 
 			this._moved = true;
 
-			this._element.ownerDocument.body.classList.add('leaflet-dragging');
+			this._element.ownerDocument.body.classList.add('maplair-dragging');
 
 			this._lastTarget = e.target ?? e.srcElement;
-			this._lastTarget.classList.add('leaflet-drag-target');
+			this._lastTarget.classList.add('maplair-drag-target');
 		}
 
 		this._newPos = this._startPos.add(offset);
@@ -170,10 +170,10 @@ export class Draggable extends Evented {
 	}
 
 	finishDrag(noInertia) {
-		this._element.ownerDocument.body.classList.remove('leaflet-dragging');
+		this._element.ownerDocument.body.classList.remove('maplair-dragging');
 
 		if (this._lastTarget) {
-			this._lastTarget.classList.remove('leaflet-drag-target');
+			this._lastTarget.classList.remove('maplair-drag-target');
 			this._lastTarget = null;
 		}
 

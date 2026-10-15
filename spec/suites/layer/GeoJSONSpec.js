@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {Circle, CircleMarker, FeatureGroup, GeoJSON, LatLng, Layer, LayerGroup, LeafletMap, Marker, Polygon, Polyline, TileLayer} from 'leaflet';
+import {Circle, CircleMarker, FeatureGroup, GeoJSON, LatLng, Layer, LayerGroup, MaplairMap, Marker, Polygon, Polyline, TileLayer} from 'maplair';
 import {createContainer, removeMapContainer} from '../SpecHelper.js';
 
 describe('GeoJSON', () => {
@@ -106,7 +106,7 @@ describe('GeoJSON', () => {
 
 		beforeEach(() => {
 			container = createContainer();
-			map = new LeafletMap(container);
+			map = new MaplairMap(container);
 			map.setView([0, 0], 1);
 		});
 

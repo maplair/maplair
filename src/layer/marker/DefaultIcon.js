@@ -9,7 +9,7 @@ const MARKER_ICON_RE = /^(.*)marker-icon\.svg$/;
  * @section
  *
  * A trivial subclass of `Icon`, represents the icon to use in `Marker`s when
- * no icon is specified. Points to the blue marker image distributed with Leaflet
+ * no icon is specified. Points to the blue marker image distributed with Maplair
  * releases.
  *
  * In order to customize the default icon, just change the properties of `DefaultIcon.prototype.options`
@@ -62,13 +62,13 @@ export class DefaultIcon extends Icon {
 	}
 
 	_detectIconPath() {
-		const el = DomUtil.create('div',  'leaflet-default-icon-path', document.body);
+		const el = DomUtil.create('div',  'maplair-default-icon-path', document.body);
 		const path = this._stripUrl(getComputedStyle(el).backgroundImage);
 
 		document.body.removeChild(el);
 		if (path) { return path; }
-		const link = document.querySelector('link[href$="leaflet.css"]');
+		const link = document.querySelector('link[href$="maplair.css"]');
 		if (!link) { return ''; }
-		return link.href.substring(0, link.href.length - 'leaflet.css'.length - 1);
+		return link.href.substring(0, link.href.length - 'maplair.css'.length - 1);
 	}
 }

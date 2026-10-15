@@ -5,7 +5,7 @@ import {Point} from './Point.js';
  *
  * Represents an affine transformation: a set of coefficients `a`, `b`, `c`, `d`
  * for transforming a point of a form `(x, y)` into `(a*x + b, c*y + d)` and doing
- * the reverse. Used by Leaflet in its projections code.
+ * the reverse. Used by Maplair in its projections code.
  *
  * @example
  *

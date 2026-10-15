@@ -3,14 +3,14 @@
 	<head>
 		<meta charset="utf-8" />
 		<!-- This file is embedded from 'iframe.html' -->
-		<title>Leaflet debug page - Iframe Map</title>
+		<title>Maplair debug page - Iframe Map</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
-		<link rel="stylesheet" href="../../dist/leaflet.css" />
+		<link rel="stylesheet" href="../../dist/maplair.css" />
 		<link rel="stylesheet" href="../css/screen.css" />
 		<script type="importmap">
 			{
 				"imports": {
-					"leaflet": "../../dist/leaflet-src.js"
+					"maplair": "../../dist/maplair-src.js"
 				}
 			}
 		</script>
@@ -19,13 +19,13 @@
 		<div id="map"></div>
 		<button id="populate">Populate with 10 markers</button>
 		<script type="module">
-			import {TileLayer, LeafletMap, FeatureGroup, LatLng, Marker, DomUtil} from 'leaflet';
+			import {TileLayer, MaplairMap, FeatureGroup, LatLng, Marker, DomUtil} from 'maplair';
 
 			const osmUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 			const osmAttrib = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 			const osm = new TileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib});
 
-			const map = new LeafletMap('map')
+			const map = new MaplairMap('map')
 				.setView([50.5, 30.51], 15)
 				.addLayer(osm);
 

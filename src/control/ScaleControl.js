@@ -47,7 +47,7 @@ export class ScaleControl extends Control {
 	}
 
 	onAdd(map) {
-		const className = 'leaflet-control-scale',
+		const className = 'maplair-control-scale',
 		container = DomUtil.create('div', className),
 		options = this.options;
 

@@ -2,14 +2,14 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<title>Leaflet debug page - Vector 2</title>
+		<title>Maplair debug page - Vector 2</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
-		<link rel="stylesheet" href="../../dist/leaflet.css" />
+		<link rel="stylesheet" href="../../dist/maplair.css" />
 		<link rel="stylesheet" href="../css/screen.css" />
 		<script type="importmap">
 			{
 				"imports": {
-					"leaflet": "../../dist/leaflet-src.js"
+					"maplair": "../../dist/maplair-src.js"
 				}
 			}
 		</script>
@@ -17,12 +17,12 @@
 	<body>
 		<div id="map"></div>
 		<script type="module">
-			import {TileLayer, SVG, LeafletMap, Marker, Canvas, Polyline, Circle, CircleMarker, LayersControl} from 'leaflet';
+			import {TileLayer, SVG, MaplairMap, Marker, Canvas, Polyline, Circle, CircleMarker, LayersControl} from 'maplair';
 			import route from './route.js';
 
 			const osm = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 18});
 			const svg = new SVG();
-			const map = new LeafletMap('map', {layers: [osm], renderer: svg});
+			const map = new MaplairMap('map', {layers: [osm], renderer: svg});
 
 			map.addLayer(new Marker(route[0]));
 			map.addLayer(new Marker(route[route.length - 1]));

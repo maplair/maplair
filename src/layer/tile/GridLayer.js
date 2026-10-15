@@ -23,7 +23,7 @@ import {LatLngBounds} from '../../geo/LatLngBounds.js';
  * class CanvasLayer extends GridLayer {
  *     createTile(coords) {
  *         // create a <canvas> element for drawing
- *         const tile = DomUtil.create('canvas', 'leaflet-tile');
+ *         const tile = DomUtil.create('canvas', 'maplair-tile');
  *
  *         // setup tile width and height according to the options
  *         const size = this.getTileSize();
@@ -50,7 +50,7 @@ import {LatLngBounds} from '../../geo/LatLngBounds.js';
  *         const error;
  *
  *         // create a <canvas> element for drawing
- *         const tile = DomUtil.create('canvas', 'leaflet-tile');
+ *         const tile = DomUtil.create('canvas', 'maplair-tile');
  *
  *         // setup tile width and height according to the options
  *         const size = this.getTileSize();
@@ -351,7 +351,7 @@ export class GridLayer extends Layer {
 	_initContainer() {
 		if (this._container) { return; }
 
-		this._container = DomUtil.create('div', `leaflet-layer ${this.options.className ?? ''}`);
+		this._container = DomUtil.create('div', `maplair-layer ${this.options.className ?? ''}`);
 		this._updateZIndex();
 
 		if (this.options.opacity < 1) {
@@ -387,7 +387,7 @@ export class GridLayer extends Layer {
 		if (!level) {
 			level = this._levels[zoom] = {};
 
-			level.el = DomUtil.create('div', 'leaflet-tile-container leaflet-zoom-animated', this._container);
+			level.el = DomUtil.create('div', 'maplair-tile-container maplair-zoom-animated', this._container);
 			level.el.style.zIndex = maxZoom;
 
 			level.origin = map.project(map.unproject(map.getPixelOrigin()), zoom).round();
@@ -777,7 +777,7 @@ export class GridLayer extends Layer {
 	}
 
 	_initTile(tile) {
-		tile.classList.add('leaflet-tile');
+		tile.classList.add('maplair-tile');
 
 		const tileSize = this.getTileSize();
 		tile.style.width = `${tileSize.x}px`;
@@ -847,7 +847,7 @@ export class GridLayer extends Layer {
 		}
 
 		if (!err) {
-			tile.el.classList.add('leaflet-tile-loaded');
+			tile.el.classList.add('maplair-tile-loaded');
 
 			// @event tileload: TileEvent
 			// Fired when a tile loads.

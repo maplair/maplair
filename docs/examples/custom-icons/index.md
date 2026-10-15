@@ -11,7 +11,7 @@ In this tutorial, you'll learn how to easily define your own icons for use by th
 
 ### Preparing the images
 
-To make a custom icon, we usually need two images --- the actual icon image and the image of its shadow. For this tutorial, we took the Leaflet logo and created four images out of it --- 3 leaf images of different colors and one shadow image for the three:
+To make a custom icon, we usually need two images --- the actual icon image and the image of its shadow. For this tutorial, we took the Maplair logo and created four images out of it --- 3 leaf images of different colors and one shadow image for the three:
 
 <p>
 	<img style="border: 1px solid #ccc" src="leaf-green.png" />
@@ -24,7 +24,7 @@ Note that the white area in the images is actually transparent.
 
 ### Creating an icon
 
-Marker icons in Leaflet are defined by [Icon](/reference.html#icon) objects, which are passed as an option when creating markers. Let's create a green leaf icon:
+Marker icons in Maplair are defined by [Icon](/reference.html#icon) objects, which are passed as an option when creating markers. Let's create a green leaf icon:
 
 ```js
 const greenIcon = new Icon({
@@ -48,7 +48,7 @@ const marker = new Marker([51.5, -0.09], {icon: greenIcon}).addTo(map);
 
 ### Defining an icon class
 
-What if we need to create several icons that have lots in common? Let's define our own icon class containing the shared options, inheriting from `Icon`! It's really easy in Leaflet:
+What if we need to create several icons that have lots in common? Let's define our own icon class containing the shared options, inheriting from `Icon`! It's really easy in Maplair:
 
 ```js
 class LeafIcon extends Icon {

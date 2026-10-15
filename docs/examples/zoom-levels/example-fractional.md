@@ -3,9 +3,9 @@ layout: tutorial_frame
 title: Fractional Zoom Example
 ---
 <script type="module">
-	import {LeafletMap, TileLayer, Control, DomUtil} from 'leaflet';
+	import {MaplairMap, TileLayer, Control, DomUtil} from 'maplair';
 
-	const map = new LeafletMap('map', {
+	const map = new MaplairMap('map', {
 		minZoom: 0,
 		maxZoom: 1,
 		zoomSnap: 0.25,

@@ -2,14 +2,14 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>Leaflet debug page - Add Remove Layers</title>
+		<title>Maplair debug page - Add Remove Layers</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
-		<link rel="stylesheet" href="../../dist/leaflet.css" />
+		<link rel="stylesheet" href="../../dist/maplair.css" />
 		<link rel="stylesheet" href="../css/screen.css" />
 		<script type="importmap">
 			{
 				"imports": {
-					"leaflet": "../../dist/leaflet-src.js"
+					"maplair": "../../dist/maplair-src.js"
 				}
 			}
 		</script>
@@ -21,9 +21,9 @@
 			<button type="button" id="b2">Remove Layer</button>
 		</div>
 		<script type="module">
-			import {LayerGroup, LeafletMap, TileLayer, LatLngBounds, Circle, LatLng, Popup, DomUtil, DomEvent} from 'leaflet';
+			import {LayerGroup, MaplairMap, TileLayer, LatLngBounds, Circle, LatLng, Popup, DomUtil, DomEvent} from 'maplair';
 
-			const map = new LeafletMap('map');
+			const map = new MaplairMap('map');
 			const osm = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 				minZoom: 1,
 				maxZoom: 17,

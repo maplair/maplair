@@ -4,7 +4,7 @@ title: Tutorials
 bodyclass: examples
 ---
 
-## Leaflet Tutorials
+## Maplair Tutorials
 
 Every tutorial here comes with step-by-step code explanation and is easy enough even for beginner JavaScript developers.
 
@@ -12,15 +12,15 @@ Every tutorial here comes with step-by-step code explanation and is easy enough 
 {% include tutorial_link.html
 page="quick-start/"
 thumbnail="quick-start/thumbnail.png"
-title="Leaflet Quick Start Guide"
-description="A simple step-by-step guide that will quickly get you started with Leaflet basics, including setting up a Leaflet map (with OpenStreetMap tiles) on your page, working with markers, polylines and popups, and dealing with events."
+title="Maplair Quick Start Guide"
+description="A simple step-by-step guide that will quickly get you started with Maplair basics, including setting up a Maplair map (with OpenStreetMap tiles) on your page, working with markers, polylines and popups, and dealing with events."
 %}
 
 
 {% include tutorial_link.html
 page="mobile/"
 thumbnail="mobile/thumbnail.png"
-title="Leaflet on Mobile"
+title="Maplair on Mobile"
 description="In this tutorial, you'll learn how to create a fullscreen map tuned for mobile devices like iPhone, iPad or Android phones, and how to easily detect and use the current user location."
 %}
 
@@ -37,14 +37,14 @@ description="In this pretty tutorial, you'll learn how to easily define your own
 page="accessibility/"
 thumbnail="accessibility/thumbnail.png"
 title="Accessible Maps"
-description="A guide to basic Leaflet accessibility - make your maps usable to persons of a wide range of abilities."
+description="A guide to basic Maplair accessibility - make your maps usable to persons of a wide range of abilities."
 %}
 
 
 {% include tutorial_link.html
 page="geojson/"
 thumbnail="geojson/thumbnail.png"
-title="Using GeoJSON with Leaflet"
+title="Using GeoJSON with Maplair"
 description="In this tutorial, you'll learn how to create and interact with map vectors created from [GeoJSON](http://geojson.org/) objects."
 %}
 
@@ -100,26 +100,26 @@ description="How the default map panes work to display overlays on top of tiles,
 page="overlays/"
 thumbnail="overlays/thumbnail.gif"
 title="Overlays: Image, Video, SVG"
-description="Leaflet can help you display images, videos and SVG elements somewhere on the map."
+description="Maplair can help you display images, videos and SVG elements somewhere on the map."
 %}
 
 ***
 
-The following tutorials cover how to create plugins for Leaflet, and are intended only for developers experienced in JavaScript:
+The following tutorials cover how to create plugins for Maplair, and are intended only for developers experienced in JavaScript:
 
 
 {% include tutorial_link.html
 page="extending-1-classes/"
 thumbnail="extending-1-classes/thumbnail.png"
-title="Extending Leaflet: Class Theory"
-description="An overview of Leaflet's classes, class inheritance, and conventions."
+title="Extending Maplair: Class Theory"
+description="An overview of Maplair's classes, class inheritance, and conventions."
 %}
 
 
 {% include tutorial_link.html
 page="extending-2-layers/"
 thumbnail="extending-2-layers/thumbnail.png"
-title="Extending Leaflet: Layers"
+title="Extending Maplair: Layers"
 description="How to extend layers or create new ones, using specific entry points for doing so."
 %}
 
@@ -127,6 +127,6 @@ description="How to extend layers or create new ones, using specific entry point
 {% include tutorial_link.html
 page="extending-3-controls/"
 thumbnail="extending-3-controls/thumbnail.png"
-title="Extending Leaflet: Handlers and Controls"
+title="Extending Maplair: Handlers and Controls"
 description="How to extend or create non-layers."
 %}

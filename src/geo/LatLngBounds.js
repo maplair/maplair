@@ -13,7 +13,7 @@ import {LatLng} from './LatLng.js';
  * bounds = new LatLngBounds(corner1, corner2);
  * ```
  *
- * All Leaflet methods that accept LatLngBounds objects also accept them in a simple Array form (unless noted otherwise), so the bounds example above can be passed like this:
+ * All Maplair methods that accept LatLngBounds objects also accept them in a simple Array form (unless noted otherwise), so the bounds example above can be passed like this:
  *
  * ```js
  * map.fitBounds([
@@ -24,7 +24,7 @@ import {LatLng} from './LatLng.js';
  *
  * Caution: if the area crosses the antimeridian (often confused with the International Date Line), you must specify corners _outside_ the [-180, 180] degrees longitude range.
  *
- * Note that `LatLngBounds` does not inherit from Leaflet's `Class` object,
+ * Note that `LatLngBounds` does not inherit from Maplair's `Class` object,
  * which means new classes can't inherit from it, and new methods
  * can't be added to it with the `include` function.
  */

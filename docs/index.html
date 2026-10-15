@@ -2,26 +2,26 @@
 layout: v2
 ---
 
-<div class="announcement">August 16, 2025 — <a href="/2025/05/18/leaflet-2.0.0-alpha.html">Leaflet 2.0.0-alpha.1</a> has been released!</div>
+<div class="announcement">August 16, 2025 — <a href="/2025/05/18/leaflet-2.0.0-alpha.html">Maplair 2.0.0-alpha.1</a> has been released!</div>
 
-<p>Leaflet is the leading open-source JavaScript library for building powerful interactive maps.
+<p>Maplair is the leading open-source JavaScript library for building powerful interactive maps.
 Weighing just about <abbr title="42 KB gzipped &mdash; that's 142 KB minified and 431 KB in the source form, with 14.5 KB of CSS (3.5 KB gzipped) and 6 KB of images.">42 KB of JS</abbr>,
 it&nbsp;has all the mapping <a href="#features">features</a> most developers ever need.</p>
 
-<p>Leaflet is designed with <em>simplicity</em>, <em>performance</em> and <em>usability</em> in mind.
+<p>Maplair is designed with <em>simplicity</em>, <em>performance</em> and <em>usability</em> in mind.
 It works efficiently across all major desktop and mobile platforms,
 can be extended with lots of <a href="plugins.html">plugins</a>,
-has a beautiful, easy to use and <a title="Leaflet API reference" href="reference.html">well-documented API</a>
-and a simple, readable&nbsp;<a title="Leaflet source code repository on GitHub" href="https://github.com/Leaflet/Leaflet">source code</a> that is a&nbsp;joy to
-<a title="A guide to contributing to Leaflet" href="https://github.com/Leaflet/Leaflet/blob/main/CONTRIBUTING.md">contribute</a> to.</p>
+has a beautiful, easy to use and <a title="Maplair API reference" href="reference.html">well-documented API</a>
+and a simple, readable&nbsp;<a title="Maplair source code repository on GitHub" href="https://github.com/Leaflet/Leaflet">source code</a> that is a&nbsp;joy to
+<a title="A guide to contributing to Maplair" href="https://github.com/Leaflet/Leaflet/blob/main/CONTRIBUTING.md">contribute</a> to.</p>
 
 <div id="map" class="map map-home" style="height: 300px; margin-top: 50px"></div>
 
-<p>Here we create a map in the <code>'map'</code> div, add <abbr title="Here we use OpenStreetMap tiles, but Leaflet doesn't force you to &mdash; use whatever works for you, it's open source!">tiles of our choice</abbr>, and then add a marker with some text in a popup:</p>
+<p>Here we create a map in the <code>'map'</code> div, add <abbr title="Here we use OpenStreetMap tiles, but Maplair doesn't force you to &mdash; use whatever works for you, it's open source!">tiles of our choice</abbr>, and then add a marker with some text in a popup:</p>
 
-<pre class="basic-code javascript"><code>import {LeafletMap, TileLayer, Marker} from 'leaflet';
+<pre class="basic-code javascript"><code>import {MaplairMap, TileLayer, Marker} from 'maplair';
 
-const map = new LeafletMap('map').setView([51.505, -0.09], 13);
+const map = new MaplairMap('map').setView([51.505, -0.09], 13);
 
 new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&amp;copy; &lt;a href="https://www.openstreetmap.org/copyright"&gt;OpenStreetMap&lt;/a&gt; contributors'
@@ -65,7 +65,7 @@ If you have any questions, take a look at the <a href="https://github.com/Leafle
 
 <h2 id="features">Features</h2>
 
-<p>Leaflet doesn't try to do everything for everyone. Instead it focuses on making <em>the basic things work perfectly</em>.</p>
+<p>Maplair doesn't try to do everything for everyone. Instead it focuses on making <em>the basic things work perfectly</em>.</p>
 
 <div class="features clearfix">
     <div class="no-break">
@@ -165,30 +165,30 @@ If you have any questions, take a look at the <a href="https://github.com/Leafle
     </div>
 </div>
 
-<p>If you find some feature really missing in Leaflet, first check if there's a <a href="plugins.html">plugin for it</a>
+<p>If you find some feature really missing in Maplair, first check if there's a <a href="plugins.html">plugin for it</a>
 and if it's been discussed before already on <a href="https://github.com/Leaflet/Leaflet/issues">GitHub issues</a>.
 If not, please open a new GitHub issue.</p>
 
 <h2>Getting Involved</h2>
 
 <p>Let's create the best mapping library in the world!
-Leaflet was originally created by <a href="https://agafonkin.com">Volodymyr Agafonkin</a>,
+Maplair was originally created by <a href="https://agafonkin.com">Volodymyr Agafonkin</a>,
 but is now developed by a big community of <a href="https://github.com/Leaflet/Leaflet/graphs/contributors">contributors</a>.
 <a href="https://github.com/Leaflet/Leaflet">Pull requests</a> are always welcome.
-However, there are many more ways to get involved with the development of Leaflet.</p>
+However, there are many more ways to get involved with the development of Maplair.</p>
 
 <p>You can help the project tremendously by discovering and <a href="https://github.com/Leaflet/Leaflet/blob/main/CONTRIBUTING.md#reporting-bugs">reporting bugs</a>, <a href="https://github.com/Leaflet/Leaflet/blob/main/CONTRIBUTING.md#improving-documentation">improving documentation</a>,
 helping others on <a href="https://stackoverflow.com/questions/tagged/leaflet">Stack Overflow</a>, <a href="https://gis.stackexchange.com/questions/tagged/leaflet">GIS Stack Exchange</a>
 and <a href="https://github.com/Leaflet/Leaflet/issues">GitHub issues</a>,
-X to <a href="https://twitter.com/LeafletJS">@LeafletJS</a>
-and spreading the word about Leaflet among your colleagues and friends.</p>
+X to <a href="https://twitter.com/LeafletJS">@MaplairJS</a>
+and spreading the word about Maplair among your colleagues and friends.</p>
 
-<p>Check out the <a href="https://github.com/Leaflet/Leaflet/blob/main/CONTRIBUTING.md">contribution guide</a> for more information on getting involved with Leaflet development.</p>
+<p>Check out the <a href="https://github.com/Leaflet/Leaflet/blob/main/CONTRIBUTING.md">contribution guide</a> for more information on getting involved with Maplair development.</p>
 
 <script type="module">
-    import {LeafletMap, TileLayer, Marker} from 'leaflet';
+    import {MaplairMap, TileLayer, Marker} from 'maplair';
     
-    const map = new LeafletMap('map').setView([51.505, -0.159], 15);
+    const map = new MaplairMap('map').setView([51.505, -0.159], 15);
     
     new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

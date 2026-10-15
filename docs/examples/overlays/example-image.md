@@ -3,9 +3,9 @@ layout: tutorial_frame
 title: Image Overlay Tutorial
 ---
 <script type="module">
-	import {LeafletMap, TileLayer, LatLngBounds, ImageOverlay, Rectangle} from 'leaflet';
+	import {MaplairMap, TileLayer, LatLngBounds, ImageOverlay, Rectangle} from 'maplair';
 
-	const map = new LeafletMap('map').setView([37.8, -96], 4);
+	const map = new MaplairMap('map').setView([37.8, -96], 4);
 
 	const osm = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		maxZoom: 19,

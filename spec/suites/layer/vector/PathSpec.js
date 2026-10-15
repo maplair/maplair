@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {LayerGroup, LeafletMap, Polygon, Polyline} from 'leaflet';
+import {LayerGroup, MaplairMap, Polygon, Polyline} from 'maplair';
 import sinon from 'sinon';
 import UIEventSimulator from 'ui-event-simulator';
 import {createContainer, removeMapContainer} from '../../SpecHelper.js';
@@ -9,7 +9,7 @@ describe('Path', () => {
 
 	beforeEach(() => {
 		container = createContainer();
-		map = new LeafletMap(container);
+		map = new MaplairMap(container);
 		map.setView([0, 0], 0);
 	});
 
@@ -17,7 +17,7 @@ describe('Path', () => {
 		removeMapContainer(map, container);
 	});
 
-	// The following two tests are skipped, as the ES6-ifycation of Leaflet
+	// The following two tests are skipped, as the ES6-ifycation of Maplair
 	// means that Path is no longer visible.
 	describe('#bringToBack', () => {
 		it('is a no-op for layers not on a map', () => {

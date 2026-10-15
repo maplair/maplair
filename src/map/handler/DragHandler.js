@@ -1,4 +1,4 @@
-import {LeafletMap} from '../Map.js';
+import {MaplairMap} from '../Map.js';
 import {Handler} from '../../core/Handler.js';
 import {Draggable} from '../../dom/Draggable.js';
 import {LatLngBounds} from '../../geo/LatLngBounds.js';
@@ -8,9 +8,9 @@ import {Bounds} from '../../geometry/Bounds.js';
  * Handler.MapDrag is used to make the map draggable (with panning inertia), enabled by default.
  */
 
-// @namespace LeafletMap
+// @namespace MaplairMap
 // @section Interaction Options
-LeafletMap.mergeOptions({
+MaplairMap.mergeOptions({
 	// @option dragging: Boolean = true
 	// Whether the map is draggable with pointer or not.
 	dragging: true,
@@ -71,14 +71,14 @@ export class DragHandler extends Handler {
 				map.whenReady(this._onZoomEnd, this);
 			}
 		}
-		this._map._container.classList.add('leaflet-grab', 'leaflet-touch-drag');
+		this._map._container.classList.add('maplair-grab', 'maplair-touch-drag');
 		this._draggable.enable();
 		this._positions = [];
 		this._times = [];
 	}
 
 	removeHooks() {
-		this._map._container.classList.remove('leaflet-grab', 'leaflet-touch-drag');
+		this._map._container.classList.remove('maplair-grab', 'maplair-touch-drag');
 		this._draggable.disable();
 	}
 
@@ -229,4 +229,4 @@ export class DragHandler extends Handler {
 // @section Handlers
 // @property dragging: Handler
 // Map dragging handler.
-LeafletMap.addInitHook('addHandler', 'dragging', DragHandler);
+MaplairMap.addInitHook('addHandler', 'dragging', DragHandler);

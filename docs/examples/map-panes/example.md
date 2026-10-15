@@ -5,8 +5,8 @@ title: Custom Pane Example
 <script type="text/javascript" src="eu-countries.js"></script>
 
 <script type="module">
-	import {LeafletMap, TileLayer, GeoJSON} from 'leaflet';
-	const map = new LeafletMap('map');
+	import {MaplairMap, TileLayer, GeoJSON} from 'maplair';
+	const map = new MaplairMap('map');
 
 	map.createPane('labels');
 

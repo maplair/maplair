@@ -3,9 +3,9 @@ layout: tutorial_frame
 title: KittenLayer Example
 ---
 <script type="module">
-	import {LeafletMap, SimpleCRS, TileLayer} from 'leaflet';
+	import {MaplairMap, SimpleCRS, TileLayer} from 'maplair';
 
-	const map = new LeafletMap('map', {
+	const map = new MaplairMap('map', {
 		crs: SimpleCRS,
 		center: [0, 0],
 		zoom: 5

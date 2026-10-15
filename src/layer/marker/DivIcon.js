@@ -16,7 +16,7 @@ import {Point} from '../../geometry/Point.js';
  * new Marker([50.505, 30.57], {icon: myIcon}).addTo(map);
  * ```
  *
- * By default, it has a 'leaflet-div-icon' CSS class and is styled as a little white square with a shadow.
+ * By default, it has a 'maplair-div-icon' CSS class and is styled as a little white square with a shadow.
  */
 
 // @constructor DivIcon(options: DivIcon options)
@@ -41,7 +41,7 @@ export class DivIcon extends Icon {
 			// Optional relative position of the background, in pixels
 			bgPos: null,
 
-			className: 'leaflet-div-icon'
+			className: 'maplair-div-icon'
 		});
 	}
 

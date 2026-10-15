@@ -1,11 +1,11 @@
 ---
 layout: tutorial_v2
-title: Leaflet Quick Start Guide
+title: Maplair Quick Start Guide
 ---
 
-## Leaflet Quick Start Guide
+## Maplair Quick Start Guide
 
-This step-by-step guide will quickly get you started on Leaflet basics, including setting up a Leaflet map, working with markers, polylines and popups, and dealing with events.
+This step-by-step guide will quickly get you started on Maplair basics, including setting up a Maplair map, working with markers, polylines and popups, and dealing with events.
 
 {% include frame.html url="example.html" %}
 
@@ -13,25 +13,25 @@ This step-by-step guide will quickly get you started on Leaflet basics, includin
 
 Before writing any code for the map, you need to do the following preparation steps on your page:
 
- * Include Leaflet CSS file in the head section of your document:
+ * Include Maplair CSS file in the head section of your document:
 
 	```html
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_leaflet_version}}/dist/leaflet.css"
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_maplair_version}}/dist/maplair.css"
 		integrity="{{site.integrity_hash_css}}"
 		crossorigin=""/>
 	```
 
- * Include Leaflet JavaScript file **after** Leaflet's CSS:
+ * Include Maplair JavaScript file **after** Maplair's CSS:
 
 	```html
-	<!-- Make sure you put this AFTER Leaflet's CSS -->
+	<!-- Make sure you put this AFTER Maplair's CSS -->
 	<script type="importmap">
 	{
 		"imports": {
-			"leaflet": "https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_leaflet_version}}/dist/leaflet.js"
+			"maplair": "https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_maplair_version}}/dist/maplair.js"
 		},
 		"integrity": {
-			"https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_leaflet_version}}/dist/leaflet.js": "{{site.integrity_hash_uglified}}"
+			"https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_maplair_version}}/dist/maplair.js": "{{site.integrity_hash_uglified}}"
 		}
 	}
 	</script>
@@ -61,8 +61,8 @@ Let's create a map of the center of London with pretty OpenStreetMap tiles. From
 
 ```javascript
 <script type="module">
-	import {LeafletMap, TileLayer, Marker, Circle, Polygon, Popup} from 'leaflet';
-	const map = new LeafletMap('map').setView([51.505, -0.09], 13);
+	import {MaplairMap, TileLayer, Marker, Circle, Polygon, Popup} from 'maplair';
+	const map = new MaplairMap('map').setView([51.505, -0.09], 13);
 
 	// ...
 </script>
@@ -70,9 +70,9 @@ Let's create a map of the center of London with pretty OpenStreetMap tiles. From
 
 By default (as we didn't pass any options when creating the map instance), all mouse and touch interactions on the map are enabled, and it has zoom and attribution controls.
 
-Note that the `setView` call also returns the map object --- most Leaflet methods act like this when they don't return an explicit value, which allows convenient jQuery-like method chaining.
+Note that the `setView` call also returns the map object --- most Maplair methods act like this when they don't return an explicit value, which allows convenient jQuery-like method chaining.
 
-Next, we'll add a tile layer to add to our map, in this case it's a OpenStreetMap tile layer. Creating a tile layer usually involves setting the [URL template](/reference.html#tilelayer-url-template) for the tile images, the attribution text, and the maximum zoom level of the layer. OpenStreetMap tiles are fine for programming your Leaflet map, but read the [Tile Usage Policy](https://operations.osmfoundation.org/policies/tiles/) of OpenStreetMap if you're going to use the tiles in production.
+Next, we'll add a tile layer to add to our map, in this case it's a OpenStreetMap tile layer. Creating a tile layer usually involves setting the [URL template](/reference.html#tilelayer-url-template) for the tile images, the attribution text, and the maximum zoom level of the layer. OpenStreetMap tiles are fine for programming your Maplair map, but read the [Tile Usage Policy](https://operations.osmfoundation.org/policies/tiles/) of OpenStreetMap if you're going to use the tiles in production.
 
 ```javascript
 new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -81,9 +81,9 @@ new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 ```
 
-Make sure all the code is called after the `div` and `leaflet.js` inclusion. That's it! You have a working Leaflet map now.
+Make sure all the code is called after the `div` and `maplair.js` inclusion. That's it! You have a working Maplair map now.
 
-It's worth noting that Leaflet is provider-agnostic, meaning that it doesn't enforce a particular choice of providers for tiles. Also, Leaflet doesn't even contain a single provider-specific line of code, so you're free to use other providers if you need to.
+It's worth noting that Maplair is provider-agnostic, meaning that it doesn't enforce a particular choice of providers for tiles. Also, Maplair doesn't even contain a single provider-specific line of code, so you're free to use other providers if you need to.
 
 Whenever using anything based on OpenStreetMap, an *attribution* is obligatory as per the [copyright notice](https://www.openstreetmap.org/copyright). Most other tile providers (such as [Mapbox](https://docs.mapbox.com/help/how-mapbox-works/attribution/), [Stamen](http://maps.stamen.com/) or [Thunderforest](https://www.thunderforest.com/terms/)) require an attribution as well. Make sure to give credit where credit is due.
 
@@ -124,7 +124,7 @@ const polygon = new Polygon([
 
 {% include frame.html url="example.html" %}
 
-Popups are usually used when you want to attach some information to a particular object on a map. Leaflet has a very handy shortcut for this:
+Popups are usually used when you want to attach some information to a particular object on a map. Maplair has a very handy shortcut for this:
 
 ```javascript
 marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
@@ -150,7 +150,7 @@ Here we use `openOn` instead of `addTo` because it handles automatic closing of 
 
 ### Dealing with events
 
-Every time something happens in Leaflet, e.g. user clicks on a marker or map zoom changes, the corresponding object sends an event which you can subscribe to with a function. It allows you to react to user interaction:
+Every time something happens in Maplair, e.g. user clicks on a marker or map zoom changes, the corresponding object sends an event which you can subscribe to with a function. It allows you to react to user interaction:
 
 ```javascript
 function onMapClick(e) {
@@ -179,4 +179,4 @@ map.on('click', onMapClick);
 
 Try clicking on the map and you will see the coordinates in a popup. <a target="_blank" href="example.html">View the full example &rarr;</a>
 
-Now you've learned Leaflet basics and can start building map apps straight away! Don't forget to take a look at the detailed <a href="/reference.html">documentation</a> or <a href="../../examples.html">other examples</a>.
+Now you've learned Maplair basics and can start building map apps straight away! Don't forget to take a look at the detailed <a href="/reference.html">documentation</a> or <a href="../../examples.html">other examples</a>.

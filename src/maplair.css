@@ -1,28 +1,28 @@
 /* required styles */
 
-.leaflet-pane,
-.leaflet-tile,
-.leaflet-marker-icon,
-.leaflet-marker-shadow,
-.leaflet-tile-container,
-.leaflet-pane > svg,
-.leaflet-pane > canvas,
-.leaflet-zoom-box,
-.leaflet-image-layer,
-.leaflet-layer {
+.maplair-pane,
+.maplair-tile,
+.maplair-marker-icon,
+.maplair-marker-shadow,
+.maplair-tile-container,
+.maplair-pane > svg,
+.maplair-pane > canvas,
+.maplair-zoom-box,
+.maplair-image-layer,
+.maplair-layer {
 	position: absolute;
 	left: 0;
 	top: 0;
 	width:100%;
 }
 
-.leaflet-container {
+.maplair-container {
 	overflow: hidden;
 }
 
-.leaflet-tile,
-.leaflet-marker-icon,
-.leaflet-marker-shadow {
+.maplair-tile,
+.maplair-marker-icon,
+.maplair-marker-shadow {
 	user-select: none;
 	-webkit-user-drag: none;
 	-webkit-touch-callout: none;
@@ -30,59 +30,59 @@
 
 /* Safari renders non-retina tile on retina better with this, but Chrome is worse */
 
-.leaflet-safari {
-	.leaflet-tile {
+.maplair-safari {
+	.maplair-tile {
 		image-rendering: -webkit-optimize-contrast;
 	}
 
 	/* hack that prevents hw layers "stretching" when loading new tiles */
-	.leaflet-tile-container {
+	.maplair-tile-container {
 		width: 1600px;
 		height: 1600px;
 		-webkit-transform-origin: 0 0;
 	}
 }
 
-.leaflet-marker-icon,
-.leaflet-marker-shadow {
+.maplair-marker-icon,
+.maplair-marker-shadow {
 	display: block;
 }
 
-/* .leaflet-container svg: reset svg max-width declaration shipped in Joomla! (joomla.org) 3.x */
-/* .leaflet-container img: map is broken in FF if you have max-width: 100% on tiles */
+/* .maplair-container svg: reset svg max-width declaration shipped in Joomla! (joomla.org) 3.x */
+/* .maplair-container img: map is broken in FF if you have max-width: 100% on tiles */
 
-.leaflet-container {
-	.leaflet-overlay-pane svg {
+.maplair-container {
+	.maplair-overlay-pane svg {
 		max-width: none !important;
 		max-height: none !important;
 	}
 
-	.leaflet-marker-pane img,
-	.leaflet-shadow-pane img,
-	.leaflet-tile-pane img,
-	img.leaflet-image-layer,
-	.leaflet-tile {
+	.maplair-marker-pane img,
+	.maplair-shadow-pane img,
+	.maplair-tile-pane img,
+	img.maplair-image-layer,
+	.maplair-tile {
 		max-width: none !important;
 		max-height: none !important;
 		width: auto;
 		padding: 0;
 	}
 
-	img.leaflet-tile {
+	img.maplair-tile {
 		/* See: https://bugs.chromium.org/p/chromium/issues/detail?id=600120 */
 		mix-blend-mode: plus-lighter;
 	}
 
-	&.leaflet-touch-zoom {
+	&.maplair-touch-zoom {
 		touch-action: pan-x pan-y;
 	}
 
-	&.leaflet-touch-drag {
+	&.maplair-touch-drag {
 		/* Fallback for FF which doesn't support pinch-zoom */
 		touch-action: none;
 		touch-action: pinch-zoom;
 
-		&.leaflet-touch-zoom {
+		&.maplair-touch-zoom {
 			touch-action: none;
 		}
 	}
@@ -94,50 +94,50 @@
 	}
 }
 
-.leaflet-tile {
+.maplair-tile {
 	visibility: hidden;
 }
 
-.leaflet-tile-loaded {
+.maplair-tile-loaded {
 	visibility: inherit;
 }
 
-.leaflet-zoom-box {
+.maplair-zoom-box {
 	width: 0;
 	height: 0;
 	box-sizing: border-box;
 	z-index: 800;
 }
 
-.leaflet-pane {
+.maplair-pane {
 	z-index: 400;
 }
 
-.leaflet-tile-pane {
+.maplair-tile-pane {
 	z-index: 200;
 }
 
-.leaflet-overlay-pane {
+.maplair-overlay-pane {
 	z-index: 400;
 }
 
-.leaflet-shadow-pane {
+.maplair-shadow-pane {
 	z-index: 500;
 }
 
-.leaflet-marker-pane {
+.maplair-marker-pane {
 	z-index: 600;
 }
 
-.leaflet-tooltip-pane {
+.maplair-tooltip-pane {
 	z-index: 650;
 }
 
-.leaflet-popup-pane {
+.maplair-popup-pane {
 	z-index: 700;
 }
 
-.leaflet-map-pane {
+.maplair-map-pane {
 	canvas {
 		z-index: 100;
 	}
@@ -149,7 +149,7 @@
 
 /* control positioning */
 
-.leaflet-control {
+.maplair-control {
 	position: relative;
 	z-index: 800;
 	pointer-events: auto;
@@ -157,38 +157,38 @@
 	clear: both;
 }
 
-.leaflet-top,
-.leaflet-bottom {
+.maplair-top,
+.maplair-bottom {
 	position: absolute;
 	z-index: 1000;
 	pointer-events: none;
 }
 
-.leaflet-top {
+.maplair-top {
 	top: 0;
-	.leaflet-control {
+	.maplair-control {
 		margin-top: 10px;
 	}
 }
 
-.leaflet-right {
+.maplair-right {
 	right: 0;
-	.leaflet-control {
+	.maplair-control {
 		float: right;
 		margin-right: 10px;
 	}
 }
 
-.leaflet-bottom {
+.maplair-bottom {
 	bottom: 0;
-	.leaflet-control {
+	.maplair-control {
 		margin-bottom: 10px;
 	}
 }
 
-.leaflet-left {
+.maplair-left {
 	left: 0;
-	.leaflet-control {
+	.maplair-control {
 		margin-left: 10px;
 	}
 }
@@ -196,98 +196,98 @@
 
 /* zoom and fade animations */
 
-.leaflet-fade-anim {
-	.leaflet-popup {
+.maplair-fade-anim {
+	.maplair-popup {
 		opacity: 0;
 		transition: opacity 0.2s linear;
 	}
 
-	.leaflet-map-pane .leaflet-popup {
+	.maplair-map-pane .maplair-popup {
 		opacity: 1;
 	}
 }
 
-.leaflet-zoom-animated {
+.maplair-zoom-animated {
 	transform-origin: 0 0;
 	svg& {
 		will-change: transform;
 	}
 }
 
-.leaflet-zoom-anim {
-	.leaflet-zoom-animated {
+.maplair-zoom-anim {
+	.maplair-zoom-animated {
 		transition: transform 0.25s cubic-bezier(0, 0, 0.25, 1);
 	}
 
-	.leaflet-tile {
+	.maplair-tile {
 		transition: none;
 	}
 
-	.leaflet-zoom-hide {
+	.maplair-zoom-hide {
 		visibility: hidden;
 	}
 }
 
-.leaflet-pan-anim .leaflet-tile {
+.maplair-pan-anim .maplair-tile {
 	transition: none;
 }
 
 /* cursors */
 
-.leaflet-interactive {
+.maplair-interactive {
 	cursor: pointer;
 }
 
-.leaflet-grab {
+.maplair-grab {
 	cursor: grab;
 }
 
-.leaflet-crosshair {
+.maplair-crosshair {
 	cursor: crosshair;
 
-	.leaflet-interactive {
+	.maplair-interactive {
 		cursor: crosshair;
 	}
 }
 
-.leaflet-popup-pane,
-.leaflet-control {
+.maplair-popup-pane,
+.maplair-control {
 	cursor: auto;
 }
 
-.leaflet-dragging {
-	.leaflet-grab {
+.maplair-dragging {
+	.maplair-grab {
 		cursor: grabbing;
 
-		.leaflet-interactive {
+		.maplair-interactive {
 			cursor: grabbing;
 		}
 	}
 
-	.leaflet-marker-draggable {
+	.maplair-marker-draggable {
 		cursor: grabbing;
 	}
 }
 
 /* marker & overlays interactivity */
-.leaflet-marker-icon,
-.leaflet-marker-shadow,
-.leaflet-image-layer,
-.leaflet-pane > svg path,
-.leaflet-tile-container {
+.maplair-marker-icon,
+.maplair-marker-shadow,
+.maplair-image-layer,
+.maplair-pane > svg path,
+.maplair-tile-container {
 	pointer-events: none;
 }
 
-.leaflet-marker-icon.leaflet-interactive,
-.leaflet-image-layer.leaflet-interactive,
-.leaflet-pane > svg path.leaflet-interactive,
-svg.leaflet-image-layer.leaflet-interactive path {
+.maplair-marker-icon.maplair-interactive,
+.maplair-image-layer.maplair-interactive,
+.maplair-pane > svg path.maplair-interactive,
+svg.maplair-image-layer.maplair-interactive path {
 	pointer-events: auto;
 }
 
 /* visual tweaks */
 
-.leaflet-container {
+.maplair-container {
 	background: #ddd;
 	outline-offset: 1px;
 
@@ -297,17 +297,17 @@ svg.leaflet-image-layer.leaflet-interactive path {
 }
 
 /* prevent showing outline-box on Chromium when clicking on a vector with a tooltip */
-path.leaflet-interactive:focus:not(:focus-visible) {
+path.maplair-interactive:focus:not(:focus-visible) {
 	outline: 0;
 }
 
-.leaflet-zoom-box {
+.maplair-zoom-box {
 	border: 2px dotted #38f;
 	background: rgba(255, 255, 255, 0.5);
 }
 
 /* general typography */
-.leaflet-container {
+.maplair-container {
 	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
 	font-size: 12px;
 	font-size: 0.75rem;
@@ -316,7 +316,7 @@ path.leaflet-interactive:focus:not(:focus-visible) {
 
 /* general toolbar styles */
 
-.leaflet-bar {
+.maplair-bar {
 	box-shadow: 0 1px 5px rgba(0, 0, 0, 0.65);
 	border-radius: 4px;
 
@@ -349,7 +349,7 @@ path.leaflet-interactive:focus:not(:focus-visible) {
 			border-bottom: none;
 		}
 
-		&.leaflet-disabled {
+		&.maplair-disabled {
 			cursor: default;
 			background-color: #f4f4f4;
 			color: #bbb;
@@ -357,13 +357,13 @@ path.leaflet-interactive:focus:not(:focus-visible) {
 	}
 }
 
-.leaflet-control-layers-toggle {
+.maplair-control-layers-toggle {
 	background-position: 50% 50%;
 	background-repeat: no-repeat;
 	display: block;
 }
 
-.leaflet-touch .leaflet-bar a {
+.maplair-touch .maplair-bar a {
 	width: 30px;
 	height: 30px;
 	line-height: 30px;
@@ -381,11 +381,11 @@ path.leaflet-interactive:focus:not(:focus-visible) {
 
 /* zoom control */
 
-.leaflet-control-zoom-in,
-.leaflet-control-zoom-out {
+.maplair-control-zoom-in,
+.maplair-control-zoom-out {
 	font: bold 18px "Lucida Console", Monaco, monospace;
 	text-indent: 1px;
-	.leaflet-touch & {
+	.maplair-touch & {
 		font-size: 22px;
 	}
 }
@@ -393,96 +393,96 @@ path.leaflet-interactive:focus:not(:focus-visible) {
 
 /* layers control */
 
-.leaflet-control-layers {
+.maplair-control-layers {
 	box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
 	background: #fff;
 	border-radius: 5px;
 
-	.leaflet-control-layers-list {
+	.maplair-control-layers-list {
 		display: none;
 	}
 }
 
-.leaflet-control-layers-toggle {
+.maplair-control-layers-toggle {
 	background-image: url(images/layers.svg);
 	width: 36px;
 	height: 36px;
 
-	.leaflet-touch & {
+	.maplair-touch & {
 		width: 44px;
 		height: 44px;
 	}
 }
 
-.leaflet-control-layers-expanded {
-	.leaflet-control-layers-toggle {
+.maplair-control-layers-expanded {
+	.maplair-control-layers-toggle {
 		display: none;
 	}
 
-	.leaflet-control-layers-list {
+	.maplair-control-layers-list {
 		display: block;
 		position: relative;
 	}
 }
 
-.leaflet-control-layers-list {
+.maplair-control-layers-list {
 	border: 0;
 	margin: 0;
 	padding: 0;
 }
 
-.leaflet-control-layers-expanded {
+.maplair-control-layers-expanded {
 	padding: 6px 10px 6px 6px;
 	color: #333;
 	background: #fff;
 }
 
-.leaflet-control-layers-scrollbar {
+.maplair-control-layers-scrollbar {
 	overflow-y: scroll;
 	overflow-x: hidden;
 	padding-right: 5px;
 }
 
-.leaflet-control-layers-selector {
+.maplair-control-layers-selector {
 	margin-top: 2px;
 	position: relative;
 	top: 1px;
 }
 
-.leaflet-control-layers label {
+.maplair-control-layers label {
 	display: block;
 	font-size: 13px;
 	font-size: 1.08333em;
 }
 
-.leaflet-control-layers-separator {
+.maplair-control-layers-separator {
 	height: 0;
 	border-top: 1px solid #ddd;
 	margin: 5px -10px 5px -6px;
 }
 
 /* Default icon URLs */
-.leaflet-default-icon-path {
+.maplair-default-icon-path {
 	/* used only in path-guessing heuristic, see DefaultIcon */
 	background-image: url(images/marker-icon.svg);
 }
 
 /* attribution and scale controls */
 
-.leaflet-container .leaflet-control-attribution {
+.maplair-container .maplair-control-attribution {
 	background: #fff;
 	background: rgba(255, 255, 255, 0.8);
 	margin: 0;
 }
 
-.leaflet-control-attribution,
-.leaflet-control-scale-line {
+.maplair-control-attribution,
+.maplair-control-scale-line {
 	padding: 0 5px;
 	color: #333;
 	line-height: 1.4;
 }
 
-.leaflet-control-attribution a {
+.maplair-control-attribution a {
 	text-decoration: none;
 
 	&:hover,
@@ -491,7 +491,7 @@ path.leaflet-interactive:focus:not(:focus-visible) {
 	}
 }
 
-.leaflet-attribution-flag {
+.maplair-attribution-flag {
 	display: inline !important;
 	vertical-align: baseline !important;
 	width: 1em;
@@ -499,15 +499,15 @@ path.leaflet-interactive:focus:not(:focus-visible) {
 	margin-right: 0.277em;
 }
 
-.leaflet-left .leaflet-control-scale {
+.maplair-left .maplair-control-scale {
 	margin-left: 5px;
 }
 
-.leaflet-bottom .leaflet-control-scale {
+.maplair-bottom .maplair-control-scale {
 	margin-bottom: 5px;
 }
 
-.leaflet-control-scale-line {
+.maplair-control-scale-line {
 	border: 2px solid #777;
 	border-top: none;
 	line-height: 1.1;
@@ -528,15 +528,15 @@ path.leaflet-interactive:focus:not(:focus-visible) {
 	}
 }
 
-.leaflet-touch {
-	.leaflet-control-attribution,
-	.leaflet-control-layers,
-	.leaflet-bar {
+.maplair-touch {
+	.maplair-control-attribution,
+	.maplair-control-layers,
+	.maplair-bar {
 		box-shadow: none;
 	}
 
-	.leaflet-control-layers,
-	.leaflet-bar {
+	.maplair-control-layers,
+	.maplair-bar {
 		border: 2px solid rgba(0, 0, 0, 0.2);
 		background-clip: padding-box;
 	}
@@ -544,19 +544,19 @@ path.leaflet-interactive:focus:not(:focus-visible) {
 
 /* popup */
 
-.leaflet-popup {
+.maplair-popup {
 	position: absolute;
 	text-align: center;
 	margin-bottom: 20px;
 }
 
-.leaflet-popup-content-wrapper {
+.maplair-popup-content-wrapper {
 	padding: 1px;
 	text-align: left;
 	border-radius: 12px;
 }
 
-.leaflet-popup-content {
+.maplair-popup-content {
 	margin: 13px 24px 13px 20px;
 	line-height: 1.3;
 	font-size: 13px;
@@ -569,7 +569,7 @@ path.leaflet-interactive:focus:not(:focus-visible) {
 	}
 }
 
-.leaflet-popup-tip-container {
+.maplair-popup-tip-container {
 	width: 40px;
 	height: 20px;
 	position: absolute;
@@ -580,7 +580,7 @@ path.leaflet-interactive:focus:not(:focus-visible) {
 	pointer-events: none;
 }
 
-.leaflet-popup-tip {
+.maplair-popup-tip {
 	width: 17px;
 	height: 17px;
 	padding: 1px;
@@ -589,14 +589,14 @@ path.leaflet-interactive:focus:not(:focus-visible) {
 	transform: rotate(45deg);
 }
 
-.leaflet-popup-content-wrapper,
-.leaflet-popup-tip {
+.maplair-popup-content-wrapper,
+.maplair-popup-tip {
 	background: white;
 	color: #333;
 	box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4);
 }
 
-.leaflet-container a.leaflet-popup-close-button {
+.maplair-container a.maplair-popup-close-button {
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -615,20 +615,20 @@ path.leaflet-interactive:focus:not(:focus-visible) {
 	}
 }
 
-.leaflet-popup-scrolled {
+.maplair-popup-scrolled {
 	overflow: auto;
 }
 
 /* div icon */
 
-.leaflet-div-icon {
+.maplair-div-icon {
 	background: #fff;
 	border: 1px solid #666;
 }
 
 /* Tooltip */
 /* Base styles for the element that has a tooltip */
-.leaflet-tooltip {
+.maplair-tooltip {
 	position: absolute;
 	padding: 6px;
 	background-color: #fff;
@@ -640,16 +640,16 @@ path.leaflet-interactive:focus:not(:focus-visible) {
 	pointer-events: none;
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 
-	&.leaflet-interactive {
+	&.maplair-interactive {
 		cursor: pointer;
 		pointer-events: auto;
 	}
 }
 
-.leaflet-tooltip-top:before,
-.leaflet-tooltip-bottom:before,
-.leaflet-tooltip-left:before,
-.leaflet-tooltip-right:before {
+.maplair-tooltip-top:before,
+.maplair-tooltip-bottom:before,
+.maplair-tooltip-left:before,
+.maplair-tooltip-right:before {
 	position: absolute;
 	pointer-events: none;
 	border: 6px solid transparent;
@@ -659,7 +659,7 @@ path.leaflet-interactive:focus:not(:focus-visible) {
 
 /* Directions */
 
-.leaflet-tooltip-bottom {
+.maplair-tooltip-bottom {
 	margin-top: 6px;
 
 	&:before {
@@ -672,7 +672,7 @@ path.leaflet-interactive:focus:not(:focus-visible) {
 	}
 }
 
-.leaflet-tooltip-top {
+.maplair-tooltip-top {
 	margin-top: -6px;
 
 	&:before {
@@ -685,7 +685,7 @@ path.leaflet-interactive:focus:not(:focus-visible) {
 }
 
 
-.leaflet-tooltip-left {
+.maplair-tooltip-left {
 	margin-left: -6px;
 
 	&:before {
@@ -697,7 +697,7 @@ path.leaflet-interactive:focus:not(:focus-visible) {
 	}
 }
 
-.leaflet-tooltip-right {
+.maplair-tooltip-right {
 	margin-left: 6px;
 
 	&:before {
@@ -712,13 +712,13 @@ path.leaflet-interactive:focus:not(:focus-visible) {
 /* Reduced motion */
 
 @media (prefers-reduced-motion: reduce) {
-	.leaflet-fade-anim .leaflet-popup {
+	.maplair-fade-anim .maplair-popup {
 		transition: none;
 	}
-	.leaflet-fade-anim .leaflet-map-pane .leaflet-tile {
+	.maplair-fade-anim .maplair-map-pane .maplair-tile {
 		transition: none;
 	}
-	.leaflet-zoom-anim .leaflet-zoom-animated {
+	.maplair-zoom-anim .maplair-zoom-animated {
 		transition: none;
 	}
 }
@@ -727,7 +727,7 @@ path.leaflet-interactive:focus:not(:focus-visible) {
 
 @media print {
 	/* Prevent printers from removing background-images of controls. */
-	.leaflet-control {
+	.maplair-control {
 		-webkit-print-color-adjust: exact;
 		print-color-adjust: exact;
 	}
