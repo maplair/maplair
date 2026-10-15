@@ -205,6 +205,9 @@ For an overview and a migration guide from Leaflet 1.9.4, see the blog post: htt
 
 ## 2.0.0-alpha.1 (2025-08-16)
 
+<details>
+<summary>Changes of this Leaflet release</summary>
+
 ## Changes
 
 ### ❇️ New Features
@@ -228,7 +231,12 @@ For an overview and a migration guide from Leaflet 1.9.4, see the blog post: htt
 * Popup width by @IvanSanchez in https://github.com/Leaflet/Leaflet/pull/9765
 * Fix overlay shifting with new BlanketOverlay by @Falke-Design in https://github.com/Leaflet/Leaflet/pull/9822
 
+</details>
+
 ## 2.0.0-alpha (2025-05-18) ⚡ Modernization of Leaflet
+
+<details>
+<summary>Changes of this Leaflet release</summary>
 
 After two and a half years of hard work, we’re thrilled to announce the first alpha release of **Leaflet 2.0**!
 
@@ -616,6 +624,8 @@ Check out this polyfill package to help ease the transition for legacy apps:  [L
 
 
 **Full Changelog**: https://github.com/Leaflet/Leaflet/compare/v1.9.4...v2.0.0-alpha
+
+</details>
 
 ## 1.9.4 (2023-05-18)
 
