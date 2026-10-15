@@ -15,7 +15,7 @@ import {Bounds} from '../../geometry/Bounds.js';
  * 	layers: 'nexrad-n0r-900913',
  * 	format: 'image/png',
  * 	transparent: true,
- * 	attribution: "Weather data © 2012 IEM Nexrad"
+ * 	attribution: "Weather data &copy; 2012 IEM Nexrad"
  * });
  * ```
  */

@@ -4,7 +4,7 @@ import * as DomEvent from '../dom/DomEvent.js';
 import * as DomUtil from '../dom/DomUtil.js';
 import {I18n} from '../core/I18n.js';
 
-const mapleLeaf = '<span aria-hidden="true" class="maplair-attribution-leaf">🍁</span>';
+const mapleLeaf = '<span aria-hidden="true" class="maplair-attribution-leaf">&#x1F341;</span>';
 
 /*
  * @class AttributionControl
@@ -82,7 +82,7 @@ export class AttributionControl extends Control {
 	}
 
 	// @method addAttribution(text: String): this
-	// Adds an attribution text (e.g. `'© OpenStreetMap contributors'`).
+	// Adds an attribution text (e.g. `'&copy; OpenStreetMap contributors'`).
 	addAttribution(text) {
 		if (!text) { return this; }
 

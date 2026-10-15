@@ -35,7 +35,7 @@ export class Layer extends Evented {
 			pane: 'overlayPane',
 
 			// @option attribution: String = null
-			// String to be shown in the attribution control, e.g. "© OpenStreetMap contributors". It describes the layer data and is often a legal obligation towards copyright holders and tile providers.
+			// String to be shown in the attribution control, e.g. "&copy; OpenStreetMap contributors". It describes the layer data and is often a legal obligation towards copyright holders and tile providers.
 			attribution: null,
 
 			bubblingPointerEvents: true
