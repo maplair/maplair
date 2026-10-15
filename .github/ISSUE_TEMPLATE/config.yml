@@ -1,12 +1,11 @@
 blank_issues_enabled: true
 contact_links:
   - name: Support
-    url: https://stackoverflow.com/questions/tagged/leaflet
+    url: https://gis.stackexchange.com/questions/tagged/leaflet
     about: >
       We use GitHub as an issue tracker and do not provide support here.
       For general usage please refer to the Maplair documentation:
       https://maplair.org.
       For support questions like "How can I do X with Maplair?"
       please search or ask questions on
-      StackOverflow: https://stackoverflow.com/questions/tagged/leaflet or
-      StackExchange: https://gis.stackexchange.com/questions/tagged/leaflet.
+      GIS Stack Exchange: https://gis.stackexchange.com/questions/tagged/leaflet.
