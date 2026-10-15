@@ -132,6 +132,14 @@ export class MaplairMap extends Evented {
 			// they will disappear for the length of the animation.
 			markerZoomAnimation: true,
 
+			// @option markerCulling: Boolean = false
+			// Whether markers far outside of the map view (more than half a view
+			// away) are taken off the page until the map is moved closer to them.
+			// This reduces the browser's rendering work, and the work of
+			// repositioning markers while zooming, when a map has many markers
+			// (e.g. several thousands) of which only some are visible at a time.
+			markerCulling: false,
+
 			// @option transform3DLimit: Number = 2^23
 			// Defines the maximum size of a CSS translation transform. The default
 			// value should not be changed unless a web browser positions layers in

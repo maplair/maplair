@@ -1,5 +1,5 @@
 import {expect, vi} from 'vite-plus/test';
-import {DivIcon, DefaultIcon, LatLng, MaplairMap, Marker, Point} from 'maplair';
+import {DivIcon, DefaultIcon, DomUtil, LatLng, MaplairMap, Marker, Point} from 'maplair';
 import UIEventSimulator from 'ui-event-simulator';
 import {createContainer, removeMapContainer} from '../../SpecHelper.js';
 
@@ -23,6 +23,69 @@ describe('Marker', () => {
 
 	afterEach(() => {
 		removeMapContainer(map, container);
+	});
+
+	describe('markerCulling map option', () => {
+		let cullingMap, cullingContainer;
+
+		beforeEach(() => {
+			cullingContainer = createContainer();
+			cullingContainer.style.width = '400px';
+			cullingContainer.style.height = '400px';
+			cullingMap = new MaplairMap(cullingContainer, {markerCulling: true, zoomAnimation: false, fadeAnimation: false}).setView([0, 0], 5);
+		});
+
+		afterEach(() => {
+			removeMapContainer(cullingMap, cullingContainer);
+		});
+
+		it('keeps markers on the page by default', () => {
+			const marker = new Marker([60, 60]).addTo(map);
+			expect(marker.getElement().parentNode).to.equal(map._panes.markerPane);
+		});
+
+		it('takes markers far outside of the view off the page', () => {
+			const near = new Marker([0, 0]).addTo(cullingMap);
+			const far = new Marker([60, 60]).addTo(cullingMap);
+			expect(near.getElement().parentNode).to.equal(cullingMap._panes.markerPane);
+			expect(near._shadow.parentNode).to.equal(cullingMap._panes.shadowPane);
+			expect(far.getElement().parentNode).to.equal(null);
+			expect(far._shadow.parentNode).to.equal(null);
+		});
+
+		it('puts markers back on the page when moving the map close to them', () => {
+			const marker = new Marker([60, 60]).addTo(cullingMap);
+			cullingMap.setView([60, 60], 5);
+			expect(marker.getElement().parentNode).to.equal(cullingMap._panes.markerPane);
+			expect(marker._shadow.parentNode).to.equal(cullingMap._panes.shadowPane);
+			expect(DomUtil.getPosition(marker.getElement())).to.eql(cullingMap.latLngToLayerPoint([60, 60]).round());
+
+			cullingMap.setView([0, 0], 5);
+			expect(marker.getElement().parentNode).to.equal(null);
+		});
+
+		it('puts a marker back on the page when moving it into the view', () => {
+			const marker = new Marker([60, 60]).addTo(cullingMap);
+			marker.setLatLng([1, 1]);
+			expect(marker.getElement().parentNode).to.equal(cullingMap._panes.markerPane);
+			expect(DomUtil.getPosition(marker.getElement())).to.eql(cullingMap.latLngToLayerPoint([1, 1]).round());
+		});
+
+		it('keeps a focused marker on the page', () => {
+			const marker = new Marker([0, 0], {autoPanOnFocus: false}).addTo(cullingMap);
+			marker.getElement().focus();
+			cullingMap.setView([60, 60], 5);
+			expect(marker.getElement().parentNode).to.equal(cullingMap._panes.markerPane);
+		});
+
+		it('removes culled markers cleanly', () => {
+			const marker = new Marker([60, 60]).addTo(cullingMap);
+			marker.remove();
+			expect(cullingMap._panes.markerPane.children.length).to.equal(0);
+			marker.addTo(cullingMap);
+			cullingMap.setView([60, 60], 5);
+			expect(marker.getElement().parentNode).to.equal(cullingMap._panes.markerPane);
+		});
 	});
 
 	describe('shadow option', () => {

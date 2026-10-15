@@ -132,6 +132,10 @@ export class Marker extends Layer {
 
 		this._initIcon();
 		this.update();
+
+		if (map.options.markerCulling) {
+			this._updateCulling();
+		}
 	}
 
 	onRemove(map) {
@@ -147,13 +151,18 @@ export class Marker extends Layer {
 
 		this._removeIcon();
 		this._removeShadow();
+		this._culled = false;
 	}
 
 	getEvents() {
-		return {
+		const events = {
 			zoom: this.update,
 			viewreset: this.update
 		};
+		if (this._map?.options.markerCulling) {
+			events.moveend = this._updateCulling;
+		}
+		return events;
 	}
 
 	// @method getLatLng: LatLng
@@ -167,6 +176,9 @@ export class Marker extends Layer {
 	setLatLng(latlng) {
 		const oldLatLng = this._latlng;
 		this._latlng = new LatLng(latlng);
+		if (this._map?.options.markerCulling) {
+			this._updateCulling();
+		}
 		this.update();
 
 		// @event move: Event
@@ -214,7 +226,7 @@ export class Marker extends Layer {
 
 	update() {
 
-		if (this._icon && this._map) {
+		if (this._icon && this._map && !this._culled) {
 			const pos = this._map.latLngToLayerPoint(this._latlng).round();
 			this._setPos(pos);
 		}
@@ -312,6 +324,32 @@ export class Marker extends Layer {
 		this._icon = null;
 	}
 
+	// With the map's `markerCulling` option, takes the icon and shadow of a marker
+	// far outside of the map view off the page (and puts them back when needed),
+	// so that the browser doesn't need to render, and the marker doesn't need
+	// to reposition, them while panning and zooming.
+	_updateCulling() {
+		if (!this._icon || !this._map) { return; }
+
+		const visible = this._map.getBounds().pad(0.5).contains(this._latlng) ||
+			!!this.dragging?._draggable?._moving ||
+			this._icon.contains(document.activeElement);
+
+		if (visible === !this._culled) { return; }
+		this._culled = !visible;
+
+		if (visible) {
+			this.getPane().appendChild(this._icon);
+			if (this._shadow) {
+				this.getPane(this.options.shadowPane).appendChild(this._shadow);
+			}
+			this.update();
+		} else {
+			this._icon.remove();
+			this._shadow?.remove();
+		}
+	}
+
 	_removeShadow() {
 		this._shadow?.remove();
 		this._shadow = null;
@@ -340,6 +378,7 @@ export class Marker extends Layer {
 	}
 
 	_animateZoom(opt) {
+		if (this._culled) { return; }
 		const pos = this._map._latLngToNewLayerPoint(this._latlng, opt.zoom, opt.center).round();
 
 		this._setPos(pos);
