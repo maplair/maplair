@@ -7,16 +7,16 @@
 - [ ] Run `git push --follow-tags` to push the commit created by NPM to Github (together with the tag).
 - [ ] Wait for the CI to complete and follow the logs to make sure it runs successfully.
 - [ ] Verify that the release was correctly published to NPM by checking:
-  - [ ] [Maplair NPM package page](https://www.npmjs.com/package/leaflet)
-  - [ ] files on [Maplair jsDelivr page](https://cdn.jsdelivr.net/npm/leaflet@latest/)
+  - [ ] [Maplair NPM package page](https://www.npmjs.com/package/maplair)
+  - [ ] files on [Maplair jsDelivr page](https://cdn.jsdelivr.net/npm/maplair@latest/)
 - [ ] Make a new release on [Maplair's GitHub release page](https://github.com/maplair/maplair/releases/) with the most important parts of the changelog
-- [ ] Download TGZ archive from https://registry.npmjs.org/leaflet/-/leaflet-X.X.X.tgz (where `X.X.X` is the new version number) and upload it as an "asset" of the GitHub release.
+- [ ] Download TGZ archive from https://registry.npmjs.org/maplair/-/maplair-X.X.X.tgz (where `X.X.X` is the new version number) and upload it as an "asset" of the GitHub release.
 
 ### Updating docs after the release
 
 - [ ] Make a new branch for the update
 - [ ] Write a blog post about the new release and put it in `/docs/_posts/`
-- [ ] [Click here to save a snapshot](https://web.archive.org/save/https://leafletjs.com/reference.html)
+- [ ] [Click here to save a snapshot](https://web.archive.org/save/https://maplair.org/reference.html)
 of the version of docs prior to this release to the Internet Archive's Wayback Machine
 (and optionally, add a link to the snapshot in `docs/reference-versions.html`).
 - [ ] Run `npm run docs` to generate the new `docs/reference.html` and update `latest_maplair_version` in `docs/_config.yml`
