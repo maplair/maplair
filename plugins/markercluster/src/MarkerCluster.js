@@ -1,10 +1,16 @@
-export var MarkerCluster = L.MarkerCluster = L.Marker.extend({
-	options: L.Icon.prototype.options,
+import {Icon, LatLng, LatLngBounds, Marker} from './maplair.js';
+import {MarkerClusterQuickHull} from './MarkerCluster.QuickHull.js';
+import {MarkerClusterAnimatedSpiderfier, MarkerClusterNonAnimatedSpiderfier, MarkerClusterSpiderfier} from './MarkerCluster.Spiderfier.js';
 
-	initialize: function (group, zoom, a, b) {
+export class MarkerCluster extends Marker {
+	static {
+		this.setDefaultOptions(Icon.prototype.options);
+	}
 
-		L.Marker.prototype.initialize.call(this, a ? (a._cLatLng || a.getLatLng()) : new L.LatLng(0, 0),
-            { icon: this, pane: group.options.clusterPane });
+	constructor(group, zoom, a, b) {
+		super(a ? (a._cLatLng || a.getLatLng()) : new LatLng(0, 0), { pane: group.options.clusterPane });
+		// A cluster is its own icon (see createIcon below)
+		this.options.icon = this;
 
 		this._group = group;
 		this._zoom = zoom;
@@ -15,7 +21,7 @@ export var MarkerCluster = L.MarkerCluster = L.Marker.extend({
 		this._iconNeedsUpdate = true;
 		this._boundsNeedUpdate = true;
 
-		this._bounds = new L.LatLngBounds();
+		this._bounds = new LatLngBounds();
 
 		if (a) {
 			this._addChild(a);
@@ -23,8 +29,12 @@ export var MarkerCluster = L.MarkerCluster = L.Marker.extend({
 		if (b) {
 			this._addChild(b);
 		}
-	},
 
+		this.callInitHooks(MarkerCluster);
+	}
+}
+
+MarkerCluster.include({
 	//Recursively retrieve all child markers of this cluster
 	getAllChildMarkers: function (storageArray, ignoreDraggedMarker) {
 		storageArray = storageArray || [];
@@ -77,7 +87,7 @@ export var MarkerCluster = L.MarkerCluster = L.Marker.extend({
 	},
 
 	getBounds: function () {
-		var bounds = new L.LatLngBounds();
+		var bounds = new LatLngBounds();
 		bounds.extend(this._bounds);
 		return bounds;
 	},
@@ -109,7 +119,7 @@ export var MarkerCluster = L.MarkerCluster = L.Marker.extend({
 		this._boundsNeedUpdate = true;
 		this._setClusterCenter(new1);
 
-		if (new1 instanceof L.MarkerCluster) {
+		if (new1 instanceof MarkerCluster) {
 			if (!isNotificationFromChild) {
 				this._childClusters.push(new1);
 				new1.__parent = this;
@@ -129,7 +139,7 @@ export var MarkerCluster = L.MarkerCluster = L.Marker.extend({
 
 	/**
 	 * Makes sure the cluster center is set. If not, uses the child center if it is a cluster, or the marker position.
-	 * @param child L.MarkerCluster|L.Marker that will be used as cluster center if not defined yet.
+	 * @param child MarkerCluster|Marker that will be used as cluster center if not defined yet.
 	 * @private
 	 */
 	_setClusterCenter: function (child) {
@@ -141,7 +151,7 @@ export var MarkerCluster = L.MarkerCluster = L.Marker.extend({
 
 	/**
 	 * Assigns impossible bounding values so that the next extend entirely determines the new bounds.
-	 * This method avoids having to trash the previous L.LatLngBounds object and to create a new one, which is much slower for this class.
+	 * This method avoids having to trash the previous LatLngBounds object and to create a new one, which is much slower for this class.
 	 * As long as the bounds are not extended, most other methods would probably fail, as they would with bounds initialized but not extended.
 	 * @private
 	 */
@@ -202,7 +212,7 @@ export var MarkerCluster = L.MarkerCluster = L.Marker.extend({
 			lngSum += childLatLng.lng * childCount;
 		}
 
-		this._latlng = this._wLatLng = new L.LatLng(latSum / totalCount, lngSum / totalCount);
+		this._latlng = this._wLatLng = new LatLng(latSum / totalCount, lngSum / totalCount);
 
 		// Reset dirty flag.
 		this._boundsNeedUpdate = false;
@@ -365,11 +375,11 @@ export var MarkerCluster = L.MarkerCluster = L.Marker.extend({
 	},
 
 	//Run the given functions recursively to this and child clusters
-	// boundsToApplyTo: a L.LatLngBounds representing the bounds of what clusters to recurse in to
+	// boundsToApplyTo: a LatLngBounds representing the bounds of what clusters to recurse in to
 	// zoomLevelToStart: zoom level to start running functions (inclusive)
 	// zoomLevelToStop: zoom level to stop running functions (inclusive)
-	// runAtEveryLevel: function that takes an L.MarkerCluster as an argument that should be applied on every level
-	// runAtBottomLevel: function that takes an L.MarkerCluster as an argument that should be applied at only the bottom level
+	// runAtEveryLevel: function that takes an MarkerCluster as an argument that should be applied on every level
+	// runAtBottomLevel: function that takes an MarkerCluster as an argument that should be applied at only the bottom level
 	_recursively: function (boundsToApplyTo, zoomLevelToStart, zoomLevelToStop, runAtEveryLevel, runAtBottomLevel) {
 		var childClusters = this._childClusters,
 		    zoom = this._zoom,
@@ -404,3 +414,16 @@ export var MarkerCluster = L.MarkerCluster = L.Marker.extend({
 	}
 });
 
+MarkerCluster.include(MarkerClusterSpiderfier);
+MarkerCluster.include(MarkerClusterAnimatedSpiderfier);
+MarkerCluster.include(MarkerClusterQuickHull);
+
+// MarkerCluster without animations, used when the MarkerClusterGroup's `animate` option is false
+export class MarkerClusterNonAnimated extends MarkerCluster {
+	constructor(...args) {
+		super(...args);
+		this.callInitHooks(MarkerClusterNonAnimated);
+	}
+}
+
+MarkerClusterNonAnimated.include(MarkerClusterNonAnimatedSpiderfier);

@@ -1,64 +1,73 @@
 /*
- * L.MarkerClusterGroup extends L.FeatureGroup by clustering the markers contained within
+ * MarkerClusterGroup extends FeatureGroup by clustering the markers contained within
  */
 
-export var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
+import {Browser, DivIcon, FeatureGroup, LatLng, LatLngBounds, LayerGroup, Marker, Point, Polygon, Util} from './maplair.js';
+import {DistanceGrid} from './DistanceGrid.js';
+import {MarkerCluster, MarkerClusterNonAnimated} from './MarkerCluster.js';
+import {MarkerClusterGroupRefresh, MarkerRefresh} from './MarkerClusterGroup.Refresh.js';
+import {MarkerClusterGroupSpiderfier} from './MarkerCluster.Spiderfier.js';
+import {MarkerOpacity} from './MarkerOpacity.js';
 
-	options: {
-		maxClusterRadius: 80, //A cluster will cover at most this many pixels from its center
-		iconCreateFunction: null,
-		clusterPane: L.Marker.prototype.options.pane,
+export class MarkerClusterGroup extends FeatureGroup {
+	static {
+		this.setDefaultOptions({
+			maxClusterRadius: 80, //A cluster will cover at most this many pixels from its center
+			iconCreateFunction: null,
+			clusterPane: Marker.prototype.options.pane,
 
-		spiderfyOnEveryZoom: false,
-		spiderfyOnMaxZoom: true,
-		showCoverageOnHover: true,
-		zoomToBoundsOnClick: true,
-		singleMarkerMode: false,
+			spiderfyOnEveryZoom: false,
+			spiderfyOnMaxZoom: true,
+			showCoverageOnHover: true,
+			zoomToBoundsOnClick: true,
+			singleMarkerMode: false,
 
-		disableClusteringAtZoom: null,
+			disableClusteringAtZoom: null,
 
-		// Setting this to false prevents the removal of any clusters outside of the viewpoint, which
-		// is the default behaviour for performance reasons.
-		removeOutsideVisibleBounds: true,
+			// Setting this to false prevents the removal of any clusters outside of the viewpoint, which
+			// is the default behaviour for performance reasons.
+			removeOutsideVisibleBounds: true,
 
-		// Set to false to disable all animations (zoom and spiderfy).
-		// If false, option animateAddingMarkers below has no effect.
-		// If L.DomUtil.TRANSITION is falsy, this option has no effect.
-		animate: true,
+			// Set to false to disable all animations (zoom and spiderfy).
+			// If false, option animateAddingMarkers below has no effect.
+			// If L.DomUtil.TRANSITION is falsy, this option has no effect.
+			animate: true,
 
-		//Whether to animate adding markers after adding the MarkerClusterGroup to the map
-		// If you are adding individual markers set to true, if adding bulk markers leave false for massive performance gains.
-		animateAddingMarkers: false,
+			//Whether to animate adding markers after adding the MarkerClusterGroup to the map
+			// If you are adding individual markers set to true, if adding bulk markers leave false for massive performance gains.
+			animateAddingMarkers: false,
 
-		// Make it possible to provide custom function to calculate spiderfy shape positions
-		spiderfyShapePositions: null,
+			// Make it possible to provide custom function to calculate spiderfy shape positions
+			spiderfyShapePositions: null,
 
-		//Increase to increase the distance away that spiderfied markers appear from the center
-		spiderfyDistanceMultiplier: 1,
+			//Increase to increase the distance away that spiderfied markers appear from the center
+			spiderfyDistanceMultiplier: 1,
 
-		// Make it possible to specify a polyline options on a spider leg
-		spiderLegPolylineOptions: { weight: 1.5, color: '#222', opacity: 0.5 },
+			// Make it possible to specify a polyline options on a spider leg
+			spiderLegPolylineOptions: { weight: 1.5, color: '#222', opacity: 0.5 },
 
-		// When bulk adding layers, adds markers in chunks. Means addLayers may not add all the layers in the call, others will be loaded during setTimeouts
-		chunkedLoading: false,
-		chunkInterval: 200, // process markers for a maximum of ~ n milliseconds (then trigger the chunkProgress callback)
-		chunkDelay: 50, // at the end of each interval, give n milliseconds back to system/browser
-		chunkProgress: null, // progress callback: function(processed, total, elapsed) (e.g. for a progress indicator)
+			// When bulk adding layers, adds markers in chunks. Means addLayers may not add all the layers in the call, others will be loaded during setTimeouts
+			chunkedLoading: false,
+			chunkInterval: 200, // process markers for a maximum of ~ n milliseconds (then trigger the chunkProgress callback)
+			chunkDelay: 50, // at the end of each interval, give n milliseconds back to system/browser
+			chunkProgress: null, // progress callback: function(processed, total, elapsed) (e.g. for a progress indicator)
 
-		//Options to pass to the L.Polygon constructor
-		polygonOptions: {}
-	},
+			//Options to pass to the Polygon constructor
+			polygonOptions: {}
+		});
+	}
 
-	initialize: function (options) {
-		L.Util.setOptions(this, options);
+	constructor(options) {
+		super();
+		Util.setOptions(this, options);
 		if (!this.options.iconCreateFunction) {
 			this.options.iconCreateFunction = this._defaultIconCreateFunction;
 		}
 
-		this._featureGroup = L.featureGroup();
+		this._featureGroup = new FeatureGroup();
 		this._featureGroup.addEventParent(this);
 
-		this._nonPointGroup = L.featureGroup();
+		this._nonPointGroup = new FeatureGroup();
 		this._nonPointGroup.addEventParent(this);
 
 		this._inZoomAnimation = 0;
@@ -76,15 +85,19 @@ export var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
 		};
 
 		// Hook the appropriate animation methods.
-		var animate = L.DomUtil.TRANSITION && this.options.animate;
-		L.extend(this, animate ? this._withAnimation : this._noAnimation);
+		var animate = this.options.animate;
+		Object.assign(this, animate ? this._withAnimation : this._noAnimation);
 		// Remember which MarkerCluster class to instantiate (animated or not).
-		this._markerCluster = animate ? L.MarkerCluster : L.MarkerClusterNonAnimated;
-	},
+		this._markerCluster = animate ? MarkerCluster : MarkerClusterNonAnimated;
 
+		this.callInitHooks(MarkerClusterGroup);
+	}
+}
+
+MarkerClusterGroup.include({
 	addLayer: function (layer) {
 
-		if (layer instanceof L.LayerGroup) {
+		if (layer instanceof LayerGroup) {
 			return this.addLayers([layer]);
 		}
 
@@ -141,7 +154,7 @@ export var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
 
 	removeLayer: function (layer) {
 
-		if (layer instanceof L.LayerGroup) {
+		if (layer instanceof LayerGroup) {
 			return this.removeLayers([layer]);
 		}
 
@@ -192,7 +205,7 @@ export var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
 
 	//Takes an array of markers and adds them in bulk
 	addLayers: function (layersArray, skipLayerAddEvent) {
-		if (!L.Util.isArray(layersArray)) {
+		if (!Array.isArray(layersArray)) {
 			return this.addLayer(layersArray);
 		}
 
@@ -208,7 +221,7 @@ export var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
 
 		if (this._map) {
 			var started = (new Date()).getTime();
-			var process = L.bind(function () {
+			var process = (function () {
 				var start = (new Date()).getTime();
 
 				// Make sure to unspiderfy before starting to add some layers
@@ -233,7 +246,7 @@ export var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
 					// - Groups are not included in this group, only their non-group child layers (hasLayer).
 					// Changing array length while looping does not affect performance in current browsers:
 					// http://jsperf.com/for-loop-changing-length/6
-					if (m instanceof L.LayerGroup) {
+					if (m instanceof LayerGroup) {
 						if (originalArray) {
 							layersArray = layersArray.slice();
 							originalArray = false;
@@ -288,7 +301,7 @@ export var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
 				} else {
 					setTimeout(process, this.options.chunkDelay);
 				}
-			}, this);
+			}).bind(this);
 
 			process();
 		} else {
@@ -298,7 +311,7 @@ export var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
 				m = layersArray[offset];
 
 				// Group of layers, append children to layersArray and skip.
-				if (m instanceof L.LayerGroup) {
+				if (m instanceof LayerGroup) {
 					if (originalArray) {
 						layersArray = layersArray.slice();
 						originalArray = false;
@@ -337,7 +350,7 @@ export var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
 				m = layersArray[i];
 
 				// Group of layers, append children to layersArray and skip.
-				if (m instanceof L.LayerGroup) {
+				if (m instanceof LayerGroup) {
 					if (originalArray) {
 						layersArray = layersArray.slice();
 						originalArray = false;
@@ -367,7 +380,7 @@ export var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
 				m = layersArray2[i];
 
 				// Group of layers, append children to layersArray and skip.
-				if (m instanceof L.LayerGroup) {
+				if (m instanceof LayerGroup) {
 					this._extractNonGroupLayers(m, layersArray2);
 					l2 = layersArray2.length;
 					continue;
@@ -381,7 +394,7 @@ export var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
 			m = layersArray[i];
 
 			// Group of layers, append children to layersArray and skip.
-			if (m instanceof L.LayerGroup) {
+			if (m instanceof LayerGroup) {
 				if (originalArray) {
 					layersArray = layersArray.slice();
 					originalArray = false;
@@ -454,7 +467,7 @@ export var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
 
 	//Override FeatureGroup.getBounds as it doesn't work
 	getBounds: function () {
-		var bounds = new L.LatLngBounds();
+		var bounds = new LatLngBounds();
 
 		if (this._topClusterLevel) {
 			bounds.extend(this._topClusterLevel._bounds);
@@ -513,7 +526,7 @@ export var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
 		id = parseInt(id, 10);
 
 		this.eachLayer(function (l) {
-			if (L.stamp(l) === id) {
+			if (Util.stamp(l) === id) {
 				result = l;
 			}
 		});
@@ -643,7 +656,7 @@ export var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
 		this._unbindEvents();
 
 		//In case we are in a cluster animation
-		this._map._mapPane.className = this._map._mapPane.className.replace(' leaflet-cluster-anim', '');
+		this._map._mapPane.className = this._map._mapPane.className.replace(' maplair-cluster-anim', '');
 
 		if (this._spiderfierOnRemove) { //TODO FIXME: Not sure how to have spiderfier add something on here nicely
 			this._spiderfierOnRemove();
@@ -801,20 +814,22 @@ export var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
 
 	//Override L.Evented.fire
 	fire: function (type, data, propagate) {
-		if (data && data.layer instanceof L.MarkerCluster) {
-			//Prevent multiple clustermouseover/off events if the icon is made up of stacked divs (Doesn't work in ie <= 8, no relatedTarget)
-			if (data.originalEvent && this._isOrIsParent(data.layer._icon, data.originalEvent.relatedTarget)) {
+		if (data && data.propagatedFrom instanceof MarkerCluster) {
+			//Prevent multiple clusterpointerover/off events if the icon is made up of stacked divs
+			if (data.originalEvent && this._isOrIsParent(data.propagatedFrom._icon, data.originalEvent.relatedTarget)) {
 				return;
 			}
 			type = 'cluster' + type;
+			//Maplair events only have `propagatedFrom`, cluster events keep providing the cluster as `layer`
+			data.layer = data.propagatedFrom;
 		}
 
-		L.FeatureGroup.prototype.fire.call(this, type, data, propagate);
+		FeatureGroup.prototype.fire.call(this, type, data, propagate);
 	},
 
 	//Override L.Evented.listens
 	listens: function (type, propagate) {
-		return L.FeatureGroup.prototype.listens.call(this, type, propagate) || L.FeatureGroup.prototype.listens.call(this, 'cluster' + type, propagate);
+		return FeatureGroup.prototype.listens.call(this, type, propagate) || FeatureGroup.prototype.listens.call(this, 'cluster' + type, propagate);
 	},
 
 	//Default functionality
@@ -830,7 +845,7 @@ export var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
 			c += 'large';
 		}
 
-		return new L.DivIcon({ html: '<div><span>' + childCount + ' <span aria-label="markers"></span>' + '</span></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });
+		return new DivIcon({ html: '<div><span>' + childCount + ' <span aria-label="markers"></span>' + '</span></div>', className: 'marker-cluster' + c, iconSize: new Point(40, 40) });
 	},
 
 	_bindEvents: function () {
@@ -847,8 +862,8 @@ export var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
 
 		//Show convex hull (boundary) polygon on mouse over
 		if (showCoverageOnHover) {
-			this.on('clustermouseover', this._showCoverage, this);
-			this.on('clustermouseout', this._hideCoverage, this);
+			this.on('clusterpointerover', this._showCoverage, this);
+			this.on('clusterpointerout', this._hideCoverage, this);
 			map.on('zoomend', this._hideCoverage, this);
 		}
 	},
@@ -857,7 +872,7 @@ export var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
 		var cluster = e.layer,
 		    bottomCluster = cluster;
 
-		if (e.type === 'clusterkeypress' && e.originalEvent && e.originalEvent.keyCode !== 13 || e.originalEvent.defaultPrevented) {
+		if (e.type === 'clusterkeypress' && e.originalEvent && e.originalEvent.keyCode !== 13 || e.originalEvent?.defaultPrevented) {
 			return;
 		}
 
@@ -894,7 +909,7 @@ export var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
 			map.removeLayer(this._shownPolygon);
 		}
 		if (e.layer.getChildCount() > 2 && e.layer !== this._spiderfied) {
-			this._shownPolygon = new L.Polygon(e.layer.getConvexHull(), this.options.polygonOptions);
+			this._shownPolygon = new Polygon(e.layer.getConvexHull(), this.options.polygonOptions);
 			map.addLayer(this._shownPolygon);
 		}
 	},
@@ -917,8 +932,8 @@ export var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
 			this.off('clusterclick clusterkeypress', this._zoomOrSpiderfy, this);
 		}
 		if (showCoverageOnHover) {
-			this.off('clustermouseover', this._showCoverage, this);
-			this.off('clustermouseout', this._hideCoverage, this);
+			this.off('clusterpointerover', this._showCoverage, this);
+			this.off('clusterpointerout', this._hideCoverage, this);
 			map.off('zoomend', this._hideCoverage, this);
 		}
 	},
@@ -976,11 +991,11 @@ export var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
             		throw "Map has no minZoom specified";
         	}
 		for (var zoom = maxZoom; zoom >= minZoom; zoom--) {
-			this._gridClusters[zoom] = new L.DistanceGrid(radiusFn(zoom));
-			this._gridUnclustered[zoom] = new L.DistanceGrid(radiusFn(zoom));
+			this._gridClusters[zoom] = new DistanceGrid(radiusFn(zoom));
+			this._gridUnclustered[zoom] = new DistanceGrid(radiusFn(zoom));
 		}
 
-		// Instantiate the appropriate L.MarkerCluster class (animated or not).
+		// Instantiate the appropriate MarkerCluster class (animated or not).
 		this._topClusterLevel = new this._markerCluster(this, minZoom - 1);
 	},
 
@@ -1055,7 +1070,7 @@ export var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
 	 */
 	_refreshClustersIcons: function () {
 		this._featureGroup.eachLayer(function (c) {
-			if (c instanceof L.MarkerCluster && c._iconNeedsUpdate) {
+			if (c instanceof MarkerCluster && c._iconNeedsUpdate) {
 				c._updateIcon();
 			}
 		});
@@ -1065,7 +1080,7 @@ export var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
 	_enqueue: function (fn) {
 		this._queue.push(fn);
 		if (!this._queueTimeout) {
-			this._queueTimeout = setTimeout(L.bind(this._processQueue, this), 300);
+			this._queueTimeout = setTimeout(this._processQueue.bind(this), 300);
 		}
 	},
 	_processQueue: function () {
@@ -1104,7 +1119,7 @@ export var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
 	_getExpandedVisibleBounds: function () {
 		if (!this.options.removeOutsideVisibleBounds) {
 			return this._mapBoundsInfinite;
-		} else if (L.Browser.mobile) {
+		} else if (Browser.mobile) {
 			return this._checkBoundsMaxLat(this._map.getBounds());
 		}
 
@@ -1117,8 +1132,8 @@ export var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
 	 * Otherwise, the removeOutsideVisibleBounds option will remove markers beyond that limit, whereas the same markers without
 	 * this option (or outside MCG) will have their position floored (ceiled) by the projection and rendered at that limit,
 	 * making the user think that MCG "eats" them and never displays them again.
-	 * @param bounds L.LatLngBounds
-	 * @returns {L.LatLngBounds}
+	 * @param bounds LatLngBounds
+	 * @returns {LatLngBounds}
 	 * @private
 	 */
 	_checkBoundsMaxLat: function (bounds) {
@@ -1168,7 +1183,7 @@ export var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
 		for (; i < layers.length; i++) {
 			layer = layers[i];
 
-			if (layer instanceof L.LayerGroup) {
+			if (layer instanceof LayerGroup) {
 				this._extractNonGroupLayers(layer, output);
 				continue;
 			}
@@ -1182,7 +1197,7 @@ export var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
 	/**
 	 * Implements the singleMarkerMode option.
 	 * @param layer Marker to re-style using the Clusters iconCreateFunction.
-	 * @returns {L.Icon} The newly created icon.
+	 * @returns {Icon} The newly created icon.
 	 * @private
 	 */
 	_overrideMarkerIcon: function (layer) {
@@ -1200,11 +1215,11 @@ export var MarkerClusterGroup = L.MarkerClusterGroup = L.FeatureGroup.extend({
 });
 
 // Constant bounds used in case option "removeOutsideVisibleBounds" is set to false.
-L.MarkerClusterGroup.include({
-	_mapBoundsInfinite: new L.LatLngBounds(new L.LatLng(-Infinity, -Infinity), new L.LatLng(Infinity, Infinity))
+MarkerClusterGroup.include({
+	_mapBoundsInfinite: new LatLngBounds(new LatLng(-Infinity, -Infinity), new LatLng(Infinity, Infinity))
 });
 
-L.MarkerClusterGroup.include({
+MarkerClusterGroup.include({
 	_noAnimation: {
 		//Non Animated versions of everything
 		_animationStart: function () {
@@ -1232,7 +1247,7 @@ L.MarkerClusterGroup.include({
 	_withAnimation: {
 		//Animated versions here
 		_animationStart: function () {
-			this._map._mapPane.className += ' leaflet-cluster-anim';
+			this._map._mapPane.className += ' maplair-cluster-anim';
 			this._inZoomAnimation++;
 		},
 
@@ -1280,7 +1295,7 @@ L.MarkerClusterGroup.include({
 			this._topClusterLevel._recursivelyBecomeVisible(bounds, newZoomLevel);
 			//TODO Maybe? Update markers in _recursivelyBecomeVisible
 			fg.eachLayer(function (n) {
-				if (!(n instanceof L.MarkerCluster) && n._icon) {
+				if (!(n instanceof MarkerCluster) && n._icon) {
 					n.clusterShow();
 				}
 			});
@@ -1384,7 +1399,7 @@ L.MarkerClusterGroup.include({
 
 	_animationEnd: function () {
 		if (this._map) {
-			this._map._mapPane.className = this._map._mapPane.className.replace(' leaflet-cluster-anim', '');
+			this._map._mapPane.className = this._map._mapPane.className.replace(' maplair-cluster-anim', '');
 		}
 		this._inZoomAnimation--;
 		this.fire('animationend');
@@ -1396,10 +1411,12 @@ L.MarkerClusterGroup.include({
 		//In my testing this works, infact offsetWidth of any element seems to work.
 		//Could loop all this._layers and do this for each _icon if it stops working
 
-		L.Util.falseFn(document.body.offsetWidth);
+		Util.falseFn(document.body.offsetWidth);
 	}
 });
 
-L.markerClusterGroup = function (options) {
-	return new L.MarkerClusterGroup(options);
-};
+MarkerClusterGroup.include(MarkerClusterGroupSpiderfier);
+MarkerClusterGroup.include(MarkerClusterGroupRefresh);
+
+Marker.include(MarkerOpacity);
+Marker.include(MarkerRefresh);

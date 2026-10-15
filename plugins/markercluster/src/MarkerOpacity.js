@@ -1,12 +1,12 @@
 /*
-* Extends L.Marker to include two extra methods: clusterHide and clusterShow.
+* Extends Marker to include two extra methods: clusterHide and clusterShow.
 * 
 * They work as setOpacity(0) and setOpacity(1) respectively, but
 * don't overwrite the options.opacity
 * 
 */
 
-L.Marker.include({
+export const MarkerOpacity = {
 	clusterHide: function () {
 		var backup = this.options.opacity;
 		this.setOpacity(0);
@@ -17,6 +17,6 @@ L.Marker.include({
 	clusterShow: function () {
 		return this.setOpacity(this.options.opacity);
 	}
-});
+};
 
 
