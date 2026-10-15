@@ -15,7 +15,7 @@
     "Simon Legner"
   ],
   "devDependencies": {
-    "@e18e/eslint-plugin": "^0.6.0",
+    "@e18e/eslint-plugin": "^0.8.1",
     "@stylistic/eslint-plugin": "^5.10.0",
     "@vitest/browser-playwright": "5.0.3",
     "@vitest/coverage-v8": "5.0.3",
