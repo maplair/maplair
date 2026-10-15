@@ -118,7 +118,7 @@ on rebuilding the bundles whenever any source file changes.
 
 ## Running the Tests
 
-Tests run in real browsers via [Vitest](https://vitest.dev/) browser mode (Playwright provider). Make sure the project has been built first (or run `npm run watch` in another terminal).
+Tests run in real browsers via [Vite+](https://viteplus.dev/) (`vp test`, bundling [Vitest](https://vitest.dev/)) in browser mode (Playwright provider). Make sure the project has been built first (or run `npm run watch` in another terminal).
 
 ```
 npm test
@@ -132,10 +132,10 @@ npm test -- --project=webkit
 npm test -- --project=firefox-retina
 ```
 
-For one-shot CI-style runs, add `--run`. To enable touch event emulation (matching what CI runs as the "touch" pass), set `VITE_TOUCH=1`:
+For one-shot CI-style runs, use `npx vp test run` instead. To enable touch event emulation (matching what CI runs as the "touch" pass), set `VITE_TOUCH=1`:
 
 ```
-VITE_TOUCH=1 npm test -- --run
+VITE_TOUCH=1 npx vp test run --project=chromium
 ```
 
 To open the Vitest UI for interactive debugging:

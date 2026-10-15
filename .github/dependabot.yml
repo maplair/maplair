@@ -10,8 +10,9 @@ updates:
     labels:
       - dependencies
     groups:
-      vitest:
+      vite-plus:
         patterns:
+          - "vite-plus"
           - "vitest"
           - "@vitest/*"
   - package-ecosystem: github-actions
