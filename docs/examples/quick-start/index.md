@@ -16,7 +16,7 @@ Before writing any code for the map, you need to do the following preparation st
  * Include Maplair CSS file in the head section of your document:
 
 	```html
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_maplair_version}}/dist/maplair.css"/>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplair@{{ site.latest_maplair_version}}/dist/maplair.css"/>
 	```
 
  * Include Maplair JavaScript file **after** Maplair's CSS:
@@ -26,7 +26,7 @@ Before writing any code for the map, you need to do the following preparation st
 	<script type="importmap">
 	{
 		"imports": {
-			"maplair": "https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_maplair_version}}/dist/maplair.js"
+			"maplair": "https://cdn.jsdelivr.net/npm/maplair@{{ site.latest_maplair_version}}/dist/maplair.js"
 		}
 	}
 	</script>

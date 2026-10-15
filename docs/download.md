@@ -35,12 +35,12 @@ so please read the changelog carefully when upgrading to it.
 The latest stable Maplair release is available on several CDNs. To start using it with an [importmap](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script/type/importmap), place the following in the `head` of your HTML code:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_maplair_version }}/dist/maplair.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplair@{{ site.latest_maplair_version }}/dist/maplair.css" />
 
 <script type="importmap">
 {
 	"imports": {
-		"maplair": "https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_maplair_version }}/dist/maplair.js"
+		"maplair": "https://cdn.jsdelivr.net/npm/maplair@{{ site.latest_maplair_version }}/dist/maplair.js"
 	}
 }
 </script>
@@ -68,10 +68,10 @@ Then, in your script, import the needed Maplair Classes as follows:
 The old (and no longer recommended) way to include Maplair in your project without using modules is by relying on the global variable `L`.
 
 ```html
-<script src="https://unpkg.com/leaflet@{{ site.latest_maplair_version}}/dist/maplair-global.js"></script>
+<script src="https://unpkg.com/maplair@{{ site.latest_maplair_version }}/dist/maplair-global.js"></script>
 ```
 
-Maplair is available on the following free CDNs: [jsDelivr](https://www.jsdelivr.com/package/npm/leaflet?path=dist), [cdnjs](https://cdnjs.com/libraries/leaflet), [unpkg](https://unpkg.com/leaflet/dist/).
+Maplair is available on the following free CDNs: [jsDelivr](https://www.jsdelivr.com/package/npm/maplair?path=dist), [unpkg](https://unpkg.com/maplair/dist/).
 
 _Disclaimer: These services are external to Maplair; for questions or support, please contact them directly._
 
