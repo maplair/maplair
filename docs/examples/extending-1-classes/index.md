@@ -22,27 +22,28 @@ From a technical point of view, Maplair can be extended in different ways:
 	* Handlers are invisible and interpret browser events
 	* Controls are fixed interface elements
 * Including more, or replacing functionality (methods, fields) of an existing class with `Class.include()`
-* Using `Class.addInitHook()` to run additional constructor code.
+* Using `Class.addInitHook()` to run additional constructor code of existing classes.
 
 ## Extending Maplair Classes
 
 JavaScript is a bit of a weird language. It's not really object-oriented in the traditional sense, but handles inheritance using a [prototype chain](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain). Only at a later point during its lifetime [syntax was added](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes) to allow more 'class-like' inheritance.
 
-Because Maplair was created before any standardized class syntax existed, it comes with its own implementation for classes in the form of a base class called `Class`. Almost all classes in Maplair extend from `Class`, as well as most classes you'll find in plugins. It also contains various utility methods to further modify class behavior.
+Almost all classes in Maplair extend from a base class called `Class`, as well as most classes you'll find in plugins. It adds a few utilities to standard JavaScript classes: default options, mixins and constructor hooks.
 
 ### Creating a subclass
 
-`Class`, or other built-in Maplair classes derived from it (such as `Layer`, `Handler`, `Control`, etc.), can be extended in the same manner as any other JavaScript class, by using the [`extends`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/extends) keyword. However, unlike regular JavaScript classes, Maplair classes do not support the [`constructor()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/constructor) method. Instead, constructor logic should go into a special `initialize()` method to preserve backwards compatibility with older versions of Maplair:
-
+`Class`, or other built-in Maplair classes derived from it (such as `Layer`, `Handler`, `Control`, etc.), can be extended in the same manner as any other JavaScript class, by using the [`extends`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/extends) keyword and a standard [`constructor()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/constructor):
 
 ```js
 class RotateMarker extends Marker {
-	initialize(latlng, rotation, options) {
-		super.initialize(latlng, options);
+	constructor(latlng, rotation, options) {
+		super(latlng, options);
 		this._rotation = rotation;
 	}
 }
 ```
+
+(Leaflet 1 used a special `initialize()` method instead; with Maplair, use `constructor()`.)
 
 ### Naming conventions
 
@@ -65,8 +66,9 @@ class MyBox extends Class {
 		});
 	}
 
-	initialize(name, options) {
-		super.initialize(options);
+	constructor(name, options) {
+		super();
+		Util.setOptions(this, options);
 		this.name = name;
 	}
 }
@@ -102,8 +104,9 @@ Maplair provides `.include()` to add or override methods in existing classes. Th
 
 ```js
 class MyLayer extends Layer {
-	initialize(options) {
-		super.initialize(options);
+	constructor(options) {
+		super();
+		Util.setOptions(this, options);
 		this._count = 0;
 	}
 
@@ -131,7 +134,9 @@ Note: Use `.include()` sparingly, as modifying base classes can have unexpected 
 
 ### Initialization hooks
 
-Use `addInitHook()` to run code after `initialize()` completes. This is useful for setup that depends on state from the class being modified (e.g. using `.include()`):
+Use `addInitHook()` to run additional code at the end of the constructor of a class — typically of an existing class, e.g. to add an editing handler to every `Polyline`. This is useful for setup that depends on state from the class being modified (e.g. using `.include()`).
+
+The hooks of a class run when its constructor calls `this.callInitHooks()`, which all Maplair classes do at the end of their constructor. Hooks of parent classes run first, and each hook runs once per object. To support hooks on your own classes, call `this.callInitHooks()` at the end of their constructor:
 
 ```js
 class MyBox extends Class {
@@ -140,6 +145,12 @@ class MyBox extends Class {
 			width: 1,
 			height: 1
 		});
+	}
+
+	constructor(options) {
+		super();
+		Util.setOptions(this, options);
+		this.callInitHooks();
 	}
 }
 
@@ -171,6 +182,7 @@ class MyCube extends MyBox {
 		this._volume = this.options.width * this.options.height * this.options.depth * multiplier;
 	}
 }
+// MyCube has no constructor of its own, so the MyBox constructor runs its hooks too
 
 MyCube.addInitHook('_calculateVolume', 1/*, arg2, arg3. etc. */);
 

@@ -10,9 +10,10 @@ It implements a simple classical inheritance model using JavaScript's standard `
 
 ```js
 class MyClass extends Class {
-    initialize(greeter) {
+    constructor(greeter) {
+        super();
         this.greeter = greeter;
-        // class constructor
+        this.callInitHooks(MyClass); // optional, see constructor hooks below
     }
 
     greet(name) {
@@ -70,7 +71,8 @@ class MyClass extends Class {
         });
     }
 
-    initialize(options) {
+    constructor(options) {
+        super();
         Util.setOptions(this, options);
         ...
     }
@@ -112,9 +114,10 @@ a.foo();
 If you're a plugin developer, you often need to add additional initialization code to existing classes (e.g. editing hooks for `Polyline`). Maplair comes with a way to do it easily using the `addInitHook` method:
 
 ```js
-MyClass.addInitHook(() => {
+Polyline.addInitHook(function () {
     // ... do something in constructor additionally
     // e.g. add event listeners, set custom properties etc.
+    this.editing = new PolylineEditor(this);
 });
 ```
 
@@ -122,4 +125,25 @@ You can also use the following shortcut when you just need to make one additiona
 
 ```js
 MyClass.addInitHook('methodName', arg1, arg2, …);
+```
+
+The hooks of a class run at the end of its constructor, which calls
+[`callInitHooks`](#class-callinithooks) — so they can rely on everything the
+constructor sets up. All Maplair classes do so. Hooks of parent classes run
+first, and parent classes without a constructor of their own (such as `Layer`
+or `Path`) have their hooks run along with their subclasses. Each hook runs
+once per object.
+
+Note that the hooks of a parent class run before the constructor of a subclass
+continues. To support hooks on your own classes, call `this.callInitHooks()`
+at the end of their constructor:
+
+```js
+class MyMarker extends Marker {
+    constructor(latlng, options) {
+        super(latlng, options); // runs the hooks of Marker (and of Layer etc.)
+        this.extra = 'ready';
+        this.callInitHooks();   // runs the hooks of MyMarker
+    }
+}
 ```
