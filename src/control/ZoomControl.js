@@ -30,7 +30,6 @@ export class ZoomControl extends Control {
 			// The text set on the 'zoom in' button.
 			zoomInText: '<span aria-hidden="true">+</span>',
 
-
 			// @option zoomOutText: String = '<span aria-hidden="true">&#x2212;</span>'
 			// The text set on the 'zoom out' button.
 			zoomOutText: '<span aria-hidden="true">&#x2212;</span>',
@@ -119,24 +118,25 @@ export class ZoomControl extends Control {
 			this._zoomInButton.setAttribute('aria-disabled', 'true');
 		}
 	}
-}
 
-// @namespace MaplairMap
-// @section Control options
-// @option zoomControl: Boolean = true
-// Whether a [zoom control](#control-zoom) is added to the map by default.
-MaplairMap.mergeOptions({
-	zoomControl: true
-});
+	static register() {
+		// @namespace MaplairMap
+		// @section Control options
+		// @option zoomControl: Boolean = true
+		// Whether a [zoom control](#control-zoom) is added to the map by default.
+		MaplairMap.mergeOptions({
+			zoomControl: true
+		});
 
-MaplairMap.addInitHook(function () {
-	if (this.options.zoomControl) {
-		// @section Controls
-		// @property zoomControl: ZoomControl
-		// The default zoom control (only available if the
-		// [`zoomControl` option](#map-zoomcontrol) was `true` when creating the map).
-		this.zoomControl = new ZoomControl();
-		this.addControl(this.zoomControl);
+		MaplairMap.addInitHook(function () {
+			if (this.options.zoomControl) {
+				// @section Controls
+				// @property zoomControl: ZoomControl
+				// The default zoom control (only available if the
+				// [`zoomControl` option](#map-zoomcontrol) was `true` when creating the map).
+				this.zoomControl = new ZoomControl();
+				this.addControl(this.zoomControl);
+			}
+		});
 	}
-});
-
+}

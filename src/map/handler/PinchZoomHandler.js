@@ -7,23 +7,6 @@ import * as PointerEvents from '../../dom/DomEvent.PointerEvents.js';
  * Handler.PinchZoom is used by Map to add pinch zoom on supported mobile browsers.
  */
 
-// @namespace MaplairMap
-// @section Interaction Options
-MaplairMap.mergeOptions({
-	// @section Touch interaction options
-	// @option pinchZoom: Boolean|String = *
-	// Whether the map can be zoomed by touch-dragging with two fingers. If
-	// passed `'center'`, it will zoom to the center of the view regardless of
-	// where the touch events (fingers) were. Enabled for touch-capable web
-	// browsers.
-	pinchZoom: true,
-
-	// @option bounceAtZoomLimits: Boolean = true
-	// Set it to false if you don't want the map to zoom beyond min/max zoom
-	// and then bounce back when pinch-zooming.
-	bounceAtZoomLimits: true
-});
-
 export class PinchZoomHandler extends Handler {
 	addHooks() {
 		this._map._container.classList.add('maplair-touch-zoom');
@@ -125,26 +108,45 @@ export class PinchZoomHandler extends Handler {
 			this._map._resetView(this._center, this._map._limitZoom(this._zoom));
 		}
 	}
+
+	static register() {
+		// @namespace MaplairMap
+		// @section Interaction Options
+		MaplairMap.mergeOptions({
+			// @section Touch interaction options
+			// @option pinchZoom: Boolean|String = *
+			// Whether the map can be zoomed by touch-dragging with two fingers. If
+			// passed `'center'`, it will zoom to the center of the view regardless of
+			// where the touch events (fingers) were. Enabled for touch-capable web
+			// browsers.
+			pinchZoom: true,
+
+			// @option bounceAtZoomLimits: Boolean = true
+			// Set it to false if you don't want the map to zoom beyond min/max zoom
+			// and then bounce back when pinch-zooming.
+			bounceAtZoomLimits: true
+		});
+
+		// @section Handlers
+		// @property pinchZoom: Handler
+		// Pinch zoom handler.
+		MaplairMap.addInitHook('addHandler', 'pinchZoom', PinchZoomHandler);
+
+		// Deprecated - Backward compatibility touchZoom
+		MaplairMap.addInitHook(function () {
+			this.touchZoom = this.pinchZoom;
+
+			if (this.options.touchZoom !== undefined) {
+				// To be removed in maplair 3
+				console.warn('Map: touchZoom option is deprecated and will be removed in future versions. Use pinchZoom instead.');
+				this.options.pinchZoom = this.options.touchZoom;
+				delete this.options.touchZoom;
+			}
+			if (this.options.pinchZoom) {
+				this.pinchZoom.enable();
+			} else {
+				this.pinchZoom.disable();
+			}
+		});
+	}
 }
-
-// @section Handlers
-// @property pinchZoom: Handler
-// Pinch zoom handler.
-MaplairMap.addInitHook('addHandler', 'pinchZoom', PinchZoomHandler);
-
-// Deprecated - Backward compatibility touchZoom
-MaplairMap.addInitHook(function () {
-	this.touchZoom = this.pinchZoom;
-
-	if (this.options.touchZoom !== undefined) {
-		// To be removed in maplair 3
-		console.warn('Map: touchZoom option is deprecated and will be removed in future versions. Use pinchZoom instead.');
-		this.options.pinchZoom = this.options.touchZoom;
-		delete this.options.touchZoom;
-	}
-	if (this.options.pinchZoom) {
-		this.pinchZoom.enable();
-	} else {
-		this.pinchZoom.disable();
-	}
-});

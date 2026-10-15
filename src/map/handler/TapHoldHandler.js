@@ -12,20 +12,6 @@ import * as PointerEvents from '../../dom/DomEvent.PointerEvents.js';
 
 const tapHoldDelay = 600;
 
-// @namespace MaplairMap
-// @section Interaction Options
-MaplairMap.mergeOptions({
-	// @section Touch interaction options
-	// @option tapHold: Boolean
-	// Enables simulation of `contextmenu` event, default is `true` for mobile Safari.
-	tapHold: Browser.safari && Browser.mobile,
-
-	// @option tapTolerance: Number = 15
-	// The max number of pixels a user can shift his finger during touch
-	// for it to be considered a valid tap.
-	tapTolerance: 15
-});
-
 export class TapHoldHandler extends Handler {
 	addHooks() {
 		DomEvent.on(this._map._container, 'pointerdown', this._onDown, this);
@@ -96,9 +82,25 @@ export class TapHoldHandler extends Handler {
 
 		e.target.dispatchEvent(simulatedEvent);
 	}
-}
 
-// @section Handlers
-// @property tapHold: Handler
-// Long tap handler to simulate `contextmenu` event (useful in mobile Safari).
-MaplairMap.addInitHook('addHandler', 'tapHold', TapHoldHandler);
+	static register() {
+		// @namespace MaplairMap
+		// @section Interaction Options
+		MaplairMap.mergeOptions({
+			// @section Touch interaction options
+			// @option tapHold: Boolean
+			// Enables simulation of `contextmenu` event, default is `true` for mobile Safari.
+			tapHold: Browser.safari && Browser.mobile,
+
+			// @option tapTolerance: Number = 15
+			// The max number of pixels a user can shift his finger during touch
+			// for it to be considered a valid tap.
+			tapTolerance: 15
+		});
+
+		// @section Handlers
+		// @property tapHold: Handler
+		// Long tap handler to simulate `contextmenu` event (useful in mobile Safari).
+		MaplairMap.addInitHook('addHandler', 'tapHold', TapHoldHandler);
+	}
+}

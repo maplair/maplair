@@ -51,7 +51,6 @@ import {I18n} from '../core/I18n.js';
  * ```
  */
 
-
 // @namespace Popup
 // @constructor Popup(options?: Popup options, source?: Layer)
 // Instantiates a `Popup` object given an optional `options` object that describes its appearance and location and an optional `source` object that is used to tag the popup with a reference to the Layer to which it refers.
@@ -241,7 +240,6 @@ export class Popup extends DivOverlay {
 			});
 		}
 
-
 		if (this.options.trackResize) {
 			this._resizeObserver = new ResizeObserver(((entries) => {
 				if (!this._map) { return; }
@@ -346,178 +344,177 @@ export class Popup extends DivOverlay {
 		return new Point(this._source?._getPopupAnchor ? this._source._getPopupAnchor() : [0, 0]);
 	}
 
-}
+	static register() {
+		/* @namespace MaplairMap
+		 * @section Interaction Options
+		 * @option closePopupOnClick: Boolean = true
+		 * Set it to `false` if you don't want popups to close when user clicks the map.
+		 */
+		MaplairMap.mergeOptions({
+			closePopupOnClick: true
+		});
 
+		// @namespace MaplairMap
+		// @section Methods for Layers and Controls
+		MaplairMap.include({
+			// @method openPopup(popup: Popup): this
+			// Opens the specified popup while closing the previously opened (to make sure only one is opened at one time for usability).
+			// @alternative
+			// @method openPopup(content: String|HTMLElement, latlng: LatLng, options?: Popup options): this
+			// Creates a popup with the specified content and options and opens it in the given point on a map.
+			// String content is rendered as HTML; sanitize untrusted input or pass an `HTMLElement` with safe `textContent` instead.
+			openPopup(popup, latlng, options) {
+				this._initOverlay(Popup, popup, latlng, options)
+					.openOn(this);
 
-/* @namespace MaplairMap
- * @section Interaction Options
- * @option closePopupOnClick: Boolean = true
- * Set it to `false` if you don't want popups to close when user clicks the map.
- */
-MaplairMap.mergeOptions({
-	closePopupOnClick: true
-});
+				return this;
+			},
 
-
-// @namespace MaplairMap
-// @section Methods for Layers and Controls
-MaplairMap.include({
-	// @method openPopup(popup: Popup): this
-	// Opens the specified popup while closing the previously opened (to make sure only one is opened at one time for usability).
-	// @alternative
-	// @method openPopup(content: String|HTMLElement, latlng: LatLng, options?: Popup options): this
-	// Creates a popup with the specified content and options and opens it in the given point on a map.
-	// String content is rendered as HTML; sanitize untrusted input or pass an `HTMLElement` with safe `textContent` instead.
-	openPopup(popup, latlng, options) {
-		this._initOverlay(Popup, popup, latlng, options)
-			.openOn(this);
-
-		return this;
-	},
-
-	// @method closePopup(popup?: Popup): this
-	// Closes the popup previously opened with [openPopup](#map-openpopup) (or the given one).
-	closePopup(popup) {
-		popup = arguments.length ? popup : this._popup;
-		popup?.close();
-		return this;
-	}
-});
-
-/*
- * @namespace Layer
- * @section Popup methods example
- *
- * All layers share a set of methods convenient for binding popups to it.
- *
- * ```js
- * const layer = new Polygon(latlngs).bindPopup('Hi There!').addTo(map);
- * layer.openPopup();
- * layer.closePopup();
- * ```
- *
- * Popups will also be automatically opened when the layer is clicked on and closed when the layer is removed from the map or another popup is opened.
- */
-
-// @section Popup methods
-Layer.include({
-
-	// @method bindPopup(content: String|HTMLElement|Function|Popup, options?: Popup options): this
-	// Binds a popup to the layer with the passed `content` and sets up the
-	// necessary event listeners. A `String` argument is rendered as HTML; if it
-	// may contain untrusted input, sanitize it (e.g. with DOMPurify) or pass an
-	// `HTMLElement` with safe `textContent` instead. If a `Function` is passed
-	// it will receive the layer as the first argument and should return a
-	// `String` or `HTMLElement`.
-	bindPopup(content, options) {
-		this._popup = this._initOverlay(Popup, this._popup, content, options);
-		if (!this._popupHandlersAdded) {
-			this.on({
-				click: this._openPopup,
-				keypress: this._onKeyPress,
-				remove: this.closePopup,
-				move: this._movePopup
-			});
-			this._popupHandlersAdded = true;
-		}
-
-		return this;
-	},
-
-	// @method unbindPopup(): this
-	// Removes the popup previously bound with `bindPopup`.
-	unbindPopup() {
-		if (this._popup) {
-			this.off({
-				click: this._openPopup,
-				keypress: this._onKeyPress,
-				remove: this.closePopup,
-				move: this._movePopup
-			});
-			this._popupHandlersAdded = false;
-			this._popup = null;
-		}
-		return this;
-	},
-
-	// @method openPopup(latlng?: LatLng): this
-	// Opens the bound popup at the specified `latlng` or at the default popup anchor if no `latlng` is passed.
-	openPopup(latlng) {
-		if (this._popup) {
-			if (!(this instanceof FeatureGroup)) {
-				this._popup._source = this;
+			// @method closePopup(popup?: Popup): this
+			// Closes the popup previously opened with [openPopup](#map-openpopup) (or the given one).
+			closePopup(popup) {
+				popup = arguments.length ? popup : this._popup;
+				popup?.close();
+				return this;
 			}
-			if (this._popup._prepareOpen(latlng || this._latlng)) {
-				// open the popup on the map
-				this._popup.openOn(this._map);
-			}
-		}
-		return this;
-	},
+		});
 
-	// @method closePopup(): this
-	// Closes the popup bound to this layer if it is open.
-	closePopup() {
-		this._popup?.close();
-		return this;
-	},
+		/*
+		 * @namespace Layer
+		 * @section Popup methods example
+		 *
+		 * All layers share a set of methods convenient for binding popups to it.
+		 *
+		 * ```js
+		 * const layer = new Polygon(latlngs).bindPopup('Hi There!').addTo(map);
+		 * layer.openPopup();
+		 * layer.closePopup();
+		 * ```
+		 *
+		 * Popups will also be automatically opened when the layer is clicked on and closed when the layer is removed from the map or another popup is opened.
+		 */
 
-	// @method togglePopup(): this
-	// Opens or closes the popup bound to this layer depending on its current state.
-	togglePopup() {
-		this._popup?.toggle(this);
-		return this;
-	},
+		// @section Popup methods
+		Layer.include({
 
-	// @method isPopupOpen(): boolean
-	// Returns `true` if the popup bound to this layer is currently open.
-	isPopupOpen() {
-		return this._popup?.isOpen() ?? false;
-	},
+			// @method bindPopup(content: String|HTMLElement|Function|Popup, options?: Popup options): this
+			// Binds a popup to the layer with the passed `content` and sets up the
+			// necessary event listeners. A `String` argument is rendered as HTML; if it
+			// may contain untrusted input, sanitize it (e.g. with DOMPurify) or pass an
+			// `HTMLElement` with safe `textContent` instead. If a `Function` is passed
+			// it will receive the layer as the first argument and should return a
+			// `String` or `HTMLElement`.
+			bindPopup(content, options) {
+				this._popup = this._initOverlay(Popup, this._popup, content, options);
+				if (!this._popupHandlersAdded) {
+					this.on({
+						click: this._openPopup,
+						keypress: this._onKeyPress,
+						remove: this.closePopup,
+						move: this._movePopup
+					});
+					this._popupHandlersAdded = true;
+				}
 
-	// @method setPopupContent(content: String|HTMLElement|Popup): this
-	// Sets the content of the popup bound to this layer.
-	// String content is rendered as HTML; sanitize untrusted input or pass an `HTMLElement` with safe `textContent` instead.
-	setPopupContent(content) {
-		this._popup?.setContent(content);
-		return this;
-	},
+				return this;
+			},
 
-	// @method getPopup(): Popup
-	// Returns the popup bound to this layer.
-	getPopup() {
-		return this._popup;
-	},
+			// @method unbindPopup(): this
+			// Removes the popup previously bound with `bindPopup`.
+			unbindPopup() {
+				if (this._popup) {
+					this.off({
+						click: this._openPopup,
+						keypress: this._onKeyPress,
+						remove: this.closePopup,
+						move: this._movePopup
+					});
+					this._popupHandlersAdded = false;
+					this._popup = null;
+				}
+				return this;
+			},
 
-	_openPopup(e) {
-		if (!this._popup || !this._map) {
-			return;
-		}
-		// prevent map click
-		DomEvent.stop(e);
+			// @method openPopup(latlng?: LatLng): this
+			// Opens the bound popup at the specified `latlng` or at the default popup anchor if no `latlng` is passed.
+			openPopup(latlng) {
+				if (this._popup) {
+					if (!(this instanceof FeatureGroup)) {
+						this._popup._source = this;
+					}
+					if (this._popup._prepareOpen(latlng || this._latlng)) {
+						// open the popup on the map
+						this._popup.openOn(this._map);
+					}
+				}
+				return this;
+			},
 
-		const target = e.propagatedFrom ?? e.target;
-		if (this._popup._source === target && !(target instanceof Path)) {
-			// treat it like a marker and figure out
-			// if we should toggle it open/closed
-			if (this._map.hasLayer(this._popup)) {
-				this.closePopup();
-			} else {
+			// @method closePopup(): this
+			// Closes the popup bound to this layer if it is open.
+			closePopup() {
+				this._popup?.close();
+				return this;
+			},
+
+			// @method togglePopup(): this
+			// Opens or closes the popup bound to this layer depending on its current state.
+			togglePopup() {
+				this._popup?.toggle(this);
+				return this;
+			},
+
+			// @method isPopupOpen(): boolean
+			// Returns `true` if the popup bound to this layer is currently open.
+			isPopupOpen() {
+				return this._popup?.isOpen() ?? false;
+			},
+
+			// @method setPopupContent(content: String|HTMLElement|Popup): this
+			// Sets the content of the popup bound to this layer.
+			// String content is rendered as HTML; sanitize untrusted input or pass an `HTMLElement` with safe `textContent` instead.
+			setPopupContent(content) {
+				this._popup?.setContent(content);
+				return this;
+			},
+
+			// @method getPopup(): Popup
+			// Returns the popup bound to this layer.
+			getPopup() {
+				return this._popup;
+			},
+
+			_openPopup(e) {
+				if (!this._popup || !this._map) {
+					return;
+				}
+				// prevent map click
+				DomEvent.stop(e);
+
+				const target = e.propagatedFrom ?? e.target;
+				if (this._popup._source === target && !(target instanceof Path)) {
+					// treat it like a marker and figure out
+					// if we should toggle it open/closed
+					if (this._map.hasLayer(this._popup)) {
+						this.closePopup();
+					} else {
+						this.openPopup(e.latlng);
+					}
+					return;
+				}
+				this._popup._source = target;
 				this.openPopup(e.latlng);
+			},
+
+			_movePopup(e) {
+				this._popup.setLatLng(e.latlng);
+			},
+
+			_onKeyPress(e) {
+				if (e.originalEvent.code === 'Enter') {
+					this._openPopup(e);
+				}
 			}
-			return;
-		}
-		this._popup._source = target;
-		this.openPopup(e.latlng);
-	},
-
-	_movePopup(e) {
-		this._popup.setLatLng(e.latlng);
-	},
-
-	_onKeyPress(e) {
-		if (e.originalEvent.code === 'Enter') {
-			this._openPopup(e);
-		}
+		});
 	}
-});
+}

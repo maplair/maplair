@@ -7,7 +7,6 @@ import {I18n} from '../core/I18n.js';
 
 const mapleLeaf = '<span aria-hidden="true" class="maplair-attribution-leaf">🍁</span>';
 
-
 /*
  * @class AttributionControl
  * @inherits Control
@@ -127,18 +126,20 @@ export class AttributionControl extends Control {
 
 		this._container.innerHTML = prefixAndAttribs.join(' <span aria-hidden="true">|</span> ');
 	}
-}
 
-// @namespace MaplairMap
-// @section Control options
-// @option attributionControl: Boolean = true
-// Whether a [attribution control](#control-attribution) is added to the map by default.
-MaplairMap.mergeOptions({
-	attributionControl: true
-});
+	static register() {
+		// @namespace MaplairMap
+		// @section Control options
+		// @option attributionControl: Boolean = true
+		// Whether a [attribution control](#control-attribution) is added to the map by default.
+		MaplairMap.mergeOptions({
+			attributionControl: true
+		});
 
-MaplairMap.addInitHook(function () {
-	if (this.options.attributionControl) {
-		new AttributionControl().addTo(this);
+		MaplairMap.addInitHook(function () {
+			if (this.options.attributionControl) {
+				new AttributionControl().addTo(this);
+			}
+		});
 	}
-});
+}

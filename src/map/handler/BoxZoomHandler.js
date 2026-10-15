@@ -10,15 +10,6 @@ import {Bounds} from '../../geometry/Bounds.js';
  * (zoom to a selected bounding box), enabled by default.
  */
 
-// @namespace MaplairMap
-// @section Interaction Options
-MaplairMap.mergeOptions({
-	// @option boxZoom: Boolean = true
-	// Whether the map can be zoomed to a rectangular area specified by
-	// dragging the pointer while pressing the shift key.
-	boxZoom: true
-});
-
 export class BoxZoomHandler extends Handler {
 	initialize(map) {
 		super.initialize(map);
@@ -144,9 +135,20 @@ export class BoxZoomHandler extends Handler {
 			this._resetState();
 		}
 	}
-}
 
-// @section Handlers
-// @property boxZoom: Handler
-// Box (shift-drag with pointer) zoom handler.
-MaplairMap.addInitHook('addHandler', 'boxZoom', BoxZoomHandler);
+	static register() {
+		// @namespace MaplairMap
+		// @section Interaction Options
+		MaplairMap.mergeOptions({
+			// @option boxZoom: Boolean = true
+			// Whether the map can be zoomed to a rectangular area specified by
+			// dragging the pointer while pressing the shift key.
+			boxZoom: true
+		});
+
+		// @section Handlers
+		// @property boxZoom: Handler
+		// Box (shift-drag with pointer) zoom handler.
+		MaplairMap.addInitHook('addHandler', 'boxZoom', BoxZoomHandler);
+	}
+}

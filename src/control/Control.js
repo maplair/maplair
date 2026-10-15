@@ -25,7 +25,6 @@ export class Control extends Class {
 		});
 	}
 
-
 	initialize(options) {
 		Util.setOptions(this, options);
 	}
@@ -109,9 +108,57 @@ export class Control extends Class {
 			this._map.getContainer().focus();
 		}
 	}
+
+	static register() {
+		/* @namespace MaplairMap
+		 * @section Methods for Layers and Controls
+		 */
+		MaplairMap.include({
+			// @method addControl(control: Control): this
+			// Adds the given control to the map
+			addControl(control) {
+				control.addTo(this);
+				return this;
+			},
+
+			// @method removeControl(control: Control): this
+			// Removes the given control from the map
+			removeControl(control) {
+				control.remove();
+				return this;
+			},
+
+			_initControlPos() {
+				const corners = this._controlCorners = {},
+				l = 'maplair-',
+				container = this._controlContainer = DomUtil.create('div', `${l}control-container`, this._container);
+
+				function createCorner(vSide, hSide) {
+					const className = `${l + vSide} ${l}${hSide}`;
+
+					corners[vSide + hSide] = DomUtil.create('div', className, container);
+				}
+
+				createCorner('top', 'left');
+				createCorner('top', 'right');
+				createCorner('bottom', 'left');
+				createCorner('bottom', 'right');
+			},
+
+			_clearControlPos() {
+				for (const c of Object.values(this._controlCorners)) {
+					c.remove();
+				}
+				this._controlContainer.remove();
+				delete this._controlCorners;
+				delete this._controlContainer;
+			}
+		});
+	}
 }
 
-/* @section Extension methods
+/* @namespace Control
+ * @section Extension methods
  * @uninheritable
  *
  * Every control should extend from `Control` and (re-)implement the following methods.
@@ -122,48 +169,3 @@ export class Control extends Class {
  * @method onRemove(map: MaplairMap)
  * Optional method. Should contain all clean up code that removes the listeners previously added in [`onAdd`](#control-onadd). Called on [`control.remove()`](#control-remove).
  */
-
-/* @namespace MaplairMap
- * @section Methods for Layers and Controls
- */
-MaplairMap.include({
-	// @method addControl(control: Control): this
-	// Adds the given control to the map
-	addControl(control) {
-		control.addTo(this);
-		return this;
-	},
-
-	// @method removeControl(control: Control): this
-	// Removes the given control from the map
-	removeControl(control) {
-		control.remove();
-		return this;
-	},
-
-	_initControlPos() {
-		const corners = this._controlCorners = {},
-		l = 'maplair-',
-		container = this._controlContainer = DomUtil.create('div', `${l}control-container`, this._container);
-
-		function createCorner(vSide, hSide) {
-			const className = `${l + vSide} ${l}${hSide}`;
-
-			corners[vSide + hSide] = DomUtil.create('div', className, container);
-		}
-
-		createCorner('top', 'left');
-		createCorner('top', 'right');
-		createCorner('bottom', 'left');
-		createCorner('bottom', 'right');
-	},
-
-	_clearControlPos() {
-		for (const c of Object.values(this._controlCorners)) {
-			c.remove();
-		}
-		this._controlContainer.remove();
-		delete this._controlCorners;
-		delete this._controlContainer;
-	}
-});

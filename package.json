@@ -35,6 +35,7 @@
   "type": "module",
   "exports": {
     ".": "./dist/maplair-src.js",
+    "./src/": "./src/",
     "./styles.css": "./dist/maplair.css"
   },
   "style": "dist/maplair.css",
