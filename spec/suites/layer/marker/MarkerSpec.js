@@ -25,6 +25,25 @@ describe('Marker', () => {
 		removeMapContainer(map, container);
 	});
 
+	describe('shadow option', () => {
+		it('adds the icon shadow by default', () => {
+			const marker = new Marker([0, 0]).addTo(map);
+			expect(marker._shadow.parentNode).to.equal(map._panes.shadowPane);
+		});
+
+		it('doesn\'t add a shadow if disabled', () => {
+			const marker = new Marker([0, 0], {shadow: false}).addTo(map);
+			expect(marker._shadow).to.equal(null);
+			expect(map._panes.shadowPane.children.length).to.equal(0);
+		});
+
+		it('doesn\'t add a shadow when changing the icon if disabled', () => {
+			const marker = new Marker([0, 0], {shadow: false}).addTo(map);
+			marker.setIcon(new DefaultIcon());
+			expect(map._panes.shadowPane.children.length).to.equal(0);
+		});
+	});
+
 	describe('#setIcon', () => {
 
 		it('set the correct x and y size attributes', () => {

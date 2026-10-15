@@ -74,6 +74,14 @@ export class Marker extends Layer {
 			// `Map pane` where the markers shadow will be added.
 			shadowPane: 'shadowPane',
 
+			// @option shadow: Boolean = true
+			// Whether to show the shadow of the marker's icon. Each shadow is an
+			// additional element on the page, so disabling shadows noticeably reduces
+			// the browser's rendering work when showing many markers (e.g. several
+			// thousands), especially while panning and zooming. To disable shadows
+			// for all markers, use `Marker.mergeOptions({shadow: false})`.
+			shadow: true,
+
 			// @option bubblingPointerEvents: Boolean = false
 			// When `true`, a pointer event on this marker will trigger the same event on the map
 			// (unless [`DomEvent.stopPropagation`](#domevent-stoppropagation) is used).
@@ -257,7 +265,7 @@ export class Marker extends Layer {
 			DomEvent.on(icon, 'focus', this._panOnFocus, this);
 		}
 
-		const newShadow = options.icon.createShadow(this._shadow);
+		const newShadow = options.shadow ? options.icon.createShadow(this._shadow) : null;
 		let addShadow = false;
 
 		if (newShadow !== this._shadow) {
