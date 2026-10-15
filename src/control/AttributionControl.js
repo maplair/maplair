@@ -5,7 +5,7 @@ import * as DomEvent from '../dom/DomEvent.js';
 import * as DomUtil from '../dom/DomUtil.js';
 import {I18n} from '../core/I18n.js';
 
-const ukrainianFlag = '<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8" class="maplair-attribution-flag"><path fill="#4C7BE1" d="M0 0h12v4H0z"/><path fill="#FFD500" d="M0 4h12v3H0z"/><path fill="#E0BC00" d="M0 7h12v1H0z"/></svg>';
+const mapleLeaf = '<span aria-hidden="true" class="maplair-attribution-leaf">🍁</span>';
 
 
 /*
@@ -39,7 +39,7 @@ export class AttributionControl extends Control {
 		super.initialize(options);
 		if (this.options.prefix === null) {
 			const title = I18n.translate('A JavaScript library for interactive maps');
-			this.options.prefix = `<a target="_blank" href="https://maplair.org" title="${title}">${ukrainianFlag}Maplair</a>`;
+			this.options.prefix = `<a target="_blank" href="https://maplair.org" title="${title}">${mapleLeaf}Maplair</a>`;
 		}
 
 		this._attributions = {};

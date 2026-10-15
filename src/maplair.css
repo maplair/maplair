@@ -491,11 +491,7 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	}
 }
 
-.maplair-attribution-flag {
-	display: inline !important;
-	vertical-align: baseline !important;
-	width: 1em;
-	height: 0.6669em;
+.maplair-attribution-leaf {
 	margin-right: 0.277em;
 }
 
