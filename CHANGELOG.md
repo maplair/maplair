@@ -1,7 +1,207 @@
-Leaflet Changelog
+Maplair Changelog
 =================
 
-(all changes without author notice are by [@mourner](https://github.com/mourner))
+(all changes of Leaflet without author notice are by [@mourner](https://github.com/mourner))
+
+## 4.0.0-alpha.1 (2026-10-15) 🍁 Maplair, a fork of Leaflet
+
+The first pre-release of Maplair, a fork of Leaflet. It contains all changes since Leaflet 1.9.4: those of Leaflet 2.0.0-alpha and 2.0.0-alpha.1 (see below), the unreleased changes of Leaflet until the fork, and Maplair's own changes.
+
+For an overview and a migration guide from Leaflet 1.9.4, see the blog post: https://maplair.org/2026/10/15/maplair-4.0.0-alpha.html
+
+### Maplair
+
+(changes without author notice are by [@simon04](https://github.com/simon04))
+
+#### ❇️ New Features
+
+* Translations of the built-in strings with `I18n` (cherry-picked from https://github.com/Leaflet/Leaflet/pull/9845), translated on Transifex: https://app.transifex.com/simon04/maplair/
+* Translations to German, Spanish, French, Czech, Slovak, Hungarian, Slovenian, Italian and Romansh
+* Map: new option `markerCulling` to take markers far outside of the view off the page
+* Marker: new option `shadow` to disable icon shadows for performance
+* Publish one ES module per source file (`dist/esm`) and declare `sideEffects`, so that bundlers can drop unused features
+* Bring back `L.noConflict()` in the global build `maplair-global.js`
+* New logo, maple leaf marker icon with zigzag outline, and favicon
+
+#### ✨ Refactorings (⚠️ Breaking Changes)
+
+* Rename Leaflet to Maplair: npm package `maplair`, files `maplair*.js`/`maplair.css`, CSS classes `maplair-*`, `LeafletMap` to `MaplairMap`
+* Use standard `constructor()` instead of `initialize()`, and run init hooks at the end of each class' constructor with `callInitHooks()` (alternative to https://github.com/Leaflet/Leaflet/pull/10044 and https://github.com/Leaflet/Leaflet/pull/10275, see https://github.com/Leaflet/Leaflet/issues/9889)
+* Register mixins for code splitting (cherry-picked from https://github.com/Leaflet/Leaflet/pull/9919, see https://github.com/Leaflet/Leaflet/issues/9814), and register the default map features from `MaplairMap`
+* Replace `Point#clone()` and `LatLng#clone()` with copy constructors (cherry-picked from https://github.com/Leaflet/Leaflet/pull/9783); `new Point()`, `new LatLng()`, `new Bounds()` and `new LatLngBounds()` always create a new object
+* Replace the `zoomInTitle`, `zoomOutTitle` and `closeButtonLabel` options with translatable strings (cherry-picked from https://github.com/Leaflet/Leaflet/pull/9845)
+* Attribution: use 🍁 instead of the Ukrainian flag in the default prefix, and link to https://maplair.org
+
+#### ❌ Removed Features (⚠️ Breaking Changes)
+
+* Remove the `Event.cancelBubble` fallback (cherry-picked from https://github.com/Leaflet/Leaflet/pull/9895)
+* Remove the subresource integrity hashes from the docs
+
+#### ⚡ Performance
+
+* Popup: avoid a second forced layout when opening a popup
+* Events: index listeners by function and context, and store them in Sets, so that adding and removing many layers isn't quadratic
+* Skip unchanged transform and z-index style writes
+
+#### 🐞 Bugfixes
+
+* DomEvent.stopPropagation: keep feature detection for DOM events of other windows (e.g. iframes)
+* Fix the `Map.addInitHook` example in the controls tutorial
+
+#### 📝 Docs
+
+* New website https://maplair.org, deployed to GitHub Pages on every push
+* Load the latest build on the website, and Maplair from the `maplair` npm package on CDNs
+* Credit major contributors in `CITATION.cff`, `package.json`, `README.md`, `LICENSE` and the website footer
+* Document standard constructors, init hooks and translations
+* Remove the Ukraine appeal, Leaflet's social media links and the "Trusted by the best" logos
+
+#### 🔧 Workflow
+
+* Test, build, lint and run commit hooks with Vite+ (`vp test`, `vp pack`, `vp lint`, `vp staged`), replacing Vitest, Rollup, ESLint, husky and lint-staged
+* Serve the debug pages with `vp dev`; remove bundlemon, `http-server` and `ssri`
+* Upgrade `eslint-plugin-baseline-js` to 0.7.5, `@e18e/eslint-plugin` to 0.8.1 and Playwright to 1.64
+
+#### 🧪 Tests
+
+* Use the test runner's built-in `expect`, spies and fake timers instead of chai and sinon
+* Fix flaky VideoOverlay drag tests
+* Add a markers profiling page (`debug/tests/markers-perf.html`)
+
+### Leaflet, since 2.0.0-alpha.1
+
+(changes without author notice are by [@mourner](https://github.com/mourner); dependency upgrades are omitted)
+
+#### ❇️ New Features
+
+* Implement Browser.reducedMotion and conditionally disable animations by @IvanSanchez in https://github.com/Leaflet/Leaflet/pull/10250
+* Use SVG for icons instead of bitmaps by @jonkoops in https://github.com/Leaflet/Leaflet/pull/8766
+
+#### ✨ Refactorings (⚠️ Breaking Changes)
+
+* Rename `Map` to `LeafletMap` and keep `Map` as alias by @simon04 in https://github.com/Leaflet/Leaflet/pull/9892
+* Rename `Map` to `LeafletMap` in source code by @simon04 in https://github.com/Leaflet/Leaflet/pull/10039
+* Reduce exported API surface from package by @jonkoops in https://github.com/Leaflet/Leaflet/pull/9910
+* Control: stop exposing modules on other classes by @simon04 in https://github.com/Leaflet/Leaflet/pull/10054
+* Icon: stop exposing modules on other classes by @simon04 in https://github.com/Leaflet/Leaflet/pull/10059
+* Handler: stop exposing modules on other classes by @simon04 in https://github.com/Leaflet/Leaflet/pull/10058
+* TileLayer: stop exposing modules on other classes by @simon04 in https://github.com/Leaflet/Leaflet/pull/10056
+* SVG: stop exposing modules on other classes by @simon04 in https://github.com/Leaflet/Leaflet/pull/10057
+* CRS: stop exposing modules on other classes by @simon04 in https://github.com/Leaflet/Leaflet/pull/10055
+* Rename WMSTileLayer for consistency by @simon04 in https://github.com/Leaflet/Leaflet/pull/10063
+* Move GeoJSON function as static functions into class by @simon04 in https://github.com/Leaflet/Leaflet/pull/9840
+* Lower polyline smoothFactor from 1.0 to 0.5 by @IvanSanchez in https://github.com/Leaflet/Leaflet/pull/10087
+* TileLayer: default to strict-origin-when-cross-origin referrer-policy by @IvanSanchez in https://github.com/Leaflet/Leaflet/pull/9897
+* Listen to pointer move and up events from containing document by @markmeeus in https://github.com/Leaflet/Leaflet/pull/10133
+* Use setPointerCapture/releasePointerCapture globally by @IvanSanchez in https://github.com/Leaflet/Leaflet/pull/10150
+* Warn about removed mouse* events by @simon04 in https://github.com/Leaflet/Leaflet/pull/9866
+* Remove initialize placeholder in Class by @Falke-Design in https://github.com/Leaflet/Leaflet/pull/9901
+* Use super to access methods on superclass by @simon04 in https://github.com/Leaflet/Leaflet/pull/9902
+* Consistently call super class `initialize()` method by @jonkoops in https://github.com/Leaflet/Leaflet/pull/10051
+* Replace custom versioning with import of package version by @jonkoops in https://github.com/Leaflet/Leaflet/pull/10042
+* Deduplicate code between `Circle` and `CircleMarker` by @tomasmusil in https://github.com/Leaflet/Leaflet/pull/10072
+* Use CSS nesting by @simon04 in https://github.com/Leaflet/Leaflet/pull/9667
+* Replace +new Date() with Date.now() by @pierreeurope in https://github.com/Leaflet/Leaflet/pull/10115
+* fix: remove stale browser-compat guards and comments (refs #8477) by @Gilmoursa in https://github.com/Leaflet/Leaflet/pull/10227
+
+#### ❌ Removed Features (⚠️ Breaking Changes)
+
+* Remove `Class.extend()` entirely by @jonkoops in https://github.com/Leaflet/Leaflet/pull/10006
+* Remove default export from ESM distribution by @jonkoops in https://github.com/Leaflet/Leaflet/pull/10029
+* Remove `LayerGroup.invoke` in favour of existing `LayerGroup.eachLayer` by @simon04 in https://github.com/Leaflet/Leaflet/pull/9680
+* Remove user-agent detection for `Browser.mobile` by @jonkoops in https://github.com/Leaflet/Leaflet/pull/9952
+* Remove Event.returnValue fallback by @simon04 in https://github.com/Leaflet/Leaflet/pull/9894
+* Remove deprecated window.event fallbacks by @pierreeurope in https://github.com/Leaflet/Leaflet/pull/10118
+* Replace `emptyImageUrl` with empty string by @SerAbin1 in https://github.com/Leaflet/Leaflet/pull/10068
+* Remove references to the `L` global by @SerAbin1 in https://github.com/Leaflet/Leaflet/pull/10065
+
+#### 🐞 Bugfixes
+
+* Fix `includes: Evented.prototype` by @simon04 in https://github.com/Leaflet/Leaflet/pull/9841
+* Fix `Class.addInitHook` with ES6 extends by @simon04 in https://github.com/Leaflet/Leaflet/pull/9848
+* Update SVG's viewBox when resizing (and revert #9815) by @IvanSanchez in https://github.com/Leaflet/Leaflet/pull/9849
+* Round BlanketOverlay transform offset by @IvanSanchez in https://github.com/Leaflet/Leaflet/pull/9854
+* Circle: allow setStyle to update radius by @AbbasReads in https://github.com/Leaflet/Leaflet/pull/9853
+* Fix l.setZIndex is not a function by @simon04 in https://github.com/Leaflet/Leaflet/pull/9945
+* Fix: type selector "svg" cannot be directly after nesting selector "&" by @simon04 in https://github.com/Leaflet/Leaflet/pull/9962
+* TileLayer: fix Safari 16.5 compatibility by @simon04 in https://github.com/Leaflet/Leaflet/pull/9992
+* Fix infinite zoom issue with `flyTo()` with specific bounds values by @itslevo in https://github.com/Leaflet/Leaflet/pull/10053
+* fix: correct typo 'supressEvent' to 'suppressEvent' in Map._move() by @pierreeurope in https://github.com/Leaflet/Leaflet/pull/10105
+* fix: default icon imagePath was treated as undefined if empty by @Rag404 in https://github.com/Leaflet/Leaflet/pull/10208
+* Fix LatLng.validate throwing on null instead of returning false by @chatman-media in https://github.com/Leaflet/Leaflet/pull/10276
+* Prevent iOS long-press save-image menu on markers by @hassams in https://github.com/Leaflet/Leaflet/pull/10274
+
+#### 📝 Docs
+
+* Update docs
+* Fix wrong identifiers in docs by @simon04 in https://github.com/Leaflet/Leaflet/pull/9928
+* Rename `Map` to `LeafletMap` in documentation by @simon04 in https://github.com/Leaflet/Leaflet/pull/10026
+* Fix some typos (found by codespell) by @stweil in https://github.com/Leaflet/Leaflet/pull/10073
+* Fix logo.svg URL on README.md by @nikola-f in https://github.com/Leaflet/Leaflet/pull/10126
+* docs: clarify disableClickPropagation click behavior by @Pradeeppilotdev in https://github.com/Leaflet/Leaflet/pull/10152
+* docs: remove outdated browser compatibility references by @pierreeurope in https://github.com/Leaflet/Leaflet/pull/10109
+* docs: clarify `L.geoJSON` `onEachFeature` arguments by @davidjb in https://github.com/Leaflet/Leaflet/pull/10098
+* Document handling untrusted HTML in popups/tooltips by @mourner in https://github.com/Leaflet/Leaflet/pull/10205
+* Docs: Add token/key to Carto positron tiles in tutorials by @IvanSanchez in https://github.com/Leaflet/Leaflet/pull/10361
+* Update index.html - Change links from HTTP to HTTPS by @danieldegroot2 in https://github.com/Leaflet/Leaflet/pull/10387
+* README: 15 years ago by @simon04 in https://github.com/Leaflet/Leaflet/pull/10013
+* README: update bundle size ++ configure bundlemon by @simon04 in https://github.com/Leaflet/Leaflet/pull/9893
+* Add development snapshot link to download page by @Falke-Design in https://github.com/Leaflet/Leaflet/pull/9899
+* Update LICENSE to 2026
+* Remove github, twitter and facebook trackers from index.html by @jjimenezshaw in https://github.com/Leaflet/Leaflet/pull/10262
+* Remove leftover .social-buttons CSS by @jonkoops in https://github.com/Leaflet/Leaflet/pull/10288
+* Add Mastodon to v2.html by @jjimenezshaw in https://github.com/Leaflet/Leaflet/pull/10265
+* Update L.Donut compatible-v2
+* Plugin: set compatible-v2 flag for leaflet.geodesic by @henrythasler in https://github.com/Leaflet/Leaflet/pull/9856
+* Plugin: update leaflet-bouncemarker for v2 by @maximeh in https://github.com/Leaflet/Leaflet/pull/9863
+* Plugin: update leaflet.tilelayer.colorfilter for leaflet v2 compatibility by @xtk93x in https://github.com/Leaflet/Leaflet/pull/9870
+* Update leaflet-tilelayer-mask.md for Leaflet 2.0 compatibility by @frogcat in https://github.com/Leaflet/Leaflet/pull/9877
+* Update leaflet-tilelayer-colorpicker.md for Leaflet 2.0 compatibility by @frogcat in https://github.com/Leaflet/Leaflet/pull/9876
+* Plugin BigImage is compatible with leaflet 2.0 by @pasichnykvasyl in https://github.com/Leaflet/Leaflet/pull/9881
+* Plugin: Update leaflet-burgermenu.md by @BenPortner in https://github.com/Leaflet/Leaflet/pull/9879
+* Update compatible-v2 flag for Leaflet.Control.Layers.Tree by @jjimenezshaw in https://github.com/Leaflet/Leaflet/pull/9937
+* Plugins: Update Leaflet.TileLayer.Swiss compatibility for Leaflet v2 by @rkaravia in https://github.com/Leaflet/Leaflet/pull/9953
+* Update compatible-v2 flag for Leaflet.UTM by @jjimenezshaw in https://github.com/Leaflet/Leaflet/pull/10216
+* Remove v2 compatibility flag from plugins by @jonkoops in https://github.com/Leaflet/Leaflet/pull/10290
+* Add Leaflet WMS Crop plugin by @amanchry in https://github.com/Leaflet/Leaflet/pull/10076
+* Add Leaflet.CityAutocompleteUSA plugin by @slbarriosdev in https://github.com/Leaflet/Leaflet/pull/10094
+* Add tonghohin/shadcn-map plugin by @MrLightful in https://github.com/Leaflet/Leaflet/pull/10015
+* Add leaflet-wms-gutter plugin by @aronsommer in https://github.com/Leaflet/Leaflet/pull/10002
+* Add java-leaflet plugin by @makbn in https://github.com/Leaflet/Leaflet/pull/9929
+* Add leaflet.regions, leaflet.us-states, and leaflet.countries plugins by @EricDalnas in https://github.com/Leaflet/Leaflet/pull/10180
+
+#### 🔧 Workflow
+
+* Automatically update nightly release with latest build by @Falke-Design in https://github.com/Leaflet/Leaflet/pull/9874
+* Add permissions write to snapshot workflow by @Falke-Design in https://github.com/Leaflet/Leaflet/pull/9890
+* Add debug tests to verify various distributions by @jonkoops in https://github.com/Leaflet/Leaflet/pull/10028
+* Use correct name for Leaflet global by @jonkoops in https://github.com/Leaflet/Leaflet/pull/10027
+* Use latest LTS version of Node.js (v24) by @jonkoops in https://github.com/Leaflet/Leaflet/pull/10037
+* Replace `uglify-js` scripts with `@rollup/plugin-terser` by @jonkoops in https://github.com/Leaflet/Leaflet/pull/10041
+* Remove unused `@rollup/plugin-json` dependency by @jonkoops in https://github.com/Leaflet/Leaflet/pull/10038
+* Remove unused `rollup-plugin-git-version` dependency
+* Upgrade chai to v6 by @jonkoops in https://github.com/Leaflet/Leaflet/pull/9887
+* Enable `@eslint/css` linting by @simon04 in https://github.com/Leaflet/Leaflet/pull/9668
+* Enable `eslint-plugin-baseline-js` linting by @simon04 in https://github.com/Leaflet/Leaflet/pull/9991
+* Enforce UTF-8 with LF line endings for text files by @jonkoops in https://github.com/Leaflet/Leaflet/pull/10066
+* Upgrade to ESLint v10 and fix reported issues by @jonkoops in https://github.com/Leaflet/Leaflet/pull/10131
+* Upgrade dependencies, add e18e plugin by @mourner in https://github.com/Leaflet/Leaflet/pull/10206
+* Stricter linting & lint config cleanup by @mourner in https://github.com/Leaflet/Leaflet/pull/10211
+* Switch from Karma to Vitest by @mourner in https://github.com/Leaflet/Leaflet/pull/10207
+* Vitest follow-up cleanups by @mourner in https://github.com/Leaflet/Leaflet/pull/10210
+* run npm test against Leaflet source instead of built files
+* Upgrade Ruby dependencies to fix documentation build by @jonkoops in https://github.com/Leaflet/Leaflet/pull/10000
+* upgrade Leafdoc to v2.4.0
+
+#### 🧪 Tests
+
+* ClassSpec: test "correct parent initialize function" by @simon04 in https://github.com/Leaflet/Leaflet/pull/9891
+* Add tests for pointerEventToLayerPoint method by @brickrint in https://github.com/Leaflet/Leaflet/pull/9913
+* fix: resolve flaky Safari test for Canvas renderer by @mokhovyk in https://github.com/Leaflet/Leaflet/pull/9967
+* Unit tests for preferCanvas by @IvanSanchez in https://github.com/Leaflet/Leaflet/pull/10062
+* Adds test for Canvas._containsPoint by @Falke-Design in https://github.com/Leaflet/Leaflet/pull/10181
+* fix two brittle flaky tests
+* hopefully fix freezing webkit CI pinch zoom tests
 
 ## 2.0.0-alpha.1 (2025-08-16)
 
