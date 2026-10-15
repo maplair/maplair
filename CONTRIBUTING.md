@@ -191,6 +191,17 @@ and you'll find a `.html` file in the `dist/` directory.
 On every release of a new Maplair version, this file will be generated and copied
 over to `docs/reference.html` - there is no need to send pull requests with changes to this file to update the API documentation.
 
+## Translating
+
+Maplair's built-in strings (e.g. the titles of the zoom buttons) are translated on
+[Transifex](https://app.transifex.com/simon04/maplair/). Join the project there to
+add or improve a translation, rather than editing the files in `i18n/` directly.
+
+For maintainers: after adding or changing strings passed to `I18n.translate()`,
+run `npm run i18n` to update the source file `i18n/en.json`, and upload it with
+`tx push --source` ([Transifex CLI](https://developers.transifex.com/docs/cli)).
+Download the translations with `tx pull --all` before a release.
+
 ## Code of Conduct
 
 Everyone is invited to participate in the Maplair community and related projects:

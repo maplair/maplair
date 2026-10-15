@@ -39,7 +39,8 @@
       "default": "./dist/maplair-src.js"
     },
     "./src/": "./src/",
-    "./styles.css": "./dist/maplair.css"
+    "./styles.css": "./dist/maplair.css",
+    "./i18n/*.json": "./i18n/*.json"
   },
   "style": "dist/maplair.css",
   "sideEffects": [
@@ -55,6 +56,7 @@
   "files": [
     "dist",
     "src",
+    "i18n",
     "!dist/maplair.zip",
     "!*.leafdoc",
     "CHANGELOG.md"
@@ -70,7 +72,8 @@
     "lint": "vp lint",
     "lintfix": "vp lint --fix",
     "serve": "cd docs && bundle exec jekyll serve",
-    "prepare": "vp config --no-agent"
+    "prepare": "vp config --no-agent",
+    "i18n": "node ./build/i18n.js"
   },
   "repository": {
     "type": "git",

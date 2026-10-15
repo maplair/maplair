@@ -4,6 +4,20 @@ import * as Util from './Util.js';
  * @namespace I18n
  *
  * Utility functions to deal with translations.
+ *
+ * @example
+ *
+ * Translations of Maplair's built-in strings are maintained on
+ * [Transifex](https://app.transifex.com/simon04/maplair/) and published in the
+ * `i18n` directory of the package. Load one before creating the map:
+ *
+ * ```js
+ * import {I18n} from 'maplair';
+ * import de from 'maplair/i18n/de.json' with {type: 'json'};
+ *
+ * I18n.registerLocale('de', de);
+ * I18n.setLocale('de');
+ * ```
  */
 
 export class I18n {

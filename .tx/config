@@ -1,0 +1,8 @@
+[main]
+host = https://app.transifex.com
+
+[o:simon04:p:maplair:r:maplair]
+source_file = i18n/en.json
+source_lang = en
+type = KEYVALUEJSON
+file_filter = i18n/<lang>.json
