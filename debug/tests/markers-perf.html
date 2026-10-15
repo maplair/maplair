@@ -65,9 +65,9 @@
 			function animate(action) {
 				return new Promise((resolve) => {
 					const frameTimes = [];
-					let last = performance.now(), running = true;
+					let last, running = true;
 					function frame(now) {
-						frameTimes.push(now - last);
+						if (last !== undefined) { frameTimes.push(now - last); }
 						last = now;
 						if (running) { requestAnimationFrame(frame); }
 					}
@@ -75,6 +75,7 @@
 					map.once('moveend', () => {
 						running = false;
 						const sorted = frameTimes.toSorted((a, b) => a - b);
+						if (!sorted.length) { resolve({frames: 0}); return; }
 						resolve({
 							frames: frameTimes.length,
 							'avg frame (ms)': (frameTimes.reduce((a, b) => a + b, 0) / frameTimes.length).toFixed(1),
