@@ -55,6 +55,43 @@ const globalPackOptions = {
 	},
 };
 
+/**
+ * Builds the bundles of a plugin in plugins/<name>. They import Maplair from the
+ * `maplair` package (or the global `L`), instead of from Maplair's sources.
+ */
+function pluginPackOptions(name, banner, {global = false, minify = false} = {}) {
+	const shim = fileURLToPath(new URL(`./plugins/${name}/src/maplair.js`, import.meta.url));
+	return {
+		...(global ? globalPackOptions : packOptions),
+		entry: {[`maplair-${name}${global ? '-global' : ''}${minify ? '' : '-src'}`]: `plugins/${name}/src/index.js`},
+		minify,
+		banner,
+		plugins: [{
+			name: 'maplair-external',
+			resolveId(source, importer) {
+				if (importer === shim) { return {id: 'maplair', external: true}; }
+			},
+		}],
+		...(global && {
+			// extends the global `L` of Maplair's global bundle
+			format: 'iife',
+			outputOptions: {
+				entryFileNames: '[name].js',
+				globals: {maplair: 'L'},
+				extend: true,
+				postBanner: banner,
+				postFooter: undefined,
+			},
+		}),
+	};
+}
+
+const markerclusterBanner = `/* @preserve
+ * Maplair ${pkg.version} markercluster plugin, based on Leaflet.markercluster: animated marker clustering. https://maplair.org
+ * (c) ${maplairYears} Maplair contributors, (c) 2012-2017 Dave Leaver, smartrak
+ */
+`;
+
 const lintRules = {
 	// eslint-config-mourner: possible problems
 	'array-callback-return': 'error',
@@ -299,9 +336,19 @@ export default defineConfig({
 		},
 		{...packOptions, entry: {maplair: 'src/Maplair.js'}, minify: true},
 		// one module per source file, so that bundlers can drop unused modules (see `sideEffects` in package.json)
-		{...packOptions, entry: ['src/Maplair.js'], unbundle: true, outDir: 'dist/esm', banner: undefined},
+		{...packOptions, entry: ['src/index.js'], unbundle: true, outDir: 'dist/esm', banner: undefined},
 		{...globalPackOptions, entry: {'maplair-global-src': 'src/Maplair.js'}},
 		{...globalPackOptions, entry: {'maplair-global': 'src/Maplair.js'}, minify: true},
+		{
+			...pluginPackOptions('markercluster', markerclusterBanner),
+			copy: [
+				{from: 'plugins/markercluster/dist/MarkerCluster.css', to: 'dist', rename: 'maplair-markercluster.css'},
+				{from: 'plugins/markercluster/dist/MarkerCluster.Default.css', to: 'dist', rename: 'maplair-markercluster-default.css'},
+			],
+		},
+		pluginPackOptions('markercluster', markerclusterBanner, {minify: true}),
+		pluginPackOptions('markercluster', markerclusterBanner, {global: true}),
+		pluginPackOptions('markercluster', markerclusterBanner, {global: true, minify: true}),
 	],
 	build: {
 		assetsInlineLimit: 0,

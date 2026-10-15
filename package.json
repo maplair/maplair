@@ -35,11 +35,14 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/esm/Maplair.js",
+      "import": "./dist/esm/index.js",
       "default": "./dist/maplair-src.js"
     },
+    "./markercluster": "./dist/esm/plugins/markercluster/src/index.js",
     "./src/": "./src/",
     "./styles.css": "./dist/maplair.css",
+    "./markercluster.css": "./dist/maplair-markercluster.css",
+    "./markercluster-default.css": "./dist/maplair-markercluster-default.css",
     "./i18n/*.json": "./i18n/*.json"
   },
   "style": "dist/maplair.css",
@@ -49,13 +52,18 @@
     "./src/core/Handler.js",
     "./src/layer/GeoJSON.js",
     "./src/map/Map.js",
+    "./plugins/markercluster/src/MarkerCluster.js",
+    "./plugins/markercluster/src/MarkerClusterGroup.js",
     "./dist/esm/core/Handler.js",
     "./dist/esm/layer/GeoJSON.js",
-    "./dist/esm/map/Map.js"
+    "./dist/esm/map/Map.js",
+    "./dist/esm/plugins/markercluster/src/MarkerCluster.js",
+    "./dist/esm/plugins/markercluster/src/MarkerClusterGroup.js"
   ],
   "files": [
     "dist",
     "src",
+    "plugins/*/src",
     "i18n",
     "!dist/maplair.zip",
     "!*.leafdoc",
