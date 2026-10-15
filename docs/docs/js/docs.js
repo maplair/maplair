@@ -1,4 +1,3 @@
-/* global hljs */
 hljs.configure({tabReplace: '    '});
 hljs.initHighlighting();
 

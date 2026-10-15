@@ -408,7 +408,6 @@ Layer.include({
 				// Remove focus listener, if already existing
 				el._maplair_focus_handler && DomEvent.off(el, 'focus', el._maplair_focus_handler, this);
 
-				// eslint-disable-next-line camelcase
 				el._maplair_focus_handler = () => {
 					if (this._tooltip) {
 						this._tooltip._source = layer;

@@ -15,6 +15,5 @@ component.json
 debug/local/
 yarn.lock
 *.log
-.eslintcache
 .vitest-attachments/
 __screenshots__/
