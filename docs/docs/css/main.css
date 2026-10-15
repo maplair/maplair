@@ -260,30 +260,6 @@ p.tagline {
 	text-decoration: none;
 }
 
-.ext-links {
-	position: fixed;
-	top: 1.5em;
-	right: 1.5em;
-}
-
-.ext-link {
-	display: block;
-	opacity: 0.7;
-	-webkit-animation: fadein 1s;
-	animation: fadein 1s;
-}
-.ext-link:hover {
-	opacity: 1;
-}
-@-webkit-keyframes fadein {
-	from { opacity: 0; }
-	to   { opacity: 0.7; }
-}
-@keyframes fadein {
-	from { opacity: 0; }
-	to   { opacity: 0.7; }
-}
-
 /* content */
 
 .container code, .container pre code {
@@ -896,19 +872,6 @@ tr:target {
 
 	.footer {
 		margin-top: 2em;
-	}
-
-	.ext-links {
-		position: static;
-		margin: 0 auto 2em;
-		text-align: center;
-		clear: both;
-	}
-
-	.ext-link {
-		display: inline-block;
-		vertical-align: middle;
-		margin: .25em;
 	}
 
 	.features {
