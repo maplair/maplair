@@ -82,7 +82,7 @@ export class AttributionControl extends Control {
 	}
 
 	// @method addAttribution(text: String): this
-	// Adds an attribution text (e.g. `'&copy; OpenStreetMap contributors'`).
+	// Adds an attribution text (e.g. `'© OpenStreetMap contributors'`).
 	addAttribution(text) {
 		if (!text) { return this; }
 

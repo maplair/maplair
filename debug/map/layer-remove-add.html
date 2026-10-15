@@ -22,7 +22,7 @@
 
 			const map = new MaplairMap('map', {center: [0, 0], zoom: 3, maxZoom: 4});
 			const osm = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-				attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+				attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 			}).addTo(map);
 
 			DomUtil.get('removeAdd').onclick = () => {

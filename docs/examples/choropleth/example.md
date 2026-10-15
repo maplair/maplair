@@ -41,7 +41,7 @@ css: "#map {
 
 	const tiles = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		maxZoom: 19,
-		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+		attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 	}).addTo(map);
 
 	// control that shows state info on hover
@@ -121,7 +121,7 @@ css: "#map {
 		});
 	}
 
-	map.attributionControl.addAttribution('Population data &copy; <a href="http://census.gov/">US Census Bureau</a>');
+	map.attributionControl.addAttribution('Population data © <a href="http://census.gov/">US Census Bureau</a>');
 
 
 	const legend = new Control({position: 'bottomright'});

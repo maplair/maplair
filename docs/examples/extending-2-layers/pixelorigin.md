@@ -34,7 +34,7 @@ title: Pixel Origin Examples
 	});
 
 	const positron = new TileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png?key={{site.cartocdn_key}}', {
-		attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attribution">CARTO</a>'
+		attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, © <a href="https://carto.com/attribution">CARTO</a>'
 	}).addTo(map);
 
 	const marker = new Marker(trd).addTo(map);

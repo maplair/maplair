@@ -57,11 +57,11 @@
 
 	<script>
 		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
-		MB_ATTR = 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
 			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
 		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
 		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
-		OSM_ATTRIB = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 	</script>
 </head>
 <body{% if page.bodyclass %} class="{{ page.bodyclass }}"{% endif %}>
@@ -129,10 +129,10 @@
 
 <footer class="container">
 	<div class="footer">
-		{% assign year = 'now' | date: "%Y" %}<p>&copy; 2026{% if year != "2026" %}–{{ year }}{% endif %} <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
-		Based on <a href="https://leafletjs.com">Leaflet</a> &copy; 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		{% assign year = 'now' | date: "%Y" %}<p>© 2026{% if year != "2026" %}–{{ year }}{% endif %} <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
 		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
-		Maps &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
 	</div>
 
 	<button id="back-to-top" title="Scroll back to top">

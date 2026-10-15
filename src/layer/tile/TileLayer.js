@@ -12,7 +12,7 @@ import {I18n} from '../../core/I18n.js';
  * @example
  *
  * ```js
- * new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png?{foo}', {foo: 'bar', attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'}).addTo(map);
+ * new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png?{foo}', {foo: 'bar', attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'}).addTo(map);
  * ```
  *
  * @section URL template
@@ -102,7 +102,7 @@ export class TileLayer extends GridLayer {
 		const osmHosts = ['tile.openstreetmap.org', 'tile.osm.org'];
 		if (osmHosts.some(host => urlHostname.endsWith(host))) {
 			if (options.attribution === null) {
-				options.attribution = `&copy; <a href="https://www.openstreetmap.org/copyright">${I18n.translate('OpenStreetMap contributors')}</a>`;
+				options.attribution = `© <a href="https://www.openstreetmap.org/copyright">${I18n.translate('OpenStreetMap contributors')}</a>`;
 			}
 			if (tileUrl.protocol === 'http:') {
 				tileUrl.protocol = 'https:';

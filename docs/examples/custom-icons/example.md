@@ -7,7 +7,7 @@ title: Custom Icons Example
 	const map = new MaplairMap('map').setView([51.5, -0.09], 13);
 
 	new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-		attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+		attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 	}).addTo(map);
 
 	class LeafIcon extends Icon {
