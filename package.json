@@ -39,7 +39,7 @@
   ],
   "scripts": {
     "debug": "http-server -c-1",
-    "docs": "node ./build/docs.js && node ./build/integrity.js",
+    "docs": "node ./build/docs.js",
     "test": "vp test watch --project=chromium",
     "test:ui": "vp test watch --project=chromium --ui --browser.headless=false",
     "coverage": "vp test run --project=chromium --coverage",

@@ -9,14 +9,11 @@
 	{% capture root %}{% if page.root %}{{ page.root }}{% else %}{{ layout.root }}{% endif %}{% endcapture %}
 	<link rel="shortcut icon" type="image/x-icon" href="{{ root }}docs/images/favicon.ico" />
 
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_maplair_version}}/dist/maplair.css" integrity="{{site.integrity_hash_css}}" crossorigin=""/>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_maplair_version}}/dist/maplair.css"/>
 	<script type="importmap">
 		{
 			"imports": {
 				"maplair": "https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_maplair_version}}/dist/maplair.js"
-			},
-			"integrity": {
-				"https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_maplair_version}}/dist/maplair.js": "{{site.integrity_hash_uglified}}"
 			}
 		}
 	</script>

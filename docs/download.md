@@ -35,15 +35,12 @@ so please read the changelog carefully when upgrading to it.
 The latest stable Maplair release is available on several CDNs. To start using it with an [importmap](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script/type/importmap), place the following in the `head` of your HTML code:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_maplair_version }}/dist/maplair.css" integrity="{{site.integrity_hash_css}}" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_maplair_version }}/dist/maplair.css" />
 
 <script type="importmap">
 {
 	"imports": {
 		"maplair": "https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_maplair_version }}/dist/maplair.js"
-	},
-	"integrity": {
-		"https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_maplair_version }}/dist/maplair.js": "{{site.integrity_hash_uglified}}"
 	}
 }
 </script>
@@ -71,10 +68,8 @@ Then, in your script, import the needed Maplair Classes as follows:
 The old (and no longer recommended) way to include Maplair in your project without using modules is by relying on the global variable `L`.
 
 ```html
-<script src="https://unpkg.com/leaflet@{{ site.latest_maplair_version}}/dist/maplair-global.js" integrity="{{site.integrity_hash_global_uglified}}" crossorigin=""></script>
+<script src="https://unpkg.com/leaflet@{{ site.latest_maplair_version}}/dist/maplair-global.js"></script>
 ```
-
-Note that the [`integrity` hashes](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity) are included for security when using Maplair from a CDN.
 
 Maplair is available on the following free CDNs: [jsDelivr](https://www.jsdelivr.com/package/npm/leaflet?path=dist), [cdnjs](https://cdnjs.com/libraries/leaflet), [unpkg](https://unpkg.com/leaflet/dist/).
 
@@ -86,7 +81,7 @@ Inside the archives downloaded from the above links, you will see four things:
 
 - `maplair.js` - This is the minified Maplair JavaScript code.
 - `maplair.js.map` - This is a source map file for `maplair.js`, allowing browser developer tools to map minified code back to the original source for easier debugging.
-- `maplair-src.js` - This is the readable, unminified Maplair JavaScript, which is sometimes helpful for debugging. <small>(integrity="<nobr><tt>{{site.integrity_hash_source}}</tt></nobr>")</small>
+- `maplair-src.js` - This is the readable, unminified Maplair JavaScript, which is sometimes helpful for debugging.
 - `maplair-src.js.map` - This is a source map file for `maplair-src.js`, providing debugging support for the unminified version of Maplair.
 - `maplair.css` - This is the stylesheet for Maplair.
 - `images` - This is a folder that contains images referenced by `maplair.css`. It must be in the same directory as `maplair.css`.

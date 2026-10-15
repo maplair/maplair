@@ -45,14 +45,11 @@
 	<link rel="stylesheet" href="{{ root }}docs/highlight/styles/github-gist.css" />
 
 	<!-- Maplair -->
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_maplair_version}}/dist/maplair.css" integrity="{{site.integrity_hash_css}}" crossorigin=""/>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_maplair_version}}/dist/maplair.css"/>
 	<script type="importmap">
 		{
 			"imports": {
 				"maplair": "https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_maplair_version}}/dist/maplair.js"
-			},
-			"integrity": {
-				"https://cdn.jsdelivr.net/npm/leaflet@{{ site.latest_maplair_version}}/dist/maplair.js": "{{site.integrity_hash_uglified}}"
 			}
 		}
 	</script>
