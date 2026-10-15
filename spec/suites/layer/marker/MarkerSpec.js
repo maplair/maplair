@@ -1,6 +1,5 @@
-import {expect} from 'vite-plus/test';
+import {expect, vi} from 'vite-plus/test';
 import {DivIcon, DefaultIcon, LatLng, MaplairMap, Marker, Point} from 'maplair';
-import sinon from 'sinon';
 import UIEventSimulator from 'ui-event-simulator';
 import {createContainer, removeMapContainer} from '../../SpecHelper.js';
 
@@ -249,43 +248,43 @@ describe('Marker', () => {
 
 	describe('events', () => {
 		it('fires click event when clicked', () => {
-			const spy = sinon.spy();
+			const spy = vi.fn();
 
 			const marker = new Marker([0, 0]).addTo(map);
 
 			marker.on('click', spy);
 			UIEventSimulator.fire('click', marker._icon);
 
-			expect(spy.called).to.be.true;
+			expect(spy).toHaveBeenCalled();
 		});
 
 		it('fires click event when clicked with DivIcon', () => {
-			const spy = sinon.spy();
+			const spy = vi.fn();
 
 			const marker = new Marker([0, 0], {icon: new DivIcon()}).addTo(map);
 
 			marker.on('click', spy);
 			UIEventSimulator.fire('click', marker._icon);
 
-			expect(spy.called).to.be.true;
+			expect(spy).toHaveBeenCalled();
 		});
 
 		it('fires click event when clicked on DivIcon child element', () => {
-			const spy = sinon.spy();
+			const spy = vi.fn();
 
 			const marker = new Marker([0, 0], {icon: new DivIcon({html: '<img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" />'})}).addTo(map);
 
 			marker.on('click', spy);
 
 			UIEventSimulator.fire('click', marker._icon);
-			expect(spy.called).to.be.true;
+			expect(spy).toHaveBeenCalled();
 
 			UIEventSimulator.fire('click', marker._icon.querySelector('img'));
-			expect(spy.calledTwice).to.be.true;
+			expect(spy).toHaveBeenCalledTimes(2);
 		});
 
 		it('fires click event when clicked on DivIcon child element set using setIcon', () => {
-			const spy = sinon.spy();
+			const spy = vi.fn();
 
 			const marker = new Marker([0, 0]).addTo(map);
 			marker.setIcon(new DivIcon({html: '<img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" />'}));
@@ -293,40 +292,40 @@ describe('Marker', () => {
 			marker.on('click', spy);
 
 			UIEventSimulator.fire('click', marker._icon);
-			expect(spy.called).to.be.true;
+			expect(spy).toHaveBeenCalled();
 
 			UIEventSimulator.fire('click', marker._icon.querySelector('img'));
-			expect(spy.calledTwice).to.be.true;
+			expect(spy).toHaveBeenCalledTimes(2);
 		});
 
 		it('do not propagate click event', () => {
-			const spy = sinon.spy();
-			const spy2 = sinon.spy();
-			const mapSpy = sinon.spy();
+			const spy = vi.fn();
+			const spy2 = vi.fn();
+			const mapSpy = vi.fn();
 			const marker = new Marker([55.8, 37.6]);
 			map.addLayer(marker);
 			marker.on('click', spy);
 			marker.on('click', spy2);
 			map.on('click', mapSpy);
 			UIEventSimulator.fire('click', marker._icon);
-			expect(spy.called).to.be.true;
-			expect(spy2.called).to.be.true;
-			expect(mapSpy.called).not.to.be.true;
+			expect(spy).toHaveBeenCalled();
+			expect(spy2).toHaveBeenCalled();
+			expect(mapSpy).not.toHaveBeenCalled();
 		});
 
 		it('do not propagate dblclick event', () => {
-			const spy = sinon.spy();
-			const spy2 = sinon.spy();
-			const mapSpy = sinon.spy();
+			const spy = vi.fn();
+			const spy2 = vi.fn();
+			const mapSpy = vi.fn();
 			const marker = new Marker([55.8, 37.6]);
 			map.addLayer(marker);
 			marker.on('dblclick', spy);
 			marker.on('dblclick', spy2);
 			map.on('dblclick', mapSpy);
 			UIEventSimulator.fire('dblclick', marker._icon);
-			expect(spy.called).to.be.true;
-			expect(spy2.called).to.be.true;
-			expect(mapSpy.called).not.to.be.true;
+			expect(spy).toHaveBeenCalled();
+			expect(spy2).toHaveBeenCalled();
+			expect(mapSpy).not.toHaveBeenCalled();
 		});
 
 		it('do not catch event if it does not listen to it', (done) => {

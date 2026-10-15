@@ -1,6 +1,5 @@
-import {expect} from 'vite-plus/test';
+import {expect, vi} from 'vite-plus/test';
 import {LayersControl, MaplairMap, Marker, TileLayer, Util} from 'maplair';
-import sinon from 'sinon';
 import UIEventSimulator from 'ui-event-simulator';
 import {createContainer, pointerType, removeMapContainer} from '../SpecHelper.js';
 
@@ -22,23 +21,23 @@ describe('LayersControl', () => {
 		it('is fired on input that changes the base layer', () => {
 			const baseLayers = {'Layer 1': new TileLayer(''), 'Layer 2': new TileLayer('')},
 			layers = new LayersControl(baseLayers).addTo(map),
-			spy = sinon.spy();
+			spy = vi.fn();
 
 			map.on('baselayerchange', spy);
 			UIEventSimulator.fire('click', layers._baseLayersList.getElementsByTagName('input')[0]);
-			expect(spy.called).to.be.true;
-			expect(spy.args[0][0].name).to.equal('Layer 1');
-			expect(spy.args[0][0].layer).to.equal(baseLayers['Layer 1']);
+			expect(spy).toHaveBeenCalled();
+			expect(spy.mock.calls[0][0].name).to.equal('Layer 1');
+			expect(spy.mock.calls[0][0].layer).to.equal(baseLayers['Layer 1']);
 			UIEventSimulator.fire('click', layers._baseLayersList.getElementsByTagName('input')[1]);
-			expect(spy.calledTwice).to.be.true;
-			expect(spy.args[1][0].name).to.equal('Layer 2');
-			expect(spy.args[1][0].layer).to.equal(baseLayers['Layer 2']);
+			expect(spy).toHaveBeenCalledTimes(2);
+			expect(spy.mock.calls[1][0].name).to.equal('Layer 2');
+			expect(spy.mock.calls[1][0].layer).to.equal(baseLayers['Layer 2']);
 		});
 
 		it('works after removing and readding the LayersControl to the map', () => {
 			const baseLayers = {'Layer 1': new TileLayer(''), 'Layer 2': new TileLayer('')},
 			layers = new LayersControl(baseLayers).addTo(map),
-			spy = sinon.spy();
+			spy = vi.fn();
 
 			map.on('baselayerchange', spy);
 
@@ -46,24 +45,24 @@ describe('LayersControl', () => {
 			map.addControl(layers);
 
 			UIEventSimulator.fire('click', layers._baseLayersList.getElementsByTagName('input')[0]);
-			expect(spy.called).to.be.true;
-			expect(spy.args[0][0].name).to.equal('Layer 1');
-			expect(spy.args[0][0].layer).to.equal(baseLayers['Layer 1']);
+			expect(spy).toHaveBeenCalled();
+			expect(spy.mock.calls[0][0].name).to.equal('Layer 1');
+			expect(spy.mock.calls[0][0].layer).to.equal(baseLayers['Layer 1']);
 			UIEventSimulator.fire('click', layers._baseLayersList.getElementsByTagName('input')[1]);
-			expect(spy.calledTwice).to.be.true;
-			expect(spy.args[1][0].name).to.equal('Layer 2');
-			expect(spy.args[1][0].layer).to.equal(baseLayers['Layer 2']);
+			expect(spy).toHaveBeenCalledTimes(2);
+			expect(spy.mock.calls[1][0].name).to.equal('Layer 2');
+			expect(spy.mock.calls[1][0].layer).to.equal(baseLayers['Layer 2']);
 		});
 
 		it('is not fired on input that doesn\'t change the base layer', () => {
 			const overlays = {'Marker 1': new Marker([0, 0]), 'Marker 2': new Marker([0, 0])},
 			layers = new LayersControl({}, overlays).addTo(map),
-			spy = sinon.spy();
+			spy = vi.fn();
 
 			map.on('baselayerchange', spy);
 			UIEventSimulator.fire('click', layers._overlaysList.getElementsByTagName('input')[0]);
 
-			expect(spy.called).to.be.false;
+			expect(spy).not.toHaveBeenCalled();
 		});
 	});
 
@@ -73,13 +72,13 @@ describe('LayersControl', () => {
 			overlay = new Marker([0, 0]),
 			layers = new LayersControl({'Base': baseLayer}, {'Overlay': overlay}).addTo(map);
 
-			const spy = sinon.spy(layers, '_update');
+			const spy = vi.spyOn(layers, '_update');
 
 			map.addLayer(overlay);
 			map.removeLayer(overlay);
 
-			expect(spy.called).to.be.true;
-			expect(spy.callCount).to.eql(2);
+			expect(spy).toHaveBeenCalled();
+			expect(spy).toHaveBeenCalledTimes(2);
 		});
 
 		it('when an included layer is added or removed from the map, it\'s (un)checked', () => {
@@ -103,12 +102,12 @@ describe('LayersControl', () => {
 			overlay = new Marker([0, 0]),
 			layers = new LayersControl({'Base': baseLayer}).addTo(map);
 
-			const spy = sinon.spy(layers, '_update');
+			const spy = vi.spyOn(layers, '_update');
 
 			map.addLayer(overlay);
 			map.removeLayer(overlay);
 
-			expect(spy.called).to.be.false;
+			expect(spy).not.toHaveBeenCalled();
 		});
 
 		it('updates when an included layer is removed from the control', () => {
@@ -397,32 +396,32 @@ describe('LayersControl', () => {
 		const baseLayers = {'Layer 1': new TileLayer(''), 'Layer 2': new TileLayer('')},
 		control = new LayersControl(baseLayers).addTo(map);
 
-		const spy = sinon.spy(map.getContainer(), 'focus');
+		const spy = vi.spyOn(map.getContainer(), 'focus');
 		map.getContainer().focus();
-		expect(spy.calledOnce).to.be.true;
+		expect(spy).toHaveBeenCalledOnce();
 
 		// simulate keyboard-click event
-		spy.resetHistory();
+		spy.mockClear();
 		UIEventSimulator.fire('click', control._baseLayersList.getElementsByTagName('input')[0], {
 			screenX: 0,
 			screenY: 0,
 		});
-		expect(spy.calledOnce).to.be.false;
+		expect(spy).not.toHaveBeenCalledOnce();
 
 		// simulate MouseEvent at 0, 1
-		spy.resetHistory();
+		spy.mockClear();
 		UIEventSimulator.fire('click', control._baseLayersList.getElementsByTagName('input')[0], {
 			screenX: 0,
 			screenY: 1,
 		});
-		expect(spy.calledOnce).to.be.true;
+		expect(spy).toHaveBeenCalledOnce();
 
 		// simulate MouseEvent
-		spy.resetHistory();
+		spy.mockClear();
 		UIEventSimulator.fire('click', control._baseLayersList.getElementsByTagName('input')[0], {
 			screenX: 100, // random number - not 0
 			screenY: 100, // random number - not 0
 		});
-		expect(spy.calledOnce).to.be.true;
+		expect(spy).toHaveBeenCalledOnce();
 	});
 });

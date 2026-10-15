@@ -1,6 +1,5 @@
-import {expect} from 'vite-plus/test';
+import {expect, vi} from 'vite-plus/test';
 import {Util} from 'maplair';
-import sinon from 'sinon';
 
 describe('Util', () => {
 	describe('#stamp', () => {
@@ -36,7 +35,7 @@ describe('Util', () => {
 
 	describe('#throttle', () => {
 		it('limits execution to not more often than specified time interval', (done) => {
-			const spy = sinon.spy();
+			const spy = vi.fn();
 
 			const fn = Util.throttle(spy, 20);
 
@@ -44,10 +43,10 @@ describe('Util', () => {
 			fn();
 			fn();
 
-			expect(spy.callCount).to.eql(1);
+			expect(spy).toHaveBeenCalledTimes(1);
 
 			setTimeout(() => {
-				expect(spy.callCount).to.eql(2);
+				expect(spy).toHaveBeenCalledTimes(2);
 				done();
 			}, 30);
 		});

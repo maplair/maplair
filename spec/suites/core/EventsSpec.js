@@ -1,17 +1,16 @@
-import {expect} from 'vite-plus/test';
+import {expect, vi} from 'vite-plus/test';
 import {Class, Evented, FeatureGroup, Marker, Util} from 'maplair';
-import sinon from 'sinon';
 
 describe('Events', () => {
 	describe('#fire', () => {
 		it('fires all listeners added through #on', () => {
 			const obj = new Evented(),
-			spy1 = sinon.spy(),
-			spy2 = sinon.spy(),
-			spy3 = sinon.spy(),
-			spy4 = sinon.spy(),
-			spy5 = sinon.spy();
-			// spy6 = sinon.spy();
+			spy1 = vi.fn(),
+			spy2 = vi.fn(),
+			spy3 = vi.fn(),
+			spy4 = vi.fn(),
+			spy5 = vi.fn();
+			// spy6 = vi.fn();
 
 			obj.on('test', spy1);
 			obj.on('test', spy2);
@@ -19,22 +18,22 @@ describe('Events', () => {
 			obj.on({test: spy4, other: spy5});
 			// obj.on({'test other': spy6 });
 
-			expect(spy1.called).to.be.false;
-			expect(spy2.called).to.be.false;
-			expect(spy3.called).to.be.false;
-			expect(spy4.called).to.be.false;
-			expect(spy5.called).to.be.false;
-			// expect(spy6.called).to.be.false;
+			expect(spy1).not.toHaveBeenCalled();
+			expect(spy2).not.toHaveBeenCalled();
+			expect(spy3).not.toHaveBeenCalled();
+			expect(spy4).not.toHaveBeenCalled();
+			expect(spy5).not.toHaveBeenCalled();
+			// expect(spy6).not.toHaveBeenCalled();
 
 			obj.fire('test');
 
-			expect(spy1.called).to.be.true;
-			expect(spy2.called).to.be.true;
-			expect(spy3.called).to.be.false;
-			expect(spy4.called).to.be.true;
-			expect(spy5.called).to.be.false;
-			// expect(spy6.called).to.be.true;
-			// expect(spy6.callCount).to.equal(1);
+			expect(spy1).toHaveBeenCalled();
+			expect(spy2).toHaveBeenCalled();
+			expect(spy3).not.toHaveBeenCalled();
+			expect(spy4).toHaveBeenCalled();
+			expect(spy5).not.toHaveBeenCalled();
+			// expect(spy6).toHaveBeenCalled();
+			// expect(spy6).toHaveBeenCalledTimes(1);
 		});
 
 		it('fires all listeners in the order they are added', () => {
@@ -141,18 +140,18 @@ describe('Events', () => {
 
 		it('calls no listeners removed through #off', () => {
 			const obj = new Evented(),
-			spy = sinon.spy(),
-			spy2 = sinon.spy(),
-			spy3 = sinon.spy(),
-			spy4 = sinon.spy(),
-			spy5 = sinon.spy();
+			spy = vi.fn(),
+			spy2 = vi.fn(),
+			spy3 = vi.fn(),
+			spy4 = vi.fn(),
+			spy5 = vi.fn();
 
 			obj.on('test', spy);
 			obj.off('test', spy);
 
 			obj.fire('test');
 
-			expect(spy.called).to.be.false;
+			expect(spy).not.toHaveBeenCalled();
 
 			obj.on('test2', spy2);
 			obj.on('test2', spy3);
@@ -160,8 +159,8 @@ describe('Events', () => {
 
 			obj.fire('test2');
 
-			expect(spy2.called).to.be.false;
-			expect(spy3.called).to.be.false;
+			expect(spy2).not.toHaveBeenCalled();
+			expect(spy3).not.toHaveBeenCalled();
 
 			obj.on('test3', spy4);
 			obj.on('test4', spy5);
@@ -173,8 +172,8 @@ describe('Events', () => {
 			obj.fire('test3');
 			obj.fire('test4');
 
-			expect(spy4.called).to.be.false;
-			expect(spy5.called).to.be.false;
+			expect(spy4).not.toHaveBeenCalled();
+			expect(spy5).not.toHaveBeenCalled();
 		});
 
 		it('can handle calls to #off on objects with no registered event listeners', () => {
@@ -188,8 +187,8 @@ describe('Events', () => {
 		// added due to context-sensitive removeListener optimization
 		it('fires multiple listeners with the same context with id', () => {
 			const obj = new Evented(),
-			spy1 = sinon.spy(),
-			spy2 = sinon.spy(),
+			spy1 = vi.fn(),
+			spy2 = vi.fn(),
 			foo = {};
 
 			Util.stamp(foo);
@@ -199,14 +198,14 @@ describe('Events', () => {
 
 			obj.fire('test');
 
-			expect(spy1.called).to.be.true;
-			expect(spy2.called).to.be.true;
+			expect(spy1).toHaveBeenCalled();
+			expect(spy2).toHaveBeenCalled();
 		});
 
 		it('removes listeners with stamped contexts', () => {
 			const obj = new Evented(),
-			spy1 = sinon.spy(),
-			spy2 = sinon.spy(),
+			spy1 = vi.fn(),
+			spy2 = vi.fn(),
 			foo = {};
 
 			Util.stamp(foo);
@@ -218,14 +217,14 @@ describe('Events', () => {
 
 			obj.fire('test');
 
-			expect(spy1.called).to.be.false;
-			expect(spy2.called).to.be.true;
+			expect(spy1).not.toHaveBeenCalled();
+			expect(spy2).toHaveBeenCalled();
 		});
 
 		it('removes listeners with a stamp originally added without one', () => {
 			const obj = new Evented(),
-			spy1 = sinon.spy(),
-			spy2 = sinon.spy(),
+			spy1 = vi.fn(),
+			spy2 = vi.fn(),
 			foo = {};
 
 			obj.on('test', spy1, foo);
@@ -237,16 +236,16 @@ describe('Events', () => {
 
 			obj.fire('test');
 
-			expect(spy1.called).to.be.false;
-			expect(spy2.called).to.be.false;
+			expect(spy1).not.toHaveBeenCalled();
+			expect(spy2).not.toHaveBeenCalled();
 		});
 
 		it('removes listeners with context == this and a stamp originally added without one', () => {
 			const obj = new Evented(),
 			obj2 = new Evented(),
-			spy1 = sinon.spy(),
-			spy2 = sinon.spy(),
-			spy3 = sinon.spy();
+			spy1 = vi.fn(),
+			spy2 = vi.fn(),
+			spy3 = vi.fn();
 
 			obj.on('test', spy1, obj);
 			Util.stamp(obj);
@@ -259,15 +258,15 @@ describe('Events', () => {
 
 			obj.fire('test');
 
-			expect(spy1.called).to.be.false;
-			expect(spy2.called).to.be.false;
-			expect(spy3.called).to.be.false;
+			expect(spy1).not.toHaveBeenCalled();
+			expect(spy2).not.toHaveBeenCalled();
+			expect(spy3).not.toHaveBeenCalled();
 		});
 
 		it('doesnt lose track of listeners when removing non existent ones', () => {
 			const obj = new Evented(),
-			spy = sinon.spy(),
-			spy2 = sinon.spy(),
+			spy = vi.fn(),
+			spy2 = vi.fn(),
 			foo = {},
 			foo2 = {};
 
@@ -283,12 +282,12 @@ describe('Events', () => {
 
 			obj.fire('test');
 
-			expect(spy.called).to.be.false;
+			expect(spy).not.toHaveBeenCalled();
 		});
 
 		it('correctly removes all listeners if given no fn', () => {
 			const obj = new Evented(),
-			spy = sinon.spy(),
+			spy = vi.fn(),
 			foo2 = {},
 			foo3 = {};
 
@@ -314,8 +313,8 @@ describe('Events', () => {
 
 		it('makes sure an event is not triggered if a listener is removed during dispatch', () => {
 			const obj = new Evented(),
-			spy = sinon.spy(),
-			spy2 = sinon.spy(),
+			spy = vi.fn(),
+			spy2 = vi.fn(),
 			foo = {};
 
 			/* without context */
@@ -323,7 +322,7 @@ describe('Events', () => {
 			obj.on('test', spy);
 			obj.fire('test');
 
-			expect(spy.called).to.be.false;
+			expect(spy).not.toHaveBeenCalled();
 
 			/* with context */
 			obj.on('test2', () => { obj.off('test2', spy2, foo); }, foo);
@@ -333,19 +332,19 @@ describe('Events', () => {
 
 		it('makes sure an event is not triggered if all listeners are removed during dispatch', () => {
 			const obj = new Evented(),
-			spy = sinon.spy();
+			spy = vi.fn();
 
 			obj.on('test', () => { obj.off('test'); });
 			obj.on('test', spy);
 			obj.fire('test');
 
-			expect(spy.called).to.be.false;
+			expect(spy).not.toHaveBeenCalled();
 		});
 
 		it('handles reentrant event firing', () => {
 			const obj = new Evented(),
-			spy1 = sinon.spy(),
-			spy2 = sinon.spy();
+			spy1 = vi.fn(),
+			spy2 = vi.fn();
 
 			obj
 				.on('test1', () => {
@@ -358,13 +357,13 @@ describe('Events', () => {
 				.on('test1', spy2);
 
 			obj.fire('test1');
-			expect(spy1.called).to.be.true;
-			expect(spy2.called).to.be.false;
+			expect(spy1).toHaveBeenCalled();
+			expect(spy2).not.toHaveBeenCalled();
 		});
 
 		it('can remove an event listener while firing', () => {
 			const obj = new Evented(),
-			spy = sinon.spy();
+			spy = vi.fn();
 
 			const removeSpy = function () {
 				obj.off('test', spy);
@@ -415,9 +414,9 @@ describe('Events', () => {
 		});
 
 		it('does not override existing methods with the same name', () => {
-			const spy1 = sinon.spy(),
-			spy2 = sinon.spy(),
-			spy3 = sinon.spy();
+			const spy1 = vi.fn(),
+			spy2 = vi.fn(),
+			spy3 = vi.fn();
 
 			class Klass extends Evented {
 				on = spy1;
@@ -428,18 +427,18 @@ describe('Events', () => {
 			const obj = new Klass();
 
 			obj.on();
-			expect(spy1.called).to.be.true;
+			expect(spy1).toHaveBeenCalled();
 
 			obj.off();
-			expect(spy2.called).to.be.true;
+			expect(spy2).toHaveBeenCalled();
 
 			obj.fire();
-			expect(spy3.called).to.be.true;
+			expect(spy3).toHaveBeenCalled();
 		});
 
 		it('does not add twice the same function', () => {
 			const obj = new Evented(),
-			spy = sinon.spy();
+			spy = vi.fn();
 
 			/* register without context */
 			obj.on('test', spy);
@@ -448,13 +447,13 @@ describe('Events', () => {
 			/* Should be called once */
 			obj.fire('test');
 
-			expect(spy.callCount).to.eql(1);
+			expect(spy).toHaveBeenCalledTimes(1);
 		});
 	});
 
 	describe('#clearEventListeners', () => {
 		it('clears all registered listeners on an object', () => {
-			const spy = sinon.spy(),
+			const spy = vi.fn(),
 			obj = new Evented(),
 			otherObj = new Evented();
 
@@ -465,29 +464,29 @@ describe('Events', () => {
 
 			obj.fire('test');
 
-			expect(spy.called).to.be.false;
+			expect(spy).not.toHaveBeenCalled();
 		});
 	});
 
 	describe('#once', () => {
 		it('removes event listeners after first trigger', () => {
 			const obj = new Evented(),
-			spy = sinon.spy();
+			spy = vi.fn();
 
 			obj.once('test', spy, obj);
 			obj.fire('test');
 
-			expect(spy.called).to.be.true;
+			expect(spy).toHaveBeenCalled();
 
 			obj.fire('test');
 
-			expect(spy.callCount).to.be.lessThan(2);
+			expect(spy.mock.calls.length).to.be.lessThan(2);
 		});
 
 		it('works with an object hash', () => {
 			const obj = new Evented(),
-			spy = sinon.spy(),
-			otherSpy = sinon.spy();
+			spy = vi.fn(),
+			otherSpy = vi.fn();
 
 			obj.once({
 				'test': spy,
@@ -497,31 +496,31 @@ describe('Events', () => {
 			obj.fire('test');
 			obj.fire('otherTest');
 
-			expect(spy.called).to.be.true;
-			expect(otherSpy.called).to.be.true;
+			expect(spy).toHaveBeenCalled();
+			expect(otherSpy).toHaveBeenCalled();
 
 			obj.fire('test');
 			obj.fire('otherTest');
 
-			expect(spy.callCount).to.be.lessThan(2);
-			expect(otherSpy.callCount).to.be.lessThan(2);
+			expect(spy.mock.calls.length).to.be.lessThan(2);
+			expect(otherSpy.mock.calls.length).to.be.lessThan(2);
 		});
 
 		it('doesn\'t call listeners to events that have been removed', () => {
 			const obj = new Evented(),
-			spy = sinon.spy();
+			spy = vi.fn();
 
 			obj.once('test', spy, obj);
 			obj.off('test', spy, obj);
 
 			obj.fire('test');
 
-			expect(spy.called).to.be.false;
+			expect(spy).not.toHaveBeenCalled();
 		});
 
 		it('doesn\'t call once twice', () => {
 			const obj = new Evented(),
-			spy = sinon.spy();
+			spy = vi.fn();
 			obj.once('test', () => {
 				spy();
 				obj.fire('test');
@@ -529,20 +528,20 @@ describe('Events', () => {
 
 			obj.fire('test');
 
-			expect(spy.calledOnce).to.be.true;
+			expect(spy).toHaveBeenCalledOnce();
 		});
 
 
 		it('works if called from a context that doesnt implement #Events', () => {
 			const obj = new Evented(),
-			spy = sinon.spy(),
+			spy = vi.fn(),
 			foo = {};
 
 			obj.once('test', spy, foo);
 
 			obj.fire('test');
 
-			expect(spy.called).to.be.true;
+			expect(spy).toHaveBeenCalled();
 		});
 	});
 
@@ -551,8 +550,8 @@ describe('Events', () => {
 			const obj = new Evented(),
 			parent1 = new Evented(),
 			parent2 = new Evented(),
-			spy1 = sinon.spy(),
-			spy2 = sinon.spy();
+			spy1 = vi.fn(),
+			spy2 = vi.fn();
 
 			parent1.on('test', spy1);
 			parent2.on('test', spy2);
@@ -561,27 +560,27 @@ describe('Events', () => {
 
 			obj.fire('test');
 
-			expect(spy1.called).to.be.false;
-			expect(spy2.called).to.be.false;
+			expect(spy1).not.toHaveBeenCalled();
+			expect(spy2).not.toHaveBeenCalled();
 
 			obj.fire('test', null, true);
 
-			expect(spy1.called).to.be.true;
-			expect(spy2.called).to.be.true;
+			expect(spy1).toHaveBeenCalled();
+			expect(spy2).toHaveBeenCalled();
 
 			obj.removeEventParent(parent1);
 
 			obj.fire('test', null, true);
 
-			expect(spy1.callCount).to.equal(1);
-			expect(spy2.callCount).to.equal(2);
+			expect(spy1).toHaveBeenCalledTimes(1);
+			expect(spy2).toHaveBeenCalledTimes(2);
 		});
 
 		it('can fire event where child has no listeners', () => {
 			const obj = new Evented(),
 			parent = new Evented(),
-			spy1 = sinon.spy(),
-			spy2 = sinon.spy();
+			spy1 = vi.fn(),
+			spy2 = vi.fn();
 
 			/* register without context */
 			obj.on('test', spy1);
@@ -592,15 +591,15 @@ describe('Events', () => {
 			/* Should be called once */
 			obj.fire('test2', null, true);
 
-			expect(spy1.callCount).to.eql(0);
-			expect(spy2.callCount).to.eql(1);
+			expect(spy1).toHaveBeenCalledTimes(0);
+			expect(spy2).toHaveBeenCalledTimes(1);
 		});
 
 		it('sets target, sourceTarget and layer correctly', () => {
 			const obj = new Evented(),
 			parent = new Evented(),
-			spy1 = sinon.spy(),
-			spy2 = sinon.spy();
+			spy1 = vi.fn(),
+			spy2 = vi.fn();
 
 			/* register without context */
 			obj.on('test2', spy1);
@@ -611,17 +610,17 @@ describe('Events', () => {
 			/* Should be called once */
 			obj.fire('test2', null, true);
 
-			expect(spy1.calledWith({
+			expect(spy1).toHaveBeenCalledWith({
 				type: 'test2',
 				target: obj,
 				sourceTarget: obj
-			})).to.be.true;
-			expect(spy2.calledWith({
+			});
+			expect(spy2).toHaveBeenCalledWith({
 				type: 'test2',
 				target: parent,
 				sourceTarget: obj,
 				propagatedFrom: obj
-			})).to.be.true;
+			});
 		});
 	});
 
@@ -634,7 +633,7 @@ describe('Events', () => {
 
 		it('is true if there is an event handler', () => {
 			const obj = new Evented(),
-			spy = sinon.spy();
+			spy = vi.fn();
 
 			obj.on('test', spy);
 			expect(obj.listens('test')).to.be.true;
@@ -642,7 +641,7 @@ describe('Events', () => {
 
 		it('is false if event handler has been removed', () => {
 			const obj = new Evented(),
-			spy = sinon.spy();
+			spy = vi.fn();
 
 			obj.on('test', spy);
 			obj.off('test', spy);
@@ -651,7 +650,7 @@ describe('Events', () => {
 
 		it('changes for a "once" handler', () => {
 			const obj = new Evented(),
-			spy = sinon.spy();
+			spy = vi.fn();
 
 			obj.once('test', spy);
 			expect(obj.listens('test')).to.be.true;
@@ -663,8 +662,8 @@ describe('Events', () => {
 		it('returns true if event handler with specific function and context is existing', () => {
 			const obj = new Evented(),
 			differentContext = new Evented(),
-			spy = sinon.spy(),
-			diffentFnc = sinon.spy();
+			spy = vi.fn(),
+			diffentFnc = vi.fn();
 
 			obj.on('test', spy);
 
@@ -685,7 +684,7 @@ describe('Events', () => {
 		it('is true if there is an event handler on parent', () => {
 			const fg = new FeatureGroup(),
 			marker = new Marker([0, 0]).addTo(fg),
-			spy = sinon.spy();
+			spy = vi.fn();
 
 			fg.on('test', spy);
 			expect(marker.listens('test', false)).to.be.false;
@@ -696,7 +695,7 @@ describe('Events', () => {
 			const fgP = new FeatureGroup(),
 			fg = new FeatureGroup().addTo(fgP),
 			marker = new Marker([0, 0]).addTo(fg),
-			spy = sinon.spy();
+			spy = vi.fn();
 
 			fgP.on('test', spy);
 			expect(marker.listens('test', false)).to.be.false;
@@ -706,7 +705,7 @@ describe('Events', () => {
 		it('is true if there is an event handler with specific function on parent', () => {
 			const fg = new FeatureGroup(),
 			marker = new Marker([0, 0]).addTo(fg),
-			spy = sinon.spy();
+			spy = vi.fn();
 
 			fg.on('test', spy);
 			expect(marker.listens('test', spy, marker, false)).to.be.false;

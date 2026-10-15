@@ -1,12 +1,11 @@
-import {expect} from 'vite-plus/test';
+import {expect, vi} from 'vite-plus/test';
 import {Browser, MaplairMap, Point} from 'maplair';
-import sinon from 'sinon';
 import Hand from 'prosthetic-hand';
 import UIEventSimulator from 'ui-event-simulator';
 import {createContainer, removeMapContainer} from '../../SpecHelper.js';
 
 describe('TapHoldHandler', () => {
-	let container, clock, spy, map;
+	let container, spy, map;
 	let touchHand, mouseHand;
 	let touchFinger, touchFinger2, mouseFinger;
 
@@ -24,13 +23,14 @@ describe('TapHoldHandler', () => {
 
 
 		// Tap-Hold depends on timing. This means `minimal` mode for prosthetic-hand
-		// plus the sinon clock faking performance.now() calls, plus a need to
-		// manually tick the sinon clock forward.
-		clock = sinon.useFakeTimers({
+		// plus the fake timers faking performance.now() calls, plus a need to
+		// manually advance the fake timers.
+		vi.useFakeTimers({
+			now: 0,
 			toFake: ['setTimeout', 'clearTimeout', 'Date', 'performance']
 		});
-		clock.tick(1000);
-		spy = sinon.spy();
+		vi.advanceTimersByTime(1000);
+		spy = vi.fn();
 
 		map.on('contextmenu', spy);
 
@@ -46,23 +46,23 @@ describe('TapHoldHandler', () => {
 	});
 
 	afterEach(() => {
-		clock.restore();
+		vi.useRealTimers();
 		removeMapContainer(map, container);
 	});
 
 	it('fires synthetic contextmenu after hold delay>600', () => {
 		touchFinger.moveTo(posStart.x, posStart.y).down().wait(550);
-		clock.tick(550);
+		vi.advanceTimersByTime(550);
 
-		expect(spy.notCalled).to.be.true;
+		expect(spy).not.toHaveBeenCalled();
 
 		touchFinger.wait(100);
-		clock.tick(100);
+		vi.advanceTimersByTime(100);
 
-		expect(spy.called).to.be.true;
-		expect(spy.calledOnce).to.be.true;
+		expect(spy).toHaveBeenCalled();
+		expect(spy).toHaveBeenCalledOnce();
 
-		const event = spy.lastCall.args[0];
+		const event = spy.mock.lastCall[0];
 		expect(event.type).to.equal('contextmenu');
 		expect(event.originalEvent._simulated).to.be.true;
 		touchFinger.up();
@@ -72,42 +72,42 @@ describe('TapHoldHandler', () => {
 
 		touchFinger.down().wait(100).up();
 		touchFinger2.down().wait(600).up();
-		clock.tick(1000);
+		vi.advanceTimersByTime(1000);
 
-		expect(spy.notCalled).to.be.true;
+		expect(spy).not.toHaveBeenCalled();
 	});
 
 	it('does not fire contextmenu when multiple pointers touches > 1 (case:2)', () => {
-		expect(spy.notCalled).to.be.true;
+		expect(spy).not.toHaveBeenCalled();
 
 		touchFinger.down().wait(650).up();
 		touchFinger2.wait(100).down();
 
-		clock.tick(750);
+		vi.advanceTimersByTime(750);
 
-		expect(spy.notCalled).to.be.true;
+		expect(spy).not.toHaveBeenCalled();
 	});
 
 	(Browser.pointer ? it : it.skip)('ignores events from mouse', () => {
 		mouseFinger.down().wait(650).up();
-		clock.tick(750);
+		vi.advanceTimersByTime(750);
 
-		expect(spy.notCalled).to.be.true;
+		expect(spy).not.toHaveBeenCalled();
 	});
 
 	it('does not conflict with native contextmenu', () => {
 
 		touchFinger.down().wait(550);
-		clock.tick(560);
+		vi.advanceTimersByTime(560);
 
 		UIEventSimulator.fire('contextmenu', container);
 
 		touchFinger.wait(100).up();
-		clock.tick(110);
+		vi.advanceTimersByTime(110);
 
-		expect(spy.called).to.be.true;
-		expect(spy.calledOnce).to.be.true;
-		expect(spy.lastCall.args[0].originalEvent._simulated).not.to.be.true;
+		expect(spy).toHaveBeenCalled();
+		expect(spy).toHaveBeenCalledOnce();
+		expect(spy.mock.lastCall[0].originalEvent._simulated).not.to.be.true;
 
 		// Note: depending on tapHoldDelay value it's also possible that native contextmenu may come after simulated one
 		//       and the only way to handle this gracefully - increase tapHoldDelay value.
@@ -115,24 +115,24 @@ describe('TapHoldHandler', () => {
 	});
 
 	it('prevents native click', () => {
-		const clickSpy = sinon.spy();
+		const clickSpy = vi.fn();
 		map.on('click', clickSpy);
 
 		touchFinger.down().wait(650).up();
-		clock.tick(660);
-		expect(clickSpy.notCalled).to.be.true;
+		vi.advanceTimersByTime(660);
+		expect(clickSpy).not.toHaveBeenCalled();
 
 		touchFinger.down().wait(100).up();
-		clock.tick(110);
-		expect(clickSpy.called).to.be.true;
+		vi.advanceTimersByTime(110);
+		expect(clickSpy).toHaveBeenCalled();
 	});
 
 	it('allows short movements', () => {
 		touchFinger.down().wait(550).moveTo(posNear.x, posNear.y).wait(100).up();
 
-		clock.tick(660);
+		vi.advanceTimersByTime(660);
 
-		expect(spy.called).to.be.true;
+		expect(spy).toHaveBeenCalled();
 	});
 
 	it('ignores long movements', () => {
@@ -140,12 +140,12 @@ describe('TapHoldHandler', () => {
 			.to.be.above(map.options.tapTolerance);
 
 		touchFinger.down().wait(550).moveTo(posFar.x, posFar.y).wait(100).up();
-		clock.tick(660);
-		expect(spy.notCalled).to.be.true;
+		vi.advanceTimersByTime(660);
+		expect(spy).not.toHaveBeenCalled();
 
 		touchFinger.down().wait(550).wait(100).up();
-		clock.tick(660);
-		expect(spy.called).to.be.true;
+		vi.advanceTimersByTime(660);
+		expect(spy).toHaveBeenCalled();
 	});
 
 	it('.originalEvent has expected properties', () => {
@@ -153,9 +153,9 @@ describe('TapHoldHandler', () => {
 		touchFinger.moveTo(2, 2).down().wait(625).up();
 
 		// UIEventSimulator.fire('pointerdown', container, {pointerId:0, ...posStart});
-		clock.tick(650);
+		vi.advanceTimersByTime(650);
 
-		const originalEvent = spy.lastCall.args[0].originalEvent;
+		const originalEvent = spy.mock.lastCall[0].originalEvent;
 		const expectedProps = {
 			type: 'contextmenu',
 			bubbles: true,

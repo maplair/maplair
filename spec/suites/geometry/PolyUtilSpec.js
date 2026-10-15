@@ -1,6 +1,5 @@
-import {expect} from 'vite-plus/test';
+import {expect, vi} from 'vite-plus/test';
 import {Bounds, MaplairMap, Point, PolyUtil, Polygon} from 'maplair';
-import sinon from 'sinon';
 
 describe('PolyUtil', () => {
 	describe('#clipPolygon', () => {
@@ -91,10 +90,10 @@ describe('PolyUtil', () => {
 			const latlngs = [
 				[[0, 0], [10, 0], [10, 10], [0, 10]]
 			];
-			const spy = sinon.spy(console, 'warn');
+			const spy = vi.spyOn(console, 'warn');
 			const center = PolyUtil.polygonCenter(latlngs, crs);
-			console.warn.restore();
-			expect(spy.calledOnce).to.be.true;
+			expect(spy).toHaveBeenCalledOnce();
+			spy.mockRestore();
 			expect(center).to.be.nearLatLng([5.019148099025293, 5]);
 		});
 

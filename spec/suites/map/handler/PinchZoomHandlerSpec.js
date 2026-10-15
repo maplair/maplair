@@ -1,7 +1,6 @@
-import {expect} from 'vite-plus/test';
+import {expect, vi} from 'vite-plus/test';
 import {LatLng, MaplairMap, Polygon, Rectangle} from 'maplair';
 import Hand from 'prosthetic-hand';
-import sinon from 'sinon';
 import {createContainer, removeMapContainer, pointerEventType} from '../../SpecHelper.js';
 
 describe('PinchZoomHandler', () => {
@@ -66,7 +65,7 @@ describe('PinchZoomHandler', () => {
 	it.skipIfNotTouch('fires zoom event while pinch zoom', (done) => {
 		map.setView([0, 0], 4);
 
-		const spy = sinon.spy();
+		const spy = vi.fn();
 		map.on('zoom', spy);
 
 		let pinchZoomEvent = false;
@@ -74,7 +73,7 @@ describe('PinchZoomHandler', () => {
 			pinchZoomEvent = e.pinch ?? pinchZoomEvent;
 		});
 		map.once('zoomend', () => {
-			expect(spy.callCount > 1).to.be.true;
+			expect(spy.mock.calls.length > 1).to.be.true;
 			expect(pinchZoomEvent).to.be.true;
 
 			expect(map.getCenter().equals(new LatLng(0, 0))).to.be.true;
@@ -274,7 +273,7 @@ describe('PinchZoomHandler', () => {
 	});
 
 	it.skipIfNotTouch('disables pinchZoom when touchZoom is false (backward compatibility)', () => {
-		const warnSpy = sinon.spy(console, 'warn');
+		const warnSpy = vi.spyOn(console, 'warn');
 
 		const localContainer = createContainer();
 		const localMap = new MaplairMap(localContainer, {
@@ -282,16 +281,16 @@ describe('PinchZoomHandler', () => {
 		});
 
 		expect(localMap.pinchZoom.enabled()).to.be.false;
-		expect(warnSpy.calledOnce).to.be.true;
-		expect(warnSpy.firstCall.args[0]).to.eq('Map: touchZoom option is deprecated and will be removed in future versions. Use pinchZoom instead.');
+		expect(warnSpy).toHaveBeenCalledOnce();
+		expect(warnSpy.mock.calls[0][0]).to.eq('Map: touchZoom option is deprecated and will be removed in future versions. Use pinchZoom instead.');
 
-		warnSpy.restore();
+		warnSpy.mockRestore();
 		removeMapContainer(localMap, localContainer);
 	});
 
 
 	it.skipIfNotTouch('enables pinchZoom when touchZoom is true and pinchZoom is false (touchZoom takes precedence)', () => {
-		const warnSpy = sinon.spy(console, 'warn');
+		const warnSpy = vi.spyOn(console, 'warn');
 
 		const localContainer = createContainer();
 		const localMap = new MaplairMap(localContainer, {
@@ -300,10 +299,10 @@ describe('PinchZoomHandler', () => {
 		});
 
 		expect(localMap.pinchZoom.enabled()).to.be.true;
-		expect(warnSpy.calledOnce).to.be.true;
-		expect(warnSpy.firstCall.args[0]).to.eq('Map: touchZoom option is deprecated and will be removed in future versions. Use pinchZoom instead.');
+		expect(warnSpy).toHaveBeenCalledOnce();
+		expect(warnSpy.mock.calls[0][0]).to.eq('Map: touchZoom option is deprecated and will be removed in future versions. Use pinchZoom instead.');
 
-		warnSpy.restore();
+		warnSpy.mockRestore();
 		removeMapContainer(localMap, localContainer);
 	});
 

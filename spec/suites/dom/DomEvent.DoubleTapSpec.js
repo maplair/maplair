@@ -1,65 +1,65 @@
-import {expect} from 'vite-plus/test';
+import {expect, vi} from 'vite-plus/test';
 import {Control, DomEvent, DomUtil, MaplairMap} from 'maplair';
-import sinon from 'sinon';
 import UIEventSimulator from 'ui-event-simulator';
 import {createContainer, removeMapContainer} from '../SpecHelper.js';
 
 describe('DomEvent.DoubleTapSpec.js', () => {
-	let container, clock, spy;
+	let container, spy;
 
 	beforeEach(() => {
 		container = createContainer();
 
-		clock = sinon.useFakeTimers({
+		vi.useFakeTimers({
+			now: 0,
 			toFake: ['setTimeout', 'clearTimeout', 'Date']
 		});
-		clock.tick(1000);
-		spy = sinon.spy();
+		vi.advanceTimersByTime(1000);
+		spy = vi.fn();
 		DomEvent.on(container, 'dblclick', spy);
 	});
 
 	afterEach(() => {
-		clock.restore();
+		vi.useRealTimers();
 		removeMapContainer(null, container);
 	});
 
 	it('fires synthetic dblclick after two clicks with delay<200', () => {
 		UIEventSimulator.fire('click', container, {detail: 1});
-		clock.tick(100);
+		vi.advanceTimersByTime(100);
 		UIEventSimulator.fire('click', container, {detail: 1});
 
-		expect(spy.called).to.be.true;
-		expect(spy.calledOnce).to.be.true;
-		expect(spy.lastCall.args[0] instanceof MouseEvent).to.equal(true);
-		expect(spy.lastCall.args[0].isTrusted).to.equal(false);
+		expect(spy).toHaveBeenCalled();
+		expect(spy).toHaveBeenCalledOnce();
+		expect(spy.mock.lastCall[0] instanceof MouseEvent).to.equal(true);
+		expect(spy.mock.lastCall[0].isTrusted).to.equal(false);
 	});
 
 	it('does not fire dblclick when delay>200', () => {
 		UIEventSimulator.fire('click', container, {detail: 1});
-		clock.tick(300);
+		vi.advanceTimersByTime(300);
 		UIEventSimulator.fire('click', container, {detail: 1});
 
-		expect(spy.notCalled).to.be.true;
+		expect(spy).not.toHaveBeenCalled();
 	});
 
 	it('does not fire dblclick after removeListener', () => {
 		DomEvent.off(container, 'dblclick', spy);
 
 		UIEventSimulator.fire('click', container, {detail: 1});
-		clock.tick(100);
+		vi.advanceTimersByTime(100);
 		UIEventSimulator.fire('click', container, {detail: 1});
-		clock.tick(100);
+		vi.advanceTimersByTime(100);
 
-		expect(spy.notCalled).to.be.true;
+		expect(spy).not.toHaveBeenCalled();
 	});
 
 	it('does not conflict with native dblclick', () => {
 		UIEventSimulator.fire('click', container, {detail: 1});
-		clock.tick(100);
+		vi.advanceTimersByTime(100);
 		UIEventSimulator.fire('click', container, {detail: 2}); // native dblclick expected
 		UIEventSimulator.fire('dblclick', container); // native dblclick expected
-		expect(spy.called).to.be.true;
-		expect(spy.calledOnce).to.be.true;
+		expect(spy).toHaveBeenCalled();
+		expect(spy).toHaveBeenCalledOnce();
 	});
 
 	it('synthetic dblclick event has expected properties', () => {
@@ -71,10 +71,10 @@ describe('DomEvent.DoubleTapSpec.js', () => {
 			screenY: 5
 		};
 		UIEventSimulator.fire('click', container, click);
-		clock.tick(100);
+		vi.advanceTimersByTime(100);
 		UIEventSimulator.fire('click', container, click);
 
-		const event = spy.lastCall.args[0];
+		const event = spy.mock.lastCall[0];
 		const expectedProps = {
 			...click,
 			type: 'dblclick',
@@ -90,11 +90,11 @@ describe('DomEvent.DoubleTapSpec.js', () => {
 	});
 
 	it('respects disableClickPropagation', () => {
-		const spyMap = sinon.spy();
+		const spyMap = vi.fn();
 		const map = new MaplairMap(container).setView([51.505, -0.09], 13);
 		map.on('dblclick', spyMap);
 
-		const spyCtrl = sinon.spy();
+		const spyCtrl = vi.fn();
 		const ctrl = DomUtil.create('div');
 		DomEvent.disableClickPropagation(ctrl);
 		class MyControl extends Control {
@@ -106,15 +106,15 @@ describe('DomEvent.DoubleTapSpec.js', () => {
 		DomEvent.on(ctrl, 'dblclick', spyCtrl);
 
 		UIEventSimulator.fire('click', ctrl, {detail: 1});
-		clock.tick(100);
+		vi.advanceTimersByTime(100);
 		UIEventSimulator.fire('click', ctrl, {detail: 1});
 
-		expect(spyCtrl.called).to.be.true;
-		expect(spyMap.notCalled).to.be.true;
+		expect(spyCtrl).toHaveBeenCalled();
+		expect(spyMap).not.toHaveBeenCalled();
 	});
 
 	it('doesn\'t fire double-click while clicking on a label with `for` attribute', () => {
-		const spyMap = sinon.spy();
+		const spyMap = vi.fn();
 		const map = new MaplairMap(container).setView([51.505, -0.09], 13);
 		map.on('dblclick', spyMap);
 
@@ -130,8 +130,8 @@ describe('DomEvent.DoubleTapSpec.js', () => {
 		map.addControl(new MyControl());
 		// click on the label
 		UIEventSimulator.fire('click', div.children[1], {detail: 1});
-		clock.tick(100);
-		expect(spyMap.notCalled).to.be.true;
+		vi.advanceTimersByTime(100);
+		expect(spyMap).not.toHaveBeenCalled();
 		map.remove();
 	});
 });

@@ -1,6 +1,5 @@
-import {expect} from 'vite-plus/test';
+import {expect, vi} from 'vite-plus/test';
 import {MaplairMap, Popup} from 'maplair';
-import sinon from 'sinon';
 import UIEventSimulator from 'ui-event-simulator';
 import {createContainer, removeMapContainer} from '../../SpecHelper.js';
 
@@ -157,49 +156,49 @@ describe('KeyboardHandler', () => {
 
 	describe('keys events binding', () => {
 		it('keypress', (done) => {
-			const keyDownSpy = sinon.spy();
-			const keyPressSpy = sinon.spy();
-			const keyUpSpy = sinon.spy();
+			const keyDownSpy = vi.fn();
+			const keyPressSpy = vi.fn();
+			const keyUpSpy = vi.fn();
 
 			map.on('keypress', keyPressSpy);
 			UIEventSimulator.fire('keypress', container, {code: KEYCODE_LOWERCASE_A});
 
 			setTimeout(() => {
-				expect(keyDownSpy.called).to.be.false;
-				expect(keyPressSpy.called).to.be.true;
-				expect(keyUpSpy.called).to.be.false;
+				expect(keyDownSpy).not.toHaveBeenCalled();
+				expect(keyPressSpy).toHaveBeenCalled();
+				expect(keyUpSpy).not.toHaveBeenCalled();
 				done();
 			}, 50);
 		});
 
 		it('keydown', (done) => {
-			const keyDownSpy = sinon.spy();
-			const keyPressSpy = sinon.spy();
-			const keyUpSpy = sinon.spy();
+			const keyDownSpy = vi.fn();
+			const keyPressSpy = vi.fn();
+			const keyUpSpy = vi.fn();
 
 			map.on('keydown', keyDownSpy);
 			UIEventSimulator.fire('keydown', container, {code: KEYCODE_LOWERCASE_A});
 
 			setTimeout(() => {
-				expect(keyDownSpy.called).to.be.true;
-				expect(keyPressSpy.called).to.be.false;
-				expect(keyUpSpy.called).to.be.false;
+				expect(keyDownSpy).toHaveBeenCalled();
+				expect(keyPressSpy).not.toHaveBeenCalled();
+				expect(keyUpSpy).not.toHaveBeenCalled();
 				done();
 			}, 50);
 		});
 
 		it('keyup', (done) => {
-			const keyDownSpy = sinon.spy();
-			const keyPressSpy = sinon.spy();
-			const keyUpSpy = sinon.spy();
+			const keyDownSpy = vi.fn();
+			const keyPressSpy = vi.fn();
+			const keyUpSpy = vi.fn();
 
 			map.on('keyup', keyUpSpy);
 			UIEventSimulator.fire('keyup', container, {code: KEYCODE_LOWERCASE_A});
 
 			setTimeout(() => {
-				expect(keyDownSpy.called).to.be.false;
-				expect(keyPressSpy.called).to.be.false;
-				expect(keyUpSpy.called).to.be.true;
+				expect(keyDownSpy).not.toHaveBeenCalled();
+				expect(keyPressSpy).not.toHaveBeenCalled();
+				expect(keyUpSpy).toHaveBeenCalled();
 				done();
 			}, 50);
 		});

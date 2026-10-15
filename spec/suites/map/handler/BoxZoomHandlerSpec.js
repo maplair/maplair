@@ -1,6 +1,5 @@
-import {expect} from 'vite-plus/test';
+import {expect, vi} from 'vite-plus/test';
 import {MaplairMap, BoxZoomHandler} from 'maplair';
-import sinon from 'sinon';
 import UIEventSimulator from 'ui-event-simulator';
 import {createContainer, removeMapContainer, pointerEventType} from '../../SpecHelper.js';
 import Hand from 'prosthetic-hand';
@@ -27,14 +26,14 @@ describe('BoxZoomHandler', () => {
 
 	it('cancel boxZoom by pressing ESC and re-enable click event on the map', async () => {
 		// let mapClick = false;
-		let clickSpy = sinon.spy();
+		let clickSpy = vi.fn();
 		map.once('click', clickSpy);
 
 		finger.moveTo(100, 100).down().up();
 		await hand.run();
 
 		// check if click event on the map is fired
-		expect(clickSpy.calledOnce).to.be.true;
+		expect(clickSpy).toHaveBeenCalledOnce();
 
 
 		// fire pointerdown event with shiftKey = true, to start drawing the boxZoom
@@ -43,15 +42,15 @@ describe('BoxZoomHandler', () => {
 		// fire pointermove event with shiftKey = true, to draw the boxZoom
 		finger.moveBy(100, 100);
 
-		const boxStartSpy = sinon.spy();
+		const boxStartSpy = vi.fn();
 		map.once('boxzoomstart', boxStartSpy);
-		const boxEndSpy = sinon.spy();
+		const boxEndSpy = vi.fn();
 		map.once('boxzoomend', boxEndSpy);
 
 		await hand.run();
 
-		expect(boxStartSpy.calledOnce).to.be.true;
-		expect(boxEndSpy.called).to.be.false;
+		expect(boxStartSpy).toHaveBeenCalledOnce();
+		expect(boxEndSpy).not.toHaveBeenCalled();
 		expect(map.getContainer().classList.contains('maplair-crosshair')).to.be.true;
 		expect(map.getContainer().querySelectorAll('.maplair-zoom-box').length).to.equal(1);
 
@@ -71,19 +70,19 @@ describe('BoxZoomHandler', () => {
 		// check if click event on the map is fired
 		finger.down().up();
 
-		clickSpy = sinon.spy();
+		clickSpy = vi.fn();
 		map.once('click', clickSpy);
 
 		await hand.run();
-		expect(clickSpy.calledOnce).to.be.true;
-		expect(boxEndSpy.called).to.be.false;
+		expect(clickSpy).toHaveBeenCalledOnce();
+		expect(boxEndSpy).not.toHaveBeenCalled();
 	});
 
 	it('zooms from level 3 to level 5', async () => {
 		expect(map.getZoom()).to.eql(3);
-		const boxStartSpy = sinon.spy();
-		const boxEndSpy = sinon.spy();
-		const zoomSpy = sinon.spy();
+		const boxStartSpy = vi.fn();
+		const boxEndSpy = vi.fn();
+		const zoomSpy = vi.fn();
 		map.on('boxzoomstart', boxStartSpy);
 		map.on('boxzoomend', boxEndSpy);
 		map.on('zoom', zoomSpy);
@@ -100,16 +99,16 @@ describe('BoxZoomHandler', () => {
 
 		await hand.run();
 
-		expect(boxStartSpy.called).to.be.true;
-		expect(boxEndSpy.called).to.be.true;
-		expect(zoomSpy.called).to.be.true;
+		expect(boxStartSpy).toHaveBeenCalled();
+		expect(boxEndSpy).toHaveBeenCalled();
+		expect(zoomSpy).toHaveBeenCalled();
 
 		expect(map.getZoom()).to.eql(5);
 	});
 
 	it('doesn\'t start box zoom if shift key is not pressed', async () => {
 		expect(map.getZoom()).to.eql(3);
-		const zoomSpy = sinon.spy();
+		const zoomSpy = vi.fn();
 		map.on('boxzoomstart', zoomSpy);
 
 		const hand = new Hand({timing: 'fastframe'});
@@ -120,15 +119,15 @@ describe('BoxZoomHandler', () => {
 
 		await hand.run();
 
-		expect(zoomSpy.called).to.be.false;
+		expect(zoomSpy).not.toHaveBeenCalled();
 		expect(map.getZoom()).to.eql(3);
 	});
 
 	it('_clearDeferredResetState', async () => {
 		let resetTimeout = false;
 
-		const stub = sinon.stub(map.boxZoom, '_clearDeferredResetState');
-		stub.callsFake(() => {
+		const stub = vi.spyOn(map.boxZoom, '_clearDeferredResetState').mockImplementation(() => {});
+		stub.mockImplementation(() => {
 			resetTimeout = map.boxZoom._resetStateTimeout !== 0;
 			BoxZoomHandler.prototype._clearDeferredResetState.call(map.boxZoom);
 		});

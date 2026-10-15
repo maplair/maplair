@@ -1,12 +1,12 @@
-import {expect} from 'vite-plus/test';
+import {expect, vi} from 'vite-plus/test';
 import {DomUtil, GridLayer, MaplairMap, Point, Util} from 'maplair';
-import sinon from 'sinon';
 import {createContainer, removeMapContainer} from '../../SpecHelper.js';
 
 describe('GridLayer', () => {
 	let container, map;
 
-	const createClock = () => sinon.useFakeTimers({
+	const createClock = () => vi.useFakeTimers({
+		now: 0,
 		toFake: ['setTimeout', 'clearTimeout', 'Date']
 	});
 
@@ -82,14 +82,13 @@ describe('GridLayer', () => {
 	});
 
 	describe('tile pyramid', () => {
-		let clock;
 
 		beforeEach(() => {
-			clock = createClock();
+			createClock();
 		});
 
 		afterEach(() => {
-			clock.restore();
+			vi.useRealTimers();
 		});
 
 		it('removes tiles for unused zoom levels', (done) => {
@@ -119,7 +118,7 @@ describe('GridLayer', () => {
 
 			map.addLayer(grid);
 			map.setZoom(0, {animate: false});
-			clock.tick(250);
+			vi.advanceTimersByTime(250);
 		});
 	});
 
@@ -172,11 +171,11 @@ describe('GridLayer', () => {
 			});
 
 			it('does not raise tileload events', (done) => {
-				const tileLoadRaised = sinon.spy();
+				const tileLoadRaised = vi.fn();
 				grid.on('tileload', tileLoadRaised);
 				grid.on('tileerror', () => {
 					if (keys.length === 4) {
-						expect(tileLoadRaised.notCalled).to.be.true;
+						expect(tileLoadRaised).not.toHaveBeenCalled();
 						done();
 					}
 				});
@@ -184,11 +183,11 @@ describe('GridLayer', () => {
 			});
 
 			it('raises tileerror events', (done) => {
-				const tileErrorRaised = sinon.spy();
+				const tileErrorRaised = vi.fn();
 				grid.on('tileerror', () => {
 					tileErrorRaised();
 					if (keys.length === 4) {
-						expect(tileErrorRaised.callCount).to.equal(4);
+						expect(tileErrorRaised).toHaveBeenCalledTimes(4);
 						done();
 					}
 				});
@@ -217,17 +216,17 @@ describe('GridLayer', () => {
 			const layer = new GridLayer().addTo(map);
 
 			const onAdd = layer.onAdd,
-			onAddSpy = sinon.spy();
+			onAddSpy = vi.fn();
 			layer.onAdd = function (...args) {
 				onAdd.apply(this, args);
 				onAddSpy();
 			};
 
-			const onReset = sinon.spy();
+			const onReset = vi.fn();
 			map.on('zoomend', onReset);
 			map.setView([0, 0], 0);
 
-			expect(onReset.calledBefore(onAddSpy)).to.be.true;
+			expect(onReset.mock.invocationCallOrder[0]).to.be.below(onAddSpy.mock.invocationCallOrder[0]);
 		});
 	});
 
@@ -372,10 +371,10 @@ describe('GridLayer', () => {
 	});
 
 	describe('number of 256px tiles loaded in synchronous non-animated grid @800x600px', () => {
-		let clock, grid, counts;
+		let grid, counts;
 
 		beforeEach(() => {
-			clock = createClock();
+			createClock();
 
 			grid = new GridLayer({
 				attribution: 'Grid Layer',
@@ -409,7 +408,7 @@ describe('GridLayer', () => {
 		});
 
 		afterEach(() => {
-			clock.restore();
+			vi.useRealTimers();
 			grid.off();
 			grid = undefined;
 			counts = undefined;
@@ -424,7 +423,7 @@ describe('GridLayer', () => {
 			});
 
 			map.addLayer(grid).setView([0, 0], 1);
-			clock.tick(250);
+			vi.advanceTimersByTime(250);
 		});
 
 		it('Loads 5 tiles zoom 0', (done) => {
@@ -436,7 +435,7 @@ describe('GridLayer', () => {
 			});
 
 			map.addLayer(grid).setView([0, 0], 0);
-			clock.tick(250);
+			vi.advanceTimersByTime(250);
 		});
 
 		it('Loads 16 tiles zoom 10', (done) => {
@@ -450,7 +449,7 @@ describe('GridLayer', () => {
 			});
 
 			map.addLayer(grid).setView([0, 0], 10);
-			clock.tick(250);
+			vi.advanceTimersByTime(250);
 		});
 
 		it('Loads 32, unloads 16 tiles zooming in 10-11', (done) => {
@@ -468,12 +467,12 @@ describe('GridLayer', () => {
 				});
 
 				map.setZoom(11, {animate: false});
-				clock.tick(250);
+				vi.advanceTimersByTime(250);
 			});
 
 
 			map.addLayer(grid).setView([0, 0], 10);
-			clock.tick(250);
+			vi.advanceTimersByTime(250);
 		});
 
 		it('Loads 32, unloads 16 tiles zooming out 11-10', (done) => {
@@ -491,12 +490,12 @@ describe('GridLayer', () => {
 				});
 
 				map.setZoom(10, {animate: false});
-				clock.tick(250);
+				vi.advanceTimersByTime(250);
 			});
 
 
 			map.addLayer(grid).setView([0, 0], 11);
-			clock.tick(250);
+			vi.advanceTimersByTime(250);
 		});
 
 		it('Loads 32, unloads 16 tiles zooming out 18-10', (done) => {
@@ -514,19 +513,19 @@ describe('GridLayer', () => {
 				});
 
 				map.setZoom(10, {animate: false});
-				clock.tick(250);
+				vi.advanceTimersByTime(250);
 			});
 
 			map.addLayer(grid).setView([0, 0], 18);
-			clock.tick(250);
+			vi.advanceTimersByTime(250);
 		});
 	});
 
 	describe('number of 256px tiles loaded in synchronous animated grid @800x600px', () => {
-		let clock, grid, counts;
+		let grid, counts;
 
 		beforeEach(() => {
-			clock = createClock();
+			createClock();
 
 			grid = new GridLayer({
 				attribution: 'Grid Layer',
@@ -553,7 +552,7 @@ describe('GridLayer', () => {
 		});
 
 		afterEach(() => {
-			clock.restore();
+			vi.useRealTimers();
 			grid.off();
 			grid = undefined;
 			counts = undefined;
@@ -575,7 +574,8 @@ describe('GridLayer', () => {
 		function _runFrames(n) {
 			if (n) {
 				return function () {
-					clock.tick(40); // 40msec/frame ~= 25fps
+					// the frame chain may outlive the test, after real timers are restored
+					if (vi.isFakeTimers()) { vi.advanceTimersByTime(40); } // 40msec/frame ~= 25fps
 					map.fire('_frame');
 					requestAnimationFrame(_runFrames(n - 1));
 				};
@@ -585,7 +585,7 @@ describe('GridLayer', () => {
 
 		it('Loads 32, unloads 16 tiles zooming in 10-11', (done) => {
 			// Advance the time to !== 0 otherwise `tile.loaded` timestamp will appear to be falsy.
-			clock.tick(1);
+			vi.advanceTimersByTime(1);
 			// Date.now() is 1.
 
 			// grid.on('tileload tileunload tileloadstart load loading', logTiles);
@@ -601,7 +601,7 @@ describe('GridLayer', () => {
 				requestAnimationFrame(() => {
 					// Wait > 250msec for the tile fade-in animation to complete,
 					// which triggers the tile pruning
-					clock.tick(300);
+					vi.advanceTimersByTime(300);
 					// At 251ms, the pruneTile from the end of the z10 tiles fade-in animation executes.
 					// Date.now() is 301.
 
@@ -620,7 +620,7 @@ describe('GridLayer', () => {
 						// However, this "load" event callback executes synchronously,
 						// i.e. _tileReady still did not have a chance to prepare the
 						// setTimeout(250) for pruning after the end of the fade-in animation.
-						clock.tick(300);
+						vi.advanceTimersByTime(300);
 						// At 301 + 250 = 551ms, the pruneTile from the end of the zoom animation executes.
 						// It unloads the 'outside' 12 tiles from z10, but not the 4 tiles in the center,
 						// since _updateOpacity did not have a chance yet to flag the 16 new z11 tiles as "active".
@@ -638,7 +638,7 @@ describe('GridLayer', () => {
 						requestAnimationFrame(() => {
 							// Wait > 250msec for the tile fade-in animation to complete,
 							// which triggers the tile pruning
-							clock.tick(300);
+							vi.advanceTimersByTime(300);
 							// At 851ms, the pruneTile from the end of the z11 tiles fade-in animation executes.
 							// It unloads the remaining 4 tiles from z10.
 							expect(counts.tileunload).to.equal(16);
@@ -684,16 +684,16 @@ describe('GridLayer', () => {
 				});
 
 				map.setZoom(18, {animate: true});
-				clock.tick(250);
+				vi.advanceTimersByTime(250);
 			});
 
 			map.addLayer(grid).setView([0, 0], 10);
-			clock.tick(250);
+			vi.advanceTimersByTime(250);
 		});
 
 		it('Loads 32, unloads 16 tiles zooming out 11-10', (done) => {
 			// Advance the time to !== 0 otherwise `tile.loaded` timestamp will appear to be falsy.
-			clock.tick(1);
+			vi.advanceTimersByTime(1);
 			// Date.now() is 1.
 
 			// grid.on('tileload tileunload load', logTiles);
@@ -706,7 +706,7 @@ describe('GridLayer', () => {
 				requestAnimationFrame(() => {
 					// Wait > 250msec for the tile fade-in animation to complete,
 					// which triggers the tile pruning
-					clock.tick(300);
+					vi.advanceTimersByTime(300);
 					// At 251ms, the pruneTile from the end of the z11 tiles fade-in animation executes.
 					// Date.now() is 301.
 
@@ -718,7 +718,7 @@ describe('GridLayer', () => {
 						// Wait > 250msec for the zoom animation to complete,
 						// which triggers the tile pruning, but there are no
 						// tiles to prune yet (z11 tiles are all in bounds).
-						clock.tick(300);
+						vi.advanceTimersByTime(300);
 						// Date.now() is 601.
 
 						// At the end of the animation, all 16 tiles from z10
@@ -784,11 +784,11 @@ describe('GridLayer', () => {
 				});
 
 				map.setZoom(10, {animate: true});
-				clock.tick(250);
+				vi.advanceTimersByTime(250);
 			});
 
 			map.addLayer(grid).setView([0, 0], 18);
-			clock.tick(250);
+			vi.advanceTimersByTime(250);
 		});
 
 		it('Loads 224, unloads 209 tiles on MAD-TRD flyTo()', (done) => {
@@ -825,16 +825,16 @@ describe('GridLayer', () => {
 			grid.options.keepBuffer = 0;
 
 			map.addLayer(grid).setView(mad, 12);
-			clock.tick(250);
+			vi.advanceTimersByTime(250);
 		}, 10000);
 
 	});
 
 	describe('configurable tile pruning', () => {
-		let clock, grid, counts;
+		let grid, counts;
 
 		beforeEach(() => {
-			clock = createClock();
+			createClock();
 
 			grid = new GridLayer({
 				attribution: 'Grid Layer',
@@ -868,7 +868,7 @@ describe('GridLayer', () => {
 		});
 
 		afterEach(() => {
-			clock.restore();
+			vi.useRealTimers();
 			grid.off();
 			grid = undefined;
 			counts = undefined;
@@ -876,7 +876,7 @@ describe('GridLayer', () => {
 
 		it('Loads map, moves forth by 512 px, keepBuffer = 0', (done) => {
 			// Advance the time to !== 0 otherwise `tile.loaded` timestamp will appear to be falsy.
-			clock.tick(1);
+			vi.advanceTimersByTime(1);
 			// Date.now() is 1.
 
 			grid.once('load', () => {
@@ -889,7 +889,7 @@ describe('GridLayer', () => {
 
 					// Wait > 250msec for the tile fade-in animation to complete,
 					// which triggers the tile pruning
-					clock.tick(300);
+					vi.advanceTimersByTime(300);
 					// At 251ms, the pruneTile from the end of the setView tiles fade-in animation executes.
 					// Date.now() is 301.
 
@@ -918,7 +918,7 @@ describe('GridLayer', () => {
 					// OOOO
 					// OOOO
 					map.panBy([512, 512], {animate: false});
-					// clock.tick(250);
+					// vi.advanceTimersByTime(250);
 				});
 			});
 
@@ -926,7 +926,7 @@ describe('GridLayer', () => {
 
 			// 800px width * 600px height => 4 tiles horizontally * 4 tiles vertically = 16 tiles
 			map.addLayer(grid).setView([0, 0], 10);
-			// clock.tick(250);
+			// vi.advanceTimersByTime(250);
 		});
 
 		it('Loads map, moves forth and back by 512 px, keepBuffer = 0', (done) => {
@@ -956,22 +956,22 @@ describe('GridLayer', () => {
 						});
 
 						map.panBy([-512, -512], {animate: false});
-						clock.tick(250);
+						vi.advanceTimersByTime(250);
 					});
 				});
 
 				map.panBy([512, 512], {animate: false});
-				clock.tick(250);
+				vi.advanceTimersByTime(250);
 			});
 
 			grid.options.keepBuffer = 0;
 
 			map.addLayer(grid).setView([0, 0], 10);
-			clock.tick(250);
+			vi.advanceTimersByTime(250);
 		});
 
 		it('Loads map, moves forth and back by 512 px, default keepBuffer', (done) => {
-			const spy = sinon.spy();
+			const spy = vi.fn();
 
 			grid.on('load', () => {
 				expect(counts.tileloadstart).to.equal(16);
@@ -988,18 +988,18 @@ describe('GridLayer', () => {
 					grid.on('load', spy);
 
 					map.panBy([-512, -512], {animate: false});
-					clock.tick(250);
+					vi.advanceTimersByTime(250);
 
-					expect(spy.called).to.be.false;
+					expect(spy).not.toHaveBeenCalled();
 					done();
 				});
 
 				map.panBy([512, 512], {animate: false});
-				clock.tick(250);
+				vi.advanceTimersByTime(250);
 			});
 
 			map.addLayer(grid).setView([0, 0], 10);
-			clock.tick(250);
+			vi.advanceTimersByTime(250);
 		});
 	});
 
@@ -1088,9 +1088,9 @@ describe('GridLayer', () => {
 	it('doesn\'t call map\'s getZoomScale method with null after _invalidateAll method was called', () => {
 		map.setView([0, 0], 0);
 		const grid = new GridLayer().addTo(map);
-		const wrapped = sinon.spy(map, 'getZoomScale');
+		const wrapped = vi.spyOn(map, 'getZoomScale');
 		grid._invalidateAll();
 		grid.redraw();
-		expect(wrapped.neverCalledWith(sinon.match.any, null)).to.be.true;
+		expect(wrapped.mock.calls.some(args => args[1] === null)).to.be.false;
 	});
 });

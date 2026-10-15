@@ -1,6 +1,5 @@
-import {expect} from 'vite-plus/test';
+import {expect, vi} from 'vite-plus/test';
 import {DomEvent, MaplairMap, Util} from 'maplair';
-import sinon from 'sinon';
 import UIEventSimulator from 'ui-event-simulator';
 
 describe('DomEvent', () => {
@@ -9,7 +8,7 @@ describe('DomEvent', () => {
 	beforeEach(() => {
 		el = document.createElement('div');
 		document.body.appendChild(el);
-		listener = sinon.spy();
+		listener = vi.fn();
 	});
 
 	afterEach(() => {
@@ -188,48 +187,48 @@ describe('DomEvent', () => {
 		});
 
 		it('adds a listener and calls it on event with click', () => {
-			const listener2 = sinon.spy();
+			const listener2 = vi.fn();
 			DomEvent.on(el, 'click', listener);
 			DomEvent.on(el, 'click', listener2);
 
 			UIEventSimulator.fire('click', el);
 
-			expect(listener.called).to.be.true;
-			expect(listener2.called).to.be.true;
+			expect(listener).toHaveBeenCalled();
+			expect(listener2).toHaveBeenCalled();
 		});
 
 		it('adds a listener and calls it on event with click and keypress', () => {
-			const listener2 = sinon.spy();
+			const listener2 = vi.fn();
 			DomEvent.on(el, 'click keypress', listener);
 			DomEvent.on(el, 'click', listener2);
 
 			UIEventSimulator.fire('click', el);
 			UIEventSimulator.fire('keypress', el);
 
-			expect(listener.called).to.be.true;
-			expect(listener2.called).to.be.true;
+			expect(listener).toHaveBeenCalled();
+			expect(listener2).toHaveBeenCalled();
 		});
 
 		it('adds a listener when passed an event map', () => {
-			const listener = sinon.spy();
+			const listener = vi.fn();
 
 			DomEvent.on(el, {click: listener});
 
 			UIEventSimulator.fire('click', el);
 
-			sinon.assert.called(listener);
+			expect(listener).toHaveBeenCalled();
 		});
 
 		it('adds 2 listener when passed an event map with multiple events', () => {
-			const listener2 = sinon.spy();
+			const listener2 = vi.fn();
 
 			DomEvent.on(el, {click: listener, keypress: listener2});
 
 			UIEventSimulator.fire('click', el);
 			UIEventSimulator.fire('keypress', el);
 
-			sinon.assert.called(listener);
-			sinon.assert.called(listener2);
+			expect(listener).toHaveBeenCalled();
+			expect(listener2).toHaveBeenCalled();
 		});
 
 		it('binds "this" to the given context', () => {
@@ -238,7 +237,7 @@ describe('DomEvent', () => {
 
 			UIEventSimulator.fire('click', el);
 
-			expect(listener.calledOn(obj)).to.be.true;
+			expect(listener.mock.contexts).to.include(obj);
 		});
 
 		it('binds "this" to the given context with multiple types', () => {
@@ -248,22 +247,22 @@ describe('DomEvent', () => {
 			UIEventSimulator.fire('click', el);
 			UIEventSimulator.fire('keypress', el);
 
-			expect(listener.calledOn(obj)).to.be.true;
+			expect(listener.mock.contexts).to.include(obj);
 		});
 
 		it('binds "this" to the given context when passed an event map', () => {
-			const listener = sinon.spy(),
+			const listener = vi.fn(),
 			ctx = {foo: 'bar'};
 
 			DomEvent.on(el, {click: listener}, ctx);
 
 			UIEventSimulator.fire('click', el);
 
-			sinon.assert.calledOn(listener, ctx);
+			expect(listener.mock.contexts).to.include(ctx);
 		});
 
 		it('binds "this" to the given context when passed an event map with multiple events', () => {
-			const listener2 = sinon.spy(),
+			const listener2 = vi.fn(),
 			ctx = {foo: 'bar'};
 
 			DomEvent.on(el, {click: listener, keypress: listener2}, ctx);
@@ -271,8 +270,8 @@ describe('DomEvent', () => {
 			UIEventSimulator.fire('click', el);
 			UIEventSimulator.fire('keypress', el);
 
-			sinon.assert.calledOn(listener, ctx);
-			sinon.assert.calledOn(listener2, ctx);
+			expect(listener.mock.contexts).to.include(ctx);
+			expect(listener2.mock.contexts).to.include(ctx);
 		});
 
 		it('passes an event object to the listener', () => {
@@ -280,7 +279,7 @@ describe('DomEvent', () => {
 
 			UIEventSimulator.fire('click', el);
 
-			expect(listener.lastCall.args[0].type).to.eql('click');
+			expect(listener.mock.lastCall[0].type).to.eql('click');
 		});
 
 		it('passes two event objects to the listener', () => {
@@ -289,8 +288,8 @@ describe('DomEvent', () => {
 			UIEventSimulator.fire('click', el);
 			UIEventSimulator.fire('keypress', el);
 
-			expect(listener.firstCall.args[0].type).to.eql('click');
-			expect(listener.secondCall.args[0].type).to.eql('keypress');
+			expect(listener.mock.calls[0][0].type).to.eql('click');
+			expect(listener.mock.calls[1][0].type).to.eql('keypress');
 		});
 
 		it('is chainable', () => {
@@ -307,7 +306,7 @@ describe('DomEvent', () => {
 
 			UIEventSimulator.fire('click', el);
 
-			expect(listener.notCalled).to.be.true;
+			expect(listener).not.toHaveBeenCalled();
 		});
 
 		it('removes a previously added event', () => {
@@ -317,12 +316,12 @@ describe('DomEvent', () => {
 			UIEventSimulator.fire('click', el);
 			UIEventSimulator.fire('keypress', el);
 
-			expect(listener.lastCall.args[0].type).to.eql('keypress');
+			expect(listener.mock.lastCall[0].type).to.eql('keypress');
 		});
 
 		it('only removes the specified listener', () => {
-			const listenerA = sinon.spy(),
-			listenerB = sinon.spy();
+			const listenerA = vi.fn(),
+			listenerB = vi.fn();
 
 			DomEvent.on(el, 'click', listenerA);
 			DomEvent.on(el, 'click', listenerB);
@@ -330,12 +329,12 @@ describe('DomEvent', () => {
 
 			UIEventSimulator.fire('click', el);
 
-			expect(listenerA.called).to.be.false;
-			expect(listenerB.called).to.be.true;
+			expect(listenerA).not.toHaveBeenCalled();
+			expect(listenerB).toHaveBeenCalled();
 		});
 
 		it('removes a previously added listener when passed an event map', () => {
-			const listener = sinon.spy(),
+			const listener = vi.fn(),
 			events = {click: listener};
 
 			DomEvent.on(el, events);
@@ -343,11 +342,11 @@ describe('DomEvent', () => {
 
 			UIEventSimulator.fire('click', el);
 
-			sinon.assert.notCalled(listener);
+			expect(listener).not.toHaveBeenCalled();
 		});
 
 		it('removes a previously added listener when passed an event map with multiple events', () => {
-			const listener2 = sinon.spy(),
+			const listener2 = vi.fn(),
 			events = {click: listener, keypress: listener2};
 
 			DomEvent.on(el, events);
@@ -356,12 +355,12 @@ describe('DomEvent', () => {
 			UIEventSimulator.fire('click', el);
 			UIEventSimulator.fire('keypress', el);
 
-			sinon.assert.notCalled(listener);
-			sinon.assert.notCalled(listener2);
+			expect(listener).not.toHaveBeenCalled();
+			expect(listener2).not.toHaveBeenCalled();
 		});
 
 		it('removes a previously added event when passed an event map with multiple events', () => {
-			const listener2 = sinon.spy(),
+			const listener2 = vi.fn(),
 			events = {click: listener, keypress: listener2},
 			events2 = {click: listener};
 
@@ -371,12 +370,12 @@ describe('DomEvent', () => {
 			UIEventSimulator.fire('click', el);
 			UIEventSimulator.fire('keypress', el);
 
-			sinon.assert.notCalled(listener);
-			expect(listener2.lastCall.args[0].type).to.eql('keypress');
+			expect(listener).not.toHaveBeenCalled();
+			expect(listener2.mock.lastCall[0].type).to.eql('keypress');
 		});
 
 		it('removes listener added with context', () => {
-			const listener = sinon.spy(),
+			const listener = vi.fn(),
 			ctx = {foo: 'bar'};
 
 			DomEvent.on(el, 'click', listener, ctx);
@@ -384,11 +383,11 @@ describe('DomEvent', () => {
 
 			UIEventSimulator.fire('click', el);
 
-			sinon.assert.notCalled(listener);
+			expect(listener).not.toHaveBeenCalled();
 		});
 
 		it('removes listener added with context when passed an event map', () => {
-			const listener = sinon.spy(),
+			const listener = vi.fn(),
 			events = {click: listener},
 			ctx = {foo: 'bar'};
 
@@ -397,11 +396,11 @@ describe('DomEvent', () => {
 
 			UIEventSimulator.fire('click', el);
 
-			sinon.assert.notCalled(listener);
+			expect(listener).not.toHaveBeenCalled();
 		});
 
 		it('removes listener added with context when passed an event map with multiple events', () => {
-			const listener2 = sinon.spy(),
+			const listener2 = vi.fn(),
 			events = {click: listener, keypress: listener2},
 			events2 = {click: listener},
 			ctx = {foo: 'bar'};
@@ -412,12 +411,12 @@ describe('DomEvent', () => {
 			UIEventSimulator.fire('click', el);
 			UIEventSimulator.fire('keypress', el);
 
-			sinon.assert.notCalled(listener);
-			expect(listener2.lastCall.args[0].type).to.eql('keypress');
+			expect(listener).not.toHaveBeenCalled();
+			expect(listener2.mock.lastCall[0].type).to.eql('keypress');
 		});
 
 		it('only removes listener when proper context specified', () => {
-			let listener = sinon.spy();
+			let listener = vi.fn();
 			const ctx = {foo: 'bar'};
 
 			DomEvent.on(el, 'click', listener);
@@ -425,20 +424,20 @@ describe('DomEvent', () => {
 
 			UIEventSimulator.fire('click', el);
 
-			sinon.assert.called(listener);
+			expect(listener).toHaveBeenCalled();
 
-			listener = sinon.spy();
+			listener = vi.fn();
 			DomEvent.on(el, 'click', listener, ctx);
 			DomEvent.off(el, 'click', listener, {}); // wrong context
 			DomEvent.off(el, 'click', listener);
 
 			UIEventSimulator.fire('click', el);
 
-			sinon.assert.called(listener);
+			expect(listener).toHaveBeenCalled();
 		});
 
 		it('only removes listener when proper context specified when passed an event map', () => {
-			let listener = sinon.spy(),
+			let listener = vi.fn(),
 			events = {click: listener};
 			const ctx = {foo: 'bar'};
 
@@ -447,9 +446,9 @@ describe('DomEvent', () => {
 
 			UIEventSimulator.fire('click', el);
 
-			sinon.assert.called(listener);
+			expect(listener).toHaveBeenCalled();
 
-			listener = sinon.spy();
+			listener = vi.fn();
 			events = {click: listener};
 
 			DomEvent.on(el, events, ctx);
@@ -458,12 +457,12 @@ describe('DomEvent', () => {
 
 			UIEventSimulator.fire('click', el);
 
-			sinon.assert.called(listener);
+			expect(listener).toHaveBeenCalled();
 		});
 
 		it('removes all listeners when only passed the HTMLElement', () => {
-			const listenerA = sinon.spy(),
-			listenerB = sinon.spy();
+			const listenerA = vi.fn(),
+			listenerB = vi.fn();
 
 			DomEvent.on(el, 'click', listenerA);
 			DomEvent.on(el, 'click', listenerB, {});
@@ -471,13 +470,13 @@ describe('DomEvent', () => {
 
 			UIEventSimulator.fire('click', el);
 
-			expect(listenerA.called).to.be.false;
-			expect(listenerB.called).to.be.false;
+			expect(listenerA).not.toHaveBeenCalled();
+			expect(listenerB).not.toHaveBeenCalled();
 		});
 
 		it('only removes specified listeners type', () => {
-			const listenerClick = sinon.spy(),
-			listenerDblClick = sinon.spy();
+			const listenerClick = vi.fn(),
+			listenerDblClick = vi.fn();
 
 			DomEvent.on(el, 'click', listenerClick);
 			DomEvent.on(el, 'dblclick', listenerDblClick);
@@ -485,8 +484,8 @@ describe('DomEvent', () => {
 			UIEventSimulator.fire('click', el);
 			UIEventSimulator.fire('dblclick', el);
 
-			sinon.assert.notCalled(listenerClick);
-			sinon.assert.called(listenerDblClick);
+			expect(listenerClick).not.toHaveBeenCalled();
+			expect(listenerDblClick).toHaveBeenCalled();
 		});
 
 		it('throws when types/fn are undefined/null/false', () => {
@@ -500,14 +499,14 @@ describe('DomEvent', () => {
 		});
 
 		it('removes listener when passed an event map', () => {
-			const listener = sinon.spy();
+			const listener = vi.fn();
 
 			DomEvent.on(el, 'click', listener);
 			DomEvent.off(el, {'click': listener});
 
 			UIEventSimulator.fire('click', el);
 
-			expect(listener.called).to.be.false;
+			expect(listener).not.toHaveBeenCalled();
 		});
 
 		it('is chainable', () => {
@@ -526,7 +525,7 @@ describe('DomEvent', () => {
 
 			UIEventSimulator.fire('click', child);
 
-			expect(listener.notCalled).to.be.true;
+			expect(listener).not.toHaveBeenCalled();
 		});
 	});
 
@@ -540,7 +539,7 @@ describe('DomEvent', () => {
 			DomEvent.disableScrollPropagation(child);
 			UIEventSimulator.fire(wheel, child);
 
-			expect(listener.notCalled).to.be.true;
+			expect(listener).not.toHaveBeenCalled();
 		});
 	});
 
@@ -555,7 +554,7 @@ describe('DomEvent', () => {
 			UIEventSimulator.fire('contextmenu', child);
 			UIEventSimulator.fire('pointerdown', child);
 
-			expect(listener.notCalled).to.be.true;
+			expect(listener).not.toHaveBeenCalled();
 		});
 
 		it('prevents click event on map object, but propagates to DOM elements', () => { // to solve #301
@@ -567,23 +566,23 @@ describe('DomEvent', () => {
 			child.appendChild(grandChild);
 
 			const map = new MaplairMap(el).setView([0, 0], 0);
-			const mapClickListener = sinon.spy();
-			const mapOtherListener = sinon.spy();
+			const mapClickListener = vi.fn();
+			const mapOtherListener = vi.fn();
 			map.on('click', mapClickListener);          // control case
 			map.on('keypress', mapOtherListener);       // control case
 
 			UIEventSimulator.fire('click', grandChild);
 			UIEventSimulator.fire('keypress', grandChild);
 
-			expect(mapOtherListener.called).to.be.true; // control case
-			expect(listener.called).to.be.true;
-			expect(mapClickListener.notCalled).to.be.true;
+			expect(mapOtherListener).toHaveBeenCalled(); // control case
+			expect(listener).toHaveBeenCalled();
+			expect(mapClickListener).not.toHaveBeenCalled();
 
 			UIEventSimulator.fire('click', child);
 			UIEventSimulator.fire('keypress', child);
 
-			expect(listener.calledTwice).to.be.true;
-			expect(mapClickListener.notCalled).to.be.true;
+			expect(listener).toHaveBeenCalledTimes(2);
+			expect(mapClickListener).not.toHaveBeenCalled();
 
 			map.remove();
 		});

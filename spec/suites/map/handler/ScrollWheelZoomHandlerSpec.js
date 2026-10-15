@@ -1,6 +1,5 @@
-import {expect} from 'vite-plus/test';
+import {expect, vi} from 'vite-plus/test';
 import {DomEvent, MaplairMap} from 'maplair';
-import sinon from 'sinon';
 import UIEventSimulator from 'ui-event-simulator';
 import {createContainer, removeMapContainer} from '../../SpecHelper.js';
 
@@ -73,18 +72,18 @@ describe('ScrollWheelZoomHandler', () => {
 		map.options.wheelDebounceTime = 100;
 		const zoom = map.getZoom();
 
-		const spy = sinon.spy();
+		const spy = vi.fn();
 		map.on('zoomend', spy);
 
 		UIEventSimulator.fire(wheel, container, scrollIn);
 		setTimeout(() => {
 			UIEventSimulator.fire(wheel, container, scrollIn);
 
-			expect(spy.notCalled).to.be.true;
+			expect(spy).not.toHaveBeenCalled();
 		}, 50);
 
 		map.on('zoomend', () => {
-			expect(spy.calledOnce).to.be.true;
+			expect(spy).toHaveBeenCalledOnce();
 			// Bug 1.8.0: Firefox wheel zoom makes 2 steps #7403
 			// expect(map.getCenter()).to.be.nearLatLng([25.48295117535531, -26.367187500000004]);
 			expect(map.getZoom()).to.be.greaterThan(zoom);

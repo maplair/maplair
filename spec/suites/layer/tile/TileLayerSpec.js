@@ -1,6 +1,5 @@
-import {expect} from 'vite-plus/test';
+import {expect, vi} from 'vite-plus/test';
 import {Browser, SimpleCRS, MaplairMap, TileLayer, Util, LatLng} from 'maplair';
-import sinon from 'sinon';
 import {createContainer, removeMapContainer} from '../../SpecHelper.js';
 
 describe('TileLayer', () => {
@@ -188,7 +187,7 @@ describe('TileLayer', () => {
 	}
 
 	describe('number of kittens loaded', () => {
-		let clock, kittenLayer, counts;
+		let kittenLayer, counts;
 
 		// animationFrame helper, just runs requestAnimationFrame() a given number of times
 		function runFrames(n) {
@@ -198,7 +197,8 @@ describe('TileLayer', () => {
 		function _runFrames(n) {
 			if (n) {
 				return function () {
-					clock.tick(40); // 40msec/frame ~= 25fps
+					// the frame chain may outlive the test, after real timers are restored
+					if (vi.isFakeTimers()) { vi.advanceTimersByTime(40); } // 40msec/frame ~= 25fps
 					map.fire('_frame');
 					requestAnimationFrame(_runFrames(n - 1));
 				};
@@ -207,7 +207,8 @@ describe('TileLayer', () => {
 		}
 
 		beforeEach(() => {
-			clock = sinon.useFakeTimers({
+			vi.useFakeTimers({
+				now: 0,
 				toFake: ['setTimeout', 'clearTimeout', 'Date']
 			});
 
@@ -233,7 +234,7 @@ describe('TileLayer', () => {
 		});
 
 		afterEach(() => {
-			clock.restore();
+			vi.useRealTimers();
 			kittenLayer.off();
 			kittenLayer = undefined;
 			counts = undefined;
@@ -249,7 +250,7 @@ describe('TileLayer', () => {
 			});
 
 			map.addLayer(kittenLayer).setView([0, 0], 1);
-			clock.tick(250);
+			vi.advanceTimersByTime(250);
 		});
 
 		it('Loads 224, unloads 209 kittens on MAD-TRD flyTo()', (done) => {
@@ -286,7 +287,7 @@ describe('TileLayer', () => {
 			});
 
 			map.addLayer(kittenLayer).setView(mad, 12);
-			clock.tick(250);
+			vi.advanceTimersByTime(250);
 		}, 10000);
 
 	});

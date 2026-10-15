@@ -1,6 +1,5 @@
-import {expect} from 'vite-plus/test';
+import {expect, vi} from 'vite-plus/test';
 import {Bounds, LineUtil, MaplairMap, LatLng, Point, Polyline} from 'maplair';
-import sinon from 'sinon';
 
 describe('LineUtil', () => {
 	describe('#clipSegment', () => {
@@ -164,10 +163,10 @@ describe('LineUtil', () => {
 			const latlngs = [
 				[[80, 0], [80, 90]]
 			];
-			const spy = sinon.spy(console, 'warn');
+			const spy = vi.spyOn(console, 'warn');
 			const center = LineUtil.polylineCenter(latlngs, crs);
-			console.warn.restore();
-			expect(spy.calledOnce).to.be.true;
+			expect(spy).toHaveBeenCalledOnce();
+			spy.mockRestore();
 			expect(center).to.be.nearLatLng([80, 45]);
 		});
 

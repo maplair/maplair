@@ -1,6 +1,5 @@
-import {expect} from 'vite-plus/test';
+import {expect, vi} from 'vite-plus/test';
 import {Control, DomUtil, MaplairMap} from 'maplair';
-import sinon from 'sinon';
 import {createContainer, removeMapContainer} from '../SpecHelper.js';
 
 describe('Control', () => {
@@ -45,9 +44,9 @@ describe('Control', () => {
 		});
 
 		it('calls onRemove if defined', () => {
-			control.onRemove = sinon.spy();
+			control.onRemove = vi.fn();
 			control.remove();
-			expect(control.onRemove.called).to.be.true;
+			expect(control.onRemove).toHaveBeenCalled();
 		});
 
 		it('is a no-op if the control has not been added', () => {

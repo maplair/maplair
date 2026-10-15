@@ -222,7 +222,6 @@ export default defineConfig({
 				rules: {
 					'no-unused-expressions': 'off',
 					'no-new': 'off',
-					'import/no-named-as-default-member': 'off', // sinon.spy() etc.
 				},
 			},
 			{

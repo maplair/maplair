@@ -1,7 +1,6 @@
-import {expect} from 'vite-plus/test';
+import {expect, vi} from 'vite-plus/test';
 import {DomUtil, LatLng, MaplairMap, Marker, Point} from 'maplair';
 import Hand from 'prosthetic-hand';
-import sinon from 'sinon';
 import UIEventSimulator from 'ui-event-simulator';
 import {createContainer, removeMapContainer, pointerEventType} from '../../SpecHelper.js';
 
@@ -137,7 +136,7 @@ describe('DragHandler', () => {
 			const originalCenter = new LatLng(0, 0);
 			map.setView(originalCenter.clone(), 1);
 
-			const spy = sinon.spy();
+			const spy = vi.fn();
 			map.on('drag', spy);
 
 			const hand = new Hand({timing: 'fastframe'});
@@ -146,7 +145,7 @@ describe('DragHandler', () => {
 				expect(map.getZoom()).to.equal(1);
 				// Expect center point to be the same as before the click
 				expect(map.getCenter()).to.eql(originalCenter);
-				expect(spy.callCount).to.eql(0); // No drag event should have been fired.
+				expect(spy).toHaveBeenCalledTimes(0); // No drag event should have been fired.
 
 				done();
 
@@ -165,9 +164,9 @@ describe('DragHandler', () => {
 				inertia: false
 			});
 			map.setView([0, 0], 1);
-			const clickSpy = sinon.spy();
-			const preclickSpy = sinon.spy();
-			const dragSpy = sinon.spy();
+			const clickSpy = vi.fn();
+			const preclickSpy = vi.fn();
+			const dragSpy = vi.fn();
 			map.on('click', clickSpy);
 			map.on('preclick', preclickSpy);
 			map.on('drag', dragSpy);
@@ -177,9 +176,9 @@ describe('DragHandler', () => {
 				// A real user scenario would trigger a click on pointerup.
 				// We want to be sure we are cancelling it after a drag.
 				UIEventSimulator.fire('click', container);
-				expect(dragSpy.called).to.be.true;
-				expect(clickSpy.called).to.be.false;
-				expect(preclickSpy.called).to.be.false;
+				expect(dragSpy).toHaveBeenCalled();
+				expect(clickSpy).not.toHaveBeenCalled();
+				expect(preclickSpy).not.toHaveBeenCalled();
 				done();
 			});
 			const pointer = hand.growFinger('pointer');
@@ -196,10 +195,10 @@ describe('DragHandler', () => {
 			});
 			map.setView([0, 0], 1);
 			const marker = new Marker(map.getCenter()).addTo(map);
-			const clickSpy = sinon.spy();
-			const preclickSpy = sinon.spy();
-			const markerDragSpy = sinon.spy();
-			const mapDragSpy = sinon.spy();
+			const clickSpy = vi.fn();
+			const preclickSpy = vi.fn();
+			const markerDragSpy = vi.fn();
+			const mapDragSpy = vi.fn();
 			map.on('click', clickSpy);
 			map.on('preclick', preclickSpy);
 			map.on('drag', mapDragSpy);
@@ -212,10 +211,10 @@ describe('DragHandler', () => {
 				// A real user scenario would trigger a click on pointerup.
 				// We want to be sure we are cancelling it after a drag.
 				UIEventSimulator.fire('click', container);
-				expect(mapDragSpy.called).to.be.true;
-				expect(markerDragSpy.called).to.be.false;
-				expect(clickSpy.called).to.be.false;
-				expect(preclickSpy.called).to.be.false;
+				expect(mapDragSpy).toHaveBeenCalled();
+				expect(markerDragSpy).not.toHaveBeenCalled();
+				expect(clickSpy).not.toHaveBeenCalled();
+				expect(preclickSpy).not.toHaveBeenCalled();
 				done();
 			});
 			const pointer = hand.growFinger('pointer');
@@ -234,10 +233,10 @@ describe('DragHandler', () => {
 			});
 			map.setView([0, 0], 1);
 			const marker = new Marker(map.getCenter(), {draggable: true}).addTo(map);
-			const clickSpy = sinon.spy();
-			const preclickSpy = sinon.spy();
-			const markerDragSpy = sinon.spy();
-			const mapDragSpy = sinon.spy();
+			const clickSpy = vi.fn();
+			const preclickSpy = vi.fn();
+			const markerDragSpy = vi.fn();
+			const mapDragSpy = vi.fn();
 			map.on('click', clickSpy);
 			map.on('preclick', preclickSpy);
 			map.on('drag', mapDragSpy);
@@ -250,10 +249,10 @@ describe('DragHandler', () => {
 				// A real user scenario would trigger a click on pointerup.
 				// We want to be sure we are cancelling it after a drag.
 				UIEventSimulator.fire('click', marker._icon);
-				expect(markerDragSpy.called).to.be.true;
-				expect(mapDragSpy.called).to.be.false;
-				expect(clickSpy.called).to.be.false;
-				expect(preclickSpy.called).to.be.false;
+				expect(markerDragSpy).toHaveBeenCalled();
+				expect(mapDragSpy).not.toHaveBeenCalled();
+				expect(clickSpy).not.toHaveBeenCalled();
+				expect(preclickSpy).not.toHaveBeenCalled();
 				done();
 			});
 			const pointer = hand.growFinger('pointer');
@@ -275,7 +274,7 @@ describe('DragHandler', () => {
 			map.on('pointerdown', () => {
 				map.dragging.disable();
 			});
-			const spy = sinon.spy();
+			const spy = vi.fn();
 			map.on('drag', spy);
 
 			const hand = new Hand({timing: 'fastframe'});
@@ -283,7 +282,7 @@ describe('DragHandler', () => {
 				expect(map.getZoom()).to.equal(1);
 				// Expect center point to be the same as before the click
 				expect(map.getCenter()).to.eql(originalCenter);
-				expect(spy.callCount).to.eql(0); // No drag event should have been fired.
+				expect(spy).toHaveBeenCalledTimes(0); // No drag event should have been fired.
 				done();
 			});
 			const pointer = hand.growFinger('pointer');
@@ -329,7 +328,7 @@ describe('DragHandler', () => {
 			const originalCenter = new LatLng(0, 0);
 			map.setView(originalCenter, 1);
 
-			const spy = sinon.spy();
+			const spy = vi.fn();
 			map.on('drag', spy);
 
 			const hand = new Hand({timing: 'fastframe'});
@@ -337,7 +336,7 @@ describe('DragHandler', () => {
 				expect(map.getZoom()).to.equal(1);
 				// Expect center point to be the same as before the click
 				expect(map.getCenter().equals(originalCenter)).to.be.true; // small margin of error allowed
-				expect(spy.callCount).to.eql(0); // No drag event should have been fired.
+				expect(spy).toHaveBeenCalledTimes(0); // No drag event should have been fired.
 
 				done();
 			});

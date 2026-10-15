@@ -13,7 +13,6 @@
     "leafdoc": "^2.4.0",
     "playwright": "^1.62.0",
     "prosthetic-hand": "^2.2.2",
-    "sinon": "^22.1.0",
     "ui-event-simulator": "^2.0.0",
     "vite-plus": "1.1.0",
     "vitest": "5.0.3"

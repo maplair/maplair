@@ -1,6 +1,5 @@
-import {expect} from 'vite-plus/test';
+import {expect, vi} from 'vite-plus/test';
 import {LatLngBounds, MaplairMap, ImageOverlay} from 'maplair';
-import sinon from 'sinon';
 import {createContainer, removeMapContainer} from '../SpecHelper.js';
 
 describe('ImageOverlay', () => {
@@ -71,19 +70,19 @@ describe('ImageOverlay', () => {
 
 		describe('when loaded', () => {
 			it('should raise the load event', () => {
-				const loadRaised = sinon.spy();
+				const loadRaised = vi.fn();
 				overlay.once('load', loadRaised);
 				raiseImageEvent('load');
-				expect(loadRaised.called).to.be.true;
+				expect(loadRaised).toHaveBeenCalled();
 			});
 		});
 
 		describe('when load fails', () => {
 			it('should raise the error event', () => {
-				const errorRaised  = sinon.spy();
+				const errorRaised  = vi.fn();
 				overlay.once('error', errorRaised);
 				raiseImageEvent('error');
-				expect(errorRaised.called).to.be.true;
+				expect(errorRaised).toHaveBeenCalled();
 			});
 
 			it('should change the image to errorOverlayUrl', () => {

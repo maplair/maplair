@@ -1,6 +1,5 @@
-import {expect} from 'vite-plus/test';
+import {expect, vi} from 'vite-plus/test';
 import {Bounds, Canvas, CircleMarker, DivIcon, DomEvent, GridLayer, Handler, LatLngBounds, Layer, MaplairMap, Marker, Point, Polygon, TileLayer, Util, LayersControl, LatLng} from 'maplair';
-import sinon from 'sinon';
 import UIEventSimulator from 'ui-event-simulator';
 import {createContainer, removeMapContainer} from '../SpecHelper.js';
 
@@ -21,7 +20,7 @@ describe('Map', () => {
 		let spy;
 
 		beforeEach(() => {
-			spy = sinon.spy();
+			spy = vi.fn();
 		});
 
 		it('fires an unload event if loaded', () => {
@@ -29,14 +28,14 @@ describe('Map', () => {
 			map.on('unload', spy);
 			map.remove();
 			map = null;
-			expect(spy.called).to.be.true;
+			expect(spy).toHaveBeenCalled();
 		});
 
 		it('fires no unload event if not loaded', () => {
 			map.on('unload', spy);
 			map.remove();
 			map = null;
-			expect(spy.called).not.to.be.true;
+			expect(spy).not.toHaveBeenCalled();
 		});
 
 		describe('corner case checking', () => {
@@ -63,10 +62,10 @@ describe('Map', () => {
 			map.setView([0, 0], 0);
 			map.on('click', spy);
 			UIEventSimulator.fire('click', container);
-			expect(spy.called).to.be.true;
+			expect(spy).toHaveBeenCalled();
 
 			// actual test
-			spy = sinon.spy();
+			spy = vi.fn();
 			map.on('click dblclick pointerdown pointerup pointermove', spy);
 			map.remove();
 			map = null;
@@ -77,7 +76,7 @@ describe('Map', () => {
 			UIEventSimulator.fire('pointerup', container);
 			UIEventSimulator.fire('pointermove', container);
 
-			expect(spy.called).to.be.false;
+			expect(spy).not.toHaveBeenCalled();
 		});
 
 		it('does not throw if removed during animation', () => {
@@ -155,22 +154,22 @@ describe('Map', () => {
 	describe('#whenReady', () => {
 		describe('when the map has not yet been loaded', () => {
 			it('calls the callback when the map is loaded', () => {
-				const spy = sinon.spy();
+				const spy = vi.fn();
 				map.whenReady(spy);
-				expect(spy.called).to.be.false;
+				expect(spy).not.toHaveBeenCalled();
 
 				map.setView([0, 0], 1);
-				expect(spy.called).to.be.true;
+				expect(spy).toHaveBeenCalled();
 			});
 		});
 
 		describe('when the map has already been loaded', () => {
 			it('calls the callback immediately', () => {
-				const spy = sinon.spy();
+				const spy = vi.fn();
 				map.setView([0, 0], 1);
 				map.whenReady(spy);
 
-				expect(spy.called).to.be.true;
+				expect(spy).toHaveBeenCalled();
 			});
 		});
 	});
@@ -206,18 +205,18 @@ describe('Map', () => {
 
 		it('passes duration option to panBy', () => {
 			const map = new MaplairMap(document.createElement('div'), {zoom: 13, center: [0, 0]});
-			map.panBy = sinon.spy();
+			map.panBy = vi.fn();
 			map.setView([51.605, -0.11], 13, {animate: true, duration: 13});
 			map.remove(); // clean up
-			expect(map.panBy.callCount).to.eql(1);
-			expect(map.panBy.args[0][1].duration).to.eql(13);
+			expect(map.panBy).toHaveBeenCalledTimes(1);
+			expect(map.panBy.mock.calls[0][1].duration).to.eql(13);
 		});
 
 		it('prevents firing movestart noMoveStart', (done) => {
-			const movestartSpy = sinon.spy();
+			const movestartSpy = vi.fn();
 			map.on('movestart', movestartSpy);
 			map.on('moveend', () => {
-				expect(movestartSpy.notCalled).to.eql(true);
+				expect(movestartSpy).not.toHaveBeenCalled();
 				done();
 			});
 
@@ -298,25 +297,25 @@ describe('Map', () => {
 	describe('#stop', () => {
 		it('does not try to stop the animation if it wasn\'t set before', () => {
 			map.setView([50, 50], 10);
-			map.stop = sinon.spy();
+			map.stop = vi.fn();
 			map.panTo([10, 10], 10);
-			expect(map.stop.called).to.be.false;
+			expect(map.stop).not.toHaveBeenCalled();
 		});
 
 		it('stops the execution of the flyTo animation', () => {
 			map.setView([0, 0]);
-			map.stop = sinon.spy();
+			map.stop = vi.fn();
 			map.flyTo([51.505, -0.09]);
 			map.stop();
-			expect(map.stop.calledOnce).to.be.true;
+			expect(map.stop).toHaveBeenCalledOnce();
 		});
 
 		it('stops the execution of the panTo animation', () => {
 			map.setView([0, 0]);
-			map.stop = sinon.spy();
+			map.stop = vi.fn();
 			map.panTo([51.505, -0.09]);
 			map.stop();
-			expect(map.stop.calledOnce).to.be.true;
+			expect(map.stop).toHaveBeenCalledOnce();
 		});
 	});
 
@@ -425,17 +424,15 @@ describe('Map', () => {
 
 			// test case: EPSG:25833 (mocked, for simplicity)
 			// The following coordinates are bounds projected with proj4maplair crs = EPSG:25833', '+proj=utm +zone=33 +ellps=GRS80 +units=m +no_defs
-			const crsMock = sinon.mock(map.options.crs);
-			crsMock.expects('latLngToPoint')
-				.withExactArgs(bounds.getNorthWest(), 16)
-				.returns(new Point(7800503.059925064, 6440062.353052008));
-			crsMock.expects('latLngToPoint')
-				.withExactArgs(bounds.getSouthEast(), 16)
-				.returns(new Point(7801987.203481699, 6425186.447901004));
+			const nw = bounds.getNorthWest(), se = bounds.getSouthEast();
+			const latLngToPoint = vi.spyOn(map.options.crs, 'latLngToPoint').mockImplementation(latlng => (latlng.equals(nw) ?
+				new Point(7800503.059925064, 6440062.353052008) :
+				new Point(7801987.203481699, 6425186.447901004)));
 			boundsZoom = map.getBoundsZoom(bounds, false, padding);
-			crsMock.restore();
 
-			crsMock.verify(); // ensure that latLngToPoint was called with expected args
+			// ensure that latLngToPoint was called with expected args
+			expect(latLngToPoint.mock.calls).to.have.deep.members([[nw, 16], [se, 16]]);
+			latLngToPoint.mockRestore();
 			expect(boundsZoom).to.eql(7); // result expected for EPSG:25833
 		});
 
@@ -499,21 +496,21 @@ describe('Map', () => {
 			new TileLayer('', {minZoom: 0, maxZoom: 20}).addTo(map);
 			container.style.width = container.style.height = '500px';
 			const bounds = new LatLngBounds([51.5, -0.05], [51.55, 0.05]);
-			map.off = sinon.spy();
+			map.off = vi.fn();
 			map.setMaxBounds(bounds, {animate: false});
-			expect(map.off.called).not.to.be.true;
+			expect(map.off).not.toHaveBeenCalled();
 		});
 
 		it('avoid subpixel / floating point related wobble (#8532)', (done) => {
 			map.setView([50.450036, 30.5241361], 13);
 
-			const spy = sinon.spy();
+			const spy = vi.fn();
 			map.on('moveend', spy);
 			map.setMaxBounds(map.getBounds());
 
 			// Unfortunately this is one of those tests where we need to allow at least one animation tick
 			setTimeout(() => {
-				expect(spy.called).to.be.false;
+				expect(spy).not.toHaveBeenCalled();
 				done();
 			}, 300);
 		});
@@ -535,7 +532,7 @@ describe('Map', () => {
 			});
 
 			it('do not fire \'zoomlevelschange\'', () => {
-				const spy = sinon.spy();
+				const spy = vi.fn();
 				map.on('zoomlevelschange', spy);
 
 				map.setZoom(5);
@@ -546,7 +543,7 @@ describe('Map', () => {
 				expect(map.getMinZoom()).to.eql(3);
 				expect(map.getMaxZoom()).to.eql(7);
 
-				expect(spy.called).to.be.false;
+				expect(spy).not.toHaveBeenCalled();
 			});
 		});
 
@@ -556,7 +553,7 @@ describe('Map', () => {
 			beforeEach(() => {
 				map.setView([0, 0], 4); // loads map
 
-				spy = sinon.spy();
+				spy = vi.fn();
 				map.on('zoomlevelschange', spy);
 			});
 
@@ -567,15 +564,15 @@ describe('Map', () => {
 				expect(map.getZoom()).to.eql(4);
 				expect(map.getMinZoom()).to.eql(2);
 				expect(map.getMaxZoom()).to.eql(7);
-				expect(spy.calledTwice).to.be.true;
+				expect(spy).toHaveBeenCalledTimes(2);
 
-				const postSpy = sinon.spy();
+				const postSpy = vi.fn();
 				map.on('zoomlevelschange', postSpy);
 
 				map.setMinZoom(2);
 				map.setMaxZoom(7);
 
-				expect(postSpy.called).to.be.false;
+				expect(postSpy).not.toHaveBeenCalled();
 			});
 
 			it('fire \'zoomlevelschange\' but do not change zoom if max/min zoom is less/more current zoom', () => {
@@ -585,7 +582,7 @@ describe('Map', () => {
 				expect(map.getZoom()).to.eql(4);
 				expect(map.getMinZoom()).to.eql(2);
 				expect(map.getMaxZoom()).to.eql(7);
-				expect(spy.calledTwice).to.be.true;
+				expect(spy).toHaveBeenCalledTimes(2);
 			});
 		});
 
@@ -708,22 +705,22 @@ describe('Map', () => {
 		});
 
 		it('checking handling events when enabled/disabled', () => {
-			const spy = sinon.spy();
+			const spy = vi.fn();
 			map.addHandler('clickHandler', getHandler(spy));
 
 			UIEventSimulator.fire('click', window);
 			UIEventSimulator.fire('click', window);
-			expect(spy.called).not.to.be.true;
+			expect(spy).not.toHaveBeenCalled();
 
 			map.clickHandler.enable();
 
 			UIEventSimulator.fire('click', window);
-			expect(spy.called).to.be.true;
+			expect(spy).toHaveBeenCalled();
 
 			map.clickHandler.disable();
 
 			UIEventSimulator.fire('click', window);
-			expect(spy.callCount).to.eql(1);
+			expect(spy).toHaveBeenCalledTimes(1);
 		});
 	});
 
@@ -953,8 +950,8 @@ describe('Map', () => {
 
 	function layerSpy() {
 		const layer = new Layer();
-		layer.onAdd = sinon.spy();
-		layer.onRemove = sinon.spy();
+		layer.onAdd = vi.fn();
+		layer.onRemove = vi.fn();
 		return layer;
 	}
 
@@ -963,15 +960,15 @@ describe('Map', () => {
 			const layer = layerSpy();
 			map.setView([0, 0], 0);
 			map.addLayer(layer);
-			expect(layer.onAdd.called).to.be.true;
+			expect(layer.onAdd).toHaveBeenCalled();
 		});
 
 		it('calls layer.onAdd when the map becomes ready', () => {
 			const layer = layerSpy();
 			map.addLayer(layer);
-			expect(layer.onAdd.called).not.to.be.true;
+			expect(layer.onAdd).not.toHaveBeenCalled();
 			map.setView([0, 0], 0);
-			expect(layer.onAdd.called).to.be.true;
+			expect(layer.onAdd).toHaveBeenCalled();
 		});
 
 		it('does not call layer.onAdd if the layer is removed before the map becomes ready', () => {
@@ -979,36 +976,36 @@ describe('Map', () => {
 			map.addLayer(layer);
 			map.removeLayer(layer);
 			map.setView([0, 0], 0);
-			expect(layer.onAdd.called).not.to.be.true;
+			expect(layer.onAdd).not.toHaveBeenCalled();
 		});
 
 		it('fires a layeradd event immediately if the map is ready', () => {
 			const layer = layerSpy(),
-			spy = sinon.spy();
+			spy = vi.fn();
 			map.on('layeradd', spy);
 			map.setView([0, 0], 0);
 			map.addLayer(layer);
-			expect(spy.called).to.be.true;
+			expect(spy).toHaveBeenCalled();
 		});
 
 		it('fires a layeradd event when the map becomes ready', () => {
 			const layer = layerSpy(),
-			spy = sinon.spy();
+			spy = vi.fn();
 			map.on('layeradd', spy);
 			map.addLayer(layer);
-			expect(spy.called).not.to.be.true;
+			expect(spy).not.toHaveBeenCalled();
 			map.setView([0, 0], 0);
-			expect(spy.called).to.be.true;
+			expect(spy).toHaveBeenCalled();
 		});
 
 		it('does not fire a layeradd event if the layer is removed before the map becomes ready', () => {
 			const layer = layerSpy(),
-			spy = sinon.spy();
+			spy = vi.fn();
 			map.on('layeradd', spy);
 			map.addLayer(layer);
 			map.removeLayer(layer);
 			map.setView([0, 0], 0);
-			expect(spy.called).not.to.be.true;
+			expect(spy).not.toHaveBeenCalled();
 		});
 
 		it('adds the layer before firing layeradd', (done) => {
@@ -1030,35 +1027,35 @@ describe('Map', () => {
 
 		describe('When the first layer is added to a map', () => {
 			it('fires a zoomlevelschange event', () => {
-				const spy = sinon.spy();
+				const spy = vi.fn();
 				map.on('zoomlevelschange', spy);
-				expect(spy.called).not.to.be.true;
+				expect(spy).not.toHaveBeenCalled();
 				new TileLayer('', {minZoom: 0, maxZoom: 10}).addTo(map);
-				expect(spy.called).to.be.true;
+				expect(spy).toHaveBeenCalled();
 			});
 		});
 
 		describe('when a new layer with greater zoomlevel coverage than the current layer is added to a map', () => {
 			it('fires a zoomlevelschange event', () => {
-				const spy = sinon.spy();
+				const spy = vi.fn();
 				new TileLayer('', {minZoom: 0, maxZoom: 10}).addTo(map);
 				map.on('zoomlevelschange', spy);
-				expect(spy.called).not.to.be.true;
+				expect(spy).not.toHaveBeenCalled();
 				new TileLayer('', {minZoom: 0, maxZoom: 15}).addTo(map);
-				expect(spy.called).to.be.true;
+				expect(spy).toHaveBeenCalled();
 			});
 		});
 
 		describe('when a new layer with the same or lower zoomlevel coverage as the current layer is added to a map', () => {
 			it('fires no zoomlevelschange event', () => {
-				const spy = sinon.spy();
+				const spy = vi.fn();
 				new TileLayer('', {minZoom: 0, maxZoom: 10}).addTo(map);
 				map.on('zoomlevelschange', spy);
-				expect(spy.called).not.to.be.true;
+				expect(spy).not.toHaveBeenCalled();
 				new TileLayer('', {minZoom: 0, maxZoom: 10}).addTo(map);
-				expect(spy.called).not.to.be.true;
+				expect(spy).not.toHaveBeenCalled();
 				new TileLayer('', {minZoom: 0, maxZoom: 5}).addTo(map);
-				expect(spy.called).not.to.be.true;
+				expect(spy).not.toHaveBeenCalled();
 			});
 		});
 	});
@@ -1069,49 +1066,49 @@ describe('Map', () => {
 			map.setView([0, 0], 0);
 			map.addLayer(layer);
 			map.removeLayer(layer);
-			expect(layer.onRemove.called).to.be.true;
+			expect(layer.onRemove).toHaveBeenCalled();
 		});
 
 		it('does not call layer.onRemove if the layer was not added', () => {
 			const layer = layerSpy();
 			map.setView([0, 0], 0);
 			map.removeLayer(layer);
-			expect(layer.onRemove.called).not.to.be.true;
+			expect(layer.onRemove).not.toHaveBeenCalled();
 		});
 
 		it('does not call layer.onRemove if the map is not ready', () => {
 			const layer = layerSpy();
 			map.addLayer(layer);
 			map.removeLayer(layer);
-			expect(layer.onRemove.called).not.to.be.true;
+			expect(layer.onRemove).not.toHaveBeenCalled();
 		});
 
 		it('fires a layerremove event if the map is ready', () => {
 			const layer = layerSpy(),
-			spy = sinon.spy();
+			spy = vi.fn();
 			map.on('layerremove', spy);
 			map.setView([0, 0], 0);
 			map.addLayer(layer);
 			map.removeLayer(layer);
-			expect(spy.called).to.be.true;
+			expect(spy).toHaveBeenCalled();
 		});
 
 		it('does not fire a layerremove if the layer was not added', () => {
 			const layer = layerSpy(),
-			spy = sinon.spy();
+			spy = vi.fn();
 			map.on('layerremove', spy);
 			map.setView([0, 0], 0);
 			map.removeLayer(layer);
-			expect(spy.called).not.to.be.true;
+			expect(spy).not.toHaveBeenCalled();
 		});
 
 		it('does not fire a layerremove if the map is not ready', () => {
 			const layer = layerSpy(),
-			spy = sinon.spy();
+			spy = vi.fn();
 			map.on('layerremove', spy);
 			map.addLayer(layer);
 			map.removeLayer(layer);
-			expect(spy.called).not.to.be.true;
+			expect(spy).not.toHaveBeenCalled();
 		});
 
 		it('removes the layer before firing layerremove', (done) => {
@@ -1141,13 +1138,13 @@ describe('Map', () => {
 		describe('when the last tile layer on a map is removed', () => {
 			it('fires a zoomlevelschange event', () => {
 				map.setView([0, 0], 0);
-				const spy = sinon.spy();
+				const spy = vi.fn();
 				const tl = new TileLayer('', {minZoom: 0, maxZoom: 10}).addTo(map);
 
 				map.on('zoomlevelschange', spy);
-				expect(spy.called).not.to.be.true;
+				expect(spy).not.toHaveBeenCalled();
 				map.removeLayer(tl);
-				expect(spy.called).to.be.true;
+				expect(spy).toHaveBeenCalled();
 			});
 		});
 
@@ -1155,31 +1152,31 @@ describe('Map', () => {
 			it('fires a zoomlevelschange event', () => {
 				map.setView([0, 0], 0);
 				new TileLayer('', {minZoom: 0, maxZoom: 10}).addTo(map);
-				const spy = sinon.spy(),
+				const spy = vi.fn(),
 				t2 = new TileLayer('', {minZoom: 0, maxZoom: 15}).addTo(map);
 
 				map.on('zoomlevelschange', spy);
-				expect(spy.called).to.be.false;
+				expect(spy).not.toHaveBeenCalled();
 				map.removeLayer(t2);
-				expect(spy.called).to.be.true;
+				expect(spy).toHaveBeenCalled();
 			});
 		});
 
 		describe('when a tile layer is removed from a map it and it had lesser or the same zoom level coverage as the remainding layer(s)', () => {
 			it('fires no zoomlevelschange event', () => {
 				map.setView([0, 0], 0);
-				const spy = sinon.spy(),
+				const spy = vi.fn(),
 				t1 = new TileLayer('', {minZoom: 0, maxZoom: 10}).addTo(map),
 				t2 = new TileLayer('', {minZoom: 0, maxZoom: 10}).addTo(map),
 				t3 = new TileLayer('', {minZoom: 0, maxZoom: 5}).addTo(map);
 
 				map.on('zoomlevelschange', spy);
 				map.removeLayer(t2);
-				expect(spy.called).to.be.false;
+				expect(spy).not.toHaveBeenCalled();
 				map.removeLayer(t3);
-				expect(spy.called).to.be.false;
+				expect(spy).not.toHaveBeenCalled();
 				map.removeLayer(t1);
-				expect(spy.called).to.be.true;
+				expect(spy).toHaveBeenCalled();
 			});
 		});
 	});
@@ -1192,41 +1189,41 @@ describe('Map', () => {
 		it('calls the provided function for each layer', () => {
 			const t1 = new TileLayer('').addTo(map),
 			t2 = new TileLayer('').addTo(map),
-			spy = sinon.spy();
+			spy = vi.fn();
 
 			map.eachLayer(spy);
 
-			expect(spy.callCount).to.eql(2);
-			expect(spy.firstCall.args).to.eql([t1]);
-			expect(spy.secondCall.args).to.eql([t2]);
+			expect(spy).toHaveBeenCalledTimes(2);
+			expect(spy.mock.calls[0]).to.eql([t1]);
+			expect(spy.mock.calls[1]).to.eql([t2]);
 		});
 
 		it('calls the provided function with the provided context', () => {
-			const spy = sinon.spy();
+			const spy = vi.fn();
 			new TileLayer('').addTo(map);
 
 			map.eachLayer(spy, map);
 
-			expect(spy.alwaysCalledOn(map)).to.be.true;
+			expect(spy.mock.contexts.every(context => context === map)).to.be.true;
 		});
 	});
 
 	describe('#invalidateSize', () => {
 		const origWidth = 100;
-		let clock;
 
 		beforeEach(() => {
 			container.style.height = '100px';
 			container.style.width = `${origWidth}px`;
 			map.setView([0, 0], 0);
 			map.invalidateSize({pan: false});
-			clock = sinon.useFakeTimers({
+			vi.useFakeTimers({
+				now: 0,
 				toFake: ['setTimeout', 'clearTimeout', 'Date']
 			});
 		});
 
 		afterEach(() => {
-			clock.restore();
+			vi.useRealTimers();
 		});
 
 		it('pans by the right amount when growing in 1px increments', () => {
@@ -1268,46 +1265,46 @@ describe('Map', () => {
 		});
 
 		it('emits no move event if the size has not changed', () => {
-			const spy = sinon.spy();
+			const spy = vi.fn();
 			map.on('move', spy);
 
 			map.invalidateSize();
 
-			expect(spy.called).not.to.be.true;
+			expect(spy).not.toHaveBeenCalled();
 		});
 
 		it('emits a move event if the size has changed', () => {
-			const spy = sinon.spy();
+			const spy = vi.fn();
 			map.on('move', spy);
 
 			container.style.width = `${origWidth + 5}px`;
 			map.invalidateSize();
 
-			expect(spy.called).to.be.true;
+			expect(spy).toHaveBeenCalled();
 		});
 
 		it('emits a moveend event if the size has changed', () => {
-			const spy = sinon.spy();
+			const spy = vi.fn();
 			map.on('moveend', spy);
 
 			container.style.width = `${origWidth + 5}px`;
 			map.invalidateSize();
 
-			expect(spy.called).to.be.true;
+			expect(spy).toHaveBeenCalled();
 		});
 
 		it('debounces the moveend event if the debounceMoveend option is given', () => {
-			const spy = sinon.spy();
+			const spy = vi.fn();
 			map.on('moveend', spy);
 
 			container.style.width = `${origWidth + 5}px`;
 			map.invalidateSize({debounceMoveend: true});
 
-			expect(spy.called).not.to.be.true;
+			expect(spy).not.toHaveBeenCalled();
 
-			clock.tick(200);
+			vi.advanceTimersByTime(200);
 
-			expect(spy.called).to.be.true;
+			expect(spy).toHaveBeenCalled();
 		});
 
 		it('correctly adjusts for new container size when view is set during map initialization (#6165)', () => {
@@ -1341,21 +1338,21 @@ describe('Map', () => {
 
 		it('auto invalidateSize after container resize', (done) => {
 			map.setView([0, 0], 0);
-			const spy = sinon.spy();
+			const spy = vi.fn();
 			map.on('resize', spy);
 
-			expect(spy.called).to.be.false;
+			expect(spy).not.toHaveBeenCalled();
 
 			map.getContainer().style.width = '200px';
 
 			map.on('resize', () => {
-				expect(spy.called).to.be.true;
+				expect(spy).toHaveBeenCalled();
 				done();
 			});
 		});
 
 		it('disables auto invalidateSize', (done) => {
-			clock.restore();
+			vi.useRealTimers();
 			map.remove();
 
 			const center = [0, 0];
@@ -1367,32 +1364,32 @@ describe('Map', () => {
 				trackResize: false
 			});
 
-			const spy = sinon.spy();
+			const spy = vi.fn();
 			map.invalidateSize = spy;
 
-			expect(spy.called).to.be.false;
+			expect(spy).not.toHaveBeenCalled();
 
 			map.getContainer().style.width = '200px';
 
 			setTimeout(() => {
-				expect(spy.called).to.be.false;
+				expect(spy).not.toHaveBeenCalled();
 				done();
 				// we need the 10 ms to be sure that the ResizeObserver is not triggered
 			}, 10);
 		});
 
 		it('makes sure that auto invalidateSize is removed', (done) => {
-			clock.restore();
+			vi.useRealTimers();
 			map.remove();
 
-			const spy = sinon.spy();
+			const spy = vi.fn();
 			map.invalidateSize = spy;
-			expect(spy.called).to.be.false;
+			expect(spy).not.toHaveBeenCalled();
 
 			map.getContainer().style.width = '200px';
 
 			setTimeout(() => {
-				expect(spy.called).to.be.false;
+				expect(spy).not.toHaveBeenCalled();
 
 				// make sure afterEach works correctly
 				map = new MaplairMap(container);
@@ -1790,56 +1787,56 @@ describe('Map', () => {
 		});
 
 		it('DOM events propagate from polygon to map', () => {
-			const spy = sinon.spy();
+			const spy = vi.fn();
 			map.on('pointermove', spy);
 			const layer = new Polygon([[1, 2], [3, 4], [5, 6]]).addTo(map);
 			UIEventSimulator.fire('pointermove', layer._path);
-			expect(spy.calledOnce).to.be.true;
+			expect(spy).toHaveBeenCalledOnce();
 		});
 
 		it('DOM events propagate from marker to map', () => {
-			const spy = sinon.spy();
+			const spy = vi.fn();
 			map.on('pointermove', spy);
 			const layer = new Marker([1, 2]).addTo(map);
 			UIEventSimulator.fire('pointermove', layer._icon);
-			expect(spy.calledOnce).to.be.true;
+			expect(spy).toHaveBeenCalledOnce();
 		});
 
 		it('DOM events fired on marker can be cancelled before being caught by the map', () => {
-			const mapSpy = sinon.spy();
-			const layerSpy = sinon.spy();
+			const mapSpy = vi.fn();
+			const layerSpy = vi.fn();
 			map.on('pointermove', mapSpy);
 			const layer = new Marker([1, 2]).addTo(map);
 			layer.on('pointermove', DomEvent.stopPropagation).on('pointermove', layerSpy);
 			UIEventSimulator.fire('pointermove', layer._icon);
-			expect(layerSpy.calledOnce).to.be.true;
-			expect(mapSpy.called).not.to.be.true;
+			expect(layerSpy).toHaveBeenCalledOnce();
+			expect(mapSpy).not.toHaveBeenCalled();
 		});
 
 		it('DOM events fired on polygon can be cancelled before being caught by the map', () => {
-			const mapSpy = sinon.spy();
-			const layerSpy = sinon.spy();
+			const mapSpy = vi.fn();
+			const layerSpy = vi.fn();
 			map.on('pointermove', mapSpy);
 			const layer = new Polygon([[1, 2], [3, 4], [5, 6]]).addTo(map);
 			layer.on('pointermove', DomEvent.stopPropagation).on('pointermove', layerSpy);
 			UIEventSimulator.fire('pointermove', layer._path);
-			expect(layerSpy.calledOnce).to.be.true;
-			expect(mapSpy.called).not.to.be.true;
+			expect(layerSpy).toHaveBeenCalledOnce();
+			expect(mapSpy).not.toHaveBeenCalled();
 		});
 
 		it('pointerout is forwarded if fired on the original target', () => {
-			const mapSpy = sinon.spy(),
-			layerSpy = sinon.spy(),
-			otherSpy = sinon.spy();
+			const mapSpy = vi.fn(),
+			layerSpy = vi.fn(),
+			otherSpy = vi.fn();
 			const layer = new Polygon([[1, 2], [3, 4], [5, 6]]).addTo(map);
 			const other = new Polygon([[10, 20], [30, 40], [50, 60]]).addTo(map);
 			map.on('pointerout', mapSpy);
 			layer.on('pointerout', layerSpy);
 			other.on('pointerout', otherSpy);
 			UIEventSimulator.fire('pointerout', layer._path, {relatedTarget: container});
-			expect(mapSpy.called).not.to.be.true;
-			expect(otherSpy.called).not.to.be.true;
-			expect(layerSpy.calledOnce).to.be.true;
+			expect(mapSpy).not.toHaveBeenCalled();
+			expect(otherSpy).not.toHaveBeenCalled();
+			expect(layerSpy).toHaveBeenCalledOnce();
 		});
 
 		it('pointerout is forwarded when using a DivIcon', () => {
@@ -1847,14 +1844,14 @@ describe('Map', () => {
 				html: '<p>this is text in a child element</p>',
 				iconSize: [100, 100]
 			});
-			const mapSpy = sinon.spy(),
-			layerSpy = sinon.spy(),
+			const mapSpy = vi.fn(),
+			layerSpy = vi.fn(),
 			layer = new Marker([1, 2], {icon}).addTo(map);
 			map.on('pointerout', mapSpy);
 			layer.on('pointerout', layerSpy);
 			UIEventSimulator.fire('pointerout', layer._icon, {relatedTarget: container});
-			expect(mapSpy.called).not.to.be.true;
-			expect(layerSpy.calledOnce).to.be.true;
+			expect(mapSpy).not.toHaveBeenCalled();
+			expect(layerSpy).toHaveBeenCalledOnce();
 		});
 
 		it('pointerout is not forwarded if relatedTarget is a target\'s child', () => {
@@ -1862,15 +1859,15 @@ describe('Map', () => {
 				html: '<p>this is text in a child element</p>',
 				iconSize: [100, 100]
 			});
-			const mapSpy = sinon.spy(),
-			layerSpy = sinon.spy(),
+			const mapSpy = vi.fn(),
+			layerSpy = vi.fn(),
 			layer = new Marker([1, 2], {icon}).addTo(map),
 			child = layer._icon.querySelector('p');
 			map.on('pointerout', mapSpy);
 			layer.on('pointerout', layerSpy);
 			UIEventSimulator.fire('pointerout', layer._icon, {relatedTarget: child});
-			expect(mapSpy.called).not.to.be.true;
-			expect(layerSpy.called).not.to.be.true;
+			expect(mapSpy).not.toHaveBeenCalled();
+			expect(layerSpy).not.toHaveBeenCalled();
 		});
 
 		it('pointerout is not forwarded if fired on target\'s child', () => {
@@ -1878,30 +1875,30 @@ describe('Map', () => {
 				html: '<p>this is text in a child element</p>',
 				iconSize: [100, 100]
 			});
-			const mapSpy = sinon.spy(),
-			layerSpy = sinon.spy(),
+			const mapSpy = vi.fn(),
+			layerSpy = vi.fn(),
 			layer = new Marker([1, 2], {icon}).addTo(map),
 			child = layer._icon.querySelector('p');
 			map.on('pointerout', mapSpy);
 			layer.on('pointerout', layerSpy);
 			UIEventSimulator.fire('pointerout', child, {relatedTarget: layer._icon});
-			expect(mapSpy.called).not.to.be.true;
-			expect(layerSpy.called).not.to.be.true;
+			expect(mapSpy).not.toHaveBeenCalled();
+			expect(layerSpy).not.toHaveBeenCalled();
 		});
 
 		it('pointerout is not forwarded to layers if fired on the map', () => {
-			const mapSpy = sinon.spy(),
-			layerSpy = sinon.spy(),
-			otherSpy = sinon.spy();
+			const mapSpy = vi.fn(),
+			layerSpy = vi.fn(),
+			otherSpy = vi.fn();
 			const layer = new Polygon([[1, 2], [3, 4], [5, 6]]).addTo(map);
 			const other = new Polygon([[10, 20], [30, 40], [50, 60]]).addTo(map);
 			map.on('pointerout', mapSpy);
 			layer.on('pointerout', layerSpy);
 			other.on('pointerout', otherSpy);
 			UIEventSimulator.fire('pointerout', container);
-			expect(otherSpy.called).not.to.be.true;
-			expect(layerSpy.called).not.to.be.true;
-			expect(mapSpy.calledOnce).to.be.true;
+			expect(otherSpy).not.toHaveBeenCalled();
+			expect(layerSpy).not.toHaveBeenCalled();
+			expect(mapSpy).toHaveBeenCalledOnce();
 		});
 
 		it('preclick is fired before click on marker and map', () => {
@@ -1939,7 +1936,7 @@ describe('Map', () => {
 			container.style.width = container.style.height = '300px';
 
 			map.setView(new LatLng([0, 0]), 12);
-			const spy = sinon.spy();
+			const spy = vi.fn();
 			map.on('contextmenu', (e) => {
 				spy(e.originalEvent.defaultPrevented);
 			});
@@ -1949,16 +1946,16 @@ describe('Map', () => {
 
 			UIEventSimulator.fireAt('contextmenu', marker._point.x, marker._point.y); // second  (#5995)
 
-			expect(spy.callCount).to.equal(2);
-			expect(spy.firstCall.lastArg).to.be.true;
-			expect(spy.secondCall.lastArg).to.be.true;
+			expect(spy).toHaveBeenCalledTimes(2);
+			expect(spy.mock.calls[0].at(-1)).to.be.true;
+			expect(spy.mock.calls[1].at(-1)).to.be.true;
 		});
 
 		it('prints to console.error about deprecated mouse* events', () => {
-			const errorSpy = sinon.spy(console, 'error');
+			const errorSpy = vi.spyOn(console, 'error');
 			map.on('mouseover', () => {});
-			expect(errorSpy.calledOnce).to.be.true;
-			expect(errorSpy.firstCall.args[0]).to.eq('The event mouseover has been removed. Use the PointerEvent variant instead.');
+			expect(errorSpy).toHaveBeenCalledOnce();
+			expect(errorSpy.mock.calls[0][0]).to.eq('The event mouseover has been removed. Use the PointerEvent variant instead.');
 		});
 	});
 
@@ -1971,12 +1968,12 @@ describe('Map', () => {
 		});
 
 		it('converts scale to zoom and returns Infinity if map crs.zoom returns NaN', () => {
-			const stub = sinon.stub(map.options.crs, 'zoom');
-			stub.returns(NaN);
+			const stub = vi.spyOn(map.options.crs, 'zoom').mockImplementation(() => {});
+			stub.mockReturnValue(NaN);
 			const scale = 0.25;
 			const fromZoom = 8.5;
 			expect(map.getScaleZoom(scale, fromZoom)).to.eql(Infinity);
-			map.options.crs.zoom.restore();
+			map.options.crs.zoom.mockRestore();
 		});
 	});
 
@@ -2379,11 +2376,11 @@ describe('Map', () => {
 		};
 
 		beforeEach(() => {
-			foundSpy = sinon.spy();
-			errorSpy = sinon.spy();
+			foundSpy = vi.fn();
+			errorSpy = vi.fn();
 
-			getCurrentPosSpy = sinon.spy();
-			watchPosSpy = sinon.spy();
+			getCurrentPosSpy = vi.fn();
+			watchPosSpy = vi.fn();
 		});
 
 		it('returns \'Geolocation not found!\' error if geolocation can\'t be found', () => {
@@ -2402,8 +2399,8 @@ describe('Map', () => {
 
 			map.locate({setView: true});
 
-			expect(errorSpy.called).to.be.true;
-			expect(foundSpy.called).to.be.false;
+			expect(errorSpy).toHaveBeenCalled();
+			expect(foundSpy).not.toHaveBeenCalled();
 		});
 
 		it('sets map view to geolocation coords', () => {
@@ -2427,11 +2424,11 @@ describe('Map', () => {
 
 			map.locate({setView: true});
 
-			expect(errorSpy.called).to.be.false;
-			expect(foundSpy.called).to.be.true;
+			expect(errorSpy).not.toHaveBeenCalled();
+			expect(foundSpy).toHaveBeenCalled();
 
-			expect(getCurrentPosSpy.called).to.be.true;
-			expect(watchPosSpy.called).to.be.false;
+			expect(getCurrentPosSpy).toHaveBeenCalled();
+			expect(watchPosSpy).not.toHaveBeenCalled();
 
 			expect(map.getCenter()).to.be.nearLatLng(expectedLatLngs);
 
@@ -2462,11 +2459,11 @@ describe('Map', () => {
 
 			map.locate({setView: true, watch: true});
 
-			expect(errorSpy.called).to.be.false;
-			expect(foundSpy.called).to.be.true;
+			expect(errorSpy).not.toHaveBeenCalled();
+			expect(foundSpy).toHaveBeenCalled();
 
-			expect(getCurrentPosSpy.called).to.be.false;
-			expect(watchPosSpy.called).to.be.true;
+			expect(getCurrentPosSpy).not.toHaveBeenCalled();
+			expect(watchPosSpy).toHaveBeenCalled();
 
 			expect(map.getCenter()).to.be.nearLatLng(expectedLatLngs);
 
@@ -2494,11 +2491,11 @@ describe('Map', () => {
 
 			map.locate();
 
-			expect(errorSpy.called).to.be.false;
-			expect(foundSpy.called).to.be.true;
+			expect(errorSpy).not.toHaveBeenCalled();
+			expect(foundSpy).toHaveBeenCalled();
 
-			expect(getCurrentPosSpy.called).to.be.true;
-			expect(watchPosSpy.called).to.be.false;
+			expect(getCurrentPosSpy).toHaveBeenCalled();
+			expect(watchPosSpy).not.toHaveBeenCalled();
 
 			expect(map._loaded).to.be.undefined;
 		});
@@ -2529,11 +2526,11 @@ describe('Map', () => {
 		it('clears the watch handler registered with the geolocation API', () => {
 			const locationWatchId = 123;
 			map._locationWatchId = locationWatchId;
-			navigator.geolocation.clearWatch = sinon.spy();
+			navigator.geolocation.clearWatch = vi.fn();
 
 			map.stopLocate();
 
-			expect(navigator.geolocation.clearWatch.calledOnceWith(locationWatchId)).to.equal(true);
+			expect(navigator.geolocation.clearWatch).toHaveBeenCalledExactlyOnceWith(locationWatchId);
 		});
 
 		it('resets the setView option to false', () => {

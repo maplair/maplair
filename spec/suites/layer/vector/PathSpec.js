@@ -1,6 +1,5 @@
-import {expect} from 'vite-plus/test';
+import {expect, vi} from 'vite-plus/test';
 import {LayerGroup, MaplairMap, Polygon, Polyline} from 'maplair';
-import sinon from 'sinon';
 import UIEventSimulator from 'ui-event-simulator';
 import {createContainer, removeMapContainer} from '../../SpecHelper.js';
 
@@ -53,25 +52,25 @@ describe('Path', () => {
 
 	describe('#events', () => {
 		it('fires click event', () => {
-			const spy = sinon.spy();
+			const spy = vi.fn();
 			const layer = new Polygon([[1, 2], [3, 4], [5, 6]]).addTo(map);
 			layer.on('click', spy);
 			UIEventSimulator.fire('click', layer._path);
-			expect(spy.called).to.be.true;
+			expect(spy).toHaveBeenCalled();
 		});
 
 		it('propagates click event by default', () => {
-			const spy = sinon.spy();
-			const spy2 = sinon.spy();
-			const mapSpy = sinon.spy();
+			const spy = vi.fn();
+			const spy2 = vi.fn();
+			const mapSpy = vi.fn();
 			const layer = new Polygon([[1, 2], [3, 4], [5, 6]]).addTo(map);
 			layer.on('click', spy);
 			layer.on('click', spy2);
 			map.on('click', mapSpy);
 			UIEventSimulator.fire('click', layer._path);
-			expect(spy.called).to.be.true;
-			expect(spy2.called).to.be.true;
-			expect(mapSpy.called).to.be.true;
+			expect(spy).toHaveBeenCalled();
+			expect(spy2).toHaveBeenCalled();
+			expect(mapSpy).toHaveBeenCalled();
 		});
 
 		it('can add a layer while being inside a moveend handler', () => {

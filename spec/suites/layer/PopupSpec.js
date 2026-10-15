@@ -1,7 +1,6 @@
-import {expect} from 'vite-plus/test';
+import {expect, vi} from 'vite-plus/test';
 import {DivIcon, DomUtil, FeatureGroup, DefaultIcon, MaplairMap, Marker, Point, Polygon, Popup} from 'maplair';
 import Hand from 'prosthetic-hand';
-import sinon from 'sinon';
 import UIEventSimulator from 'ui-event-simulator';
 import {createContainer, removeMapContainer, pointerEventType} from '../SpecHelper.js';
 
@@ -173,15 +172,15 @@ describe('Popup', () => {
 		marker1.bindPopup('Popup1');
 		marker2.bindPopup('Popup2');
 
-		const spy = sinon.spy();
+		const spy = vi.fn();
 
 		marker1.on('popupopen', spy);
 
-		expect(spy.called).to.be.false;
+		expect(spy).not.toHaveBeenCalled();
 		marker2.openPopup();
-		expect(spy.called).to.be.false;
+		expect(spy).not.toHaveBeenCalled();
 		marker1.openPopup();
-		expect(spy.called).to.be.true;
+		expect(spy).toHaveBeenCalled();
 	});
 
 	// Related to #8558
@@ -196,8 +195,8 @@ describe('Popup', () => {
 		marker2.bindPopup(popup);
 		marker1.bindPopup(popup);
 
-		const spy = sinon.spy();
-		const spy2 = sinon.spy();
+		const spy = vi.fn();
+		const spy2 = vi.fn();
 
 		marker1.on('popupopen', (e) => {
 			spy();
@@ -209,12 +208,12 @@ describe('Popup', () => {
 			expect(e.target.options.testId).to.eql('markerB');
 		});
 
-		expect(spy.called).to.be.false;
+		expect(spy).not.toHaveBeenCalled();
 		marker2.openPopup();
-		expect(spy.called).to.be.false;
-		expect(spy2.called).to.be.true;
+		expect(spy).not.toHaveBeenCalled();
+		expect(spy2).toHaveBeenCalled();
 		marker1.closePopup().openPopup();
-		expect(spy.called).to.be.true;
+		expect(spy).toHaveBeenCalled();
 	});
 
 	it('triggers popupclose on marker when popup closes', () => {
@@ -227,20 +226,20 @@ describe('Popup', () => {
 		marker1.bindPopup('Popup1');
 		marker2.bindPopup('Popup2');
 
-		const spy = sinon.spy();
+		const spy = vi.fn();
 
 		marker1.on('popupclose', spy);
 
-		expect(spy.called).to.be.false;
+		expect(spy).not.toHaveBeenCalled();
 		marker2.openPopup();
-		expect(spy.called).to.be.false;
+		expect(spy).not.toHaveBeenCalled();
 		marker1.openPopup();
-		expect(spy.called).to.be.false;
+		expect(spy).not.toHaveBeenCalled();
 		marker2.openPopup();
-		expect(spy.called).to.be.true;
+		expect(spy).toHaveBeenCalled();
 		marker1.openPopup();
 		marker1.closePopup();
-		expect(spy.callCount).to.equal(2);
+		expect(spy).toHaveBeenCalledTimes(2);
 	});
 
 	it('should take into account icon popupAnchor option', () => {
@@ -439,7 +438,7 @@ describe('Popup', () => {
 			container.style.zIndex = 10000;
 
 			const coords = map._container.getBoundingClientRect();
-			const spy = sinon.spy();
+			const spy = vi.fn();
 			const p = new Popup().setLatLng(center);
 			map.openPopup(p);
 			expect(map.hasLayer(p)).to.be.true;
@@ -447,7 +446,7 @@ describe('Popup', () => {
 			const hand = new Hand({
 				timing: 'fastframe',
 				onStop() {
-					expect(spy.called).to.be.true;
+					expect(spy).toHaveBeenCalled();
 					expect(map.hasLayer(p)).to.be.true;
 					done();
 				}
@@ -466,13 +465,13 @@ describe('Popup', () => {
 			// to prevent waiting until the animation is finished
 			map.options.inertia = false;
 
-			const spy = sinon.spy();
+			const spy = vi.fn();
 			map.on('autopanstart', spy);
 
 			// Short hop to the edge of the map (at time of writing, will trigger an animated pan)
 			const p = new Popup({keepInView: true}).setContent('Popup').setLatLng(map.getBounds()._northEast);
 			map.once('moveend', () => {
-				expect(spy.callCount).to.equal(1);
+				expect(spy).toHaveBeenCalledTimes(1);
 				expect(map.getBounds().contains(p.getLatLng())).to.be.true;
 				done();
 			});
@@ -488,13 +487,13 @@ describe('Popup', () => {
 			// to prevent waiting until the animation is finished
 			map.options.inertia = false;
 
-			const spy = sinon.spy();
+			const spy = vi.fn();
 			map.on('autopanstart', spy);
 
 			// Long hop (at time of writing, will trigger a view reset)
 			const p = new Popup({keepInView: true}).setContent('Popup').setLatLng([center[0], center[1] + 50]);
 			map.once('moveend', () => {
-				expect(spy.callCount).to.equal(1);
+				expect(spy).toHaveBeenCalledTimes(1);
 				expect(map.getBounds().contains(p.getLatLng())).to.be.true;
 				done();
 			});

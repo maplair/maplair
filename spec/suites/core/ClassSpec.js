@@ -1,6 +1,5 @@
-import {expect} from 'vite-plus/test';
+import {expect, vi} from 'vite-plus/test';
 import {Class} from 'maplair';
-import sinon from 'sinon';
 
 describe('Class', () => {
 	describe('#extends', () => {
@@ -29,8 +28,8 @@ describe('Class', () => {
 		});
 
 		it('inherits constructor hooks', () => {
-			const spy1 = sinon.spy(),
-			spy2 = sinon.spy();
+			const spy1 = vi.fn(),
+			spy2 = vi.fn();
 
 			class Class1 extends Class {}
 			class Class2 extends Class1 {}
@@ -40,13 +39,13 @@ describe('Class', () => {
 
 			new Class2();
 
-			expect(spy1.called).to.be.true;
-			expect(spy2.called).to.be.true;
+			expect(spy1).toHaveBeenCalled();
+			expect(spy2).toHaveBeenCalled();
 		});
 
 		it('does not call child constructor hooks', () => {
-			const spy1 = sinon.spy(),
-			spy2 = sinon.spy();
+			const spy1 = vi.fn(),
+			spy2 = vi.fn();
 
 			class Class1 extends Class {}
 			class Class2 extends Class1 {}
@@ -56,8 +55,8 @@ describe('Class', () => {
 
 			new Class1();
 
-			expect(spy1.called).to.be.true;
-			expect(spy2.called).to.eql(false);
+			expect(spy1).toHaveBeenCalled();
+			expect(spy2).not.toHaveBeenCalled();
 		});
 	});
 
@@ -70,7 +69,7 @@ describe('Class', () => {
 
 		it('returns the class with the extra methods', () => {
 
-			const q = sinon.spy();
+			const q = vi.fn();
 
 			const Qlass = Klass.include({quux: q});
 
@@ -78,10 +77,10 @@ describe('Class', () => {
 			const b = new Qlass();
 
 			a.quux();
-			expect(q.called).to.be.true;
+			expect(q).toHaveBeenCalled();
 
 			b.quux();
-			expect(q.called).to.be.true;
+			expect(q).toHaveBeenCalled();
 		});
 
 		it('keeps parent options', () => { // #6070

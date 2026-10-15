@@ -1,7 +1,6 @@
-import {expect} from 'vite-plus/test';
+import {expect, vi} from 'vite-plus/test';
 import {CircleMarker, FeatureGroup, LayerGroup, MaplairMap, Marker, Polygon, Polyline, Rectangle, Tooltip} from 'maplair';
 import Hand from 'prosthetic-hand';
-import sinon from 'sinon';
 import UIEventSimulator from 'ui-event-simulator';
 import {createContainer, removeMapContainer} from '../SpecHelper.js';
 
@@ -153,32 +152,32 @@ describe('Tooltip', () => {
 
 	it('is not interactive by default', () => {
 		const layer = new Marker(center).addTo(map);
-		const spy = sinon.spy();
+		const spy = vi.fn();
 
 		layer.bindTooltip('Tooltip', {permanent: true});
 		layer._tooltip.on('click', spy);
 		UIEventSimulator.fire('click', layer._tooltip._container);
-		expect(spy.called).to.be.false;
+		expect(spy).not.toHaveBeenCalled();
 	});
 
 	it('can be made interactive', () => {
 		const layer = new Marker(center).addTo(map);
-		const spy = sinon.spy();
+		const spy = vi.fn();
 
 		layer.bindTooltip('Tooltip', {permanent: true, interactive: true});
 		layer._tooltip.on('click', spy);
 		UIEventSimulator.fire('click', layer._tooltip._container);
-		expect(spy.calledOnce).to.be.true;
+		expect(spy).toHaveBeenCalledOnce();
 	});
 
 	it('events are propagated to bound layer', () => {
 		const layer = new Marker(center).addTo(map);
-		const spy = sinon.spy();
+		const spy = vi.fn();
 		layer.on('click', spy);
 
 		layer.bindTooltip('Tooltip', {permanent: true, interactive: true});
 		UIEventSimulator.fire('click', layer._tooltip._container);
-		expect(spy.calledOnce).to.be.true;
+		expect(spy).toHaveBeenCalledOnce();
 	});
 
 	it('has class maplair-interactive', () => {
@@ -195,84 +194,84 @@ describe('Tooltip', () => {
 
 	it('can be forced on left direction', () => {
 		const layer = new Marker(center).addTo(map);
-		const spy = sinon.spy();
+		const spy = vi.fn();
 		layer.on('click', spy);
 
 		layer.bindTooltip('A long tooltip that should be displayed on the left', {permanent: true, direction: 'left', interactive: true});
 		expect(map.hasLayer(layer._tooltip)).to.be.true;
 		UIEventSimulator.fireAt('click', 150, 180);  // Marker is on the map center, which is 400px large.
-		expect(spy.calledOnce).to.be.true;
+		expect(spy).toHaveBeenCalledOnce();
 	});
 
 	it('honours offset on left direction', () => {
 		const layer = new Marker(center).addTo(map);
-		const spy = sinon.spy();
+		const spy = vi.fn();
 		layer.on('click', spy);
 
 		layer.bindTooltip('A long tooltip that should be displayed on the left', {permanent: true, direction: 'left', interactive: true, offset: [-20, -20]});
 		expect(map.hasLayer(layer._tooltip)).to.be.true;
 		UIEventSimulator.fireAt('click', 150, 180);
-		expect(spy.calledOnce).to.be.false;
+		expect(spy).not.toHaveBeenCalledOnce();
 		UIEventSimulator.fireAt('click', 130, 160);
-		expect(spy.calledOnce).to.be.true;
+		expect(spy).toHaveBeenCalledOnce();
 	});
 
 	it('can be forced on top direction', () => {
 		const layer = new CircleMarker(center).addTo(map);
-		const spy = sinon.spy();
+		const spy = vi.fn();
 		layer.on('click', spy);
 
 		layer.bindTooltip('A tooltip that should be displayed on the top', {permanent: true, direction: 'top', interactive: true});
 		expect(map.hasLayer(layer._tooltip)).to.be.true;
 		UIEventSimulator.fireAt('click', 200, 180);  // Marker is on the map center, which is 400px large.
-		expect(spy.calledOnce).to.be.true;
+		expect(spy).toHaveBeenCalledOnce();
 	});
 
 	it('honours offset on top direction', () => {
 		const layer = new CircleMarker(center).addTo(map);
-		const spy = sinon.spy();
+		const spy = vi.fn();
 		layer.on('click', spy);
 
 		layer.bindTooltip('A tooltip that should be displayed on the top', {permanent: true, direction: 'top', interactive: true, offset: [-20, -20]});
 		UIEventSimulator.fireAt('click', 200, 180);
-		expect(spy.calledOnce).to.be.false;
+		expect(spy).not.toHaveBeenCalledOnce();
 		UIEventSimulator.fireAt('click', 180, 150);
-		expect(spy.calledOnce).to.be.true;
+		expect(spy).toHaveBeenCalledOnce();
 	});
 
 	it('can be forced on bottom direction', () => {
 		const layer = new CircleMarker(center).addTo(map);
-		const spy = sinon.spy();
+		const spy = vi.fn();
 		layer.on('click', spy);
 
 		layer.bindTooltip('A tooltip that should be displayed on the top', {permanent: true, direction: 'bottom', interactive: true});
 		expect(map.hasLayer(layer._tooltip)).to.be.true;
 		UIEventSimulator.fireAt('click', 200, 220);  // Marker is on the map center, which is 400px large.
-		expect(spy.calledOnce).to.be.true;
+		expect(spy).toHaveBeenCalledOnce();
 	});
 
 	it('honours offset on bottom direction', () => {
 		const layer = new CircleMarker(center).addTo(map);
-		const spy = sinon.spy();
+		const spy = vi.fn();
 		layer.on('click', spy);
 
 		layer.bindTooltip('A tooltip that should be displayed on the top', {permanent: true, direction: 'bottom', interactive: true, offset: [20, 20]});
 		expect(map.hasLayer(layer._tooltip)).to.be.true;
 		UIEventSimulator.fireAt('click', 200, 220);
-		expect(spy.calledOnce).to.be.false;
+		expect(spy).not.toHaveBeenCalledOnce();
 		UIEventSimulator.fireAt('click', 220, 230);
-		expect(spy.calledOnce).to.be.true;
+		expect(spy).toHaveBeenCalledOnce();
 	});
 
 	it('can be forced on center', () => {
 		const layer = new Marker(center).addTo(map);
-		const spy = sinon.spy();
+		const spy = vi.fn();
 		layer.on('click', spy);
 
 		layer.bindTooltip('A tooltip that should be displayed on the center', {permanent: true, direction: 'center', interactive: true});
 		expect(map.hasLayer(layer._tooltip)).to.be.true;
 		UIEventSimulator.fireAt('click', 150, 180);  // Marker is on the map center, which is 400px large.
-		expect(spy.calledOnce).to.be.true;
+		expect(spy).toHaveBeenCalledOnce();
 	});
 
 	it('honours opacity option', () => {
@@ -402,14 +401,14 @@ describe('Tooltip', () => {
 	});
 
 	it('map.openTooltip considers interactive option', () => {
-		const spy = sinon.spy();
+		const spy = vi.fn();
 		const tooltip = new Tooltip({interactive: true, permanent: true})
 			.setContent('Tooltip')
 			.on('click', spy);
 		map.openTooltip(tooltip, center);
 
 		UIEventSimulator.fire('click', tooltip._container);
-		expect(spy.calledOnce).to.be.true;
+		expect(spy).toHaveBeenCalledOnce();
 	});
 
 	it('can call closeTooltip while not on the map', () => {
@@ -449,13 +448,13 @@ describe('Tooltip', () => {
 
 	it('closes existent tooltip on new bindTooltip call', () => {
 		const layer = new Marker(center).addTo(map);
-		const eventSpy = sinon.spy(layer, 'unbindTooltip');
+		const eventSpy = vi.spyOn(layer, 'unbindTooltip');
 		layer.bindTooltip('Tooltip1', {permanent: true});
 		const tooltip1 = layer.getTooltip();
 		layer.bindTooltip('Tooltip2').openTooltip();
-		layer.unbindTooltip.restore(); // unwrap the spy
+		expect(eventSpy).toHaveBeenCalledOnce();
+		eventSpy.mockRestore(); // unwrap the spy
 		expect(map.hasLayer(tooltip1)).to.be.false;
-		expect(eventSpy.calledOnce).to.be.true;
 	});
 
 	it('don\'t opens the tooltip on marker pointerover while dragging map', (done) => {
@@ -560,8 +559,8 @@ describe('Tooltip', () => {
 		const layer1 = marker1.bindTooltip(tooltip);
 		const layer2 = marker2.bindTooltip(tooltip);
 
-		const spy = sinon.spy();
-		const spy2 = sinon.spy();
+		const spy = vi.fn();
+		const spy2 = vi.fn();
 
 		layer1.on('tooltipopen', (e) => {
 			spy();
@@ -573,12 +572,12 @@ describe('Tooltip', () => {
 			expect(e.target.options.testId).to.eql('markerB');
 		});
 
-		expect(spy.called).to.be.false;
+		expect(spy).not.toHaveBeenCalled();
 		layer1.openTooltip().closeTooltip();
-		expect(spy.called).to.be.true;
-		expect(spy2.called).to.be.false;
+		expect(spy).toHaveBeenCalled();
+		expect(spy2).not.toHaveBeenCalled();
 		layer2.openTooltip();
-		expect(spy2.called).to.be.true;
+		expect(spy2).toHaveBeenCalled();
 	});
 
 	it('removes focus listeners after unbinding tooltip from Layer', () => {
