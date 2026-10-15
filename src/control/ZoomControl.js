@@ -3,6 +3,7 @@ import {Control} from './Control.js';
 import {MaplairMap} from '../map/Map.js';
 import * as DomUtil from '../dom/DomUtil.js';
 import * as DomEvent from '../dom/DomEvent.js';
+import {I18n} from '../core/I18n.js';
 
 /*
  * @class ZoomControl
@@ -29,17 +30,10 @@ export class ZoomControl extends Control {
 			// The text set on the 'zoom in' button.
 			zoomInText: '<span aria-hidden="true">+</span>',
 
-			// @option zoomInTitle: String = 'Zoom in'
-			// The title set on the 'zoom in' button.
-			zoomInTitle: 'Zoom in',
 
 			// @option zoomOutText: String = '<span aria-hidden="true">&#x2212;</span>'
 			// The text set on the 'zoom out' button.
 			zoomOutText: '<span aria-hidden="true">&#x2212;</span>',
-
-			// @option zoomOutTitle: String = 'Zoom out'
-			// The title set on the 'zoom out' button.
-			zoomOutTitle: 'Zoom out'
 		});
 	}
 
@@ -48,9 +42,9 @@ export class ZoomControl extends Control {
 		container = DomUtil.create('div', `${zoomName} maplair-bar`),
 		options = this.options;
 
-		this._zoomInButton  = this._createButton(options.zoomInText, options.zoomInTitle,
+		this._zoomInButton  = this._createButton(options.zoomInText, I18n.translate('Zoom in'),
 			`${zoomName}-in`,  container, this._zoomIn);
-		this._zoomOutButton = this._createButton(options.zoomOutText, options.zoomOutTitle,
+		this._zoomOutButton = this._createButton(options.zoomOutText, I18n.translate('Zoom out'),
 			`${zoomName}-out`, container, this._zoomOut);
 
 		this._updateDisabled();
