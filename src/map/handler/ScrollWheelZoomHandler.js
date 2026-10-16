@@ -79,7 +79,8 @@ export class ScrollWheelZoomHandler extends Handler {
 	}
 
 	// Zooms continuously like `PinchZoomHandler`, around the pointer position of `e`.
-	_pinchTo(e, zoom) {
+	// If `eased`, the zoom approaches `zoom` over a few frames (for mouse wheels with steps).
+	_pinchTo(e, zoom, eased) {
 		const map = this._map;
 
 		if (!this._pinch) {
@@ -95,15 +96,23 @@ export class ScrollWheelZoomHandler extends Handler {
 			map._moveStart(true, false);
 		}
 
-		if (!map.options.bounceAtZoomLimits) {
+		if (!map.options.bounceAtZoomLimits || eased) {
 			zoom = Math.max(map.getMinZoom(), Math.min(map.getMaxZoom(), zoom));
 		}
 		this._pinch.zoom = zoom;
+		this._pinch.shown ??= map.getZoom();
 
+		const frame = () => {
+			const pinch = this._pinch,
+			delta = pinch.zoom - pinch.shown;
+			pinch.shown = eased && Math.abs(delta) > 0.01 ? pinch.shown + delta * 0.3 : pinch.zoom;
+			map._move(this._getPinchCenter(pinch.shown), pinch.shown, {pinch: true, round: false});
+			if (pinch.shown !== pinch.zoom) {
+				this._pinchFrame = requestAnimationFrame(frame);
+			}
+		};
 		cancelAnimationFrame(this._pinchFrame);
-		this._pinchFrame = requestAnimationFrame(() => {
-			map._move(this._getPinchCenter(zoom), zoom, {pinch: true, round: false});
-		});
+		this._pinchFrame = requestAnimationFrame(frame);
 	}
 
 	_getPinchCenter(zoom) {
@@ -122,7 +131,7 @@ export class ScrollWheelZoomHandler extends Handler {
 		center = this._getPinchCenter(zoom);
 		this._pinch = null;
 
-		if (map.options.zoomAnimation) {
+		if (map.options.zoomAnimation && Math.abs(zoom - map.getZoom()) > 1e-9) {
 			map._animateZoom(center, zoom, true, map.options.zoomSnap);
 		} else {
 			// `_moveStart()` has already been called on the first event
@@ -167,6 +176,15 @@ export class ScrollWheelZoomHandler extends Handler {
 	}
 
 	_onWheelZoom(e) {
+		if (this._map.options.continuousZoom) {
+			// zoom with each wheel event, see the `continuousZoom` option
+			DomEvent.stop(e);
+			const delta = DomEvent.getWheelDelta(e) / this._map.options.wheelPxPerZoomLevel;
+			this._pinchTo(e, (this._pinch?.zoom ?? this._map.getZoom()) + delta, true);
+			clearTimeout(this._pinchTimer);
+			this._pinchTimer = setTimeout(this._endPinch.bind(this), gestureEndDelay);
+			return;
+		}
 		const delta = DomEvent.getWheelDelta(e);
 
 		const debounce = this._map.options.wheelDebounceTime;

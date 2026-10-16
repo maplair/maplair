@@ -592,7 +592,7 @@ export class GridLayer extends Layer {
 	}
 
 	_resetView(e) {
-		const animating = e && (e.pinch || e.flyTo);
+		const animating = e && (e.pinch || e.flyTo || e.continuous);
 		this._setView(this._map.getCenter(), this._map.getZoom(), animating, animating);
 	}
 

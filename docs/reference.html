@@ -427,6 +427,16 @@ Animations are enabled by default unless the user has configured</td>
 		<td><code>4</code></td>
 		<td>Won't animate zoom if the zoom difference exceeds this value.</td>
 	</tr>
+	<tr id='maplairmap-continuouszoom'>
+		<td><code><b>continuousZoom</b></code></td>
+		<td><code>Boolean</code></td>
+		<td><code>false</code></td>
+		<td>Whether zoom animations (e.g. of the zoom control, double click and keyboard)
+change the view frame by frame through fractional zoom levels, like <code>flyTo()</code>
+and pinch zoom, instead of scaling the map with a CSS transition between two
+zoom levels. Also makes the scroll wheel zoom smoothly with each wheel event
+(see <code>scrollWheelZoom</code>), snapping to <code>zoomSnap</code> when scrolling ends.</td>
+	</tr>
 	<tr id='maplairmap-fadeanimation'>
 		<td><code><b>fadeAnimation</b></code></td>
 		<td><code>Boolean</code></td>

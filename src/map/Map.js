@@ -130,6 +130,14 @@ export class MaplairMap extends Evented {
 			// Won't animate zoom if the zoom difference exceeds this value.
 			zoomAnimationThreshold: 4,
 
+			// @option continuousZoom: Boolean = false
+			// Whether zoom animations (e.g. of the zoom control, double click and keyboard)
+			// change the view frame by frame through fractional zoom levels, like `flyTo()`
+			// and pinch zoom, instead of scaling the map with a CSS transition between two
+			// zoom levels. Also makes the scroll wheel zoom smoothly with each wheel event
+			// (see `scrollWheelZoom`), snapping to `zoomSnap` when scrolling ends.
+			continuousZoom: false,
+
 			// @option fadeAnimation: Boolean = *
 			// Whether the tile fade animation is enabled.
 			// Animations are enabled by default unless the user has configured
@@ -1837,6 +1845,32 @@ export class MaplairMap extends Evented {
 		return !this._container.getElementsByClassName('maplair-zoom-animated').length;
 	}
 
+	// Zooms to `center` and `zoom` frame by frame around the zoom origin at `offset`
+	// from the center (as the CSS zoom animation does), see the `continuousZoom` option.
+	_continuousZoom(center, zoom, offset, options) {
+		const startZoom = this._zoom,
+		originOffset = offset.multiplyBy(-1),
+		origin = this.containerPointToLatLng(this.getSize()._divideBy(2).add(offset)),
+		start = performance.now(),
+		duration = 250;
+
+		this._moveStart(true, options.noMoveStart ?? false);
+
+		const frame = () => {
+			const t = Math.min(1, (performance.now() - start) / duration);
+			if (t < 1) {
+				// ease out, like the CSS zoom transition
+				const z = startZoom + (zoom - startZoom) * (1 - (1 - t) ** 2);
+				this._move(this.unproject(this.project(origin, z).add(originOffset), z), z, {continuous: true});
+				// cancelled by `_stop()`
+				this._flyToFrame = requestAnimationFrame(frame);
+			} else {
+				this._move(center, zoom)._moveEnd(true);
+			}
+		};
+		this._flyToFrame = requestAnimationFrame(frame);
+	}
+
 	_tryAnimatedZoom(center, zoom, options) {
 
 		if (this._animatingZoom) { return true; }
@@ -1844,7 +1878,8 @@ export class MaplairMap extends Evented {
 		options ??= {};
 
 		// don't animate if disabled, not supported or zoom difference is too large
-		if (!this._zoomAnimated || options.animate === false || this._nothingToAnimate() ||
+		if (!this._zoomAnimated || options.animate === false ||
+		        (this._nothingToAnimate() && !this.options.continuousZoom) ||
 		        Math.abs(zoom - this._zoom) > this.options.zoomAnimationThreshold) { return false; }
 
 		// offset is the pixel coords of the zoom origin relative to the current center
@@ -1853,6 +1888,11 @@ export class MaplairMap extends Evented {
 
 		// don't animate if the zoom origin isn't within one screen from the current center, unless forced
 		if (options.animate !== true && !this.getSize().contains(offset)) { return false; }
+
+		if (this.options.continuousZoom) {
+			this._continuousZoom(center, zoom, offset, options);
+			return true;
+		}
 
 		const userEvent = this._userEvent;
 		this._zoomAnimFrame = requestAnimationFrame(() => {
