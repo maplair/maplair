@@ -43,7 +43,8 @@ describe('DivOverlay overflow', () => {
 		expectSameRect(overflowing.getElement(), regular.getElement());
 	}
 
-	for (const direction of ['auto', 'top', 'bottom', 'left', 'right']) {
+	// (`auto` differs by design, the area of an overflowing tooltip is the viewport)
+	for (const direction of ['top', 'bottom', 'left', 'right']) {
 		it(`positions an overflowing tooltip like a regular one (direction: ${direction})`, () => expectSamePosition(direction));
 	}
 
@@ -59,8 +60,9 @@ describe('DivOverlay overflow', () => {
 
 	it('positions a sticky overflowing tooltip like a regular one', () => {
 		const latlng = map.containerPointToLatLng([150, 150]);
-		const regular = new Tooltip(latlng, {sticky: true, content: 'Tooltip'}).addTo(map);
-		const overflowing = new Tooltip(latlng, {sticky: true, content: 'Tooltip', overflow: true}).addTo(map);
+		const options = {sticky: true, direction: 'right', content: 'Tooltip'};
+		const regular = new Tooltip(latlng, options).addTo(map);
+		const overflowing = new Tooltip(latlng, {...options, overflow: true}).addTo(map);
 		regular._setPosition(map.latLngToLayerPoint(map.containerPointToLatLng([160, 120])));
 		overflowing._setPosition(map.latLngToLayerPoint(map.containerPointToLatLng([160, 120])));
 
@@ -113,8 +115,8 @@ describe('DivOverlay overflow', () => {
 		scroller.appendChild(spacer);
 
 		const latlng = map.containerPointToLatLng([100, 100]);
-		const regular = new Tooltip(latlng, {permanent: true, content: 'A'}).addTo(map);
-		const overflowing = new Tooltip(latlng, {permanent: true, content: 'A', overflow: true}).addTo(map);
+		const regular = new Tooltip(latlng, {permanent: true, direction: 'top', content: 'A'}).addTo(map);
+		const overflowing = new Tooltip(latlng, {permanent: true, direction: 'top', content: 'A', overflow: true}).addTo(map);
 
 		const scrolled = nextScroll(scroller);
 		scroller.scrollTop = 30;

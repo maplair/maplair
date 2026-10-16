@@ -659,7 +659,7 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	margin-top: 6px;
 
 	&:before {
-		left: 50%;
+		left: calc(50% + var(--maplair-tooltip-tip-shift, 0px));
 		margin-left: -6px;
 		top: 0;
 		margin-top: -12px;
@@ -672,7 +672,7 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	margin-top: -6px;
 
 	&:before {
-		left: 50%;
+		left: calc(50% + var(--maplair-tooltip-tip-shift, 0px));
 		margin-left: -6px;
 		bottom: 0;
 		margin-bottom: -12px;
@@ -685,7 +685,7 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	margin-left: -6px;
 
 	&:before {
-		top: 50%;
+		top: calc(50% + var(--maplair-tooltip-tip-shift, 0px));
 		margin-top: -6px;
 		right: 0;
 		margin-right: -12px;
@@ -697,7 +697,7 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	margin-left: 6px;
 
 	&:before {
-		top: 50%;
+		top: calc(50% + var(--maplair-tooltip-tip-shift, 0px));
 		margin-top: -6px;
 		left: 0;
 		margin-left: -12px;

@@ -59,6 +59,24 @@ import {FeatureGroup} from './FeatureGroup.js';
 // @alternative
 // @constructor Tooltip(latlng: LatLng, options?: Tooltip options)
 // Instantiates a `Tooltip` object given `latlng` where the tooltip will open and an optional `options` object that describes its appearance and location.
+const directions = ['top', 'bottom', 'center', 'right', 'left'];
+
+// The size of the tooltip tip (see `.maplair-tooltip-top` etc. in maplair.css) and
+// the minimum distance of an `auto` tooltip to the edge of the map.
+const tipSize = 6,
+autoPadding = 4;
+
+// The shift moving a box from `start` with `size` into the range `[min, max]`.
+function shiftInto(start, size, min, max) {
+	return Math.max(0, min - start) - Math.max(0, start + size - max);
+}
+
+// Keeps the shifted tip off the rounded corners of the tooltip.
+function clampTip(tipShift, size) {
+	const max = Math.max(0, size / 2 - 2 * tipSize);
+	return Math.round(Math.min(max, Math.max(-max, tipShift)));
+}
+
 export class Tooltip extends DivOverlay {
 
 	static {
@@ -76,8 +94,11 @@ export class Tooltip extends DivOverlay {
 			// @option direction: String = 'auto'
 			// Direction where to open the tooltip. Possible values are: `right`, `left`,
 			// `top`, `bottom`, `center`, `auto`.
-			// `auto` will dynamically switch between `right` and `left` according to the tooltip
-			// position on the map.
+			// `auto` chooses the direction with enough space when opening the tooltip:
+			// preferably the side towards the center of the map (`right` or `left`),
+			// otherwise the opposite side, `top` or `bottom`. The tooltip is shifted
+			// along that side to stay within the map (within the viewport if `overflow`
+			// is set), its tip still pointing at the source.
 			direction: 'auto',
 
 			// @option permanent: Boolean = false
@@ -164,43 +185,44 @@ export class Tooltip extends DivOverlay {
 
 	_adjustPan() {}
 
+	update() {
+		// The automatic direction is chosen once per opening and content, so that
+		// the tooltip does not flip sides while the map or the pointer moves.
+		this._autoDirection = undefined;
+		super.update();
+	}
+
 	_setPosition(pos) {
-		let subX, subY, direction = this.options.direction;
-		const map = this._map,
-		container = this._container,
-		centerPoint = map.latLngToContainerPoint(map.getCenter()),
-		tooltipPoint = map.layerPointToContainerPoint(pos),
+		let direction = this.options.direction,
+		shift = new Point(0, 0);
+		const container = this._container,
 		tooltipWidth = container.offsetWidth,
 		tooltipHeight = container.offsetHeight,
 		offset = new Point(this.options.offset),
 		anchor = this._getAnchor();
 
-		if (direction === 'top') {
-			subX = tooltipWidth / 2;
-			subY = tooltipHeight;
-		} else if (direction === 'bottom') {
-			subX = tooltipWidth / 2;
-			subY = 0;
-		} else if (direction === 'center') {
-			subX = tooltipWidth / 2;
-			subY = tooltipHeight / 2;
-		} else if (direction === 'right') {
-			subX = 0;
-			subY = tooltipHeight / 2;
-		} else if (direction === 'left') {
-			subX = tooltipWidth;
-			subY = tooltipHeight / 2;
-		} else if (tooltipPoint.x < centerPoint.x) {
-			direction = 'right';
-			subX = 0;
-			subY = tooltipHeight / 2;
-		} else {
-			direction = 'left';
-			subX = tooltipWidth + (offset.x + anchor.x) * 2;
-			subY = tooltipHeight / 2;
+		if (!directions.includes(direction)) {
+			({direction, shift} = this._getAutoPlacement(pos, offset, anchor, tooltipWidth, tooltipHeight));
+			if (direction === 'left') {
+				// mirror the offset and anchor, which are meant for the right side
+				offset.x = -offset.x;
+				anchor.x = -anchor.x;
+			}
 		}
 
-		pos = pos.subtract(new Point(subX, subY, true)).add(offset).add(anchor);
+		let subX = tooltipWidth / 2,
+		subY = tooltipHeight / 2;
+		if (direction === 'top') {
+			subY = tooltipHeight;
+		} else if (direction === 'bottom') {
+			subY = 0;
+		} else if (direction === 'right') {
+			subX = 0;
+		} else if (direction === 'left') {
+			subX = tooltipWidth;
+		}
+
+		pos = pos.subtract(new Point(subX, subY, true)).add(offset).add(anchor).add(shift);
 
 		container.classList.remove(
 			'maplair-tooltip-right',
@@ -209,7 +231,68 @@ export class Tooltip extends DivOverlay {
 			'maplair-tooltip-bottom'
 		);
 		container.classList.add(`maplair-tooltip-${direction}`);
+
+		// Let the tip point at the source despite the shift
+		const tipShift = direction === 'top' || direction === 'bottom' ?
+			clampTip(-shift.x, tooltipWidth) :
+			clampTip(-shift.y, tooltipHeight);
+		if (tipShift) {
+			container.style.setProperty('--maplair-tooltip-tip-shift', `${tipShift}px`);
+		} else {
+			container.style.removeProperty('--maplair-tooltip-tip-shift');
+		}
+
 		this._setContainerPosition(pos);
+	}
+
+	// Chooses the direction of an `auto` tooltip by the available space:
+	// preferably the side towards the center, otherwise the opposite side,
+	// above or below. The tooltip is shifted along that side to stay in view.
+	_getAutoPlacement(pos, offset, anchor, width, height) {
+		const area = this._getAutoArea(),
+		point = this._map.layerPointToContainerPoint(pos),
+		x = point.x + offset.x + anchor.x,
+		y = point.y + offset.y + anchor.y,
+		// the space for each direction, see `direction` for the mirrored left side
+		space = {
+			right: area.max.x - x - width - tipSize,
+			left: point.x - offset.x - anchor.x - area.min.x - width - tipSize,
+			top: y - area.min.y - height - tipSize,
+			bottom: area.max.y - y - height - tipSize
+		};
+
+		if (!this._autoDirection) {
+			const sides = point.x < (area.min.x + area.max.x) / 2 ? ['right', 'left'] : ['left', 'right'],
+			fallback = space.right >= space.left ? 'right' : 'left';
+			this._autoDirection = [...sides, 'top', 'bottom'].find(d => space[d] >= 0 &&
+				// above or below, the tooltip has to fit horizontally
+				(d === 'right' || d === 'left' || width <= area.max.x - area.min.x)) ?? fallback;
+		}
+
+		const direction = this._autoDirection,
+		shift = direction === 'top' || direction === 'bottom' ?
+			new Point(shiftInto(x - width / 2, width, area.min.x, area.max.x), 0) :
+			new Point(0, shiftInto(y - height / 2, height, area.min.y, area.max.y));
+
+		return {direction, shift};
+	}
+
+	// The area in container points an `auto` tooltip should stay within:
+	// the map, or the viewport for an overflowing tooltip.
+	_getAutoArea() {
+		const map = this._map;
+		let min = new Point(0, 0),
+		max = map.getSize();
+		if (this.options.overflow) {
+			const mapContainer = map._container,
+			rect = mapContainer.getBoundingClientRect(),
+			origin = new Point(rect.left + mapContainer.clientLeft, rect.top + mapContainer.clientTop),
+			viewport = document.documentElement;
+			min = min.subtract(origin);
+			max = new Point(viewport.clientWidth, viewport.clientHeight).subtract(origin);
+		}
+		const padding = new Point(autoPadding, autoPadding);
+		return {min: min.add(padding), max: max.subtract(padding)};
 	}
 
 	_updatePosition() {

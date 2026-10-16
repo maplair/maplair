@@ -4808,8 +4808,11 @@ should adapt this value if you use a custom icon.</li>
 		<td><code>&#x27;auto&#x27;</code></td>
 		<td>Direction where to open the tooltip. Possible values are: <code>right</code>, <code>left</code>,
 <code>top</code>, <code>bottom</code>, <code>center</code>, <code>auto</code>.
-<code>auto</code> will dynamically switch between <code>right</code> and <code>left</code> according to the tooltip
-position on the map.</td>
+<code>auto</code> chooses the direction with enough space when opening the tooltip:
+preferably the side towards the center of the map (<code>right</code> or <code>left</code>),
+otherwise the opposite side, <code>top</code> or <code>bottom</code>. The tooltip is shifted
+along that side to stay within the map (within the viewport if <code>overflow</code>
+is set), its tip still pointing at the source.</td>
 	</tr>
 	<tr id='tooltip-permanent'>
 		<td><code><b>permanent</b></code></td>
