@@ -1,8 +1,10 @@
 {
 	"A JavaScript library for interactive maps": "Knižnica JavaScript pre interaktívne mapy",
 	"Close popup": "Zavrieť vyskakovacie okno",
+	"Exit fullscreen": "Ukončiť celú obrazovku",
 	"Layers": "Vrstvy",
 	"OpenStreetMap contributors": "prispievatelia OpenStreetMap",
+	"View fullscreen": "Zobraziť na celú obrazovku",
 	"Zoom in": "Priblížiť",
 	"Zoom out": "Oddialiť",
 	"{feet} ft": "{feet} ft",

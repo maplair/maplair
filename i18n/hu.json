@@ -1,8 +1,10 @@
 {
 	"A JavaScript library for interactive maps": "JavaScript-könyvtár interaktív térképekhez",
 	"Close popup": "Felugró ablak bezárása",
+	"Exit fullscreen": "Kilépés a teljes képernyőből",
 	"Layers": "Rétegek",
 	"OpenStreetMap contributors": "OpenStreetMap közreműködők",
+	"View fullscreen": "Teljes képernyő",
 	"Zoom in": "Nagyítás",
 	"Zoom out": "Kicsinyítés",
 	"{feet} ft": "{feet} ft",

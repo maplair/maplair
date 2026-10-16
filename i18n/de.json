@@ -1,8 +1,10 @@
 {
 	"A JavaScript library for interactive maps": "Eine JavaScript-Bibliothek für interaktive Karten",
 	"Close popup": "Popup schließen",
+	"Exit fullscreen": "Vollbild beenden",
 	"Layers": "Ebenen",
 	"OpenStreetMap contributors": "OpenStreetMap-Mitwirkende",
+	"View fullscreen": "Vollbild anzeigen",
 	"Zoom in": "Hineinzoomen",
 	"Zoom out": "Herauszoomen",
 	"{feet} ft": "{feet} ft",

@@ -1,8 +1,10 @@
 {
 	"A JavaScript library for interactive maps": "Knjižnica JavaScript za interaktivne zemljevide",
 	"Close popup": "Zapri pojavno okno",
+	"Exit fullscreen": "Izhod iz celozaslonskega načina",
 	"Layers": "Sloji",
 	"OpenStreetMap contributors": "sodelavci OpenStreetMap",
+	"View fullscreen": "Prikaži v celozaslonskem načinu",
 	"Zoom in": "Povečaj",
 	"Zoom out": "Pomanjšaj",
 	"{feet} ft": "{feet} ft",
