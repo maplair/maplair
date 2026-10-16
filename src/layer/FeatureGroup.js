@@ -1,5 +1,6 @@
 import {LayerGroup} from './LayerGroup.js';
 import {LatLngBounds} from '../geo/LatLngBounds.js';
+import * as Util from '../core/Util.js';
 
 /*
  * @class FeatureGroup
@@ -66,6 +67,13 @@ export class FeatureGroup extends LayerGroup {
 	// Sets the given path options to each layer of the group that has a `setStyle` method.
 	setStyle(style) {
 		return this.eachLayer(l => l.setStyle?.(style));
+	}
+
+	// @method setInteractive(interactive: Boolean): this
+	// Changes the `interactive` option of each layer of the group.
+	setInteractive(interactive) {
+		Util.setOptions(this, {interactive: !!interactive});
+		return this.eachLayer(l => l.setInteractive?.(interactive));
 	}
 
 	// @method bringToFront(): this

@@ -100,6 +100,10 @@ export class Path extends Layer {
 		return this;
 	}
 
+	_updateInteractive() {
+		this._renderer._updateInteractive(this);
+	}
+
 	// @method setStyle(style: Path options): this
 	// Changes the appearance of a Path based on the options in the `Path options` object.
 	setStyle(style) {

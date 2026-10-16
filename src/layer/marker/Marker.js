@@ -387,6 +387,21 @@ export class Marker extends Layer {
 		this._setPos(pos);
 	}
 
+	_updateInteractive() {
+		if (!this._icon) { return; }
+		if (this.options.interactive) {
+			this._initInteraction();
+			if (this._draggableBeforeNonInteractive) {
+				this.dragging?.enable();
+			}
+		} else {
+			this._icon.classList.remove('maplair-interactive');
+			this.removeInteractiveTarget(this._icon);
+			this._draggableBeforeNonInteractive = this.dragging?.enabled();
+			this.dragging?.disable();
+		}
+	}
+
 	_initInteraction() {
 
 		if (!this.options.interactive) { return; }

@@ -166,6 +166,15 @@ export class DivOverlay extends Layer {
 	}
 
 	// @namespace DivOverlay
+	_updateInteractive() {
+		this._container.classList.toggle('maplair-interactive', this.options.interactive);
+		if (this.options.interactive) {
+			this.addInteractiveTarget(this._container);
+		} else {
+			this.removeInteractiveTarget(this._container);
+		}
+	}
+
 	// @method getLatLng: LatLng
 	// Returns the geographical point of the overlay.
 	getLatLng() {

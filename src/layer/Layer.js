@@ -76,6 +76,21 @@ export class Layer extends Evented {
 		return this._map.getPane(name ? (this.options[name] || name) : this.options.pane);
 	}
 
+	// Documented in Layer.Interactive.leafdoc
+	setInteractive(interactive) {
+		interactive = !!interactive;
+		if (this.options.interactive !== interactive) {
+			Util.setOptions(this, {interactive});
+			if (this._map) {
+				this._updateInteractive();
+			}
+		}
+		return this;
+	}
+
+	// Applies a changed `interactive` option to a layer on the map, see `setInteractive()`.
+	_updateInteractive() {}
+
 	addInteractiveTarget(targetEl) {
 		this._map._targets[Util.stamp(targetEl)] = this;
 		return this;

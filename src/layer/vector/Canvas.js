@@ -342,6 +342,10 @@ export class Canvas extends Renderer {
 		}
 	}
 
+	// The hit detection checks the `interactive` option of the layers,
+	// the hovered layer is left on the next pointer move.
+	_updateInteractive() {}
+
 	// Canvas obviously doesn't have pointer events for individual drawn objects,
 	// so we emulate that by calculating what's under the pointer on pointermove/click manually
 

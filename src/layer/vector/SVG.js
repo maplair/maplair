@@ -105,6 +105,10 @@ export class SVG extends Renderer {
 		this._layers[stamp(layer)] = layer;
 	}
 
+	_updateInteractive(layer) {
+		layer._path.classList.toggle('maplair-interactive', !!layer.options.interactive);
+	}
+
 	_addPath(layer) {
 		if (!this._rootGroup) { this._initContainer(); }
 		this._rootGroup.appendChild(layer._path);

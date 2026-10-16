@@ -102,6 +102,15 @@ export class ImageOverlay extends Layer {
 		}
 	}
 
+	_updateInteractive() {
+		this._image.classList.toggle('maplair-interactive', this.options.interactive);
+		if (this.options.interactive) {
+			this.addInteractiveTarget(this._image);
+		} else {
+			this.removeInteractiveTarget(this._image);
+		}
+	}
+
 	// @method setOpacity(opacity: Number): this
 	// Sets the opacity of the overlay.
 	setOpacity(opacity) {
