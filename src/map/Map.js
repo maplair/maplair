@@ -506,6 +506,46 @@ export class MaplairMap extends Evented {
 		return this.flyTo(target.center, target.zoom, options);
 	}
 
+	// @method setCrs(crs: CRS): this
+	// Changes the [Coordinate Reference System](#crs) of the map, keeping its center
+	// and (as far as possible with the zoom levels and `zoomSnap`) its scale at the
+	// center. All layers are redrawn in the new CRS; note that tile layers only work
+	// with the CRS their tiles were made for.
+	setCrs(crs) {
+		const oldCrs = this.options.crs;
+		if (crs === oldCrs) { return this; }
+
+		if (!this._loaded) {
+			this.options.crs = crs;
+			this.fire('crschange', {oldCrs, crs});
+			return this;
+		}
+
+		this._stop();
+		const center = this.getCenter(),
+		resolution = this._getResolution(center);
+
+		this.options.crs = crs;
+
+		// the zoom with the same distance per pixel at the center
+		const zoom = this._limitZoom(crs.zoom(crs.scale(this._zoom) * this._getResolution(center) / resolution));
+
+		// @section Other Events
+		// @event crschange: CrsChangeEvent
+		// Fired when the CRS of the map changes with `setCrs()`, before the view is reset.
+		this.fire('crschange', {oldCrs, crs});
+
+		this._resetView(center, zoom);
+		return this;
+	}
+
+	// The distance per pixel at `latlng` at the current zoom, in the units of the CRS.
+	_getResolution(latlng) {
+		const crs = this.options.crs,
+		point = crs.latLngToPoint(latlng, this._zoom);
+		return crs.distance(latlng, crs.pointToLatLng(point.add([1, 0]), this._zoom));
+	}
+
 	// @method setMaxBounds(bounds: LatLngBounds): this
 	// Restricts the map view to the given bounds (see the [maxBounds](#map-maxbounds) option).
 	setMaxBounds(bounds) {

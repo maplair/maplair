@@ -108,6 +108,13 @@ The old size before resize event.
 @property newSize: Point
 The new size after the resize event.
 
+@miniclass CrsChangeEvent (Event objects)
+@inherits Event
+@property oldCrs: CRS
+The CRS of the map before the change.
+@property crs: CRS
+The new CRS of the map.
+
 @miniclass GeoJSONEvent (Event objects)
 @inherits Event
 @property layer: Layer

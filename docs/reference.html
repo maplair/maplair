@@ -865,6 +865,37 @@ including pan and fly animations.</td>
 
 </section><section class='collapsable'>
 
+<h4 id='maplairmap-other-events'>Other Events</h4>
+
+
+<table><thead>
+	<tr>
+		<th>Event</th>
+		<th>Data</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='maplairmap-crschange'>
+		<td><code><b>crschange</b></code></td>
+		<td><code><a href='#crschangeevent'>CrsChangeEvent</a></code></td>
+		<td>Fired when the CRS of the map changes with <code>setCrs()</code>, before the view is reset.</td>
+	</tr>
+	<tr id='maplairmap-pixelratiochange'>
+		<td><code><b>pixelratiochange</b></code></td>
+		<td><code><a href='#event'>Event</a></code></td>
+		<td>Fired when the <code>devicePixelRatio</code> of the browser changes, e.g. when moving
+the window to a screen with another resolution or when zooming the page.
+Tile layers with <code>detectRetina</code> and canvas renderers adapt to it.</td>
+	</tr>
+	<tr id='maplairmap-zoomanim'>
+		<td><code><b>zoomanim</b></code></td>
+		<td><code><a href='#zoomanimevent'>ZoomAnimEvent</a></code></td>
+		<td>Fired at least once per zoom animation. For continuous zoom, like pinch zooming, fired once per frame during zoom.</td>
+	</tr>
+</tbody></table>
+
+</section><section class='collapsable'>
+
 <h4 id='maplairmap-location-events'>Location events</h4>
 
 
@@ -890,7 +921,7 @@ went successfully.</td>
 
 </section><section class='collapsable'>
 
-<h4 id='maplairmap-other-events'>Other Events</h4>
+<h4 id='maplairmap-interaction-events'>Interaction events</h4>
 
 <div class='section-comments'>The map state change events <code>movestart</code>, <code>move</code>, <code>moveend</code>, <code>zoomstart</code>,
 <code>zoom</code>, <code>zoomend</code> and <code>zoomanim</code> caused by the user (e.g. dragging, scrolling,
@@ -898,32 +929,6 @@ pinching, pressing a key or clicking a zoom button) have an <code>originalEvent<
 property with the DOM event that started the change. It is <code>undefined</code> for
 changes made by code (e.g. <code>setView()</code>), which allows to tell them apart,
 e.g. to avoid feedback loops when synchronizing the view.</div>
-
-<table><thead>
-	<tr>
-		<th>Event</th>
-		<th>Data</th>
-		<th>Description</th>
-	</tr>
-	</thead><tbody>
-	<tr id='maplairmap-pixelratiochange'>
-		<td><code><b>pixelratiochange</b></code></td>
-		<td><code><a href='#event'>Event</a></code></td>
-		<td>Fired when the <code>devicePixelRatio</code> of the browser changes, e.g. when moving
-the window to a screen with another resolution or when zooming the page.
-Tile layers with <code>detectRetina</code> and canvas renderers adapt to it.</td>
-	</tr>
-	<tr id='maplairmap-zoomanim'>
-		<td><code><b>zoomanim</b></code></td>
-		<td><code><a href='#zoomanimevent'>ZoomAnimEvent</a></code></td>
-		<td>Fired at least once per zoom animation. For continuous zoom, like pinch zooming, fired once per frame during zoom.</td>
-	</tr>
-</tbody></table>
-
-</section><section class='collapsable'>
-
-<h4 id='maplairmap-interaction-events'>Interaction events</h4>
-
 
 <table><thead>
 	<tr>
@@ -1219,6 +1224,55 @@ pan-zoom animation.</p>
 but takes a bounds parameter like <a href="#map-fitbounds"><code>fitBounds</code></a>.</p>
 </td>
 	</tr>
+	<tr id='maplairmap-setcrs'>
+		<td><code><b>setCrs</b>(<nobr>&lt;<a href='#crs'>CRS</a>&gt;</nobr> <i>crs</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#crs">Coordinate Reference System</a> of the map, keeping its center
+and (as far as possible with the zoom levels and <code>zoomSnap</code>) its scale at the
+center. All layers are redrawn in the new CRS; note that tile layers only work
+with the CRS their tiles were made for.</p>
+</td>
+	</tr>
+	<tr id='maplairmap-stop'>
+		<td><code><b>stop</b>()</code></td>
+		<td><code>this</code></td>
+		<td><p>Stops the currently running <code>panTo</code> or <code>flyTo</code> animation, if any.</p>
+</td>
+	</tr>
+</tbody></table>
+
+</section><section class='collapsable'>
+
+<h4 id='maplairmap-other-methods'>Other methods</h4>
+
+
+<table><thead>
+	<tr>
+		<th>Method</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='maplairmap-isfullscreen'>
+		<td><code><b>isFullscreen</b>()</code></td>
+		<td><code>Boolean</code></td>
+		<td><p>Returns <code>true</code> if the map is viewed in fullscreen.</p>
+</td>
+	</tr>
+</tbody></table>
+
+</section><section class='collapsable'>
+
+<h4 id='maplairmap-other-events'>Other Events</h4>
+
+
+<table><thead>
+	<tr>
+		<th>Method</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
 	<tr id='maplairmap-setmaxbounds'>
 		<td><code><b>setMaxBounds</b>(<nobr>&lt;<a href='#latlngbounds'>LatLngBounds</a>&gt;</nobr> <i>bounds</i>)</code></td>
 		<td><code>this</code></td>
@@ -1269,32 +1323,6 @@ times in a row.</p>
 		<td><p>Checks if the map container size changed and updates the map if so —
 call it after you've changed the map size dynamically, also animating
 pan by default.</p>
-</td>
-	</tr>
-	<tr id='maplairmap-stop'>
-		<td><code><b>stop</b>()</code></td>
-		<td><code>this</code></td>
-		<td><p>Stops the currently running <code>panTo</code> or <code>flyTo</code> animation, if any.</p>
-</td>
-	</tr>
-</tbody></table>
-
-</section><section class='collapsable'>
-
-<h4 id='maplairmap-other-methods'>Other methods</h4>
-
-
-<table><thead>
-	<tr>
-		<th>Method</th>
-		<th>Returns</th>
-		<th>Description</th>
-	</tr>
-	</thead><tbody>
-	<tr id='maplairmap-isfullscreen'>
-		<td><code><b>isFullscreen</b>()</code></td>
-		<td><code>Boolean</code></td>
-		<td><p>Returns <code>true</code> if the map is viewed in fullscreen.</p>
 </td>
 	</tr>
 </tbody></table>
@@ -27304,6 +27332,82 @@ the propagation chain that fired the event.</td>
 be the same as the <code>target</code>.</td>
 	</tr>
 	<tr id='resizeevent-propagatedfrom'>
+		<td><code><b>propagatedFrom</b></code></td>
+		<td><code>Object</code></td>
+		<td>For propagated events, the last object that propagated the event to its
+event parent.</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
+
+</section><span id='crschangeevent'></span>
+
+<section>
+<h3 id='crschangeevent-property'>CrsChangeEvent</h3>
+
+<section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Property</th>
+		<th>Type</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='crschangeevent-oldcrs'>
+		<td><code><b>oldCrs</b></code></td>
+		<td><code><a href='#crs'>CRS</a></code></td>
+		<td>The CRS of the map before the change.</td>
+	</tr>
+	<tr id='crschangeevent-crs'>
+		<td><code><b>crs</b></code></td>
+		<td><code><a href='#crs'>CRS</a></code></td>
+		<td>The new CRS of the map.</td>
+	</tr>
+</tbody></table>
+
+</section>
+
+
+<div class='accordion'>
+	<label><span class='expander'>▶</span> Properties inherited from <a href='#event'>Event</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Property</th>
+		<th>Type</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='crschangeevent-type'>
+		<td><code><b>type</b></code></td>
+		<td><code>String</code></td>
+		<td>The event type (e.g. <code>'click'</code>).</td>
+	</tr>
+	<tr id='crschangeevent-target'>
+		<td><code><b>target</b></code></td>
+		<td><code>Object</code></td>
+		<td>The object that fired the event. For propagated events, the last object in
+the propagation chain that fired the event.</td>
+	</tr>
+	<tr id='crschangeevent-sourcetarget'>
+		<td><code><b>sourceTarget</b></code></td>
+		<td><code>Object</code></td>
+		<td>The object that originally fired the event. For non-propagated events, this will
+be the same as the <code>target</code>.</td>
+	</tr>
+	<tr id='crschangeevent-propagatedfrom'>
 		<td><code><b>propagatedFrom</b></code></td>
 		<td><code>Object</code></td>
 		<td>For propagated events, the last object that propagated the event to its

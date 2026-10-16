@@ -29,7 +29,7 @@ export class DragHandler extends Handler {
 			this._draggable.on('predrag', this._onPreDragLimit, this);
 			if (map.options.worldCopyJump) {
 				this._draggable.on('predrag', this._onPreDragWrap, this);
-				map.on('zoomend', this._onZoomEnd, this);
+				map.on('zoomend crschange', this._onZoomEnd, this);
 
 				map.whenReady(this._onZoomEnd, this);
 			}

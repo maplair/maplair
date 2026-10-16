@@ -102,14 +102,22 @@ export class WMSTileLayer extends TileLayer {
 	}
 
 	onAdd(map) {
+		this._updateCrs();
+		super.onAdd(map);
+	}
 
-		this._crs = this.options.crs ?? map.options.crs;
+	_updateCrs() {
+		this._crs = this.options.crs ?? this._map.options.crs;
 		this._wmsVersion = parseFloat(this.wmsParams.version);
 
 		const projectionKey = this._wmsVersion >= 1.3 ? 'crs' : 'srs';
 		this.wmsParams[projectionKey] = this._crs.code;
+	}
 
-		super.onAdd(map);
+	getEvents() {
+		const events = super.getEvents();
+		events.crschange = this._updateCrs;
+		return events;
 	}
 
 	getTileUrl(coords) {
