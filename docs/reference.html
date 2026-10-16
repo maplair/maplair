@@ -564,6 +564,15 @@ browsers.</td>
 		<td>Set it to false if you don't want the map to zoom beyond min/max zoom
 and then bounce back when pinch-zooming.</td>
 	</tr>
+	<tr id='maplairmap-tapdragzoom'>
+		<td><code><b>tapDragZoom</b></code></td>
+		<td><code>Boolean|String</code></td>
+		<td><code>true</code></td>
+		<td>Whether the map can be zoomed with one finger by tapping once, then
+touching again and dragging down (zoom in) or up (zoom out). If
+passed <code>'center'</code>, it will zoom to the center of the view regardless
+of where the finger was.</td>
+	</tr>
 	<tr id='maplairmap-taphold'>
 		<td><code><b>tapHold</b></code></td>
 		<td><code>Boolean</code></td>
@@ -1676,6 +1685,11 @@ Without <code>cls</code>, runs the hooks of all classes of this object.</p>
 		<td><code><b>scrollWheelZoom</b></code></td>
 		<td><code><a href='#handler'>Handler</a></code></td>
 		<td>Scroll wheel zoom handler.</td>
+	</tr>
+	<tr id='maplairmap-tapdragzoom'>
+		<td><code><b>tapDragZoom</b></code></td>
+		<td><code><a href='#handler'>Handler</a></code></td>
+		<td>Tap-drag zoom handler (double tap and drag with one finger).</td>
 	</tr>
 	<tr id='maplairmap-taphold'>
 		<td><code><b>tapHold</b></code></td>

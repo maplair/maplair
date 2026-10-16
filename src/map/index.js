@@ -5,5 +5,6 @@ export {DragHandler} from './handler/DragHandler.js';
 export {KeyboardHandler} from './handler/KeyboardHandler.js';
 export {ScrollWheelZoomHandler} from './handler/ScrollWheelZoomHandler.js';
 export {TapHoldHandler} from './handler/TapHoldHandler.js';
+export {TapDragZoomHandler} from './handler/TapDragZoomHandler.js';
 export {PinchZoomHandler} from './handler/PinchZoomHandler.js';
 export {DisplaceHandler, displace} from './handler/DisplaceHandler.js';

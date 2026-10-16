@@ -25,6 +25,7 @@ import {KeyboardHandler} from './handler/KeyboardHandler.js';
 import {PinchZoomHandler} from './handler/PinchZoomHandler.js';
 import {ScrollWheelZoomHandler} from './handler/ScrollWheelZoomHandler.js';
 import {TapHoldHandler} from './handler/TapHoldHandler.js';
+import {TapDragZoomHandler} from './handler/TapDragZoomHandler.js';
 
 /*
  * @class MaplairMap
@@ -1819,6 +1820,7 @@ for (const feature of [
 	PinchZoomHandler,
 	ScrollWheelZoomHandler,
 	TapHoldHandler,
+	TapDragZoomHandler,
 	Popup,
 	Tooltip,
 	RendererSupport,
