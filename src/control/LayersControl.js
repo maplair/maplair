@@ -225,10 +225,10 @@ export class LayersControl extends Control {
 			}, this);
 		}
 
-		const link = this._layersLink = DomUtil.create('a', `${className}-toggle`, container);
-		link.href = '#';
+		const link = this._layersLink = DomUtil.create('button', `${className}-toggle`, container);
+		link.type = 'button';
 		link.title = I18n.translate('Layers');
-		link.setAttribute('role', 'button');
+		link.setAttribute('aria-label', I18n.translate('Layers'));
 
 		DomEvent.on(link, {
 			keydown(e) {

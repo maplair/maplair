@@ -9,6 +9,7 @@ import Browser from '../core/Browser.js';
 import * as DomEvent from '../dom/DomEvent.js';
 import * as DomUtil from '../dom/DomUtil.js';
 import {PosAnimation} from '../dom/PosAnimation.js';
+import {I18n} from '../core/I18n.js';
 import * as PointerEvents from '../dom/DomEvent.PointerEvents.js';
 import {Control} from '../control/Control.js';
 import {AttributionControl} from '../control/AttributionControl.js';
@@ -98,6 +99,12 @@ export class MaplairMap extends Evented {
 			// @option layers: Layer[] = []
 			// Array of layers that will be added to the map initially
 			layers: [],
+
+			// @option ariaLabel: String = 'Map'
+			// The accessible name of the map, announced by screen readers. The map
+			// container gets the ARIA role `region` with this label, unless it already
+			// has a role or label. The default is translated, see `I18n`.
+			ariaLabel: undefined,
 
 			// @option maxBounds: LatLngBounds = null
 			// When this option is set, the map restricts the view to the given
@@ -810,6 +817,9 @@ export class MaplairMap extends Evented {
 
 		PointerEvents.disablePointerDetection(this._container);
 		this._mapPane.remove();
+		for (const name of this._ariaAttributes) {
+			this._container.removeAttribute(name);
+		}
 
 		if (this._clearControlPos) {
 			this._clearControlPos();
@@ -1163,6 +1173,17 @@ export class MaplairMap extends Evented {
 		if (this._fadeAnimated) { classes.push('maplair-fade-anim'); }
 
 		container.classList.add(...classes);
+
+		// an accessible name for the map, e.g. for the landmarks of screen readers
+		this._ariaAttributes = [];
+		if (!container.hasAttribute('role')) {
+			container.setAttribute('role', 'region');
+			this._ariaAttributes.push('role');
+		}
+		if (!container.hasAttribute('aria-label') && !container.hasAttribute('aria-labelledby')) {
+			container.setAttribute('aria-label', this.options.ariaLabel ?? I18n.translate('Map'));
+			this._ariaAttributes.push('aria-label');
+		}
 
 		const {position} = getComputedStyle(container);
 

@@ -55,9 +55,8 @@ export class FullscreenControl extends Control {
 
 	onAdd(map) {
 		const container = DomUtil.create('div', 'maplair-control-fullscreen maplair-bar'),
-		button = this._button = DomUtil.create('a', 'maplair-control-fullscreen-button', container);
-		button.href = '#';
-		button.setAttribute('role', 'button');
+		button = this._button = DomUtil.create('button', 'maplair-control-fullscreen-button', container);
+		button.type = 'button';
 
 		DomEvent.disableClickPropagation(button);
 		DomEvent.on(button, 'click', DomEvent.stop);

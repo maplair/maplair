@@ -87,15 +87,10 @@ export class ZoomControl extends Control {
 	}
 
 	_createButton(html, title, className, container, fn) {
-		const link = DomUtil.create('a', className, container);
+		const link = DomUtil.create('button', className, container);
+		link.type = 'button';
 		link.innerHTML = html;
-		link.href = '#';
 		link.title = title;
-
-		/*
-		 * Will force screen readers like VoiceOver to read this as "Zoom in - button"
-		 */
-		link.setAttribute('role', 'button');
 		link.setAttribute('aria-label', title);
 
 		DomEvent.disableClickPropagation(link);

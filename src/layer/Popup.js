@@ -159,7 +159,19 @@ export class Popup extends DivOverlay {
 	}
 
 	onAdd(map) {
+		// The element to return the focus to when closing the popup, e.g. a marker
+		const active = document.activeElement;
+		this._returnFocus = map._container.contains(active) && !this._container?.contains(active) ? active : null;
+
 		super.onAdd(map);
+
+		if (this._openedByKeyboard) {
+			// Move the focus into the popup, so that its content is read and reachable
+			if (!this._closeButton) {
+				this._container.tabIndex = -1;
+			}
+			(this._closeButton ?? this._container).focus({preventScroll: true});
+		}
 
 		// @namespace MaplairMap
 		// @section Popup events
@@ -182,6 +194,11 @@ export class Popup extends DivOverlay {
 	}
 
 	onRemove(map) {
+		if (this._container.contains(document.activeElement) && this._returnFocus?.isConnected) {
+			this._returnFocus.focus({preventScroll: true});
+		}
+		this._returnFocus = null;
+
 		super.onRemove(map);
 
 		// @namespace MaplairMap
@@ -224,6 +241,12 @@ export class Popup extends DivOverlay {
 		this._contentNode = DomUtil.create('div', `${prefix}-content`, wrapper);
 
 		DomEvent.disableClickPropagation(container);
+		// The keyboard handler of the map does not get keys while the focus is in the popup
+		DomEvent.on(container, 'keydown', (e) => {
+			if (e.key === 'Escape' && this.options.closeOnEscapeKey) {
+				this.close();
+			}
+		});
 		DomEvent.disableScrollPropagation(this._contentNode);
 		DomEvent.on(container, 'contextmenu', DomEvent.stopPropagation);
 
@@ -231,11 +254,10 @@ export class Popup extends DivOverlay {
 		this._tip = DomUtil.create('div', `${prefix}-tip`, this._tipContainer);
 
 		if (this.options.closeButton) {
-			const closeButton = this._closeButton = DomUtil.create('a', `${prefix}-close-button`, container);
-			closeButton.setAttribute('role', 'button'); // overrides the implicit role=link of <a> elements #7399
+			const closeButton = this._closeButton = DomUtil.create('button', `${prefix}-close-button`, container);
+			closeButton.type = 'button';
 			closeButton.setAttribute('aria-label', I18n.translate('Close popup'));
 
-			closeButton.href = '#close';
 			closeButton.innerHTML = '<span aria-hidden="true">&#215;</span>';
 
 			DomEvent.on(closeButton, 'click', (ev) => {
@@ -520,7 +542,9 @@ export class Popup extends DivOverlay {
 
 			_onKeyPress(e) {
 				if (e.originalEvent.code === 'Enter') {
+					this._popup._openedByKeyboard = true;
 					this._openPopup(e);
+					this._popup._openedByKeyboard = false;
 				}
 			}
 		});

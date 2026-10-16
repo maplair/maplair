@@ -1,6 +1,8 @@
 import {Handler} from '../../core/Handler.js';
-import {on, off, stop} from '../../dom/DomEvent.js';
+import {on, off, stop, disableClickPropagation, disableScrollPropagation} from '../../dom/DomEvent.js';
+import * as DomUtil from '../../dom/DomUtil.js';
 import {Point} from '../../geometry/Point.js';
+import {I18n} from '../../core/I18n.js';
 
 /*
  * KeyboardHandler is handling keyboard interaction with the map, enabled by default.
@@ -62,6 +64,46 @@ export class KeyboardHandler extends Handler {
 			focus: this._addHooks,
 			blur: this._removeHooks
 		}, this);
+
+		this._help?.remove();
+		this._help = null;
+	}
+
+	// Shows or hides a list of the keyboard shortcuts (on the `?` key), as popover
+	// closed by pressing `Escape` or clicking outside of it.
+	_toggleHelp() {
+		this._help ??= this._createHelp();
+		this._help.togglePopover();
+	}
+
+	_createHelp() {
+		const help = DomUtil.create('div', 'maplair-keyboard-help', this._map._container),
+		title = I18n.translate('Keyboard shortcuts');
+		help.popover = 'auto';
+		help.setAttribute('role', 'dialog');
+		help.setAttribute('aria-label', title);
+
+		DomUtil.create('h2', '', help).textContent = title;
+		const list = DomUtil.create('dl', '', help);
+		for (const [keys, description] of [
+			[['←', '→', '↑', '↓'], I18n.translate('Pan the map')],
+			[['+'], I18n.translate('Zoom in')],
+			[['−'], I18n.translate('Zoom out')],
+			[['Shift'], I18n.translate('Pan or zoom further, together with the keys above')],
+			[['Esc'], I18n.translate('Close popup')],
+			[['?'], I18n.translate('Show or hide the keyboard shortcuts')]
+		]) {
+			const row = DomUtil.create('div', '', list),
+			dt = DomUtil.create('dt', '', row);
+			for (const key of keys) {
+				DomUtil.create('kbd', '', dt).textContent = key;
+			}
+			DomUtil.create('dd', '', row).textContent = description;
+		}
+
+		disableClickPropagation(help);
+		disableScrollPropagation(help);
+		return help;
 	}
 
 	//  acquire/lose focus #594, #1228, #1540
@@ -128,6 +170,12 @@ export class KeyboardHandler extends Handler {
 
 	_onKeyDown(e) {
 		if (e.altKey || e.ctrlKey || e.metaKey) { return; }
+
+		if (e.key === '?') {
+			this._toggleHelp();
+			stop(e);
+			return;
+		}
 
 		const key = e.code,
 		map = this._map;
