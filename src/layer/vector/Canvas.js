@@ -54,7 +54,14 @@ export class Canvas extends Renderer {
 	getEvents() {
 		const events = super.getEvents();
 		events.viewprereset = this._onViewPreReset;
+		events.pixelratiochange = this._onPixelRatioChange;
 		return events;
+	}
+
+	// Redraws with the resolution of the new `devicePixelRatio`.
+	_onPixelRatioChange() {
+		this._resizeContainer();
+		this._update();
 	}
 
 	_onViewPreReset() {
@@ -222,6 +229,8 @@ export class Canvas extends Renderer {
 	}
 
 	_redraw() {
+		// also when redrawing directly, see `_updatePaths()`
+		cancelAnimationFrame(this._redrawRequest);
 		this._redrawRequest = null;
 
 		if (this._redrawBounds) {

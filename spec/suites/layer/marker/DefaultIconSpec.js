@@ -1,5 +1,5 @@
-import {expect} from 'vite-plus/test';
-import {DefaultIcon, MaplairMap, Marker, Browser} from 'maplair';
+import {expect, vi} from 'vite-plus/test';
+import {DefaultIcon, MaplairMap, Marker} from 'maplair';
 import {createContainer, removeMapContainer} from '../../SpecHelper.js';
 
 describe('DefaultIcon', () => {
@@ -68,8 +68,7 @@ describe('DefaultIcon', () => {
 	it('don\'t set retina shadow icon if null', () => {
 		const oldShadowRetinaUrl = DefaultIcon.prototype.options.shadowRetinaUrl;
 		const oldShadowUrl = DefaultIcon.prototype.options.shadowUrl;
-		const oldRetinaValue = Browser.retina;
-		Browser.retina = true;
+		vi.spyOn(window, 'devicePixelRatio', 'get').mockReturnValue(2);
 		DefaultIcon.prototype.options.shadowRetinaUrl = null;
 		DefaultIcon.prototype.options.shadowUrl = null;
 		const marker = new Marker([0, 0]).addTo(map);
@@ -79,6 +78,6 @@ describe('DefaultIcon', () => {
 		// This is needed because else other tests will fail
 		DefaultIcon.prototype.options.shadowRetinaUrl = oldShadowRetinaUrl;
 		DefaultIcon.prototype.options.shadowUrl = oldShadowUrl;
-		Browser.retina = oldRetinaValue;
+		vi.restoreAllMocks();
 	});
 });

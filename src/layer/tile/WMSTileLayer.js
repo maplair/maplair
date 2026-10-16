@@ -79,15 +79,26 @@ export class WMSTileLayer extends TileLayer {
 			}
 		}
 
+		this.wmsParams = wmsParams;
+		this._updateWmsSize();
+
+		this.callInitHooks(WMSTileLayer);
+	}
+
+	// The size of the requested images: the tile size, doubled on retina displays with `detectRetina`.
+	_updateWmsSize() {
 		const realRetina = this.options.detectRetina && Browser.retina ? 2 : 1;
 		const tileSize = this.getTileSize();
 
-		wmsParams.width = tileSize.x * realRetina;
-		wmsParams.height = tileSize.y * realRetina;
+		this.wmsParams.width = tileSize.x * realRetina;
+		this.wmsParams.height = tileSize.y * realRetina;
+	}
 
-		this.wmsParams = wmsParams;
-
-		this.callInitHooks(WMSTileLayer);
+	_applyRetina() {
+		super._applyRetina();
+		if (this.wmsParams) {
+			this._updateWmsSize();
+		}
 	}
 
 	onAdd(map) {

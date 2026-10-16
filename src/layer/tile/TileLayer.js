@@ -110,14 +110,38 @@ export class TileLayer extends GridLayer {
 			}
 		}
 
-		// detecting retina displays, adjusting tileSize and zoom levels
-		if (this.options.detectRetina && Browser.retina && this.options.maxZoom > 0) {
+		const {tileSize, zoomOffset, minZoom, maxZoom, minNativeZoom, maxNativeZoom} = this.options;
+		this._nonRetinaOptions = {tileSize, zoomOffset, minZoom, maxZoom, minNativeZoom, maxNativeZoom};
+		this._applyRetina();
+
+		if (typeof this.options.subdomains === 'string') {
+			this.options.subdomains = this.options.subdomains.split('');
+		}
+
+		this.on('tileunload', this._onTileRemove);
+
+		this.callInitHooks(TileLayer);
+	}
+
+	// Detects retina displays (if `detectRetina` is set), adjusting tileSize and zoom levels.
+	_applyRetina() {
+		Object.assign(this.options, this._nonRetinaOptions);
+		this._retina = Browser.retina;
+
+		if (this.options.detectRetina && this._retina && this.options.maxZoom > 0) {
 
 			this.options.tileSize = Math.floor(this.options.tileSize / 2);
 
 			if (!this.options.zoomReverse) {
 				this.options.zoomOffset++;
 				this.options.maxZoom = Math.max(this.options.minZoom, this.options.maxZoom - 1);
+				// do not request tiles beyond the native zoom levels
+				if (this.options.maxNativeZoom !== undefined) {
+					this.options.maxNativeZoom = Math.max(0, this.options.maxNativeZoom - 1);
+				}
+				if (this.options.minNativeZoom !== undefined) {
+					this.options.minNativeZoom = Math.max(0, this.options.minNativeZoom - 1);
+				}
 			} else {
 				this.options.zoomOffset--;
 				this.options.minZoom = Math.min(this.options.maxZoom, this.options.minZoom + 1);
@@ -131,14 +155,27 @@ export class TileLayer extends GridLayer {
 			// make sure minZoom is lte maxZoom
 			this.options.minZoom = Math.min(this.options.maxZoom, this.options.minZoom);
 		}
+	}
 
-		if (typeof this.options.subdomains === 'string') {
-			this.options.subdomains = this.options.subdomains.split('');
+	getEvents() {
+		const events = super.getEvents();
+		events.pixelratiochange = this._onPixelRatioChange;
+		return events;
+	}
+
+	// Loads the tiles for the new resolution, see the map's `pixelratiochange` event.
+	_onPixelRatioChange() {
+		if (Browser.retina === this._retina) { return; }
+		const map = this._map;
+		this._applyRetina();
+		if (this.options.detectRetina) {
+			map._removeZoomLimit(this);
+			map._addZoomLimit(this);
+			this._invalidateAll();
+			this._resetView();
+		} else if (this._url.includes('{r}')) {
+			this.redraw();
 		}
-
-		this.on('tileunload', this._onTileRemove);
-
-		this.callInitHooks(TileLayer);
 	}
 
 	// @method setUrl(url: String, noRedraw?: Boolean): this

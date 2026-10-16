@@ -1,5 +1,5 @@
 import {expect, vi} from 'vite-plus/test';
-import {Browser, SimpleCRS, MaplairMap, TileLayer, Util, LatLng} from 'maplair';
+import {SimpleCRS, MaplairMap, TileLayer, Util, LatLng} from 'maplair';
 import {createContainer, removeMapContainer} from '../../SpecHelper.js';
 
 describe('TileLayer', () => {
@@ -526,8 +526,7 @@ describe('TileLayer', () => {
 			const minZoom = 1;
 
 			// override retina to load extra tiles
-			const originalRetina = Browser.retina;
-			Browser.retina = true;
+			vi.spyOn(window, 'devicePixelRatio', 'get').mockReturnValue(2);
 
 			const kittenLayer = kittenLayerFactory({
 				maxZoom,
@@ -540,7 +539,7 @@ describe('TileLayer', () => {
 				expect(kittenLayer.options.minZoom).to.equal(minZoom);
 
 				// reset retina value
-				Browser.retina = originalRetina;
+				vi.restoreAllMocks();
 
 				done();
 			});
@@ -550,8 +549,7 @@ describe('TileLayer', () => {
 
 		it('resets invalid min/maxZoom to allow for tiles to be loaded without detectRetina', (done) => {
 			// override retina to load extra tiles
-			const originalRetina = Browser.retina;
-			Browser.retina = false;
+			vi.spyOn(window, 'devicePixelRatio', 'get').mockReturnValue(1);
 
 			const kittenLayer = kittenLayerFactory({
 				// invalid min/maxZoom
@@ -565,7 +563,7 @@ describe('TileLayer', () => {
 				expect(kittenLayer.options.maxZoom).to.equal(kittenLayer.options.minZoom);
 
 				// reset retina value
-				Browser.retina = originalRetina;
+				vi.restoreAllMocks();
 
 				done();
 			});

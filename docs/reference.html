@@ -872,7 +872,7 @@ went successfully.</td>
 
 </section><section class='collapsable'>
 
-<h4 id='maplairmap-interaction-events'>Interaction events</h4>
+<h4 id='maplairmap-other-events'>Other Events</h4>
 
 <div class='section-comments'>The map state change events <code>movestart</code>, <code>move</code>, <code>moveend</code>, <code>zoomstart</code>,
 <code>zoom</code>, <code>zoomend</code> and <code>zoomanim</code> caused by the user (e.g. dragging, scrolling,
@@ -880,6 +880,32 @@ pinching, pressing a key or clicking a zoom button) have an <code>originalEvent<
 property with the DOM event that started the change. It is <code>undefined</code> for
 changes made by code (e.g. <code>setView()</code>), which allows to tell them apart,
 e.g. to avoid feedback loops when synchronizing the view.</div>
+
+<table><thead>
+	<tr>
+		<th>Event</th>
+		<th>Data</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='maplairmap-pixelratiochange'>
+		<td><code><b>pixelratiochange</b></code></td>
+		<td><code><a href='#event'>Event</a></code></td>
+		<td>Fired when the <code>devicePixelRatio</code> of the browser changes, e.g. when moving
+the window to a screen with another resolution or when zooming the page.
+Tile layers with <code>detectRetina</code> and canvas renderers adapt to it.</td>
+	</tr>
+	<tr id='maplairmap-zoomanim'>
+		<td><code><b>zoomanim</b></code></td>
+		<td><code><a href='#zoomanimevent'>ZoomAnimEvent</a></code></td>
+		<td>Fired at least once per zoom animation. For continuous zoom, like pinch zooming, fired once per frame during zoom.</td>
+	</tr>
+</tbody></table>
+
+</section><section class='collapsable'>
+
+<h4 id='maplairmap-interaction-events'>Interaction events</h4>
+
 
 <table><thead>
 	<tr>
@@ -954,25 +980,6 @@ that do not produce a character value.</td>
 		<td>Fired before pointer click on the map (sometimes useful when you
 want something to happen on click before any existing click
 handlers start running).</td>
-	</tr>
-</tbody></table>
-
-</section><section class='collapsable'>
-
-<h4 id='maplairmap-other-events'>Other Events</h4>
-
-
-<table><thead>
-	<tr>
-		<th>Event</th>
-		<th>Data</th>
-		<th>Description</th>
-	</tr>
-	</thead><tbody>
-	<tr id='maplairmap-zoomanim'>
-		<td><code><b>zoomanim</b></code></td>
-		<td><code><a href='#zoomanimevent'>ZoomAnimEvent</a></code></td>
-		<td>Fired at least once per zoom animation. For continuous zoom, like pinch zooming, fired once per frame during zoom.</td>
 	</tr>
 </tbody></table>
 
@@ -22332,7 +22339,8 @@ Note: pointer events will be preferred (if available), and processed for all <co
 	<tr id='browser-retina'>
 		<td><code><b>retina</b></code></td>
 		<td><code>Boolean</code></td>
-		<td><code>true</code> for browsers on a high-resolution &quot;retina&quot; screen or on any screen when browser's display zoom is more than 100%.</td>
+		<td><code>true</code> for browsers on a high-resolution &quot;retina&quot; screen or on any screen when browser's display zoom is more than 100%.
+Follows changes of the <code>devicePixelRatio</code>, e.g. when moving the window to another screen (see the map's <code>pixelratiochange</code> event).</td>
 	</tr>
 	<tr id='browser-mac'>
 		<td><code><b>mac</b></code></td>

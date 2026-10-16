@@ -46,7 +46,10 @@ const touch = touchNative || pointer;
 
 // @property retina: Boolean
 // `true` for browsers on a high-resolution "retina" screen or on any screen when browser's display zoom is more than 100%.
-const retina = typeof window === 'undefined' || typeof window.devicePixelRatio === 'undefined' ? false : window.devicePixelRatio > 1;
+// Follows changes of the `devicePixelRatio`, e.g. when moving the window to another screen (see the map's `pixelratiochange` event).
+function isRetina() {
+	return typeof window === 'undefined' || typeof window.devicePixelRatio === 'undefined' ? false : window.devicePixelRatio > 1;
+}
 
 // @property mac: Boolean; `true` when the browser is running in a Mac platform
 const mac = typeof navigator === 'undefined' || typeof navigator.platform === 'undefined' ? false : navigator.platform.startsWith('Mac');
@@ -69,7 +72,9 @@ export default {
 	pointer,
 	touch,
 	touchNative,
-	retina,
+	get retina() {
+		return isRetina();
+	},
 	mac,
 	linux
 };

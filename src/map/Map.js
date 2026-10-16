@@ -186,6 +186,8 @@ export class MaplairMap extends Evented {
 
 		this._initEvents();
 
+		this._watchPixelRatio();
+
 		this.on({
 			movestart: this._onBusy,
 			zoomstart: this._onBusy,
@@ -817,6 +819,7 @@ export class MaplairMap extends Evented {
 			this._resizeRequest = null;
 		}
 		cancelAnimationFrame(this._idleRequest);
+		this._watchPixelRatio(true);
 
 		this._clearHandlers();
 
@@ -1271,6 +1274,25 @@ export class MaplairMap extends Evented {
 
 	static _viewEvents = new Set(['movestart', 'move', 'moveend', 'zoomstart', 'zoom', 'zoomend', 'zoomanim']);
 
+	// @section Other Events
+	// @event pixelratiochange: Event
+	// Fired when the `devicePixelRatio` of the browser changes, e.g. when moving
+	// the window to a screen with another resolution or when zooming the page.
+	// Tile layers with `detectRetina` and canvas renderers adapt to it.
+	_watchPixelRatio(remove) {
+		this._pixelRatioQuery?.removeEventListener('change', this._onPixelRatioChange);
+		if (remove || typeof window === 'undefined' || !window.matchMedia) { return; }
+
+		this._onPixelRatioChange ??= () => {
+			this._watchPixelRatio();
+			this.fire('pixelratiochange');
+		};
+		// matches until the ratio changes, then a new query is needed
+		this._pixelRatioQuery = window.matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
+		this._pixelRatioQuery.addEventListener('change', this._onPixelRatioChange);
+	}
+
+	// @section Map state change events
 	// @event idle: Event
 	// Fired when the map becomes idle: the view is not changing (no dragging,
 	// panning or zooming, including their animations) and all layers have
