@@ -85,7 +85,16 @@ export class TileLayer extends GridLayer {
 			//
 			// Tile providers might require you to use a specific referrer policy (e.g. to verify API tokens or prevent abuse).
 			// Specifically, if you are using tiles from `tile.openstreetmap.org` or `tile.osm.org`, you [should not change this value](https://operations.osmfoundation.org/policies/tiles/).
-			referrerPolicy: 'strict-origin-when-cross-origin'
+			referrerPolicy: 'strict-origin-when-cross-origin',
+
+			// @option fetchOptions: Object = null
+			// If set, the tiles are loaded with [`fetch()`](https://developer.mozilla.org/docs/Web/API/Window/fetch)
+			// using these options (see [`RequestInit`](https://developer.mozilla.org/docs/Web/API/RequestInit)),
+			// e.g. `{headers: {Authorization: 'Bearer …'}}` for tile servers requiring custom HTTP headers.
+			// Requests of tiles that are no longer needed (e.g. after panning or zooming away) are aborted.
+			// Cross-origin tile servers have to allow such requests with
+			// [CORS](https://developer.mozilla.org/docs/Web/HTTP/CORS) headers.
+			fetchOptions: null
 		});
 	}
 
@@ -221,9 +230,53 @@ export class TileLayer extends GridLayer {
 		// https://www.w3.org/TR/html-aria/#el-img-empty-alt
 		tile.alt = '';
 
-		tile.src = this.getTileUrl(coords);
+		const url = this.getTileUrl(coords);
+		if (this.options.fetchOptions) {
+			this._fetchTile(tile, url, done);
+		} else {
+			tile.src = url;
+		}
 
 		return tile;
+	}
+
+	// Loads the tile image with `fetch()`, see the `fetchOptions` option.
+	_fetchTile(tile, url, done) {
+		const controller = new AbortController(),
+		options = {signal: controller.signal, ...this.options.fetchOptions};
+		if (typeof this.options.referrerPolicy === 'string') {
+			options.referrerPolicy ??= this.options.referrerPolicy;
+		}
+
+		this._tileFetches ??= new Map();
+		this._tileFetches.set(tile, controller);
+
+		fetch(url, options)
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error(`Failed to load the tile ${url}: HTTP ${response.status}`);
+				}
+				return response.blob();
+			})
+			.then((blob) => {
+				// revoked in `_tileOnLoad()`
+				tile.src = URL.createObjectURL(blob);
+			})
+			.catch((error) => {
+				if (!controller.signal.aborted) {
+					this._tileOnError(done, tile, error);
+				}
+			})
+			.finally(() => this._tileFetches.delete(tile));
+	}
+
+	// Aborts the request of a tile loaded with `fetch()`, returns whether there was one.
+	_abortTileFetch(tile) {
+		const controller = this._tileFetches?.get(tile);
+		if (!controller) { return false; }
+		controller.abort();
+		this._tileFetches.delete(tile);
+		return true;
 	}
 
 	// @section Extension methods
@@ -253,6 +306,10 @@ export class TileLayer extends GridLayer {
 	}
 
 	_tileOnLoad(done, tile) {
+		if (tile.src.startsWith('blob:')) {
+			// the image keeps its data, see `_fetchTile()`
+			URL.revokeObjectURL(tile.src);
+		}
 		done(null, tile);
 	}
 
@@ -296,7 +353,7 @@ export class TileLayer extends GridLayer {
 				tile.onload = Util.falseFn;
 				tile.onerror = Util.falseFn;
 
-				if (!tile.complete) {
+				if (this._abortTileFetch(tile) || !tile.complete) {
 					tile.setAttribute('src', '');
 					const coords = this._tiles[i].coords;
 					tile.remove();
@@ -317,6 +374,7 @@ export class TileLayer extends GridLayer {
 		if (!tile) { return; }
 
 		// Cancels any pending http requests associated with the tile
+		this._abortTileFetch(tile.el);
 		tile.el.setAttribute('src', '');
 
 		return super._removeTile(key);

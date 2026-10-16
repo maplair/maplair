@@ -5904,6 +5904,17 @@ Refer to <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_setting
 <p>Tile providers might require you to use a specific referrer policy (e.g. to verify API tokens or prevent abuse).
 Specifically, if you are using tiles from <code>tile.openstreetmap.org</code> or <code>tile.osm.org</code>, you <a href="https://operations.osmfoundation.org/policies/tiles/">should not change this value</a>.</p></td>
 	</tr>
+	<tr id='tilelayer-fetchoptions'>
+		<td><code><b>fetchOptions</b></code></td>
+		<td><code>Object</code></td>
+		<td><code>null</code></td>
+		<td>If set, the tiles are loaded with <a href="https://developer.mozilla.org/docs/Web/API/Window/fetch"><code>fetch()</code></a>
+using these options (see <a href="https://developer.mozilla.org/docs/Web/API/RequestInit"><code>RequestInit</code></a>),
+e.g. <code>{headers: {Authorization: 'Bearer …'}}</code> for tile servers requiring custom HTTP headers.
+Requests of tiles that are no longer needed (e.g. after panning or zooming away) are aborted.
+Cross-origin tile servers have to allow such requests with
+<a href="https://developer.mozilla.org/docs/Web/HTTP/CORS">CORS</a> headers.</td>
+	</tr>
 </tbody></table>
 
 </section>
@@ -6870,6 +6881,17 @@ Refer to <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_setting
 <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/referrerPolicy"><code>HTMLImageElement.referrerPolicy</code></a> for possible values.
 <p>Tile providers might require you to use a specific referrer policy (e.g. to verify API tokens or prevent abuse).
 Specifically, if you are using tiles from <code>tile.openstreetmap.org</code> or <code>tile.osm.org</code>, you <a href="https://operations.osmfoundation.org/policies/tiles/">should not change this value</a>.</p></td>
+	</tr>
+	<tr id='wmstilelayer-fetchoptions'>
+		<td><code><b>fetchOptions</b></code></td>
+		<td><code>Object</code></td>
+		<td><code>null</code></td>
+		<td>If set, the tiles are loaded with <a href="https://developer.mozilla.org/docs/Web/API/Window/fetch"><code>fetch()</code></a>
+using these options (see <a href="https://developer.mozilla.org/docs/Web/API/RequestInit"><code>RequestInit</code></a>),
+e.g. <code>{headers: {Authorization: 'Bearer …'}}</code> for tile servers requiring custom HTTP headers.
+Requests of tiles that are no longer needed (e.g. after panning or zooming away) are aborted.
+Cross-origin tile servers have to allow such requests with
+<a href="https://developer.mozilla.org/docs/Web/HTTP/CORS">CORS</a> headers.</td>
 	</tr>
 </tbody></table>
 
