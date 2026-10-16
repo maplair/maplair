@@ -357,6 +357,19 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	}
 }
 
+.maplair-control-fullscreen-button svg {
+	vertical-align: middle;
+}
+
+/* the map enlarged to the window where the Fullscreen API is not available */
+.maplair-pseudo-fullscreen {
+	position: fixed !important;
+	inset: 0 !important;
+	width: 100% !important;
+	height: 100% !important;
+	z-index: 99999;
+}
+
 .maplair-control-layers-toggle {
 	background-position: 50% 50%;
 	background-repeat: no-repeat;

@@ -13,6 +13,7 @@ import * as PointerEvents from '../dom/DomEvent.PointerEvents.js';
 import {Control} from '../control/Control.js';
 import {AttributionControl} from '../control/AttributionControl.js';
 import {ZoomControl} from '../control/ZoomControl.js';
+import {FullscreenControl} from '../control/FullscreenControl.js';
 import {Layer} from '../layer/Layer.js';
 import {DivOverlay} from '../layer/DivOverlay.js';
 import {Popup} from '../layer/Popup.js';
@@ -1824,7 +1825,8 @@ for (const feature of [
 	Popup,
 	Tooltip,
 	RendererSupport,
-	ZoomControl
+	ZoomControl,
+	FullscreenControl
 ]) {
 	feature.register(MaplairMap);
 }
