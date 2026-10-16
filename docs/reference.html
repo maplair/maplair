@@ -746,6 +746,14 @@ on map zoom or load). Very useful for creating custom overlays.</td>
 		<td>Fired when the map is initialized (when its center and zoom are set
 for the first time).</td>
 	</tr>
+	<tr id='maplairmap-idle'>
+		<td><code><b>idle</b></code></td>
+		<td><code><a href='#event'>Event</a></code></td>
+		<td>Fired when the map becomes idle: the view is not changing (no dragging,
+panning or zooming, including their animations) and all layers have
+finished loading (e.g. the tiles of tile layers, see <code>GridLayer.isLoading()</code>).
+Useful e.g. for taking screenshots or for tests.</td>
+	</tr>
 	<tr id='maplairmap-zoomstart'>
 		<td><code><b>zoomstart</b></code></td>
 		<td><code><a href='#event'>Event</a></code></td>

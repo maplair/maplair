@@ -696,6 +696,7 @@ export class GridLayer extends Layer {
 				// @event loading: Event
 				// Fired when the grid layer starts loading tiles.
 				this.fire('loading');
+				this._map._onLayerLoading();
 			}
 
 			// create DOM fragment to append tiles in one batch
@@ -865,6 +866,7 @@ export class GridLayer extends Layer {
 			// @event load: Event
 			// Fired when the grid layer loaded all visible tiles.
 			this.fire('load');
+			this._map._scheduleIdleCheck();
 
 			if (!this._map._fadeAnimated) {
 				requestAnimationFrame(this._pruneTiles.bind(this));

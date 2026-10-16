@@ -186,6 +186,13 @@ export class MaplairMap extends Evented {
 
 		this._initEvents();
 
+		this.on({
+			movestart: this._onBusy,
+			zoomstart: this._onBusy,
+			moveend: this._onViewChanged,
+			layerremove: this._scheduleIdleCheck
+		}, this);
+
 		if (options.maxBounds) {
 			this.setMaxBounds(options.maxBounds);
 		}
@@ -809,6 +816,7 @@ export class MaplairMap extends Evented {
 			cancelAnimationFrame(this._resizeRequest);
 			this._resizeRequest = null;
 		}
+		cancelAnimationFrame(this._idleRequest);
 
 		this._clearHandlers();
 
@@ -1262,6 +1270,42 @@ export class MaplairMap extends Evented {
 	}
 
 	static _viewEvents = new Set(['movestart', 'move', 'moveend', 'zoomstart', 'zoom', 'zoomend', 'zoomanim']);
+
+	// @event idle: Event
+	// Fired when the map becomes idle: the view is not changing (no dragging,
+	// panning or zooming, including their animations) and all layers have
+	// finished loading (e.g. the tiles of tile layers, see `GridLayer.isLoading()`).
+	// Useful e.g. for taking screenshots or for tests.
+	_onBusy() {
+		this._viewChanging = true;
+		this._idle = false;
+	}
+
+	_onViewChanged() {
+		this._viewChanging = false;
+		this._scheduleIdleCheck();
+	}
+
+	// Called by layers when they start loading, see `GridLayer`.
+	_onLayerLoading() {
+		this._idle = false;
+	}
+
+	// Called by layers when they finished loading, see `GridLayer`.
+	_scheduleIdleCheck() {
+		cancelAnimationFrame(this._idleRequest);
+		// After the current task, so that layers can start loading on the same `moveend`
+		this._idleRequest = requestAnimationFrame(() => this._checkIdle());
+	}
+
+	_checkIdle() {
+		if (this._idle || !this._loaded || this._viewChanging || this._animatingZoom) { return; }
+		for (const layer of Object.values(this._layers)) {
+			if (layer.isLoading?.()) { return; }
+		}
+		this._idle = true;
+		this.fire('idle');
+	}
 
 	// Marks the following view change (until `moveend`) as caused by the DOM event `e`
 	// of the user, see the map state change events. If no view change starts right
