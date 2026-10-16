@@ -34,6 +34,14 @@ export class DivOverlay extends Layer {
 			// `Map pane` where the overlay will be added.
 			pane: undefined,
 
+			// @option overflow: Boolean = false
+			// Whether the overlay may extend beyond the map container, e.g. a tooltip
+			// of a marker near the edge of a small map. The overlay is then shown as
+			// [popover](https://developer.mozilla.org/docs/Web/API/Popover_API) in the
+			// top layer of the page, above all other content, while remaining in its
+			// map pane in the DOM (for styling and events).
+			overflow: false,
+
 			// @option content: String|HTMLElement|Function = ''
 			// Sets the HTML content of the overlay while initializing. If a function is passed the source layer will be
 			// passed to the function. The function should return a `String` or `HTMLElement` to be used in the overlay.
@@ -112,13 +120,25 @@ export class DivOverlay extends Layer {
 
 		clearTimeout(this._removeTimeout);
 		this.getPane().appendChild(this._container);
+		if (this.options.overflow) {
+			this._container.classList.add('maplair-overflow');
+			this._container.popover = 'manual';
+			this._container.showPopover();
+			// The map pane does not carry the overlay, it has to follow the page and the map
+			this._onPageChange ??= () => this._updatePosition();
+			document.addEventListener('scroll', this._onPageChange, {capture: true, passive: true});
+			window.addEventListener('resize', this._onPageChange, {passive: true});
+		}
 		this.update();
 
 		if (map._fadeAnimated) {
 			this._container.style.opacity = 1;
 		}
 
-		this.bringToFront();
+		// A popover is shown on top already, re-showing it would skip the fade animation
+		if (!this.options.overflow) {
+			this.bringToFront();
+		}
 
 		if (this.options.interactive) {
 			this._container.classList.add('maplair-interactive');
@@ -127,6 +147,11 @@ export class DivOverlay extends Layer {
 	}
 
 	onRemove(map) {
+		if (this.options.overflow) {
+			document.removeEventListener('scroll', this._onPageChange, {capture: true});
+			window.removeEventListener('resize', this._onPageChange);
+		}
+
 		if (map._fadeAnimated) {
 			this._container.style.opacity = 0;
 			this._removeTimeout = setTimeout(() => this._container.remove(), 200);
@@ -207,6 +232,9 @@ export class DivOverlay extends Layer {
 		if (this._zoomAnimated) {
 			events.zoomanim = this._animateZoom;
 		}
+		if (this.options.overflow) {
+			events.move = this._updatePosition;
+		}
 		return events;
 	}
 
@@ -221,6 +249,7 @@ export class DivOverlay extends Layer {
 	bringToFront() {
 		if (this._map) {
 			DomUtil.toFront(this._container);
+			this._restackPopovers();
 		}
 		return this;
 	}
@@ -230,8 +259,23 @@ export class DivOverlay extends Layer {
 	bringToBack() {
 		if (this._map) {
 			DomUtil.toBack(this._container);
+			this._restackPopovers();
 		}
 		return this;
+	}
+
+	// Popovers are stacked in the order they are shown, not in DOM order. Moving
+	// a popover in the DOM hides it, so (re-)show the overflowing overlays of
+	// the pane in DOM order.
+	_restackPopovers() {
+		if (!this.options.overflow) { return; }
+		for (const el of this.getPane().children) {
+			if (!el.classList.contains('maplair-overflow')) { continue; }
+			if (el.matches(':popover-open')) {
+				el.hidePopover();
+			}
+			el.showPopover();
+		}
 	}
 
 	// prepare bound overlay to open: update latlng pos / content source (for FeatureGroup)
@@ -303,8 +347,8 @@ export class DivOverlay extends Layer {
 		anchor = this._getAnchor();
 		let offset = new Point(this.options.offset);
 
-		if (this._zoomAnimated) {
-			DomUtil.setPosition(this._container, pos.add(anchor));
+		if (this._zoomAnimated || this.options.overflow) {
+			this._setContainerPosition(pos.add(anchor));
 		} else {
 			offset = offset.add(pos).add(anchor);
 		}
@@ -313,8 +357,32 @@ export class DivOverlay extends Layer {
 		left = this._containerLeft = -Math.round(this._containerWidth / 2) + offset.x;
 
 		// bottom position the overlay in case the height of the overlay changes (images loading etc)
-		this._container.style.bottom = `${bottom}px`;
+		if (this.options.overflow) {
+			// relative to the top of the viewport instead of the pane origin
+			this._container.style.top = 'auto';
+			this._container.style.bottom = `calc(100% + ${bottom}px)`;
+		} else {
+			this._container.style.bottom = `${bottom}px`;
+		}
 		this._container.style.left = `${left}px`;
+	}
+
+	// Positions the container at the given layer point. An overflowing overlay
+	// lives in the top layer of the page, so it is positioned in viewport coordinates.
+	_setContainerPosition(pos) {
+		this._containerPos = pos;
+		if (this.options.overflow) {
+			const mapContainer = this._map._container,
+			rect = mapContainer.getBoundingClientRect();
+			pos = this._map.layerPointToContainerPoint(pos)
+				._add(new Point(rect.left + mapContainer.clientLeft, rect.top + mapContainer.clientTop));
+		}
+		DomUtil.setPosition(this._container, pos);
+	}
+
+	// Returns the layer point the container was positioned at, see `_setContainerPosition`.
+	_getContainerPosition() {
+		return this._containerPos ?? new Point(0, 0);
 	}
 
 	_getAnchor() {

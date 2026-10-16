@@ -705,6 +705,25 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	}
 }
 
+/* Overlays extending beyond the map, shown as popover in the top layer */
+
+:where(.maplair-overflow) {
+	/* reset the user agent styles of popovers */
+	inset: auto;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: inherit;
+	overflow: visible;
+}
+
+.maplair-overflow {
+	position: fixed;
+	top: 0;
+	left: 0;
+}
+
 /* Reduced motion */
 
 @media (prefers-reduced-motion: reduce) {

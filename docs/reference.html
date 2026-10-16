@@ -3092,6 +3092,16 @@ Without <code>cls</code>, runs the hooks of all classes of this object.</p>
 		<td><code>undefined</code></td>
 		<td><code>Map pane</code> where the overlay will be added.</td>
 	</tr>
+	<tr id='divoverlay-overflow'>
+		<td><code><b>overflow</b></code></td>
+		<td><code>Boolean</code></td>
+		<td><code>false</code></td>
+		<td>Whether the overlay may extend beyond the map container, e.g. a tooltip
+of a marker near the edge of a small map. The overlay is then shown as
+<a href="https://developer.mozilla.org/docs/Web/API/Popover_API">popover</a> in the
+top layer of the page, above all other content, while remaining in its
+map pane in the DOM (for styling and events).</td>
+	</tr>
 	<tr id='divoverlay-content'>
 		<td><code><b>content</b></code></td>
 		<td><code>String|HTMLElement|Function</code></td>
@@ -3980,6 +3990,16 @@ on the map. Defaults to the map's <a href="#map-closepopuponclick"><code>closePo
 		<td><code>false</code></td>
 		<td>If true, the popup/tooltip will listen to the pointer events.</td>
 	</tr>
+	<tr id='popup-overflow'>
+		<td><code><b>overflow</b></code></td>
+		<td><code>Boolean</code></td>
+		<td><code>false</code></td>
+		<td>Whether the overlay may extend beyond the map container, e.g. a tooltip
+of a marker near the edge of a small map. The overlay is then shown as
+<a href="https://developer.mozilla.org/docs/Web/API/Popover_API">popover</a> in the
+top layer of the page, above all other content, while remaining in its
+map pane in the DOM (for styling and events).</td>
+	</tr>
 	<tr id='popup-content'>
 		<td><code><b>content</b></code></td>
 		<td><code>String|HTMLElement|Function</code></td>
@@ -4841,6 +4861,16 @@ position on the map.</td>
 		<td><code>String</code></td>
 		<td><code>&#x27;&#x27;</code></td>
 		<td>A custom CSS class name to assign to the overlay.</td>
+	</tr>
+	<tr id='tooltip-overflow'>
+		<td><code><b>overflow</b></code></td>
+		<td><code>Boolean</code></td>
+		<td><code>false</code></td>
+		<td>Whether the overlay may extend beyond the map container, e.g. a tooltip
+of a marker near the edge of a small map. The overlay is then shown as
+<a href="https://developer.mozilla.org/docs/Web/API/Popover_API">popover</a> in the
+top layer of the page, above all other content, while remaining in its
+map pane in the DOM (for styling and events).</td>
 	</tr>
 	<tr id='tooltip-content'>
 		<td><code><b>content</b></code></td>

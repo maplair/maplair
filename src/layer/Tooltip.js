@@ -209,7 +209,7 @@ export class Tooltip extends DivOverlay {
 			'maplair-tooltip-bottom'
 		);
 		container.classList.add(`maplair-tooltip-${direction}`);
-		DomUtil.setPosition(container, pos);
+		this._setContainerPosition(pos);
 	}
 
 	_updatePosition() {
