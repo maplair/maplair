@@ -611,8 +611,11 @@ for it to be considered a valid tap.</td>
 		<td><code><b>scrollWheelZoom</b></code></td>
 		<td><code>Boolean|String</code></td>
 		<td><code>true</code></td>
-		<td>Whether the map can be zoomed by using the mouse wheel. If passed <code>'center'</code>,
-it will zoom to the center of the view regardless of where the pointer was.</td>
+		<td>Whether the map can be zoomed by using the mouse wheel and by pinching on a
+touchpad (or using the mouse wheel with the Ctrl key). If passed <code>'center'</code>,
+it will zoom to the center of the view regardless of where the pointer was.
+If passed <code>'trackpad'</code>, scrolling (e.g. with two fingers on a touchpad) pans
+the map instead, while pinching still zooms.</td>
 	</tr>
 	<tr id='maplairmap-wheeldebouncetime'>
 		<td><code><b>wheelDebounceTime</b></code></td>
