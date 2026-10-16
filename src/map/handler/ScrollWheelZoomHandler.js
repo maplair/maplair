@@ -29,6 +29,7 @@ export class ScrollWheelZoomHandler extends Handler {
 
 		this._delta += delta;
 		this._lastMousePos = this._map.pointerEventToContainerPoint(e);
+		this._lastEvent = e;
 
 		if (!this._startTime) {
 			this._startTime = Date.now();
@@ -60,6 +61,7 @@ export class ScrollWheelZoomHandler extends Handler {
 
 		if (!delta) { return; }
 
+		map._setUserEvent(this._lastEvent);
 		if (map.options.scrollWheelZoom === 'center') {
 			map.setZoom(zoom + delta);
 		} else {

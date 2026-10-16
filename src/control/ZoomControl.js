@@ -74,12 +74,14 @@ export class ZoomControl extends Control {
 
 	_zoomIn(e) {
 		if (!this._disabled && this._map._zoom < this._map.getMaxZoom()) {
+			this._map._setUserEvent(e);
 			this._map.zoomIn(this._map.options.zoomDelta * (e.shiftKey ? 3 : 1));
 		}
 	}
 
 	_zoomOut(e) {
 		if (!this._disabled && this._map._zoom > this._map.getMinZoom()) {
+			this._map._setUserEvent(e);
 			this._map.zoomOut(this._map.options.zoomDelta * (e.shiftKey ? 3 : 1));
 		}
 	}

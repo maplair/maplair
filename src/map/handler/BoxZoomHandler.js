@@ -124,6 +124,7 @@ export class BoxZoomHandler extends Handler {
 			this._map.containerPointToLatLng(this._startPoint),
 			this._map.containerPointToLatLng(this._point));
 
+		this._map._setUserEvent(e);
 		this._map
 			.fitBounds(bounds)
 			.fire('boxzoomend', {boxZoomBounds: bounds});

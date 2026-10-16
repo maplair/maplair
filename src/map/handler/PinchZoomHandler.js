@@ -81,6 +81,7 @@ export class PinchZoomHandler extends Handler {
 		}
 
 		if (!this._moved) {
+			map._setUserEvent(e);
 			map._moveStart(true, false);
 			this._moved = true;
 		}

@@ -137,7 +137,7 @@ export class Draggable extends Evented {
 		if (!this._moved) {
 			// @event dragstart: Event
 			// Fired when a drag starts
-			this.fire('dragstart');
+			this.fire('dragstart', {originalEvent: e});
 
 			this._moved = true;
 

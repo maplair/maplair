@@ -53,10 +53,11 @@ export class DragHandler extends Handler {
 		return this._draggable?._moving;
 	}
 
-	_onDragStart() {
+	_onDragStart(e) {
 		const map = this._map;
 
 		map._stop();
+		map._setUserEvent(e.originalEvent);
 		if (this._map.options.maxBounds && this._map.options.maxBoundsViscosity) {
 			const bounds = new LatLngBounds(this._map.options.maxBounds);
 

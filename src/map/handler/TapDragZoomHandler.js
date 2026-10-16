@@ -133,6 +133,7 @@ export class TapDragZoomHandler extends Handler {
 
 		if (!this._moved) {
 			map._stop();
+			map._setUserEvent(e);
 			map._moveStart(true, false);
 			this._moved = true;
 		}

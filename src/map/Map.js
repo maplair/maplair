@@ -1242,6 +1242,40 @@ export class MaplairMap extends Evented {
 		}
 	}
 
+	// @section Map state change events
+	// The map state change events `movestart`, `move`, `moveend`, `zoomstart`,
+	// `zoom`, `zoomend` and `zoomanim` caused by the user (e.g. dragging, scrolling,
+	// pinching, pressing a key or clicking a zoom button) have an `originalEvent`
+	// property with the DOM event that started the change. It is `undefined` for
+	// changes made by code (e.g. `setView()`), which allows to tell them apart,
+	// e.g. to avoid feedback loops when synchronizing the view.
+	fire(type, data, propagate) {
+		if (this._userEvent && MaplairMap._viewEvents.has(type)) {
+			data = {originalEvent: this._userEvent, ...data};
+			if (type === 'moveend') {
+				this._userEvent = null;
+			} else {
+				this._userMoving = true;
+			}
+		}
+		return super.fire(type, data, propagate);
+	}
+
+	static _viewEvents = new Set(['movestart', 'move', 'moveend', 'zoomstart', 'zoom', 'zoomend', 'zoomanim']);
+
+	// Marks the following view change (until `moveend`) as caused by the DOM event `e`
+	// of the user, see the map state change events. If no view change starts right
+	// away, the mark is dropped.
+	_setUserEvent(e) {
+		this._userEvent = e;
+		this._userMoving = false;
+		queueMicrotask(() => {
+			if (this._userEvent === e && !this._userMoving) {
+				this._userEvent = null;
+			}
+		});
+	}
+
 	_moveStart(zoomChanged, noMoveStart) {
 		// @event zoomstart: Event
 		// Fired when the map zoom is about to change (e.g. before zoom animation).
@@ -1733,8 +1767,12 @@ export class MaplairMap extends Evented {
 		// don't animate if the zoom origin isn't within one screen from the current center, unless forced
 		if (options.animate !== true && !this.getSize().contains(offset)) { return false; }
 
+		const userEvent = this._userEvent;
 		this._zoomAnimFrame = requestAnimationFrame(() => {
 			this._zoomAnimFrame = null;
+			if (userEvent) {
+				this._setUserEvent(userEvent);
+			}
 			this
 				._moveStart(true, options.noMoveStart ?? false)
 				._animateZoom(center, zoom, true);

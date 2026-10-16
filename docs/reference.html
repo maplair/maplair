@@ -863,6 +863,12 @@ went successfully.</td>
 
 <h4 id='maplairmap-interaction-events'>Interaction events</h4>
 
+<div class='section-comments'>The map state change events <code>movestart</code>, <code>move</code>, <code>moveend</code>, <code>zoomstart</code>,
+<code>zoom</code>, <code>zoomend</code> and <code>zoomanim</code> caused by the user (e.g. dragging, scrolling,
+pinching, pressing a key or clicking a zoom button) have an <code>originalEvent</code>
+property with the DOM event that started the change. It is <code>undefined</code> for
+changes made by code (e.g. <code>setView()</code>), which allows to tell them apart,
+e.g. to avoid feedback loops when synchronizing the view.</div>
 
 <table><thead>
 	<tr>

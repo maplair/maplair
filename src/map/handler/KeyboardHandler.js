@@ -144,6 +144,7 @@ export class KeyboardHandler extends Handler {
 					offset = map._limitOffset(new Point(offset), map.options.maxBounds);
 				}
 
+				map._setUserEvent(e);
 				if (map.options.worldCopyJump) {
 					const newLatLng = map.wrapLatLng(map.unproject(map.project(map.getCenter()).add(offset)));
 					map.panTo(newLatLng);
@@ -152,6 +153,7 @@ export class KeyboardHandler extends Handler {
 				}
 			}
 		} else if (key in this._zoomKeys) {
+			map._setUserEvent(e);
 			map.setZoom(map.getZoom() + (e.shiftKey ? 3 : 1) * this._zoomKeys[key]);
 
 		} else if (key === 'Escape' && map._popup && map._popup.options.closeOnEscapeKey) {

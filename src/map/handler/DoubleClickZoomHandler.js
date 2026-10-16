@@ -27,6 +27,7 @@ export class DoubleClickZoomHandler extends Handler {
 		delta = map.options.zoomDelta,
 		zoom = e.originalEvent.shiftKey ? oldZoom - delta : oldZoom + delta;
 
+		map._setUserEvent(e.originalEvent);
 		if (map.options.doubleClickZoom === 'center') {
 			map.setZoom(zoom);
 		} else {
