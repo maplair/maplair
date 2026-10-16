@@ -308,8 +308,8 @@ export class Popup extends DivOverlay {
 
 	_animateZoom(e) {
 		const pos = this._map._latLngToNewLayerPoint(this._latlng, e.zoom, e.center),
-		anchor = this._getAnchor();
-		this._setContainerPosition(pos.add(anchor));
+		anchor = this._map._rotateToPane(new Point(this._getAnchor()));
+		this._setContainerPosition(pos.add(anchor), this._container.style.transformOrigin);
 	}
 
 	_adjustPan() {
@@ -327,11 +327,10 @@ export class Popup extends DivOverlay {
 		marginBottom = this._containerMarginBottom ?? (parseInt(getComputedStyle(this._container).marginBottom, 10) || 0),
 		containerHeight = this._containerHeight + marginBottom,
 		containerWidth = this._containerWidth,
-		layerPos = new Point(this._containerLeft, -containerHeight - this._containerBottom);
+		// the top left corner, relative to the (upright) anchored point
+		topLeft = new Point(this._containerLeft, -containerHeight - this._containerBottom);
 
-		layerPos._add(this._getContainerPosition());
-
-		const containerPos = map.layerPointToContainerPoint(layerPos),
+		const containerPos = map.layerPointToContainerPoint(this._getContainerPosition())._add(topLeft),
 		padding = new Point(this.options.autoPanPadding),
 		paddingTL = new Point(this.options.autoPanPaddingTopLeft ?? padding),
 		paddingBR = new Point(this.options.autoPanPaddingBottomRight ?? padding),

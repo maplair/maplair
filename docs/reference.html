@@ -179,7 +179,8 @@ and optionally an object literal with <code>Map options</code>.</td>
 	<tr id='maplairmap-map'>
 		<td><code><b>new Map</b>(<nobr>&lt;HTMLElement&gt;</nobr> <i>el</i>, <nobr>&lt;Map options&gt;</nobr> <i>options?</i>)</code></td>
 		<td>Instantiates a map object given an instance of a <code>&lt;div&gt;</code> HTML element
-and optionally an object literal with <code>Map options</code>.</td>
+and optionally an object literal with <code>Map options</code>.
+The bearing in degrees in the range [0, 360)</td>
 	</tr>
 </tbody></table>
 
@@ -236,6 +237,12 @@ By default, all <a href="#path"><code>Path</code></a>s are rendered in a <a href
 		<td><code>Boolean</code></td>
 		<td><code>false</code></td>
 		<td>Whether a <a href="#fullscreencontrol">fullscreen control</a> is added to the map by default.</td>
+	</tr>
+	<tr id='maplairmap-rotatecontrol'>
+		<td><code><b>rotateControl</b></code></td>
+		<td><code>Boolean</code></td>
+		<td><code>false</code></td>
+		<td>Whether a <a href="#rotatecontrol">rotate control</a> is added to the map by default.</td>
 	</tr>
 	<tr id='maplairmap-zoomcontrol'>
 		<td><code><b>zoomControl</b></code></td>
@@ -374,6 +381,13 @@ the highest of their <code>maxZoom</code> options will be used instead.</td>
 		<td><code>Layer[]</code></td>
 		<td><code>[]</code></td>
 		<td>Array of layers that will be added to the map initially</td>
+	</tr>
+	<tr id='maplairmap-bearing'>
+		<td><code><b>bearing</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>Initial rotation of the map in degrees: the compass direction pointing up,
+clockwise from north (e.g. <code>90</code> for east up), see <code>setBearing()</code>.</td>
 	</tr>
 	<tr id='maplairmap-arialabel'>
 		<td><code><b>ariaLabel</b></code></td>
@@ -581,6 +595,12 @@ passed <code>'center'</code>, it will zoom to the center of the view regardless 
 where the touch events (fingers) were. Enabled for touch-capable web
 browsers.</td>
 	</tr>
+	<tr id='maplairmap-pinchrotate'>
+		<td><code><b>pinchRotate</b></code></td>
+		<td><code>Boolean</code></td>
+		<td><code>false</code></td>
+		<td>Whether the map can be rotated by turning two fingers, see <code>setBearing()</code>.</td>
+	</tr>
 	<tr id='maplairmap-bounceatzoomlimits'>
 		<td><code><b>bounceAtZoomLimits</b></code></td>
 		<td><code>Boolean</code></td>
@@ -744,6 +764,11 @@ faster (and vice versa).</td>
 		<td><code><a href='#event'>Event</a></code></td>
 		<td>Fired when the number of zoomlevels on the map is changed due
 to adding or removing a layer.</td>
+	</tr>
+	<tr id='maplairmap-rotate'>
+		<td><code><b>rotate</b></code></td>
+		<td><code><a href='#event'>Event</a></code></td>
+		<td>Fired when the bearing of the map changes, see <code>setBearing()</code>.</td>
 	</tr>
 	<tr id='maplairmap-resize'>
 		<td><code><b>resize</b></code></td>
@@ -1273,6 +1298,35 @@ with the CRS their tiles were made for.</p>
 		<th>Description</th>
 	</tr>
 	</thead><tbody>
+	<tr id='maplairmap-setbearing'>
+		<td><code><b>setBearing</b>(<nobr>&lt;Number&gt;</nobr> <i>bearing</i>, <nobr>&lt;{animate: Boolean}&gt;</nobr> <i>options?</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Rotates the map around the center of the view, so that the compass direction
+<code>bearing</code> (in degrees, clockwise from north) points up. Markers, popups and
+tooltips stay upright. With <code>{animate: true}</code>, the map rotates smoothly (the
+shorter way round).</p>
+</td>
+	</tr>
+</tbody></table>
+
+</section><section class='collapsable'>
+
+<h4 id='maplairmap-map-state-change-events'>Map state change events</h4>
+
+
+<table><thead>
+	<tr>
+		<th>Method</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='maplairmap-getbearing'>
+		<td><code><b>getBearing</b>()</code></td>
+		<td><code>Number</code></td>
+		<td><p>Returns the rotation of the map, see <code>setBearing()</code>.</p>
+</td>
+	</tr>
 	<tr id='maplairmap-setmaxbounds'>
 		<td><code><b>setMaxBounds</b>(<nobr>&lt;<a href='#latlngbounds'>LatLngBounds</a>&gt;</nobr> <i>bounds</i>)</code></td>
 		<td><code>this</code></td>
@@ -1774,6 +1828,12 @@ Without <code>cls</code>, runs the hooks of all classes of this object.</p>
 		<td><code><a href='#fullscreencontrol'>FullscreenControl</a></code></td>
 		<td>The default fullscreen control (only available if the
 <a href="#map-fullscreencontrol"><code>fullscreenControl</code> option</a> was <code>true</code> when creating the map).</td>
+	</tr>
+	<tr id='maplairmap-rotatecontrol'>
+		<td><code><b>rotateControl</b></code></td>
+		<td><code><a href='#rotatecontrol'>RotateControl</a></code></td>
+		<td>The default rotate control (only available if the
+<a href="#map-rotatecontrol"><code>rotateControl</code> option</a> was <code>true</code> when creating the map).</td>
 	</tr>
 	<tr id='maplairmap-zoomcontrol'>
 		<td><code><b>zoomControl</b></code></td>
@@ -2400,6 +2460,14 @@ If not specified, a common instance of <a href="#defaulticon"><code>DefaultIcon<
 		<td><code>Number</code></td>
 		<td><code>250</code></td>
 		<td>The z-index offset used for the <code>riseOnHover</code> feature.</td>
+	</tr>
+	<tr id='marker-rotatewithview'>
+		<td><code><b>rotateWithView</b></code></td>
+		<td><code>Boolean</code></td>
+		<td><code>false</code></td>
+		<td>On a rotated map (see <code>MaplairMap.setBearing()</code>), whether the icon rotates
+with the map (e.g. for arrows pointing in a geographic direction) instead
+of staying upright.</td>
 	</tr>
 	<tr id='marker-pane'>
 		<td><code><b>pane</b></code></td>
@@ -27961,6 +28029,166 @@ Extends <a href="#control"><code>Control</code></a>.</p>
 	</tr>
 	</thead><tbody>
 	<tr id='fullscreencontrol-callinithooks'>
+		<td><code><b>callInitHooks</b>(<nobr>&lt;Function&gt;</nobr> <i>cls?</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Runs the <a href="#class-constructor-hooks">constructor hooks</a> of the given class and
+of its parent classes, which haven't run yet for this object. Classes call it
+at the end of their constructor, e.g. <code>this.callInitHooks(MyClass)</code>.
+Without <code>cls</code>, runs the hooks of all classes of this object.</p>
+</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
+
+</section><h2 id='rotatecontrol'>RotateControl</h2><p>A compass showing the rotation of the map (see <code>MaplairMap.setBearing()</code>); clicking it
+rotates the map back to north up. It is put on the map if you set its
+<a href="#map-rotatecontrol"><code>rotateControl</code> option</a> to <code>true</code>. Extends <a href="#control"><code>Control</code></a>.</p>
+
+<section>
+<h3 id='rotatecontrol-example'>Usage example</h3>
+
+<section >
+
+
+
+
+
+<pre><code class="language-js">new RotateControl({position: 'topright'}).addTo(map);
+</code></pre>
+
+
+
+</section>
+
+
+</section><section>
+<h3 id='rotatecontrol-constructor'>Constructor</h3>
+
+<section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Constructor</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='rotatecontrol-rotatecontrol'>
+		<td><code><b>new RotateControl</b>(<nobr>&lt;<a href='#rotatecontrol-option'>RotateControl options</a>&gt;</nobr> <i>options?</i>)</code></td>
+		<td>Creates a rotate control.</td>
+	</tr>
+</tbody></table>
+
+
+</section>
+
+
+</section><section>
+<h3 id='rotatecontrol-option'>Options</h3>
+
+<section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Option</th>
+		<th>Type</th>
+		<th>Default</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='rotatecontrol-position'>
+		<td><code><b>position</b></code></td>
+		<td><code>String</code></td>
+		<td><code>&#x27;topleft&#x27;</code></td>
+		<td>The position of the control (one of the map corners). Possible values are <code>'topleft'</code>,
+<code>'topright'</code>, <code>'bottomleft'</code> or <code>'bottomright'</code></td>
+	</tr>
+</tbody></table>
+
+</section>
+
+
+</section><section>
+<h3 id=''>Methods</h3>
+
+
+
+
+<div class='accordion'>
+	<label><span class='expander'>▶</span> Methods inherited from <a href='#control'>Control</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Method</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='rotatecontrol-getposition'>
+		<td><code><b>getPosition</b>()</code></td>
+		<td><code>string</code></td>
+		<td><p>Returns the position of the control.</p>
+</td>
+	</tr>
+	<tr id='rotatecontrol-setposition'>
+		<td><code><b>setPosition</b>(<nobr>&lt;string&gt;</nobr> <i>position</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Sets the position of the control.</p>
+</td>
+	</tr>
+	<tr id='rotatecontrol-getcontainer'>
+		<td><code><b>getContainer</b>()</code></td>
+		<td><code>HTMLElement</code></td>
+		<td><p>Returns the HTMLElement that contains the control.</p>
+</td>
+	</tr>
+	<tr id='rotatecontrol-addto'>
+		<td><code><b>addTo</b>(<nobr>&lt;<a href='#maplairmap'>MaplairMap</a>&gt;</nobr> <i>map</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Adds the control to the given map.</p>
+</td>
+	</tr>
+	<tr id='rotatecontrol-remove'>
+		<td><code><b>remove</b>()</code></td>
+		<td><code>this</code></td>
+		<td><p>Removes the control from the map it is currently active on.</p>
+</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
+
+<div class='accordion'>
+	<label><span class='expander'>▶</span> Methods inherited from <a href='#class'>Class</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Method</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='rotatecontrol-callinithooks'>
 		<td><code><b>callInitHooks</b>(<nobr>&lt;Function&gt;</nobr> <i>cls?</i>)</code></td>
 		<td><code>this</code></td>
 		<td><p>Runs the <a href="#class-constructor-hooks">constructor hooks</a> of the given class and

@@ -66,6 +66,12 @@ export class Marker extends Layer {
 			// The z-index offset used for the `riseOnHover` feature.
 			riseOffset: 250,
 
+			// @option rotateWithView: Boolean = false
+			// On a rotated map (see `MaplairMap.setBearing()`), whether the icon rotates
+			// with the map (e.g. for arrows pointing in a geographic direction) instead
+			// of staying upright.
+			rotateWithView: false,
+
 			// @option pane: String = 'markerPane'
 			// `Map pane` where the markers icon will be added.
 			pane: 'markerPane',
@@ -160,7 +166,8 @@ export class Marker extends Layer {
 	getEvents() {
 		const events = {
 			zoom: this.update,
-			viewreset: this.update
+			viewreset: this.update,
+			rotate: this.update
 		};
 		if (this._map?.options.markerCulling) {
 			events.moveend = this._updateCulling;
@@ -367,10 +374,21 @@ export class Marker extends Layer {
 		if (this._shadow) {
 			DomUtil.setPosition(this._shadow, pos);
 		}
+		this._rotateUpright();
 
 		this._zIndex = pos.y + this.options.zIndexOffset;
 
 		this._resetZIndex();
+	}
+
+	// Keeps the icon and shadow upright on a rotated map, rotating them around their anchor
+	_rotateUpright() {
+		if (this.options.rotateWithView) { return; }
+		for (const el of [this._icon, this._shadow]) {
+			if (el) {
+				this._map._rotateUpright(el, `${-parseFloat(el.style.marginLeft) || 0}px ${-parseFloat(el.style.marginTop) || 0}px`);
+			}
+		}
 	}
 
 	_updateZIndex(offset) {

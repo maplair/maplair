@@ -698,7 +698,7 @@ export class GridLayer extends Layer {
 		mapZoom = map._animatingZoom ? Math.max(map._animateToZoom, map.getZoom()) : map.getZoom(),
 		scale = map.getZoomScale(mapZoom, this._tileZoom),
 		pixelCenter = map.project(center, this._tileZoom).floor(),
-		halfSize = map.getSize().divideBy(scale * 2);
+		halfSize = map._getViewSize().divideBy(scale * 2);
 
 		return new Bounds(pixelCenter.subtract(halfSize), pixelCenter.add(halfSize));
 	}

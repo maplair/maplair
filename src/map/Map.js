@@ -15,6 +15,7 @@ import {Control} from '../control/Control.js';
 import {AttributionControl} from '../control/AttributionControl.js';
 import {ZoomControl} from '../control/ZoomControl.js';
 import {FullscreenControl} from '../control/FullscreenControl.js';
+import {RotateControl} from '../control/RotateControl.js';
 import {Layer} from '../layer/Layer.js';
 import {DivOverlay} from '../layer/DivOverlay.js';
 import {Popup} from '../layer/Popup.js';
@@ -66,6 +67,19 @@ import {TapDragZoomHandler} from './handler/TapDragZoomHandler.js';
 // @constructor Map(el: HTMLElement, options?: Map options)
 // Instantiates a map object given an instance of a `<div>` HTML element
 // and optionally an object literal with `Map options`.
+// The bearing in degrees in the range [0, 360)
+function normalizeBearing(bearing) {
+	return ((Number(bearing) % 360) + 360) % 360;
+}
+
+// Rotates `point` clockwise (on the screen) by `degrees` around the origin
+function rotatePoint(point, degrees) {
+	const angle = degrees * Math.PI / 180,
+	cos = Math.cos(angle),
+	sin = Math.sin(angle);
+	return new Point(point.x * cos - point.y * sin, point.x * sin + point.y * cos);
+}
+
 export class MaplairMap extends Evented {
 
 	static {
@@ -99,6 +113,11 @@ export class MaplairMap extends Evented {
 			// @option layers: Layer[] = []
 			// Array of layers that will be added to the map initially
 			layers: [],
+
+			// @option bearing: Number = 0
+			// Initial rotation of the map in degrees: the compass direction pointing up,
+			// clockwise from north (e.g. `90` for east up), see `setBearing()`.
+			bearing: 0,
 
 			// @option ariaLabel: String = 'Map'
 			// The accessible name of the map, announced by screen readers. The map
@@ -198,6 +217,9 @@ export class MaplairMap extends Evented {
 
 		this._initContainer(id);
 		this._initLayout();
+		if (options.bearing || options.pinchRotate || options.rotateControl) {
+			this._rotate(options.bearing);
+		}
 
 		this._initEvents();
 
@@ -376,7 +398,7 @@ export class MaplairMap extends Evented {
 	// @method panBy(offset: Point, options?: Pan options): this
 	// Pans the map by a given number of pixels (animated).
 	panBy(offset, options) {
-		offset = new Point(offset).round();
+		offset = this._rotateToPane(new Point(offset)).round();
 		options ??= {};
 
 		if (!offset.x && !offset.y) {
@@ -546,6 +568,102 @@ export class MaplairMap extends Evented {
 		return crs.distance(latlng, crs.pointToLatLng(point.add([1, 0]), this._zoom));
 	}
 
+	// @method setBearing(bearing: Number, options?: {animate: Boolean}): this
+	// Rotates the map around the center of the view, so that the compass direction
+	// `bearing` (in degrees, clockwise from north) points up. Markers, popups and
+	// tooltips stay upright. With `{animate: true}`, the map rotates smoothly (the
+	// shorter way round).
+	setBearing(bearing, options) {
+		bearing = normalizeBearing(bearing);
+		const from = this.getBearing();
+		if (!this._rotatePane && !bearing) { return this; }
+		if (bearing === from) { return this; }
+
+		this._stop();
+		if (!options?.animate || !this._loaded || Browser.reducedMotion) {
+			this._rotate(bearing);
+			return this._loaded ? this.fire('movestart').fire('move').fire('moveend') : this;
+		}
+
+		// the shorter way round
+		const delta = ((bearing - from + 540) % 360) - 180,
+		start = performance.now(),
+		duration = 250;
+		this.fire('movestart');
+		const frame = () => {
+			const t = Math.min(1, (performance.now() - start) / duration);
+			this._rotate(from + delta * (1 - (1 - t) ** 2));
+			this.fire('move');
+			if (t < 1) {
+				// cancelled by `_stop()`
+				this._flyToFrame = requestAnimationFrame(frame);
+			} else {
+				this.fire('moveend');
+			}
+		};
+		this._flyToFrame = requestAnimationFrame(frame);
+		return this;
+	}
+
+	// Applies the bearing without the events of a view change (e.g. while pinching)
+	_rotate(bearing) {
+		bearing = normalizeBearing(bearing);
+		if (!this._rotatePane) {
+			// the map pane is wrapped in a pane rotated around the center of the container
+			const rotatePane = this._rotatePane = DomUtil.create('div', 'maplair-rotate-pane');
+			this._container.insertBefore(rotatePane, this._mapPane);
+			rotatePane.appendChild(this._mapPane);
+		}
+		if (bearing === this.getBearing()) { return; }
+
+		this._bearing = bearing;
+		this._rotatePane.style.transform = bearing ? `rotate(${-bearing}deg)` : '';
+
+		if (this._loaded) {
+			// @section Map state change events
+			// @event rotate: Event
+			// Fired when the bearing of the map changes, see `setBearing()`.
+			this.fire('rotate');
+		}
+	}
+
+	// @method getBearing(): Number
+	// Returns the rotation of the map, see `setBearing()`.
+	getBearing() {
+		return this._bearing ?? 0;
+	}
+
+	// Rotates an offset in container (screen) pixels to the frame of the rotated map pane
+	_rotateToPane(point) {
+		return this._bearing ? rotatePoint(point, this._bearing) : point;
+	}
+
+	// Rotates an offset in the frame of the rotated map pane to container (screen) pixels
+	_rotateToContainer(point) {
+		return this._bearing ? rotatePoint(point, -this._bearing) : point;
+	}
+
+	// The size of the bounding box of the rotated view, in pixels of the map pane
+	_getViewSize() {
+		const size = this.getSize();
+		if (!this._bearing) { return size; }
+		const angle = this._bearing * Math.PI / 180,
+		cos = Math.abs(Math.cos(angle)),
+		sin = Math.abs(Math.sin(angle));
+		return new Point(size.x * cos + size.y * sin, size.x * sin + size.y * cos);
+	}
+
+	// Counter-rotates `el` (positioned with `DomUtil.setPosition()`) around its CSS
+	// `transformOrigin`, so that it stays upright on a rotated map.
+	_rotateUpright(el, transformOrigin) {
+		if (this._bearing) {
+			el.style.transform += ` rotate(${this._bearing}deg)`;
+			el.style.transformOrigin = transformOrigin;
+		} else if (el.style.transformOrigin) {
+			el.style.transformOrigin = '';
+		}
+	}
+
 	// @method setMaxBounds(bounds: LatLngBounds): this
 	// Restricts the map view to the given bounds (see the [maxBounds](#map-maxbounds) option).
 	setMaxBounds(bounds) {
@@ -680,7 +798,7 @@ export class MaplairMap extends Evented {
 		if (!offset.x && !offset.y) { return this; }
 
 		if (options.animate && options.pan) {
-			this.panBy(offset);
+			this.panBy(this._rotateToContainer(offset));
 
 		} else {
 			if (options.pan) {
@@ -1015,7 +1133,13 @@ export class MaplairMap extends Evented {
 	// If `center` and `zoom` is omitted, the map's current zoom level and center is used.
 	getPixelBounds(center, zoom) {
 		const topLeftPoint = this._getTopLeftPoint(center, zoom);
-		return new Bounds(topLeftPoint, topLeftPoint.add(this.getSize()));
+		if (!this._bearing) {
+			return new Bounds(topLeftPoint, topLeftPoint.add(this.getSize()));
+		}
+		// the bounding box of the rotated view
+		const pixelCenter = topLeftPoint.add(this.getSize()._divideBy(2)),
+		half = this._getViewSize()._divideBy(2);
+		return new Bounds(pixelCenter.subtract(half), pixelCenter.add(half));
 	}
 
 	// TODO: Check semantics - isn't the pixel origin the 0,0 coord relative to
@@ -1145,14 +1269,25 @@ export class MaplairMap extends Evented {
 	// Given a pixel coordinate relative to the map container, returns the corresponding
 	// pixel coordinate relative to the [origin pixel](#map-getpixelorigin).
 	containerPointToLayerPoint(point) { // (Point)
-		return new Point(point).subtract(this._getMapPanePos());
+		point = new Point(point);
+		if (this._bearing) {
+			// the map pane is rotated around the center of the container
+			const center = this.getSize()._divideBy(2);
+			point = this._rotateToPane(point.subtract(center))._add(center);
+		}
+		return point.subtract(this._getMapPanePos());
 	}
 
 	// @method layerPointToContainerPoint(point: Point): Point
 	// Given a pixel coordinate relative to the [origin pixel](#map-getpixelorigin),
 	// returns the corresponding pixel coordinate relative to the map container.
 	layerPointToContainerPoint(point) { // (Point)
-		return new Point(point).add(this._getMapPanePos());
+		point = new Point(point).add(this._getMapPanePos());
+		if (this._bearing) {
+			const center = this.getSize()._divideBy(2);
+			point = this._rotateToContainer(point.subtract(center))._add(center);
+		}
+		return point;
 	}
 
 	// @method containerPointToLatLng(point: Point): LatLng
@@ -1813,7 +1948,7 @@ export class MaplairMap extends Evented {
 
 	_tryAnimatedPan(center, options) {
 		// difference between the new and current centers in pixels
-		const offset = this._getCenterOffset(center)._trunc();
+		const offset = this._rotateToContainer(this._getCenterOffset(center)._trunc());
 
 		// don't animate too far unless animate: true specified in options
 		if (options?.animate !== true && !this.getSize().contains(offset)) { return false; }
@@ -1890,7 +2025,7 @@ export class MaplairMap extends Evented {
 	_continuousZoom(center, zoom, offset, options) {
 		const startZoom = this._zoom,
 		originOffset = offset.multiplyBy(-1),
-		origin = this.containerPointToLatLng(this.getSize()._divideBy(2).add(offset)),
+		origin = this.layerPointToLatLng(this._getCenterLayerPoint().add(offset)),
 		start = performance.now(),
 		duration = 250;
 
@@ -2031,7 +2166,8 @@ for (const feature of [
 	Tooltip,
 	RendererSupport,
 	ZoomControl,
-	FullscreenControl
+	FullscreenControl,
+	RotateControl
 ]) {
 	feature.register(MaplairMap);
 }

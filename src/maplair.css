@@ -20,6 +20,12 @@
 	overflow: hidden;
 }
 
+/* wraps the map pane of a rotated map, see setBearing() */
+.maplair-rotate-pane {
+	position: absolute;
+	inset: 0;
+}
+
 .maplair-tile,
 .maplair-marker-icon,
 .maplair-marker-shadow {
@@ -373,7 +379,8 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	}
 }
 
-.maplair-control-fullscreen-button svg {
+.maplair-control-fullscreen-button svg,
+.maplair-control-rotate-button svg {
 	vertical-align: middle;
 }
 

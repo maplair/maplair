@@ -86,7 +86,7 @@ export class BlanketOverlay extends Layer {
 
 	_updateTransform(center, zoom) {
 		const scale = this._map.getZoomScale(zoom, this._zoom),
-		viewHalf = this._map.getSize().multiplyBy(0.5 + this.options.padding),
+		viewHalf = this._map._getViewSize().multiplyBy(0.5 + this.options.padding),
 		currentCenterPoint = this._map.project(this._center, zoom),
 		topLeftOffset = viewHalf.multiplyBy(-scale)._add(currentCenterPoint)
 			._subtract(this._map._getNewPixelOrigin(center, zoom))
@@ -97,9 +97,14 @@ export class BlanketOverlay extends Layer {
 
 	_onMoveEnd(ev) {
 		// Update pixel bounds of renderer container (for positioning/sizing/clipping later)
+		// the bounding box of the (possibly rotated) view, extended by the padding
 		const p = this.options.padding,
-		size = this._map.getSize(),
-		min = this._map.containerPointToLayerPoint(size.multiplyBy(-p)).round();
+		size = this._map._getViewSize();
+		if (!size.multiplyBy(1 + p * 2).round().equals(this._containerSize)) {
+			// e.g. after rotating the map
+			this._resizeContainer();
+		}
+		const min = this._map._getCenterLayerPoint().subtract(size.multiplyBy(0.5 + p)).round();
 
 		this._bounds = new Bounds(min, min.add(size.multiplyBy(1 + p * 2)).round());
 
@@ -160,7 +165,7 @@ export class BlanketOverlay extends Layer {
 	}
 	_resizeContainer() {
 		const p = this.options.padding,
-		size = this._map.getSize().multiplyBy(1 + p * 2).round();
+		size = this._containerSize = this._map._getViewSize().multiplyBy(1 + p * 2).round();
 		this._container.style.width = `${size.x}px`;
 		this._container.style.height = `${size.y}px`;
 		return size;

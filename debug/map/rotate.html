@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Maplair debug page - Rotation</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
+		<link rel="stylesheet" href="../../dist/maplair.css" />
+		<link rel="stylesheet" href="../css/screen.css" />
+		<script type="importmap">
+			{
+				"imports": {
+					"maplair": "../../dist/maplair-src.js"
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<div id="map"></div>
+		<input id="bearing" type="range" min="0" max="359" value="30" />
+		<script type="module">
+			import {Canvas, Marker, MaplairMap, Polygon, Polyline, TileLayer} from 'maplair';
+
+			const map = new MaplairMap('map', {
+				center: [47.27, 11.39],
+				zoom: 13,
+				bearing: 30,
+				pinchRotate: true,
+				rotateControl: true,
+				fullscreenControl: true
+			});
+			new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 19}).addTo(map);
+
+			new Marker([47.27, 11.39], {draggable: true}).addTo(map).bindPopup('Drag me').openPopup();
+			new Marker([47.26, 11.41]).addTo(map).bindTooltip('Tooltip', {permanent: true});
+			new Polygon([[47.28, 11.37], [47.29, 11.40], [47.28, 11.41]], {color: 'red'}).addTo(map);
+			new Polyline([[47.26, 11.37], [47.25, 11.40]], {renderer: new Canvas(), weight: 6}).addTo(map);
+
+			const input = document.getElementById('bearing');
+			input.addEventListener('input', () => map.setBearing(input.value));
+			map.on('rotate', () => { input.value = Math.round(map.getBearing()); });
+		</script>
+	</body>
+</html>

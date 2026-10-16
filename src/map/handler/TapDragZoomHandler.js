@@ -128,7 +128,7 @@ export class TapDragZoomHandler extends Handler {
 		if (map.options.tapDragZoom === 'center') {
 			this._center = this._startLatLng;
 		} else {
-			this._center = map.unproject(map.project(this._aroundLatLng, this._zoom).subtract(this._aroundOffset), this._zoom);
+			this._center = map.unproject(map.project(this._aroundLatLng, this._zoom).subtract(map._rotateToPane(this._aroundOffset)), this._zoom);
 		}
 
 		if (!this._moved) {
