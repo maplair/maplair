@@ -194,6 +194,12 @@
 }
 
 
+/* nearest-neighbour scaling, see the `pixelated` option */
+.maplair-pixelated,
+.maplair-pixelated .maplair-tile {
+	image-rendering: pixelated;
+}
+
 /* zoom and fade animations */
 
 .maplair-fade-anim {

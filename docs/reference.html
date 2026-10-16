@@ -6002,6 +6002,15 @@ tiles outside the CRS limits.</td>
 		<td><code>&#x27;&#x27;</code></td>
 		<td>A custom class name to assign to the tile layer. Empty by default.</td>
 	</tr>
+	<tr id='tilelayer-pixelated'>
+		<td><code><b>pixelated</b></code></td>
+		<td><code>Boolean</code></td>
+		<td><code>false</code></td>
+		<td>Whether to scale the tiles with nearest-neighbour interpolation
+(<code>image-rendering: pixelated</code>) instead of smoothing them, so that
+their pixels stay crisp, e.g. while zooming or beyond <code>maxNativeZoom</code>.
+Useful for raster data, pixel art or scientific imagery.</td>
+	</tr>
 	<tr id='tilelayer-keepbuffer'>
 		<td><code><b>keepBuffer</b></code></td>
 		<td><code>Number</code></td>
@@ -6961,6 +6970,15 @@ tiles outside the CRS limits.</td>
 		<td><code>&#x27;&#x27;</code></td>
 		<td>A custom class name to assign to the tile layer. Empty by default.</td>
 	</tr>
+	<tr id='wmstilelayer-pixelated'>
+		<td><code><b>pixelated</b></code></td>
+		<td><code>Boolean</code></td>
+		<td><code>false</code></td>
+		<td>Whether to scale the tiles with nearest-neighbour interpolation
+(<code>image-rendering: pixelated</code>) instead of smoothing them, so that
+their pixels stay crisp, e.g. while zooming or beyond <code>maxNativeZoom</code>.
+Useful for raster data, pixel art or scientific imagery.</td>
+	</tr>
 	<tr id='wmstilelayer-keepbuffer'>
 		<td><code><b>keepBuffer</b></code></td>
 		<td><code>Number</code></td>
@@ -7735,6 +7753,15 @@ Refer to <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_setting
 		<td><code>String</code></td>
 		<td><code>&#x27;&#x27;</code></td>
 		<td>A custom class name to assign to the image. Empty by default.</td>
+	</tr>
+	<tr id='imageoverlay-pixelated'>
+		<td><code><b>pixelated</b></code></td>
+		<td><code>Boolean</code></td>
+		<td><code>false</code></td>
+		<td>Whether to scale the image with nearest-neighbour interpolation
+(<code>image-rendering: pixelated</code>) instead of smoothing it, so that its
+pixels stay crisp when zoomed in. Useful for raster data, pixel art
+or scientific imagery.</td>
 	</tr>
 	<tr id='imageoverlay-decoding'>
 		<td><code><b>decoding</b></code></td>
@@ -8586,6 +8613,15 @@ Refer to <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_setting
 		<td><code>&#x27;&#x27;</code></td>
 		<td>A custom class name to assign to the image. Empty by default.</td>
 	</tr>
+	<tr id='videooverlay-pixelated'>
+		<td><code><b>pixelated</b></code></td>
+		<td><code>Boolean</code></td>
+		<td><code>false</code></td>
+		<td>Whether to scale the image with nearest-neighbour interpolation
+(<code>image-rendering: pixelated</code>) instead of smoothing it, so that its
+pixels stay crisp when zoomed in. Useful for raster data, pixel art
+or scientific imagery.</td>
+	</tr>
 	<tr id='videooverlay-decoding'>
 		<td><code><b>decoding</b></code></td>
 		<td><code>String</code></td>
@@ -9428,6 +9464,15 @@ Refer to <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_setting
 		<td><code>String</code></td>
 		<td><code>&#x27;&#x27;</code></td>
 		<td>A custom class name to assign to the image. Empty by default.</td>
+	</tr>
+	<tr id='svgoverlay-pixelated'>
+		<td><code><b>pixelated</b></code></td>
+		<td><code>Boolean</code></td>
+		<td><code>false</code></td>
+		<td>Whether to scale the image with nearest-neighbour interpolation
+(<code>image-rendering: pixelated</code>) instead of smoothing it, so that its
+pixels stay crisp when zoomed in. Useful for raster data, pixel art
+or scientific imagery.</td>
 	</tr>
 	<tr id='svgoverlay-decoding'>
 		<td><code><b>decoding</b></code></td>
@@ -19547,6 +19592,15 @@ tiles outside the CRS limits.</td>
 		<td><code>String</code></td>
 		<td><code>&#x27;&#x27;</code></td>
 		<td>A custom class name to assign to the tile layer. Empty by default.</td>
+	</tr>
+	<tr id='gridlayer-pixelated'>
+		<td><code><b>pixelated</b></code></td>
+		<td><code>Boolean</code></td>
+		<td><code>false</code></td>
+		<td>Whether to scale the tiles with nearest-neighbour interpolation
+(<code>image-rendering: pixelated</code>) instead of smoothing them, so that
+their pixels stay crisp, e.g. while zooming or beyond <code>maxNativeZoom</code>.
+Useful for raster data, pixel art or scientific imagery.</td>
 	</tr>
 	<tr id='gridlayer-keepbuffer'>
 		<td><code><b>keepBuffer</b></code></td>

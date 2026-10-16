@@ -147,6 +147,13 @@ export class GridLayer extends Layer {
 			// A custom class name to assign to the tile layer. Empty by default.
 			className: '',
 
+			// @option pixelated: Boolean = false
+			// Whether to scale the tiles with nearest-neighbour interpolation
+			// (`image-rendering: pixelated`) instead of smoothing them, so that
+			// their pixels stay crisp, e.g. while zooming or beyond `maxNativeZoom`.
+			// Useful for raster data, pixel art or scientific imagery.
+			pixelated: false,
+
 			// @option keepBuffer: Number = 2
 			// When panning the map, keep this many rows and columns of tiles before unloading them.
 			keepBuffer: 2
@@ -355,6 +362,7 @@ export class GridLayer extends Layer {
 		if (this._container) { return; }
 
 		this._container = DomUtil.create('div', `maplair-layer ${this.options.className ?? ''}`);
+		this._container.classList.toggle('maplair-pixelated', !!this.options.pixelated);
 		this._updateZIndex();
 
 		if (this.options.opacity < 1) {

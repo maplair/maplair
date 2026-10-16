@@ -58,6 +58,13 @@ export class ImageOverlay extends Layer {
 			// A custom class name to assign to the image. Empty by default.
 			className: '',
 
+			// @option pixelated: Boolean = false
+			// Whether to scale the image with nearest-neighbour interpolation
+			// (`image-rendering: pixelated`) instead of smoothing it, so that its
+			// pixels stay crisp when zoomed in. Useful for raster data, pixel art
+			// or scientific imagery.
+			pixelated: false,
+
 			// @option decoding: String = 'auto'
 			// Tells the browser whether to decode the image in a synchronous fashion,
 			// as per the [`decoding` HTML attribute](https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/decoding).
@@ -90,6 +97,7 @@ export class ImageOverlay extends Layer {
 			this._image.classList.add('maplair-interactive');
 			this.addInteractiveTarget(this._image);
 		}
+		this._image.classList.toggle('maplair-pixelated', !!this.options.pixelated);
 
 		this.getPane().appendChild(this._image);
 		this._reset();
