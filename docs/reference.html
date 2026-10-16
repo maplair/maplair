@@ -5948,6 +5948,15 @@ Cross-origin tile servers have to allow such requests with
 		<td><code>1.0</code></td>
 		<td>Opacity of the tiles. Can be used in the <code>createTile()</code> function.</td>
 	</tr>
+	<tr id='tilelayer-placeholder'>
+		<td><code><b>placeholder</b></code></td>
+		<td><code>String</code></td>
+		<td><code>null</code></td>
+		<td>A CSS <a href="https://developer.mozilla.org/docs/Web/CSS/background"><code>background</code></a>
+shown in place of tiles while they are loading, e.g. <code>'#ddd'</code> or
+<code>'url(loading.svg) center no-repeat #eee'</code>. Tiles with a placeholder
+appear without fading in.</td>
+	</tr>
 	<tr id='tilelayer-updatewhenidle'>
 		<td><code><b>updateWhenIdle</b></code></td>
 		<td><code>Boolean</code></td>
@@ -6258,7 +6267,8 @@ Useful for raster data, pixel art or scientific imagery.</td>
 		<td><code>this</code></td>
 		<td><p>Updates the layer's URL template and redraws it (unless <code>noRedraw</code> is set to <code>true</code>).
 If the URL does not change, the layer will not be redrawn unless
-the noRedraw parameter is set to false.</p>
+the noRedraw parameter is set to false.
+The current tiles stay visible until the new tiles have loaded, to avoid flickering.</p>
 </td>
 	</tr>
 	<tr id='tilelayer-createtile'>
@@ -6927,6 +6937,15 @@ Cross-origin tile servers have to allow such requests with
 		<td><code>1.0</code></td>
 		<td>Opacity of the tiles. Can be used in the <code>createTile()</code> function.</td>
 	</tr>
+	<tr id='wmstilelayer-placeholder'>
+		<td><code><b>placeholder</b></code></td>
+		<td><code>String</code></td>
+		<td><code>null</code></td>
+		<td>A CSS <a href="https://developer.mozilla.org/docs/Web/CSS/background"><code>background</code></a>
+shown in place of tiles while they are loading, e.g. <code>'#ddd'</code> or
+<code>'url(loading.svg) center no-repeat #eee'</code>. Tiles with a placeholder
+appear without fading in.</td>
+	</tr>
 	<tr id='wmstilelayer-updatewhenidle'>
 		<td><code><b>updateWhenIdle</b></code></td>
 		<td><code>Boolean</code></td>
@@ -7270,7 +7289,8 @@ Useful for raster data, pixel art or scientific imagery.</td>
 		<td><code>this</code></td>
 		<td><p>Updates the layer's URL template and redraws it (unless <code>noRedraw</code> is set to <code>true</code>).
 If the URL does not change, the layer will not be redrawn unless
-the noRedraw parameter is set to false.</p>
+the noRedraw parameter is set to false.
+The current tiles stay visible until the new tiles have loaded, to avoid flickering.</p>
 </td>
 	</tr>
 	<tr id='wmstilelayer-createtile'>
@@ -19537,6 +19557,15 @@ GridLayer can be extended to create a tiled grid of HTML elements like <code>&lt
 		<td><code>Number</code></td>
 		<td><code>1.0</code></td>
 		<td>Opacity of the tiles. Can be used in the <code>createTile()</code> function.</td>
+	</tr>
+	<tr id='gridlayer-placeholder'>
+		<td><code><b>placeholder</b></code></td>
+		<td><code>String</code></td>
+		<td><code>null</code></td>
+		<td>A CSS <a href="https://developer.mozilla.org/docs/Web/CSS/background"><code>background</code></a>
+shown in place of tiles while they are loading, e.g. <code>'#ddd'</code> or
+<code>'url(loading.svg) center no-repeat #eee'</code>. Tiles with a placeholder
+appear without fading in.</td>
 	</tr>
 	<tr id='gridlayer-updatewhenidle'>
 		<td><code><b>updateWhenIdle</b></code></td>

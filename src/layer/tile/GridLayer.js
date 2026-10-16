@@ -87,6 +87,13 @@ export class GridLayer extends Layer {
 			// Opacity of the tiles. Can be used in the `createTile()` function.
 			opacity: 1,
 
+			// @option placeholder: String = null
+			// A CSS [`background`](https://developer.mozilla.org/docs/Web/CSS/background)
+			// shown in place of tiles while they are loading, e.g. `'#ddd'` or
+			// `'url(loading.svg) center no-repeat #eee'`. Tiles with a placeholder
+			// appear without fading in.
+			placeholder: null,
+
 			// @option updateWhenIdle: Boolean = *
 			// Load new tiles only when panning ends.
 			// Defaults to `false` (tiles are loaded _during_ panning) unless
@@ -181,6 +188,7 @@ export class GridLayer extends Layer {
 	}
 
 	onRemove(map) {
+		this._removeKeptLevel();
 		this._removeAllTiles();
 		this._container.remove();
 		map._removeZoomLimit(this);
@@ -333,7 +341,7 @@ export class GridLayer extends Layer {
 		for (const tile of Object.values(this._tiles ?? {})) {
 			if (!tile.current || !tile.loaded) { continue; }
 
-			const fade = Math.min(1, (now - tile.loaded) / 200);
+			const fade = tile.noFade ? 1 : Math.min(1, (now - tile.loaded) / 200);
 
 			tile.el.style.opacity = fade;
 			if (fade < 1) {
@@ -370,6 +378,58 @@ export class GridLayer extends Layer {
 		}
 
 		this.getPane().appendChild(this._container);
+	}
+
+	// Keeps the loaded tiles of the current level visible below the tiles loaded
+	// next (e.g. after changing the URL), until these have loaded, to avoid flickering.
+	_keepCurrentTiles() {
+		const zoom = this._tileZoom,
+		level = this._levels?.[zoom];
+		// keep the first level if the next one has not loaded yet
+		if (!this._map || !level || this._keptLevel) { return; }
+
+		const tiles = [];
+		for (const [key, tile] of Object.entries(this._tiles)) {
+			if (tile.coords.z === zoom && tile.loaded) {
+				tiles.push(tile);
+				delete this._tiles[key];
+			}
+		}
+		delete this._levels[zoom];
+		level.el.style.zIndex = -1;
+		this._keptLevel = {level, tiles};
+		// new level for the next tiles
+		this._updateLevels();
+
+		this.on('load', this._onLoadKeptLevel, this);
+		this._map.on('zoomstart viewprereset', this._removeKeptLevel, this);
+	}
+
+	_onLoadKeptLevel() {
+		if (this._map._fadeAnimated) {
+			// after the new tiles faded in
+			clearTimeout(this._keptLevelTimeout);
+			this._keptLevelTimeout = setTimeout(this._removeKeptLevel.bind(this), 250);
+		} else {
+			this._removeKeptLevel();
+		}
+	}
+
+	_removeKeptLevel() {
+		if (!this._keptLevel) { return; }
+		const {level, tiles} = this._keptLevel;
+		this._keptLevel = null;
+		clearTimeout(this._keptLevelTimeout);
+		this.off('load', this._onLoadKeptLevel, this);
+		this._map.off('zoomstart viewprereset', this._removeKeptLevel, this);
+
+		level.el.remove();
+		for (const tile of tiles) {
+			this.fire('tileunload', {
+				tile: tile.el,
+				coords: tile.coords
+			});
+		}
 	}
 
 	_updateLevels() {
@@ -797,6 +857,10 @@ export class GridLayer extends Layer {
 
 		tile.onselectstart = Util.falseFn;
 		tile.onpointermove = Util.falseFn;
+
+		if (this.options.placeholder) {
+			tile.style.background = this.options.placeholder;
+		}
 	}
 
 	_addTile(coords, container) {
@@ -849,7 +913,12 @@ export class GridLayer extends Layer {
 		if (!tile) { return; }
 
 		tile.loaded = Date.now();
-		if (this._map._fadeAnimated) {
+		if (this.options.placeholder) {
+			// fading in would show the map below instead of the placeholder at first
+			tile.noFade = true;
+			tile.el.style.background = '';
+		}
+		if (this._map._fadeAnimated && !tile.noFade) {
 			tile.el.style.opacity = 0;
 			cancelAnimationFrame(this._fadeFrame);
 			this._fadeFrame = requestAnimationFrame(this._updateOpacity.bind(this));

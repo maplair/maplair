@@ -191,6 +191,7 @@ export class TileLayer extends GridLayer {
 	// Updates the layer's URL template and redraws it (unless `noRedraw` is set to `true`).
 	// If the URL does not change, the layer will not be redrawn unless
 	// the noRedraw parameter is set to false.
+	// The current tiles stay visible until the new tiles have loaded, to avoid flickering.
 	setUrl(url, noRedraw) {
 		if (this._url === url && noRedraw === undefined) {
 			noRedraw = true;
@@ -199,6 +200,7 @@ export class TileLayer extends GridLayer {
 		this._url = url;
 
 		if (!noRedraw) {
+			this._keepCurrentTiles();
 			this.redraw();
 		}
 		return this;
