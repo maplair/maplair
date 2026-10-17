@@ -722,6 +722,7 @@ stations classified by air temperature, as circle markers:
 
 ```js
 import {Classification, LegendControl} from 'maplair/classification';
+import 'maplair/geojson-loading';
 
 const temperature = new Classification([
 	{value: null, symbol: {fillColor: '#000000'}, legend: 'No data', counted: false},
@@ -734,7 +735,8 @@ const temperature = new Classification([
 	otherValues: {symbol: {fillColor: '#cccccc'}, legend: 'All other values'},
 });
 
-const stations = new GeoJSON(data, {
+const stations = new GeoJSON(null, {
+	url: 'stations.geojson',
 	classification: temperature, // getLegend() and the feature count of this layer
 	pointToLayer: (feature, latlng) => new CircleMarker(latlng, {radius: 6, color: '#ffffff'}),
 	style: temperature.style, // fillColor of the class
@@ -743,11 +745,14 @@ const stations = new GeoJSON(data, {
 // collects getLegend() of all layers, here inside the attribution
 new LegendControl({container: 'attribution', featureCount: true}).addTo(map);
 
-// refreshing the data restyles the markers and fires legendchange
-stations.clearLayers().addData(newData);
+// reloading every 10 minutes restyles the markers and fires legendchange
+setInterval(() => stations.load('stations.geojson'), 10 * 60 * 1000);
 
 // the same symbol for the class column of a table
-const {legend, symbol} = temperature.classify(feature);
+stations.on('load', ({data}) => renderTable(data.features.map(feature => ({
+	feature,
+	...temperature.classify(feature), // {legend, symbol}
+}))));
 
 // any other layer may provide a legend
 wmsLayer.addTo(map); // GetLegendGraphic image
