@@ -2469,6 +2469,22 @@ If not specified, a common instance of <a href="#defaulticon"><code>DefaultIcon<
 with the map (e.g. for arrows pointing in a geographic direction) instead
 of staying upright.</td>
 	</tr>
+	<tr id='marker-rotationangle'>
+		<td><code><b>rotationAngle</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>Rotation of the icon in degrees, clockwise, e.g. for the heading of a
+vehicle. On a rotated map, the angle is relative to the screen, or to
+north with <code>rotateWithView</code>. The shadow is not rotated.
+Inspired by the <a href="https://github.com/bbecquet/Leaflet.RotatedMarker">Leaflet.RotatedMarker</a> plugin.</td>
+	</tr>
+	<tr id='marker-rotationorigin'>
+		<td><code><b>rotationOrigin</b></code></td>
+		<td><code>String</code></td>
+		<td><code>undefined</code></td>
+		<td>The CSS <a href="https://developer.mozilla.org/docs/Web/CSS/transform-origin"><code>transform-origin</code></a>
+to rotate the icon around, e.g. <code>'center'</code>. By default the anchor of the icon.</td>
+	</tr>
 	<tr id='marker-pane'>
 		<td><code><b>pane</b></code></td>
 		<td><code>String</code></td>
@@ -2874,6 +2890,18 @@ for a second (also called long press).</td>
 		<td><code>HTMLElement</code></td>
 		<td><p>Returns the instance of <a href="https://developer.mozilla.org/docs/Web/API/HTMLElement"><code>HTMLElement</code></a>
 used by Marker layer.</p>
+</td>
+	</tr>
+	<tr id='marker-setrotationangle'>
+		<td><code><b>setRotationAngle</b>(<nobr>&lt;Number&gt;</nobr> <i>angle</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#marker-rotationangle"><code>rotationAngle</code></a> of the icon.</p>
+</td>
+	</tr>
+	<tr id='marker-setrotationorigin'>
+		<td><code><b>setRotationOrigin</b>(<nobr>&lt;String&gt;</nobr> <i>origin</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#marker-rotationorigin"><code>rotationOrigin</code></a> of the icon.</p>
 </td>
 	</tr>
 	<tr id='marker-setopacity'>
