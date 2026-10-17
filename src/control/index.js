@@ -7,6 +7,7 @@ export {LayersControl} from './LayersControl.js';
 export {LegendControl} from './LegendControl.js';
 export {MiniMapControl} from './MiniMapControl.js';
 export {ScaleControl} from './ScaleControl.js';
+export {SearchControl} from './SearchControl.js';
 export {SideBySideControl} from './SideBySideControl.js';
 export {TextControl} from './TextControl.js';
 export {ZoomControl} from './ZoomControl.js';

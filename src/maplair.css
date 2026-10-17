@@ -602,6 +602,121 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	}
 }
 
+/* search control */
+
+.maplair-control-search {
+	position: relative;
+	background: var(--maplair-background-color-base);
+
+	&.maplair-control-search-loading .maplair-control-search-toggle {
+		cursor: progress;
+		color: var(--maplair-color-subtle);
+	}
+}
+
+.maplair-control-search-form {
+	display: flex;
+	align-items: center;
+	margin: 0;
+
+	.maplair-control-search-toggle,
+	.maplair-control-search-reset {
+		flex: none;
+		border-radius: var(--maplair-border-radius-base);
+		border-bottom: none;
+	}
+
+	.maplair-control-search-toggle svg {
+		vertical-align: middle;
+	}
+
+	.maplair-control-search-reset {
+		font-size: var(--maplair-font-size-large);
+		color: var(--maplair-color-subtle);
+	}
+}
+
+.maplair-control-search-input {
+	box-sizing: border-box;
+	width: 240px;
+	max-width: calc(100vw - 100px);
+	height: var(--maplair-size-control);
+	padding: 0 var(--maplair-spacing-25);
+	border: 0;
+	background: transparent;
+	color: var(--maplair-color-base);
+	font: inherit;
+	font-size: var(--maplair-font-size-small);
+
+	&::-webkit-search-cancel-button {
+		display: none;
+	}
+
+	&:focus {
+		outline: none;
+	}
+
+	.maplair-touch & {
+		height: var(--maplair-size-control-touch);
+	}
+}
+
+.maplair-control-search:not(.maplair-control-search-expanded) {
+	.maplair-control-search-input,
+	.maplair-control-search-reset,
+	.maplair-control-search-results,
+	.maplair-control-search-message {
+		display: none;
+	}
+}
+
+.maplair-control-search:focus-within:has(.maplair-control-search-input:focus-visible) {
+	outline: var(--maplair-border-width-thick) solid var(--maplair-border-color-progressive);
+}
+
+.maplair-control-search-form:has(.maplair-control-search-input:placeholder-shown) .maplair-control-search-reset {
+	visibility: hidden;
+}
+
+.maplair-control-search-results {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	max-height: 50vh;
+	overflow-y: auto;
+	border-top: var(--maplair-border-width-base) solid var(--maplair-border-color-subtle);
+
+	&[hidden] {
+		display: none;
+	}
+}
+
+.maplair-control-search-result {
+	max-width: calc(240px + 2 * var(--maplair-size-control));
+	padding: var(--maplair-spacing-25) var(--maplair-spacing-50);
+	color: var(--maplair-color-base);
+	line-height: var(--maplair-line-height-small);
+	cursor: pointer;
+
+	&:hover {
+		background-color: var(--maplair-background-color-interactive-subtle--hover);
+	}
+
+	&[aria-selected="true"] {
+		background-color: var(--maplair-background-color-interactive--active);
+	}
+}
+
+.maplair-control-search-message {
+	padding: var(--maplair-spacing-25) var(--maplair-spacing-50);
+	border-top: var(--maplair-border-width-base) solid var(--maplair-border-color-subtle);
+	color: var(--maplair-color-subtle);
+
+	&[hidden] {
+		display: none;
+	}
+}
+
 /* legend control */
 
 .maplair-control-legend {

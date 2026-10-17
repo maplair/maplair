@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Maplair debug page - Search control</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
+		<link rel="stylesheet" href="../../dist/maplair.css" />
+		<link rel="stylesheet" href="../css/screen.css" />
+		<script type="importmap">
+			{
+				"imports": {
+					"maplair": "../../dist/maplair-src.js"
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<div id="map"></div>
+		<script type="module">
+			import {MaplairMap, SearchControl, TextControl, TileLayer} from 'maplair';
+
+			const map = new MaplairMap('map').setView([47.27, 11.4], 10);
+			new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				maxZoom: 19,
+				attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+			}).addTo(map);
+
+			// Nominatim, searching on Enter
+			new SearchControl().addTo(map);
+
+			// Photon of Komoot, searching while typing
+			new SearchControl({
+				position: 'topright',
+				collapsed: false,
+				autoComplete: true,
+				placeholder: 'Search with Photon',
+				async geocoder(query, {signal}) {
+					const response = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=5`, {signal});
+					const {features} = await response.json();
+					return features.map(({geometry, properties}) => ({
+						label: [properties.name, properties.city, properties.country].filter(Boolean).join(', '),
+						latlng: [geometry.coordinates[1], geometry.coordinates[0]],
+						bounds: properties.extent && [[properties.extent[1], properties.extent[0]], [properties.extent[3], properties.extent[2]]],
+						raw: properties
+					}));
+				}
+			}).addTo(map);
+
+			const status = new TextControl({position: 'bottomleft'}).addTo(map);
+			map.on('searchresult', ({result, latlng}) => {
+				status.setContent(`${result.label} (${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)})`);
+			});
+		</script>
+	</body>
+</html>
