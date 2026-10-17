@@ -552,6 +552,8 @@ filter) instead of styling `_layersLink`.
 
 ## 42. Control order, text control and access keys
 
+**Status:** implemented in a407f79c (`TextControl`, the Control option `order`, the `ButtonControl` option `accessKey`).
+
 Effort: small
 
 Control option `order`: controls in a corner are sorted by it instead of by the
@@ -561,6 +563,8 @@ empty (content passed through the sanitizer of 20). `ButtonControl` option
 `accessKey`, shown in the title and as `aria-keyshortcuts`.
 
 ## 43. Changing attributions and their order
+
+**Status:** implemented in 61a21f7b (`setAttribution()`, the layer option `attributionOrder`).
 
 Effort: small
 
@@ -583,6 +587,8 @@ is hidden (`visibilitychange`), refreshing once on return.
 
 ## 45. GeoJSON from a URL
 
+**Status:** implemented in cda6946a as optional module `maplair/geojson-loading` (`load()`, options `url`, `fetchOptions`, `fitBounds`; no URL as first constructor argument).
+
 [leaflet-ajax](https://github.com/calvinmetcalf/leaflet-ajax) · effort: small
 
 `geoJSON(url | Promise, options)` and `layer.load(url, {fetchOptions})`
@@ -591,6 +597,8 @@ running load with an `AbortController`, fires `load`/`error`; option
 `fitBounds` zooms to the data once loaded.
 
 ## 46. Zoom-dependent styles
+
+**Status:** implemented in d6126dda as optional module `maplair/zoom-styles`; interpolation with `Path.interpolate(stops)` instead of an option.
 
 Effort: small–medium
 
@@ -602,6 +610,8 @@ zoom expressions), or as function `(zoom) => number`. Re-evaluated on
 
 ## 47. Hidden maps keep their view
 
+**Status:** implemented in a4ff5f18.
+
 Effort: small
 
 The `ResizeObserver` of `trackResize` ignores a zero size, i.e. a container
@@ -611,6 +621,8 @@ Today hiding a map collapses its bounds to a point.
 
 ## 48. Following another map by bounds
 
+**Status:** implemented in 45f739e6.
+
 Effort: small
 
 `MapSync` options `oneWay: true` (only follow the other map) and `fit:
@@ -618,6 +630,8 @@ Effort: small
 for maps of different sizes such as thumbnails next to the main map.
 
 ## 49. Hash: query parameters
+
+**Status:** implemented in 9e653ccb.
 
 Effort: small
 
@@ -627,6 +641,8 @@ already kept with the `layers` option (2aedd723); in query mode as parameter
 `layers` too.
 
 ## 50. WMS legend URL
+
+**Status:** implemented in dfe859bb (also adds `sld_version` for WMS 1.3).
 
 Effort: small
 
