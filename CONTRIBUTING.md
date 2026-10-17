@@ -62,16 +62,13 @@ please consider submitting another pull request with the corresponding [document
 
 ### Setting up the Build System
 
-The Maplair build system uses [NodeJS](http://nodejs.org/).
-To set up the Maplair build system, install [NodeJS](https://nodejs.org/).
-Then run the following commands in the project root to install dependencies:
+The Maplair build system uses [NodeJS](http://nodejs.org/) and the [pnpm](https://pnpm.io/) package manager.
+To set up the Maplair build system, install [NodeJS](https://nodejs.org/) and [pnpm](https://pnpm.io/installation)
+(the pnpm version of the project, set in the `packageManager` field of `package.json`, is picked automatically).
+Then run the following command in the project root to install dependencies:
 
 ```
-npm install
-```
-or, if you prefer [`yarn`](https://yarnpkg.com/) over `npm`:
-```
-yarn install
+pnpm install
 ```
 
 ### Making Changes to Maplair Source
@@ -86,7 +83,7 @@ Please do not commit to the `main` branch of your fork — otherwise your unrela
 You should also follow the code style and whitespace conventions of the original codebase.
 In particular, use tabs for indentation and spaces for alignment.
 
-Before committing your changes, run `npm run lint` to catch any JS errors in the code and fix them. 
+Before committing your changes, run `pnpm run lint` to catch any JS errors in the code and fix them. 
 The same command is automatically executed while committing. 
 You can prevent it from execution with the git flag `--no-verify`: `git commit -m "WIP" --no-verify`.  
 
@@ -99,7 +96,7 @@ Happy coding!
 The source JavaScript code for Maplair is a few dozen files, in the `src/` directory.
 But normally, Maplair is loaded in a web browser as just one JavaScript file.
 
-In order to create this file, run `npm run build` or `yarn run build`.
+In order to create this file, run `pnpm run build`.
 
 You'll find `dist/maplair-src.js` and `dist/maplair.js`. The difference is that
 `dist/maplair-src.js` has sourcemaps and it's not uglified, so it's better for
@@ -110,40 +107,40 @@ When developing (or bugfixing) core Maplair functionalities, it's common to use
 the webpages in the `debug/` directory, and run the tests
 in a graphical browser. This requires regenerating the bundled files quickly.
 
-In order to do so, run `npm run watch` or `yarn run watch`. This will keep
+In order to do so, run `pnpm run watch`. This will keep
 on rebuilding the bundles whenever any source file changes.
 
 ## Running the Tests
 
-Tests run in real browsers via [Vite+](https://viteplus.dev/) (`vp test`, bundling [Vitest](https://vitest.dev/)) in browser mode (Playwright provider). Make sure the project has been built first (or run `npm run watch` in another terminal).
+Tests run in real browsers via [Vite+](https://viteplus.dev/) (`vp test`, bundling [Vitest](https://vitest.dev/)) in browser mode (Playwright provider). Make sure the project has been built first (or run `pnpm run watch` in another terminal).
 
 ```
-npm test
+pnpm test
 ```
 
 Runs the suite in headless Chromium and stays in watch mode. To override the browser, pass `--project`:
 
 ```
-npm test -- --project=firefox
-npm test -- --project=webkit
-npm test -- --project=firefox-retina
+pnpm test --project=firefox
+pnpm test --project=webkit
+pnpm test --project=firefox-retina
 ```
 
-For one-shot CI-style runs, use `npx vp test run` instead. To enable touch event emulation (matching what CI runs as the "touch" pass), set `VITE_TOUCH=1`:
+For one-shot CI-style runs, use `pnpm exec vp test run` instead. To enable touch event emulation (matching what CI runs as the "touch" pass), set `VITE_TOUCH=1`:
 
 ```
-VITE_TOUCH=1 npx vp test run --project=chromium
+VITE_TOUCH=1 pnpm exec vp test run --project=chromium
 ```
 
 To open the Vitest UI for interactive debugging:
 
 ```
-npm run test:ui
+pnpm run test:ui
 ```
 
 This opens a dashboard at `http://localhost:51204/__vitest__/` and spawns a visible browser window. Open DevTools in that window to set breakpoints in source (sourcemaps work), inspect the test DOM, and step through specs. Use `it.only(...)` to isolate a single test, or `debugger;` statements to pause inline.
 
-Playwright will install its own browser binaries the first time it runs (`npx playwright install chromium firefox webkit`).
+Playwright will install its own browser binaries the first time it runs (`pnpm exec playwright install chromium firefox webkit`).
 
 ## Improving Documentation
 
@@ -165,7 +162,7 @@ If you need to make edits in a local repository to see how it looks in the proce
 1. Open a terminal in the `docs/` directory.
 2. Make sure you are on the `main` branch by running `git checkout main`.
 3. Run `bundle install` to install the dependencies.
-4. Run `npm run serve` to serve the documentation.
+4. Run `pnpm run serve` to serve the documentation.
 5. Open [http://localhost:4000](http://localhost:4000) in your web browser.
 
 Now any file changes in `docs/` will be applied when you reload pages.
@@ -180,10 +177,10 @@ that feature. In order to edit the API documentation, just edit these comments i
 source code.
 
 In order to generate the documentation, make sure that the development dependencies
-are installed (run either `npm install` or `yarn install`), then just run
+are installed (run `pnpm install`), then just run
 
 ```
-npm run docs
+pnpm run docs
 ```
 
 and you'll find a `.html` file in the `dist/` directory.
@@ -198,7 +195,7 @@ Maplair's built-in strings (e.g. the titles of the zoom buttons) are translated 
 add or improve a translation, rather than editing the files in `i18n/` directly.
 
 For maintainers: after adding or changing strings passed to `I18n.translate()`,
-run `npm run i18n` to update the source file `i18n/en.json`, and upload it with
+run `pnpm run i18n` to update the source file `i18n/en.json`, and upload it with
 `tx push --source` ([Transifex CLI](https://developers.transifex.com/docs/cli)).
 Download the translations with `tx pull --all` before a release.
 

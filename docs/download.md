@@ -149,11 +149,12 @@ which installs easily and works well across all major platforms.
 Here are the steps to set it up:
 
 1. [Download and install Node](http://nodejs.org)
-2. Run the following command in the command line:
+2. [Install pnpm](https://pnpm.io/installation)
+3. Run the following command in the command line:
 
 ```sh
-npm install
+pnpm install
 ```
 
-Now that you have everything installed, run `npm run build` inside the Maplair directory.
+Now that you have everything installed, run `pnpm run build` inside the Maplair directory.
 This will combine and compress the Maplair source files, saving the build to the `dist` folder.

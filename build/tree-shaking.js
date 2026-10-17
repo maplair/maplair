@@ -1,7 +1,7 @@
 // Checks that bundlers drop the optional features (see `exports` in package.json)
 // unless they are imported: bundles small apps against the ES modules in dist/esm
-// (run `npm run build` first) with Vite+, and looks for code of each feature.
-import {build} from 'vite';
+// (run `pnpm run build` first) with Vite+, and looks for code of each feature.
+import {build} from 'vite-plus';
 import {mkdirSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 

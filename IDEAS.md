@@ -319,7 +319,7 @@ smallest first (33, 27, 28, 35, 26, 31), then 30, 34, 29, 32, 25, 36.
 All but 36 are implemented. Features extending existing classes (32, 33, 34,
 and the map rotation 1) are optional modules adding themselves with
 `Class.include()`, so that bundlers only include them when imported;
-`npm run test:tree-shaking` checks this. The other features are classes of
+`pnpm run test:tree-shaking` checks this. The other features are classes of
 their own.
 
 ## 25. Heatmap layer
