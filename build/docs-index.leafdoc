@@ -17,6 +17,7 @@ This file just defines the order of the classes in the docs.
 @class ImageOverlay
 @class VideoOverlay
 @class SVGOverlay
+@class HeatLayer
 
 @class Path
 @class Polyline

@@ -4,6 +4,7 @@ export {FeatureGroup} from './FeatureGroup.js';
 export {GeoJSON} from './GeoJSON.js';
 
 export {BlanketOverlay} from './BlanketOverlay.js';
+export {HeatLayer} from './HeatLayer.js';
 
 export {ImageOverlay} from './ImageOverlay.js';
 export {VideoOverlay} from './VideoOverlay.js';

@@ -10763,6 +10763,659 @@ Without <code>cls</code>, runs the hooks of all classes of this object.</p>
 	</div>
 </div>
 
+</section><h2 id='heatlayer'>HeatLayer</h2><p>A heatmap of points, each with an optional intensity, drawn on a canvas: the
+points are drawn as blurred circles adding up, and colored by a gradient.
+Nearby points are merged into a grid for speed, so that tens of thousands of
+points stay fast.</p>
+<p>Inspired by the <a href="https://github.com/Leaflet/Leaflet.heat">Leaflet.heat</a> plugin
+and its <a href="https://github.com/mourner/simpleheat">simpleheat</a> algorithm.</p>
+
+<section>
+<h3 id='heatlayer-example'>Usage example</h3>
+
+<section >
+
+
+
+
+
+<pre><code class="language-js">new HeatLayer([
+	[47.27, 11.40, 0.5], // latitude, longitude, intensity
+	[47.28, 11.41],
+	new LatLng(47.26, 11.39)
+], {radius: 20}).addTo(map);
+</code></pre>
+
+
+
+</section>
+
+
+</section><section>
+<h3 id='heatlayer-constructor'>Constructor</h3>
+
+<section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Constructor</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='heatlayer-heatlayer'>
+		<td><code><b>new HeatLayer</b>(<nobr>&lt;Array&gt;</nobr> <i>latlngs</i>, <nobr>&lt;<a href='#heatlayer-option'>HeatLayer options</a>&gt;</nobr> <i>options?</i>)</code></td>
+		<td>Creates a heatmap of the given points: <a href="#latlng"><code>LatLng</code></a>s or arrays <code>[lat, lng, intensity]</code>
+(the intensity defaults to <code>1</code>).</td>
+	</tr>
+</tbody></table>
+
+
+</section>
+
+
+</section><section>
+<h3 id='heatlayer-option'>Options</h3>
+
+<section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Option</th>
+		<th>Type</th>
+		<th>Default</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='heatlayer-radius'>
+		<td><code><b>radius</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>25</code></td>
+		<td>The radius of each point in pixels.</td>
+	</tr>
+	<tr id='heatlayer-blur'>
+		<td><code><b>blur</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>15</code></td>
+		<td>The amount of blur in pixels.</td>
+	</tr>
+	<tr id='heatlayer-max'>
+		<td><code><b>max</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>1</code></td>
+		<td>The intensity with the strongest color.</td>
+	</tr>
+	<tr id='heatlayer-maxzoom'>
+		<td><code><b>maxZoom</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>undefined</code></td>
+		<td>The zoom level where the points reach the full intensity; below it, the
+intensity is halved per zoom level. By default the maximum zoom of the map.</td>
+	</tr>
+	<tr id='heatlayer-minopacity'>
+		<td><code><b>minOpacity</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0.05</code></td>
+		<td>The minimum opacity of the heat.</td>
+	</tr>
+	<tr id='heatlayer-gradient'>
+		<td><code><b>gradient</b></code></td>
+		<td><code>Object</code></td>
+		<td><code>{0.4: &#x27;blue&#x27;, 0.6: &#x27;cyan&#x27;, 0.7: &#x27;lime&#x27;, 0.8: &#x27;yellow&#x27;, 1: &#x27;red&#x27;}</code></td>
+		<td>The colors for the intensities from <code>0</code> to <code>1</code>, any CSS colors.</td>
+	</tr>
+	<tr id='heatlayer-pane'>
+		<td><code><b>pane</b></code></td>
+		<td><code>String</code></td>
+		<td><code>&#x27;overlayPane&#x27;</code></td>
+		<td>The map pane of the layer.</td>
+	</tr>
+</tbody></table>
+
+</section>
+
+
+<div class='accordion'>
+	<label><span class='expander'>▶</span> Options inherited from <a href='#blanketoverlay'>BlanketOverlay</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Option</th>
+		<th>Type</th>
+		<th>Default</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='heatlayer-padding'>
+		<td><code><b>padding</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0.1</code></td>
+		<td>How much to extend the clip area around the map view (relative to its size)
+e.g. 0.1 would be 10% of map view in each direction</td>
+	</tr>
+	<tr id='heatlayer-continuous'>
+		<td><code><b>continuous</b></code></td>
+		<td><code>Boolean</code></td>
+		<td><code>false</code></td>
+		<td>When <code>false</code>, the blanket will update its position only when the
+map state settles (<em>after</em> a pan/zoom animation). When <code>true</code>,
+it will update when the map state changes (<em>during</em> pan/zoom
+animations)</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
+
+<div class='accordion'>
+	<label><span class='expander'>▶</span> Options inherited from <a href='#layer'>Layer</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Option</th>
+		<th>Type</th>
+		<th>Default</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='heatlayer-attribution'>
+		<td><code><b>attribution</b></code></td>
+		<td><code>String</code></td>
+		<td><code>null</code></td>
+		<td>String to be shown in the attribution control, e.g. &quot;© OpenStreetMap contributors&quot;. It describes the layer data and is often a legal obligation towards copyright holders and tile providers.</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
+
+</section><section>
+<h3 id=''>Events</h3>
+
+
+
+
+<div class='accordion'>
+	<label><span class='expander'>▶</span> Events inherited from <a href='#layer'>Layer</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Event</th>
+		<th>Data</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='heatlayer-add'>
+		<td><code><b>add</b></code></td>
+		<td><code><a href='#event'>Event</a></code></td>
+		<td>Fired after the layer is added to a map</td>
+	</tr>
+	<tr id='heatlayer-remove'>
+		<td><code><b>remove</b></code></td>
+		<td><code><a href='#event'>Event</a></code></td>
+		<td>Fired after the layer is removed from a map</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
+
+<div class='accordion'>
+	<label><span class='expander'>▶</span> Popup events inherited from <a href='#layer'>Layer</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Event</th>
+		<th>Data</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='heatlayer-popupopen'>
+		<td><code><b>popupopen</b></code></td>
+		<td><code><a href='#popupevent'>PopupEvent</a></code></td>
+		<td>Fired when a popup bound to this layer is opened</td>
+	</tr>
+	<tr id='heatlayer-popupclose'>
+		<td><code><b>popupclose</b></code></td>
+		<td><code><a href='#popupevent'>PopupEvent</a></code></td>
+		<td>Fired when a popup bound to this layer is closed</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
+
+<div class='accordion'>
+	<label><span class='expander'>▶</span> Tooltip events inherited from <a href='#layer'>Layer</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Event</th>
+		<th>Data</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='heatlayer-tooltipopen'>
+		<td><code><b>tooltipopen</b></code></td>
+		<td><code><a href='#tooltipevent'>TooltipEvent</a></code></td>
+		<td>Fired when a tooltip bound to this layer is opened.</td>
+	</tr>
+	<tr id='heatlayer-tooltipclose'>
+		<td><code><b>tooltipclose</b></code></td>
+		<td><code><a href='#tooltipevent'>TooltipEvent</a></code></td>
+		<td>Fired when a tooltip bound to this layer is closed.</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
+
+</section><section>
+<h3 id='heatlayer-method'>Methods</h3>
+
+<section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Method</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='heatlayer-setlatlngs'>
+		<td><code><b>setLatLngs</b>(<nobr>&lt;Array&gt;</nobr> <i>latlngs</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Replaces the points of the heatmap.</p>
+</td>
+	</tr>
+	<tr id='heatlayer-addlatlng'>
+		<td><code><b>addLatLng</b>(<nobr>&lt;LatLng|Array&gt;</nobr> <i>latlng</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Adds a point to the heatmap.</p>
+</td>
+	</tr>
+	<tr id='heatlayer-getlatlngs'>
+		<td><code><b>getLatLngs</b>()</code></td>
+		<td><code>Array</code></td>
+		<td><p>Returns the points of the heatmap.</p>
+</td>
+	</tr>
+	<tr id='heatlayer-setoptions'>
+		<td><code><b>setOptions</b>(<nobr>&lt;<a href='#heatlayer-option'>HeatLayer options</a>&gt;</nobr> <i>options</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the options, e.g. the <code>radius</code> or the <code>gradient</code>.</p>
+</td>
+	</tr>
+	<tr id='heatlayer-redraw'>
+		<td><code><b>redraw</b>()</code></td>
+		<td><code>this</code></td>
+		<td><p>Redraws the heatmap.</p>
+</td>
+	</tr>
+</tbody></table>
+
+</section>
+
+
+<div class='accordion'>
+	<label><span class='expander'>▶</span> Methods inherited from <a href='#layer'>Layer</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Method</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='heatlayer-addto'>
+		<td><code><b>addTo</b>(<nobr>&lt;MaplairMap|LayerGroup&gt;</nobr> <i>map</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Adds the layer to the given map or layer group.</p>
+</td>
+	</tr>
+	<tr id='heatlayer-remove'>
+		<td><code><b>remove</b>()</code></td>
+		<td><code>this</code></td>
+		<td><p>Removes the layer from the map it is currently active on.</p>
+</td>
+	</tr>
+	<tr id='heatlayer-removefrom'>
+		<td><code><b>removeFrom</b>(<nobr>&lt;<a href='#maplairmap'>MaplairMap</a>&gt;</nobr> <i>map</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Removes the layer from the given map</p>
+</td>
+	</tr>
+	<tr id='heatlayer-removefrom'>
+		<td><code><b>removeFrom</b>(<nobr>&lt;<a href='#layergroup'>LayerGroup</a>&gt;</nobr> <i>group</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Removes the layer from the given <a href="#layergroup"><code>LayerGroup</code></a></p>
+</td>
+	</tr>
+	<tr id='heatlayer-getpane'>
+		<td><code><b>getPane</b>(<nobr>&lt;String&gt;</nobr> <i>name?</i>)</code></td>
+		<td><code>HTMLElement</code></td>
+		<td><p>Returns the <code>HTMLElement</code> representing the named pane on the map. If <code>name</code> is omitted, returns the pane for this layer.</p>
+</td>
+	</tr>
+	<tr id='heatlayer-getattribution'>
+		<td><code><b>getAttribution</b>()</code></td>
+		<td><code>String</code></td>
+		<td><p>Used by the <code>attribution control</code>, returns the <a href="#gridlayer-attribution">attribution option</a>.</p>
+</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
+
+<div class='accordion'>
+	<label><span class='expander'>▶</span> Popup methods inherited from <a href='#layer'>Layer</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Method</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='heatlayer-bindpopup'>
+		<td><code><b>bindPopup</b>(<nobr>&lt;String|HTMLElement|Function|Popup&gt;</nobr> <i>content</i>, <nobr>&lt;<a href='#popup-option'>Popup options</a>&gt;</nobr> <i>options?</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Binds a popup to the layer with the passed <code>content</code> and sets up the
+necessary event listeners. A <code>String</code> argument is rendered as HTML; if it
+may contain untrusted input, sanitize it (e.g. with DOMPurify) or pass an
+<code>HTMLElement</code> with safe <code>textContent</code> instead. If a <code>Function</code> is passed
+it will receive the layer as the first argument and should return a
+<code>String</code> or <code>HTMLElement</code>.</p>
+</td>
+	</tr>
+	<tr id='heatlayer-unbindpopup'>
+		<td><code><b>unbindPopup</b>()</code></td>
+		<td><code>this</code></td>
+		<td><p>Removes the popup previously bound with <code>bindPopup</code>.</p>
+</td>
+	</tr>
+	<tr id='heatlayer-openpopup'>
+		<td><code><b>openPopup</b>(<nobr>&lt;<a href='#latlng'>LatLng</a>&gt;</nobr> <i>latlng?</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Opens the bound popup at the specified <code>latlng</code> or at the default popup anchor if no <code>latlng</code> is passed.</p>
+</td>
+	</tr>
+	<tr id='heatlayer-closepopup'>
+		<td><code><b>closePopup</b>()</code></td>
+		<td><code>this</code></td>
+		<td><p>Closes the popup bound to this layer if it is open.</p>
+</td>
+	</tr>
+	<tr id='heatlayer-togglepopup'>
+		<td><code><b>togglePopup</b>()</code></td>
+		<td><code>this</code></td>
+		<td><p>Opens or closes the popup bound to this layer depending on its current state.</p>
+</td>
+	</tr>
+	<tr id='heatlayer-ispopupopen'>
+		<td><code><b>isPopupOpen</b>()</code></td>
+		<td><code>boolean</code></td>
+		<td><p>Returns <code>true</code> if the popup bound to this layer is currently open.</p>
+</td>
+	</tr>
+	<tr id='heatlayer-setpopupcontent'>
+		<td><code><b>setPopupContent</b>(<nobr>&lt;String|HTMLElement|Popup&gt;</nobr> <i>content</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Sets the content of the popup bound to this layer.
+String content is rendered as HTML; sanitize untrusted input or pass an <code>HTMLElement</code> with safe <code>textContent</code> instead.</p>
+</td>
+	</tr>
+	<tr id='heatlayer-getpopup'>
+		<td><code><b>getPopup</b>()</code></td>
+		<td><code><a href='#popup'>Popup</a></code></td>
+		<td><p>Returns the popup bound to this layer.</p>
+</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
+
+<div class='accordion'>
+	<label><span class='expander'>▶</span> Tooltip methods inherited from <a href='#layer'>Layer</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Method</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='heatlayer-bindtooltip'>
+		<td><code><b>bindTooltip</b>(<nobr>&lt;String|HTMLElement|Function|Tooltip&gt;</nobr> <i>content</i>, <nobr>&lt;<a href='#tooltip-option'>Tooltip options</a>&gt;</nobr> <i>options?</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Binds a tooltip to the layer with the passed <code>content</code> and sets up the
+necessary event listeners. A <code>String</code> argument is rendered as HTML; if it
+may contain untrusted input, sanitize it (e.g. with DOMPurify) or pass an
+<code>HTMLElement</code> with safe <code>textContent</code> instead. If a <code>Function</code> is passed
+it will receive the layer as the first argument and should return a
+<code>String</code> or <code>HTMLElement</code>.</p>
+</td>
+	</tr>
+	<tr id='heatlayer-unbindtooltip'>
+		<td><code><b>unbindTooltip</b>()</code></td>
+		<td><code>this</code></td>
+		<td><p>Removes the tooltip previously bound with <code>bindTooltip</code>.</p>
+</td>
+	</tr>
+	<tr id='heatlayer-opentooltip'>
+		<td><code><b>openTooltip</b>(<nobr>&lt;<a href='#latlng'>LatLng</a>&gt;</nobr> <i>latlng?</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Opens the bound tooltip at the specified <code>latlng</code> or at the default tooltip anchor if no <code>latlng</code> is passed.</p>
+</td>
+	</tr>
+	<tr id='heatlayer-closetooltip'>
+		<td><code><b>closeTooltip</b>()</code></td>
+		<td><code>this</code></td>
+		<td><p>Closes the tooltip bound to this layer if it is open.</p>
+</td>
+	</tr>
+	<tr id='heatlayer-toggletooltip'>
+		<td><code><b>toggleTooltip</b>()</code></td>
+		<td><code>this</code></td>
+		<td><p>Opens or closes the tooltip bound to this layer depending on its current state.</p>
+</td>
+	</tr>
+	<tr id='heatlayer-istooltipopen'>
+		<td><code><b>isTooltipOpen</b>()</code></td>
+		<td><code>boolean</code></td>
+		<td><p>Returns <code>true</code> if the tooltip bound to this layer is currently open.</p>
+</td>
+	</tr>
+	<tr id='heatlayer-settooltipcontent'>
+		<td><code><b>setTooltipContent</b>(<nobr>&lt;String|HTMLElement|Tooltip&gt;</nobr> <i>content</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Sets the content of the tooltip bound to this layer.
+String content is rendered as HTML; sanitize untrusted input or pass an <code>HTMLElement</code> with safe <code>textContent</code> instead.</p>
+</td>
+	</tr>
+	<tr id='heatlayer-gettooltip'>
+		<td><code><b>getTooltip</b>()</code></td>
+		<td><code><a href='#tooltip'>Tooltip</a></code></td>
+		<td><p>Returns the tooltip bound to this layer.</p>
+</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
+
+<div class='accordion'>
+	<label><span class='expander'>▶</span> Methods inherited from <a href='#evented'>Evented</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Method</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='heatlayer-on'>
+		<td><code><b>on</b>(<nobr>&lt;String&gt;</nobr> <i>type</i>, <nobr>&lt;Function&gt;</nobr> <i>fn</i>, <nobr>&lt;Object&gt;</nobr> <i>context?</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Adds a listener function (<code>fn</code>) to a particular event type of the object. You can optionally specify the context of the listener (object the this keyword will point to). You can also pass several space-separated types (e.g. <code>'click dblclick'</code>).</p>
+</td>
+	</tr>
+	<tr id='heatlayer-on'>
+		<td><code><b>on</b>(<nobr>&lt;Object&gt;</nobr> <i>eventMap</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Adds a set of type/listener pairs, e.g. <code>{click: onClick, pointermove: onPointerMove}</code></p>
+</td>
+	</tr>
+	<tr id='heatlayer-off'>
+		<td><code><b>off</b>(<nobr>&lt;String&gt;</nobr> <i>type</i>, <nobr>&lt;Function&gt;</nobr> <i>fn?</i>, <nobr>&lt;Object&gt;</nobr> <i>context?</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Removes a previously added listener function. If no function is specified, it will remove all the listeners of that particular event from the object. Note that if you passed a custom context to <code>on</code>, you must pass the same context to <code>off</code> in order to remove the listener.</p>
+</td>
+	</tr>
+	<tr id='heatlayer-off'>
+		<td><code><b>off</b>(<nobr>&lt;Object&gt;</nobr> <i>eventMap</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Removes a set of type/listener pairs.</p>
+</td>
+	</tr>
+	<tr id='heatlayer-off'>
+		<td><code><b>off</b>()</code></td>
+		<td><code>this</code></td>
+		<td><p>Removes all listeners to all events on the object. This includes implicitly attached events.</p>
+</td>
+	</tr>
+	<tr id='heatlayer-fire'>
+		<td><code><b>fire</b>(<nobr>&lt;String&gt;</nobr> <i>type</i>, <nobr>&lt;Object&gt;</nobr> <i>data?</i>, <nobr>&lt;Boolean&gt;</nobr> <i>propagate?</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Fires an event of the specified type. You can optionally provide a data
+object — the first argument of the listener function will contain its
+properties. The event can optionally be propagated to event parents.</p>
+</td>
+	</tr>
+	<tr id='heatlayer-listens'>
+		<td><code><b>listens</b>(<nobr>&lt;String&gt;</nobr> <i>type</i>, <nobr>&lt;Boolean&gt;</nobr> <i>propagate?</i>)</code></td>
+		<td><code>Boolean</code></td>
+		<td><p>Returns <code>true</code> if a particular event type has any listeners attached to it.
+The verification can optionally be propagated, it will return <code>true</code> if parents have the listener attached to it.</p>
+</td>
+	</tr>
+	<tr id='heatlayer-once'>
+		<td><code><b>once</b>(<i>…</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Behaves as <a href="#evented-on"><code>on(…)</code></a>, except the listener will only get fired once and then removed.</p>
+</td>
+	</tr>
+	<tr id='heatlayer-addeventparent'>
+		<td><code><b>addEventParent</b>(<nobr>&lt;<a href='#evented'>Evented</a>&gt;</nobr> <i>obj</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Adds an event parent - an <a href="#evented"><code>Evented</code></a> that will receive propagated events</p>
+</td>
+	</tr>
+	<tr id='heatlayer-removeeventparent'>
+		<td><code><b>removeEventParent</b>(<nobr>&lt;<a href='#evented'>Evented</a>&gt;</nobr> <i>obj</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Removes an event parent, so it will stop receiving propagated events</p>
+</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
+
+<div class='accordion'>
+	<label><span class='expander'>▶</span> Methods inherited from <a href='#class'>Class</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Method</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='heatlayer-callinithooks'>
+		<td><code><b>callInitHooks</b>(<nobr>&lt;Function&gt;</nobr> <i>cls?</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Runs the <a href="#class-constructor-hooks">constructor hooks</a> of the given class and
+of its parent classes, which haven't run yet for this object. Classes call it
+at the end of their constructor, e.g. <code>this.callInitHooks(MyClass)</code>.
+Without <code>cls</code>, runs the hooks of all classes of this object.</p>
+</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
+
 </section><h2 id='path'>Path</h2><p>An abstract class that contains options and constants shared between vector
 overlays (Polygon, Polyline, Circle). Do not use it directly. Extends <a href="#layer"><code>Layer</code></a>.</p>
 
