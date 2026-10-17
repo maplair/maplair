@@ -7494,7 +7494,7 @@ corners). Possible values are <code>'topleft'</code>, <code>'topright'</code>, <
 and expanded on click.</p>
 </td></tr>
 <tr id="searchcontrol-autocomplete"><span id="searchcontroloptions-autocomplete"></span><td><code>autoComplete</code></td><td><code>boolean</code></td><td><code>false</code></td><td><p>Whether to search while typing instead of
-on <kbd>Enter</kbd>. Do not enable it with the public Nominatim service, its
+on <kbd>Enter</kbd>. Not with the public Nominatim service, its
 <a href="https://operations.osmfoundation.org/policies/nominatim/">usage policy</a> forbids
 auto-complete.</p>
 </td></tr>
@@ -7561,7 +7561,11 @@ Without <code>cls</code>, runs the hooks of all classes of this object.</p>
 <div class="table"><table><thead><tr><th scope="col">Method</th><th scope="col">Returns</th><th scope="col">Description</th></tr></thead><tbody><tr id="searchcontrol-nominatim"><td><code>nominatim({ url, params }?: { url?: string | undefined; params?: Record&lt;string, string&gt; | undefined; })</code></td><td><code><a href="#geocoder">Geocoder</a></code></td><td><p>Returns a <a href="#searchcontrol-geocoder">geocoder</a> searching with
 <a href="https://nominatim.org/release-docs/latest/api/Search/">Nominatim</a>, by default the
 public service of OpenStreetMap. Respect its
-<a href="https://operations.osmfoundation.org/policies/nominatim/">usage policy</a>.</p>
+<a href="https://operations.osmfoundation.org/policies/nominatim/">usage policy</a>: the
+geocoder sends at most one request per second, caches the results of the last 100
+queries, adds the OpenStreetMap attribution to the map and does not search while
+typing with the public service. For more traffic, use your own Nominatim server or a
+commercial provider.</p>
 <pre><code class="language-js">new SearchControl({
     geocoder: SearchControl.nominatim({params: {countrycodes: 'at,de'}})
 }).addTo(map);
@@ -10323,8 +10327,11 @@ which the map fits to instead of zooming to the position.</p>
 <h2>Geocoder</h2>
 <p>A function searching places for a query, see the <a href="#searchcontrol-geocoder"><code>geocoder</code></a>
 option. It should pass the <code>signal</code> to <code>fetch()</code>: searches are aborted when the user
-starts another one.</p>
-<pre><code>type Geocoder = (query: string, options: { signal: AbortSignal; }) =&gt; Promise&lt;<a href="#searchresult">SearchResult</a>[]&gt;</code></pre>
+starts another one. Optional properties of the function: <code>attribution</code>, an attribution
+text which the control adds to the map, and <code>autoComplete: false</code> if the service
+forbids searching while typing (overriding the
+<a href="#searchcontrol-autocomplete"><code>autoComplete</code></a> option).</p>
+<pre><code>type Geocoder = ((query: string, options: { signal: AbortSignal; }) =&gt; Promise&lt;<a href="#searchresult">SearchResult</a>[]&gt;) &amp; { attribution?: string; autoComplete?: boolean; }</code></pre>
 </section>
 
 <section id="version" class="api-module">

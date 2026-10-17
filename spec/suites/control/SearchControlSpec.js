@@ -256,6 +256,59 @@ describe('SearchControl', () => {
 			await search('x', {signal: new AbortController().signal}).then(() => expect.fail('resolved'), error => expect(error.message).to.contain('429'));
 		});
 
+		it('caches the results', async () => {
+			const fetch = vi.spyOn(window, 'fetch').mockImplementation(() => Promise.resolve(Response.json([])));
+			const search = SearchControl.nominatim(), {signal} = new AbortController();
+			const results = await search('Innsbruck', {signal});
+			expect(await search('Innsbruck', {signal})).to.equal(results);
+			expect(fetch).toHaveBeenCalledOnce();
+		});
+
+		it('sends at most one request per second', async () => {
+			vi.useFakeTimers();
+			try {
+				const fetch = vi.spyOn(window, 'fetch').mockImplementation(() => Promise.resolve(Response.json([])));
+				const search = SearchControl.nominatim(), {signal} = new AbortController();
+				await search('a', {signal});
+				const b = search('b', {signal});
+				const aborted = new AbortController();
+				const c = search('c', {signal: aborted.signal});
+				await vi.advanceTimersByTimeAsync(999);
+				expect(fetch).toHaveBeenCalledOnce();
+				await vi.advanceTimersByTimeAsync(1);
+				expect(fetch).toHaveBeenCalledTimes(2);
+				await b;
+
+				aborted.abort();
+				await c.then(() => expect.fail('resolved'), error => expect(error.name).to.equal('AbortError'));
+				expect(fetch).toHaveBeenCalledTimes(2);
+			} finally {
+				vi.useRealTimers();
+			}
+		});
+
+		it('adds the OpenStreetMap attribution to the map', () => {
+			const control = new SearchControl().addTo(map);
+			expect(map.attributionControl.getContainer().textContent).to.contain('OpenStreetMap contributors');
+			control.remove();
+			expect(map.attributionControl.getContainer().textContent).not.to.contain('OpenStreetMap contributors');
+		});
+
+		it('does not search while typing with the public service', () => {
+			vi.useFakeTimers();
+			try {
+				const fetch = vi.spyOn(window, 'fetch').mockImplementation(() => Promise.resolve(Response.json([])));
+				expect(SearchControl.nominatim().autoComplete).to.be.false;
+				expect(SearchControl.nominatim({url: 'https://nominatim.example.org/search'}).autoComplete).to.be.true;
+				const control = new SearchControl({autoComplete: true}).addTo(map).expand();
+				type(control, 'Innsbruck');
+				vi.advanceTimersByTime(1000);
+				expect(fetch).not.toHaveBeenCalled();
+			} finally {
+				vi.useRealTimers();
+			}
+		});
+
 		it('is the default geocoder', async () => {
 			const fetch = vi.spyOn(window, 'fetch').mockResolvedValue(Response.json([]));
 			const control = new SearchControl().addTo(map);

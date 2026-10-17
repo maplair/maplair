@@ -14,6 +14,17 @@ import {Marker} from '../layer/marker/Marker.js';
 
 const searchIcon = '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6.5" cy="6.5" r="4.5"/><path d="M10 10l4.5 4.5"/></svg>';
 
+// Resolves after `ms` milliseconds, rejects when the signal aborts
+function delay(ms, signal) {
+	return new Promise((resolve, reject) => {
+		const timeout = setTimeout(resolve, ms);
+		signal.addEventListener('abort', () => {
+			clearTimeout(timeout);
+			reject(signal.reason);
+		}, {once: true});
+	});
+}
+
 /**
  * A result of a search, returned by a [geocoder](#searchcontrol-geocoder).
  * @typedef {object} SearchResult
@@ -27,8 +38,11 @@ const searchIcon = '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 
 /**
  * A function searching places for a query, see the [`geocoder`](#searchcontrol-geocoder)
  * option. It should pass the `signal` to `fetch()`: searches are aborted when the user
- * starts another one.
- * @typedef {(query: string, options: {signal: AbortSignal}) => Promise<SearchResult[]>} Geocoder
+ * starts another one. Optional properties of the function: `attribution`, an attribution
+ * text which the control adds to the map, and `autoComplete: false` if the service
+ * forbids searching while typing (overriding the
+ * [`autoComplete`](#searchcontrol-autocomplete) option).
+ * @typedef {((query: string, options: {signal: AbortSignal}) => Promise<SearchResult[]>) & {attribution?: string, autoComplete?: boolean}} Geocoder
  */
 
 /**
@@ -43,7 +57,7 @@ const searchIcon = '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 
  * @property {boolean} [collapsed=true] If `true`, the control is collapsed into a button
  * and expanded on click.
  * @property {boolean} [autoComplete=false] Whether to search while typing instead of
- * on <kbd>Enter</kbd>. Do not enable it with the public Nominatim service, its
+ * on <kbd>Enter</kbd>. Not with the public Nominatim service, its
  * [usage policy](https://operations.osmfoundation.org/policies/nominatim/) forbids
  * auto-complete.
  * @property {number} [autoCompleteDelay=250] The delay in milliseconds after typing
@@ -116,7 +130,11 @@ export class SearchControl extends Control {
 	 * Returns a [geocoder](#searchcontrol-geocoder) searching with
 	 * [Nominatim](https://nominatim.org/release-docs/latest/api/Search/), by default the
 	 * public service of OpenStreetMap. Respect its
-	 * [usage policy](https://operations.osmfoundation.org/policies/nominatim/).
+	 * [usage policy](https://operations.osmfoundation.org/policies/nominatim/): the
+	 * geocoder sends at most one request per second, caches the results of the last 100
+	 * queries, adds the OpenStreetMap attribution to the map and does not search while
+	 * typing with the public service. For more traffic, use your own Nominatim server or a
+	 * commercial provider.
 	 *
 	 * @example
 	 * ```js
@@ -132,13 +150,29 @@ export class SearchControl extends Control {
 	 * @returns {Geocoder}
 	 */
 	static nominatim({url = 'https://nominatim.openstreetmap.org/search', params = {}} = {}) {
-		return async (query, {signal}) => {
+		// the results of recent queries, and the time of the next allowed request
+		const cache = new Map();
+		let nextRequest = 0;
+
+		async function geocoder(query, {signal}) {
 			const search = new URLSearchParams({q: query, format: 'jsonv2', limit: '5', ...params}),
-			response = await fetch(`${url}?${search}`, {signal});
+			requestUrl = `${url}?${search}`;
+			if (cache.has(requestUrl)) {
+				return cache.get(requestUrl);
+			}
+
+			// at most one request per second
+			const now = Date.now(), wait = nextRequest - now;
+			nextRequest = Math.max(now, nextRequest) + 1000;
+			if (wait > 0) {
+				await delay(wait, signal);
+			}
+
+			const response = await fetch(requestUrl, {signal});
 			if (!response.ok) {
 				throw new Error(`Nominatim: ${response.status} ${response.statusText}`);
 			}
-			return (await response.json()).map((place) => {
+			const results = (await response.json()).map((place) => {
 				// [south, north, west, east]
 				const [s, n, w, e] = place.boundingbox.map(Number);
 				return {
@@ -148,7 +182,18 @@ export class SearchControl extends Control {
 					raw: place
 				};
 			});
-		};
+			cache.set(requestUrl, results);
+			if (cache.size > 100) {
+				cache.delete(cache.keys().next().value);
+			}
+			return results;
+		}
+
+		return Object.defineProperties(geocoder, {
+			// the same as of OpenStreetMap tiles, translated when added
+			attribution: {get: () => `&copy; <a href="https://www.openstreetmap.org/copyright">${I18n.translate('OpenStreetMap contributors')}</a>`},
+			autoComplete: {value: new URL(url).hostname !== 'nominatim.openstreetmap.org'}
+		});
 	}
 
 	/**
@@ -212,6 +257,8 @@ export class SearchControl extends Control {
 		DomEvent.on(input, 'keydown', this._onKeyDown, this);
 		DomEvent.on(list, 'click', this._onListClick, this);
 		map.on('click', this._onMapClick, this);
+		this._attribution = this.options.geocoder.attribution;
+		map.attributionControl?.addAttribution(this._attribution);
 
 		this._showResults([]);
 		this._setExpanded(!this.options.collapsed);
@@ -224,6 +271,7 @@ export class SearchControl extends Control {
 	 */
 	onRemove(map) {
 		map.off('click', this._onMapClick, this);
+		map.attributionControl?.removeAttribution(this._attribution);
 		this._abort();
 		this._marker?.remove();
 	}
@@ -407,7 +455,7 @@ export class SearchControl extends Control {
 	_onInput() {
 		clearTimeout(this._autoCompleteTimeout);
 		const query = this._input.value.trim();
-		if (!this.options.autoComplete) {
+		if (!this.options.autoComplete || this.options.geocoder.autoComplete === false) {
 			this._showResults([]);
 		} else if (query.length >= this.options.minLength || LatLng.parse(query)) {
 			this._autoCompleteTimeout = setTimeout(() => {
