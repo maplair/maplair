@@ -58,7 +58,9 @@ describe('Hash', () => {
 			expect(Hash.parse('#geo:1,2?z=3&bearing=45').bearing).to.equal(45);
 			// without zoom
 			expect(Hash.parse('#geo:1,2').zoom).to.be.undefined;
-			for (const value of ['#geo:', '#geo:1', '#geo:1,x', '#geo:1,2?z=x', '#geo:1,2,3']) {
+			// with altitude
+			expect(Hash.parse('#geo:1,2,3').center).to.be.nearLatLng([1, 2]);
+			for (const value of ['#geo:', '#geo:1', '#geo:1,x', '#geo:1,2?z=x', '#geo:91,2']) {
 				expect(Hash.parse(value), value).to.be.undefined;
 			}
 		});

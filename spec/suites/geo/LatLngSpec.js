@@ -49,6 +49,49 @@ describe('LatLng', () => {
 		});
 	});
 
+	describe('parse', () => {
+		// test cases from leaflet-control-geocoder, in decimal degrees
+		const parse = (text, lat, lng) => {
+			const latlng = LatLng.parse(text);
+			expect(latlng, text).to.be.instanceOf(LatLng);
+			expect(latlng.lat, text).to.be.closeTo(lat, 1e-9);
+			expect(latlng.lng, text).to.be.closeTo(lng, 1e-9);
+		};
+
+		it('parses pairs of numbers', () => {
+			for (const text of ['50.06773 14.37742', '50.06773, 14.37742', '+50.06773 +14.37742', '+50.06773, +14.37742', '50.06773;14.37742', ' 50.06773° 14.37742° ']) {
+				parse(text, 50.06773, 14.37742);
+			}
+			parse('-50.06773, -14.37742', -50.06773, -14.37742);
+		});
+
+		it('parses hemispheres before and after the numbers', () => {
+			for (const [lat, lng, texts] of [
+				[50.06773, 14.37742, ['N50.06773 E14.37742', 'N50.06773, E14.37742', '50.06773N 14.37742E', '50.06773N, 14.37742E', 'n 50.06773° e 14.37742°', '50.06773° N, 14.37742° E']],
+				[50.06773, -14.37742, ['N50.06773 W14.37742', 'N50.06773, W14.37742', '50.06773N 14.37742W', '50.06773N, 14.37742W']],
+				[-50.06773, 14.37742, ['S50.06773 E14.37742', 'S50.06773, E14.37742', '50.06773S 14.37742E', '50.06773S, 14.37742E']],
+				[-50.06773, -14.37742, ['S50.06773 W14.37742', 'S50.06773, W14.37742', '50.06773S 14.37742W', '50.06773S, 14.37742W', 'W14.37742 S50.06773']]
+			]) {
+				for (const text of texts) {
+					parse(text, lat, lng);
+				}
+			}
+		});
+
+		it('parses geo URIs', () => {
+			parse('geo:50.06773,14.37742', 50.06773, 14.37742);
+			parse('geo:-50.06773,-14.37742?z=13', -50.06773, -14.37742);
+			const latlng = LatLng.parse('geo:50.06773,14.37742,250;u=35');
+			expect(latlng.alt).to.equal(250);
+		});
+
+		it('returns null for other text', () => {
+			for (const text of ['no-lat-lng', '', '50.06773', '50.06773 14.37742 3', 'N50.06773 N14.37742', 'E50 W14', '91 14', '50 181', 'geo:50', 'N 50° 04.064 E 014° 22.645']) {
+				expect(LatLng.parse(text), text).to.be.null;
+			}
+		});
+	});
+
 	describe('#equals', () => {
 		it('returns true if compared objects are equal within a certain margin', () => {
 			const a = new LatLng(10, 20);

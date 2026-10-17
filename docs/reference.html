@@ -6486,6 +6486,15 @@ meters apart from the <a href="#latlng"><code>LatLng</code></a>.</p>
 <h3 id="latlng-function">Static members</h3>
 <div class="table"><table><thead><tr><th scope="col">Method</th><th scope="col">Returns</th><th scope="col">Description</th></tr></thead><tbody><tr id="latlng-validate"><td><code>validate(lat: any, lng?: any, alt?: any)</code></td><td><code>boolean</code></td><td><p>Returns <code>true</code> if the LatLng object can be properly initialized with the given
 arguments (the same as of the constructor).</p>
+</td></tr>
+<tr id="latlng-parse"><td><code>parse(text: string)</code></td><td><code><a href="#latlng">LatLng</a> | null</code></td><td><p>Parses coordinates in decimal degrees: a pair of numbers (latitude first), e.g.
+<code>'47.27, 11.4'</code> or <code>'47.27 11.4'</code>, with the hemispheres before or after the numbers,
+e.g. <code>'N 47.27, E 11.4'</code>, <code>'47.27° S 11.4° W'</code> (also longitude first), or a
+<a href="https://www.rfc-editor.org/rfc/rfc5870">geo URI</a> like <code>'geo:47.27,11.4'</code> (with an
+optional altitude). Returns <code>null</code> for other text and out-of-range coordinates.</p>
+<pre><code class="language-js">LatLng.parse('47.2692 N, 11.4041 E'); // LatLng(47.2692, 11.4041)
+LatLng.parse('geo:47.2692,11.4041?z=13'); // LatLng(47.2692, 11.4041)
+</code></pre>
 </td></tr></tbody></table></div>
 </section>
 

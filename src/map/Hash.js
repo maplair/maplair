@@ -4,7 +4,6 @@ import {LatLng} from '../geo/LatLng.js';
 
 const leadingHashRe = /^#/,
 leadingQuestionMarkRe = /^\?/,
-geoRe = /^geo:(-?[\d.]+),(-?[\d.]+)$/,
 // the parameters of the query mode
 queryParams = ['zoom', 'lat', 'lng', 'bearing', 'layers'];
 
@@ -181,9 +180,10 @@ export class Hash {
 		layers = parseLayers(query);
 		let zoom, lat, lng, bearing;
 
-		const geo = geoRe.exec(path);
-		if (geo) {
-			[lat, lng] = geo.slice(1).map(Number);
+		if (path.startsWith('geo:')) {
+			const center = LatLng.parse(path);
+			if (!center) { return undefined; }
+			({lat, lng} = center);
 			zoom = params.has('z') ? Number(params.get('z')) : undefined;
 			bearing = params.has('bearing') ? Number(params.get('bearing')) : undefined;
 		} else {

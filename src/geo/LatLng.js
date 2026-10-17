@@ -2,6 +2,19 @@ import * as Util from '../core/Util.js';
 import {EarthCRS} from './crs/EarthCRS.js';
 import {LatLngBounds} from './LatLngBounds.js';
 
+// a coordinate in decimal degrees, with an optional degree sign
+const coordinate = String.raw`([+-]?\d+(?:\.\d+)?)\s*°?`,
+separator = String.raw`(?:\s*[,;]\s*|\s+)`,
+// `47.27 11.4`, `47.27, 11.4`, `+47.27;+11.4`
+plainRe = new RegExp(`^${coordinate}${separator}${coordinate}$`),
+// `N47.27 E11.4`, `N 47.27°, E 11.4°`
+prefixRe = new RegExp(`^([NSEW])\\s*${coordinate}${separator}([NSEW])\\s*${coordinate}$`, 'i'),
+// `47.27N 11.4E`, `47.27° N, 11.4° E`
+suffixRe = new RegExp(`^${coordinate}\\s*([NSEW])${separator}${coordinate}\\s*([NSEW])$`, 'i'),
+hemisphereRe = /^[NSEW]$/i,
+// `geo:47.27,11.4`, `geo:47.27,11.4,500;u=35`, `geo:47.27,11.4?z=13` (RFC 5870)
+geoUriRe = /^geo:([+-]?\d+(?:\.\d+)?),([+-]?\d+(?:\.\d+)?)(?:,([+-]?\d+(?:\.\d+)?))?(?:[;?].*)?$/i;
+
 /**
  * A geographical point: a `LatLng`, an array of the form `[lat, lng]` or
  * `[lat, lng, alt]`, or a plain object of the form `{lat, lng}` or `{lat, lng, alt}`
@@ -115,6 +128,50 @@ export class LatLng {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Parses coordinates in decimal degrees: a pair of numbers (latitude first), e.g.
+	 * `'47.27, 11.4'` or `'47.27 11.4'`, with the hemispheres before or after the numbers,
+	 * e.g. `'N 47.27, E 11.4'`, `'47.27° S 11.4° W'` (also longitude first), or a
+	 * [geo URI](https://www.rfc-editor.org/rfc/rfc5870) like `'geo:47.27,11.4'` (with an
+	 * optional altitude). Returns `null` for other text and out-of-range coordinates.
+	 *
+	 * @example
+	 * ```js
+	 * LatLng.parse('47.2692 N, 11.4041 E'); // LatLng(47.2692, 11.4041)
+	 * LatLng.parse('geo:47.2692,11.4041?z=13'); // LatLng(47.2692, 11.4041)
+	 * ```
+	 * @param {string} text
+	 * @returns {LatLng|null}
+	 */
+	static parse(text) {
+		text = text.trim();
+		let lat, lng, alt, match;
+		if ((match = geoUriRe.exec(text))) {
+			[lat, lng, alt] = match.slice(1).map(n => (n === undefined ? undefined : Number(n)));
+		} else if ((match = plainRe.exec(text))) {
+			[lat, lng] = match.slice(1).map(Number);
+		} else if ((match = prefixRe.exec(text) ?? suffixRe.exec(text))) {
+			// the hemisphere and the number of both coordinates
+			const prefixed = hemisphereRe.test(match[1]),
+			coords = prefixed ?
+				[[match[1], match[2]], [match[3], match[4]]] :
+				[[match[2], match[1]], [match[4], match[3]]];
+			for (const [hemisphere, number] of coords) {
+				const h = hemisphere.toUpperCase(),
+				value = Math.abs(Number(number)) * (h === 'S' || h === 'W' ? -1 : 1);
+				if (h === 'N' || h === 'S') {
+					if (lat !== undefined) { return null; }
+					lat = value;
+				} else {
+					if (lng !== undefined) { return null; }
+					lng = value;
+				}
+			}
+		}
+		if (lat === undefined || Math.abs(lat) > 90 || Math.abs(lng) > 180) { return null; }
+		return new LatLng(lat, lng, alt);
 	}
 
 	/**
