@@ -818,14 +818,28 @@ new GeoJSON(data, {style: renderer.style}).addTo(map);
 renderer.setKeyVisible('closed', false);
 ```
 
-Recommended: E as the core (with A's `Categorized` and `Graduated` as rule
-generators), B reduced to a layer with a renderer, and C as the generic place
-for legends and feature counts. Implementation: an opt-in module
-`maplair/symbology` exporting `RuleRenderer`, `Categorized`, `Graduated` and
-`LegendControl` and adding the `renderer` option to `FeatureGroup`;
-`Layer.getLegend()` documented next to `getAttribution()`. Graduated lookup with a sorted array of range bounds
-(binary search), categorized lookup with a `Map`, `normalize` for tolerant
-matching. Legend patches as small inline SVG (circle for `CircleMarker`, square
+Recommended, ranked by how they match the Maplair style: C first (the
+`getAttribution()`/`AttributionControl` pattern, a plain `Control` with flat
+options like `position` and `collapsed`, a `legendchange` event like
+`crschange`), then A (a standalone class feeding the existing `style` and
+`pointToLayer` options), B (an object-valued option like `Path`'s `renderer`,
+but wrapping `addLayer` of a core class), E (cleanest concept, but nested rule
+objects, exported helpers and a name clashing with the SVG/Canvas `Renderer`)
+and D (a mini language in style values, nothing alike in Maplair). So: C as the
+generic place for legends and feature counts, and E as the core in Maplair
+shape: `new Symbology(rules, options)` instead of `RuleRenderer` (the rules as
+constructor argument like the layers of `new LayersControl(baseLayers,
+overlays, options)`, flat options such as `minZoom`/`maxZoom`), A's
+`new Categorized(categories, {value, normalize, otherValues})` and
+`new Graduated(ranges, {value})` as subclasses generating rules, classification
+methods as static methods (`Graduated.quantile(values, n)`, like `Hash.parse`)
+instead of exported helpers, and B reduced to the `symbology` option of
+`FeatureGroup`. Implementation: an opt-in module `maplair/symbology` exporting
+`Symbology`, `Categorized`, `Graduated` and `LegendControl`, adding
+`Layer.getLegend()` (documented next to `getAttribution()`) and the
+`symbology` option to `FeatureGroup` with `include()`, leaving the core classes
+untouched. Graduated lookup with a sorted array of range bounds (binary
+search), categorized lookup with a `Map`, `normalize` for tolerant matching. Legend patches as small inline SVG (circle for `CircleMarker`, square
 for polygons, line for polylines) with the class symbol, so that they match the
 map, also in dark mode via CSS variables. The bar as flex `<div>`s with
 `flex-grow` = count. Translated texts ("{n} features", "Legend", "All other
