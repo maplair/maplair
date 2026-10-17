@@ -495,7 +495,7 @@ overshoots and snaps back on `moveend`). The `auto` placement counts the space
 gained by panning. Option `autoDirections: ['top', 'bottom', 'right', 'left']`
 sets the order of preference (e.g. above/below first, sides only as
 fallback). `overflow: 'horizontal'` lets the tooltip extend beyond the map
-sideways only, so that it stays below sticky page headers.
+sideways only, so that it stays below page headers.
 
 ## 38. Tap-to-pin tooltips on touch screens
 
@@ -525,12 +525,12 @@ used for tapped markers.
 ## 40. Time dimension: animated WMS time series
 
 [Leaflet.TimeDimension](https://github.com/socib/Leaflet.TimeDimension) (with
-iso8601-js-period), e.g. an animation of the last 24 h · effort: medium–large
+iso8601-js-period), e.g. an hourly animation of a day · effort: medium–large
 
 Opt-in module. `WMSTileLayer` option `time` and `setTime(date)` setting the
 `TIME` parameter with the flicker-free swapping of 7, prefetching the tiles of
-the next step. `TimeControl({times | interval: 'PT24H/2026-10-17T12:00Z',
-period: 'PT5M', loop, transitionTime})`: play/pause/step buttons (reusing 28)
+the next step. `TimeControl({times | interval: 'P1D/2026-10-17T12:00Z',
+period: 'PT1H', loop, transitionTime})`: play/pause/step buttons (reusing 28)
 and a range slider; advances only once the frame has loaded (`load`), fires
 `timechange`. Parses ISO 8601 intervals and durations itself; formats dates with
 `Intl.DateTimeFormat` or an option `formatTime` (instead of overriding
@@ -594,8 +594,8 @@ running load with an `AbortController`, fires `load`/`error`; option
 
 Effort: small–medium
 
-Path options `radius` and `weight` as zoom stops, e.g. `radius: {7: 3.5, 9: 5,
-12: 6.5}` (stepped, or interpolated with `interpolate: true`, like MapLibre's
+Path options `radius` and `weight` as zoom stops, e.g. `radius: {5: 3, 10: 6,
+15: 10}` (stepped, or interpolated with `interpolate: true`, like MapLibre's
 zoom expressions), or as function `(zoom) => number`. Re-evaluated on
 `zoomend` (and while zooming with `continuousZoom`), before the relayout of
 `DisplaceHandler`.
