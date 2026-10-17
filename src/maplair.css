@@ -71,10 +71,6 @@
 	width:100%;
 }
 
-.maplair-container {
-	overflow: hidden;
-}
-
 /* wraps the map pane of a rotated map, see setBearing() */
 .maplair-rotate-pane {
 	position: absolute;
@@ -113,6 +109,8 @@
 /* .maplair-container img: map is broken in FF if you have max-width: 100% on tiles */
 
 .maplair-container {
+	overflow: hidden;
+
 	.maplair-overlay-pane svg {
 		max-width: none !important;
 		max-height: none !important;
@@ -168,6 +166,8 @@
 	height: 0;
 	box-sizing: border-box;
 	z-index: 800;
+	border: var(--maplair-border-width-thick) dotted var(--maplair-border-color-progressive);
+	background: color-mix(in srgb, var(--maplair-background-color-base) 50%, transparent);
 }
 
 .maplair-pane {
@@ -216,6 +216,12 @@
 	pointer-events: auto;
 	float: left;
 	clear: both;
+
+	/* Prevent printers from removing background-images of controls. */
+	@media print {
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+	}
 }
 
 .maplair-top,
@@ -256,9 +262,11 @@
 
 
 /* nearest-neighbour scaling, see the `pixelated` option */
-.maplair-pixelated,
-.maplair-pixelated .maplair-tile {
-	image-rendering: pixelated;
+.maplair-pixelated {
+	&,
+	.maplair-tile {
+		image-rendering: pixelated;
+	}
 }
 
 /* decorations of paths, see the arrowheads and text options */
@@ -270,6 +278,10 @@
 /* animated dashes of paths, see the dashSpeed option */
 .maplair-dash-animated {
 	animation: maplair-dash var(--maplair-dash-duration) linear infinite;
+
+	@media (prefers-reduced-motion: reduce) {
+		animation: none;
+	}
 }
 
 @keyframes maplair-dash {
@@ -288,6 +300,10 @@
 	.maplair-popup {
 		opacity: 0;
 		transition: opacity 0.2s linear;
+
+		@media (prefers-reduced-motion: reduce) {
+			transition: none;
+		}
 	}
 
 	.maplair-map-pane .maplair-popup {
@@ -305,6 +321,10 @@
 .maplair-zoom-anim {
 	.maplair-zoom-animated {
 		transition: transform 0.25s cubic-bezier(0, 0, 0.25, 1);
+
+		@media (prefers-reduced-motion: reduce) {
+			transition: none;
+		}
 	}
 
 	.maplair-tile {
@@ -378,6 +398,9 @@ svg.maplair-image-layer.maplair-interactive path {
 .maplair-container {
 	background: var(--maplair-background-color-neutral);
 	outline-offset: 1px;
+	font-family: var(--maplair-font-family-base);
+	font-size: var(--maplair-font-size-x-small);
+	line-height: var(--maplair-line-height-content);
 
 	a {
 		color: var(--maplair-color-progressive);
@@ -387,18 +410,6 @@ svg.maplair-image-layer.maplair-interactive path {
 /* prevent showing outline-box on Chromium when clicking on a vector with a tooltip */
 path.maplair-interactive:focus:not(:focus-visible) {
 	outline: 0;
-}
-
-.maplair-zoom-box {
-	border: var(--maplair-border-width-thick) dotted var(--maplair-border-color-progressive);
-	background: color-mix(in srgb, var(--maplair-background-color-base) 50%, transparent);
-}
-
-/* general typography */
-.maplair-container {
-	font-family: var(--maplair-font-family-base);
-	font-size: var(--maplair-font-size-x-small);
-	line-height: var(--maplair-line-height-content);
 }
 
 /* general toolbar styles */
@@ -450,6 +461,22 @@ path.maplair-interactive:focus:not(:focus-visible) {
 			background-color: var(--maplair-background-color-disabled-subtle);
 			color: var(--maplair-color-disabled);
 		}
+
+		.maplair-touch & {
+			width: var(--maplair-size-control-touch);
+			height: var(--maplair-size-control-touch);
+			line-height: var(--maplair-size-control-touch);
+
+			&:first-child {
+				border-top-left-radius: var(--maplair-border-radius-small);
+				border-top-right-radius: var(--maplair-border-radius-small);
+			}
+
+			&:last-child {
+				border-bottom-left-radius: var(--maplair-border-radius-small);
+				border-bottom-right-radius: var(--maplair-border-radius-small);
+			}
+		}
 	}
 }
 
@@ -465,28 +492,6 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	width: 100% !important;
 	height: 100% !important;
 	z-index: 99999;
-}
-
-.maplair-control-layers-toggle {
-	background-position: 50% 50%;
-	background-repeat: no-repeat;
-	display: block;
-}
-
-.maplair-touch .maplair-bar :is(a, button) {
-	width: var(--maplair-size-control-touch);
-	height: var(--maplair-size-control-touch);
-	line-height: var(--maplair-size-control-touch);
-
-	&:first-child {
-		border-top-left-radius: var(--maplair-border-radius-small);
-		border-top-right-radius: var(--maplair-border-radius-small);
-	}
-
-	&:last-child {
-		border-bottom-left-radius: var(--maplair-border-radius-small);
-		border-bottom-right-radius: var(--maplair-border-radius-small);
-	}
 }
 
 /* zoom control */
@@ -511,10 +516,18 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	.maplair-control-layers-list {
 		display: none;
 	}
+
+	label {
+		display: block;
+		font-size: var(--maplair-font-size-small);
+	}
 }
 
 .maplair-control-layers-toggle {
+	display: block;
 	background-image: url(images/layers.svg);
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
 	/* reset the user agent styles of buttons */
 	background-color: transparent;
 	padding: 0;
@@ -530,6 +543,10 @@ path.maplair-interactive:focus:not(:focus-visible) {
 }
 
 .maplair-control-layers-expanded {
+	padding: var(--maplair-spacing-50);
+	color: var(--maplair-color-base);
+	background: var(--maplair-background-color-base);
+
 	.maplair-control-layers-toggle {
 		display: none;
 	}
@@ -546,12 +563,6 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	padding: 0;
 }
 
-.maplair-control-layers-expanded {
-	padding: var(--maplair-spacing-50);
-	color: var(--maplair-color-base);
-	background: var(--maplair-background-color-base);
-}
-
 .maplair-control-layers-scrollbar {
 	overflow-y: scroll;
 	overflow-x: hidden;
@@ -562,11 +573,6 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	margin-top: 2px;
 	position: relative;
 	top: 1px;
-}
-
-.maplair-control-layers label {
-	display: block;
-	font-size: var(--maplair-font-size-small);
 }
 
 .maplair-control-layers-separator {
@@ -608,12 +614,14 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	margin-right: 0.277em;
 }
 
-.maplair-left .maplair-control-scale {
-	margin-left: var(--maplair-spacing-25);
-}
+.maplair-control-scale {
+	.maplair-left & {
+		margin-left: var(--maplair-spacing-25);
+	}
 
-.maplair-bottom .maplair-control-scale {
-	margin-bottom: var(--maplair-spacing-25);
+	.maplair-bottom & {
+		margin-bottom: var(--maplair-spacing-25);
+	}
 }
 
 .maplair-control-scale-line {
@@ -1006,31 +1014,4 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	position: fixed;
 	top: 0;
 	left: 0;
-}
-
-/* Reduced motion */
-
-@media (prefers-reduced-motion: reduce) {
-	.maplair-fade-anim .maplair-popup {
-		transition: none;
-	}
-	.maplair-fade-anim .maplair-map-pane .maplair-tile {
-		transition: none;
-	}
-	.maplair-zoom-anim .maplair-zoom-animated {
-		transition: none;
-	}
-	.maplair-dash-animated {
-		animation: none;
-	}
-}
-
-/* Printing */
-
-@media print {
-	/* Prevent printers from removing background-images of controls. */
-	.maplair-control {
-		-webkit-print-color-adjust: exact;
-		print-color-adjust: exact;
-	}
 }
