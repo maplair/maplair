@@ -33,7 +33,7 @@
 				maxBounds: bounds
 			});
 
-			const latlngs = new Rectangle(bounds).getLatLngs();
+			const latlngs = /** @type {import('maplair').LatLng[][]} */ (new Rectangle(bounds).getLatLngs());
 			new Polyline(latlngs[0].concat(latlngs[0][0])).addTo(map);
 
 			map.setMaxBounds(bounds);	// Should not enter infinite recursion

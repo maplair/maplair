@@ -52,10 +52,10 @@
 			new Marker([41.23, 9.42], {draggable: true}).addTo(map).bindTooltip('Draggable marker tooltip', {permanent: true, direction: 'auto'});
 			new Marker([41.19, 9.43]).addTo(map).bindTooltip('Clickable marker tooltip', {permanent: true, interactive: true}).on('click', () => { alert('clicked!'); });
 
-			const marker1 = new Marker([41.18, 9.45], {description: 'Marker 1'});
-			const marker2 = new Marker([41.18, 9.46], {description: 'Marker 2'});
+			const marker1 = new Marker([41.18, 9.45], {title: 'Marker 1'});
+			const marker2 = new Marker([41.18, 9.46], {title: 'Marker 2'});
 			const group = new FeatureGroup([marker1, marker2]).addTo(map);
-			group.bindTooltip(layer => `Group tooltip: ${layer.options.description}`, {opacity: 0.7});
+			group.bindTooltip(layer => `Group tooltip: ${/** @type {Marker} */ (layer).options.title}`, {opacity: 0.7});
 			new Marker([41.18, 9.35]).addTo(map).bindTooltip('Top tooltip is top', {permanent: true, direction: 'top'});
 			new Marker([41.173, 9.37]).addTo(map).bindTooltip('Bottom tooltip is weird but ok', {permanent: true, direction: 'bottom'});
 			new Polyline([[41.20, 9.36], [41.205, 9.35], [41.19, 9.34]]).bindTooltip('Polyline tooltip', {permanent: true, direction: 'top'}).addTo(map);

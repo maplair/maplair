@@ -189,7 +189,7 @@
 					gridLoadData[indexStr] = 0;
 				}
 
-				tile.innerHTML = ++gridLoadData[indexStr];
+				tile.innerHTML = String(++gridLoadData[indexStr]);
 
 				// more tile loadings -> more red grid tile
 				tile.style.backgroundColor = `rgba(255,0,0,${(gridLoadData[indexStr] - 1) / 5})`;
@@ -197,13 +197,13 @@
 			};
 
 			grid.on('tileload tileunload tileerror tileloadstart load', (ev) => {
-				document.getElementById(`grid-${ev.type}`).innerHTML = ++gridCounts[ev.type];
-				document.getElementById('grid-visible').innerHTML = grid._container.querySelectorAll('.maplair-tile').length;
+				document.getElementById(`grid-${ev.type}`).innerHTML = String(++gridCounts[ev.type]);
+				document.getElementById('grid-visible').innerHTML = String(grid.getContainer().querySelectorAll('.maplair-tile').length);
 			});
 
 			positron.on('tileload tileunload tileerror tileloadstart load', (ev) => {
-				document.getElementById(`positron-${ev.type}`).innerHTML = ++positronCounts[ev.type];
-				document.getElementById('positron-visible').innerHTML = positron._container.querySelectorAll('.maplair-tile').length;
+				document.getElementById(`positron-${ev.type}`).innerHTML = String(++positronCounts[ev.type]);
+				document.getElementById('positron-visible').innerHTML = String(positron.getContainer().querySelectorAll('.maplair-tile').length);
 			});
 
 			map.addLayer(positron);
@@ -253,8 +253,8 @@
 				for (let i = 0; i < fields.length; i++) {
 					gridCounts[fields[i]] = 0;
 					positronCounts[fields[i]] = 0;
-					document.getElementById(`positron-${fields[i]}`).innerHTML = 0;
-					document.getElementById(`grid-${fields[i]}`).innerHTML = 0;
+					document.getElementById(`positron-${fields[i]}`).innerHTML = '0';
+					document.getElementById(`grid-${fields[i]}`).innerHTML = '0';
 				}
 			}
 		</script>

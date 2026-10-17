@@ -1,3 +1,4 @@
+/** @type {import('geojson').FeatureCollection} */
 export default {
 	type: 'FeatureCollection',
 	features: [

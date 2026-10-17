@@ -104,7 +104,7 @@
 				stations.load(fetch('stations.geojson').then(response => response.json()).then(otherWeather));
 			});
 			document.getElementById('collapsed').addEventListener('change', (e) => {
-				legend.getContainer().querySelector('details').open = !e.target.checked;
+				legend.getContainer().querySelector('details').open = !(/** @type {HTMLInputElement} */ (e.target).checked);
 			});
 
 			function renderTable(features) {
@@ -129,12 +129,12 @@
 			function select(name) {
 				selected = name;
 				stations.resetStyle();
-				for (const layer of stations.getLayers()) {
+				for (const layer of /** @type {CircleMarker[]} */ (stations.getLayers())) {
 					if (layer.feature.properties.name === name) {
 						layer.setStyle({color: '#ff00aa', weight: 4}).bringToFront();
 					}
 				}
-				for (const row of document.getElementById('table').children) {
+				for (const row of /** @type {HTMLCollectionOf<HTMLElement>} */ (document.getElementById('table').children)) {
 					row.classList.toggle('selected', row.dataset.name === name);
 				}
 			}

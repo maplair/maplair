@@ -48,7 +48,7 @@
 						const button = DomUtil.create('button');
 						button.textContent = '⏸';
 						DomEvent.on(button, 'click', () => {
-							overlay.getElement().pause();
+							/** @type {HTMLVideoElement} */ (overlay.getElement()).pause();
 						});
 						return button;
 					}
@@ -59,7 +59,7 @@
 						const button = DomUtil.create('button');
 						button.textContent = '⏵';
 						DomEvent.on(button, 'click', () => {
-							overlay.getElement().play();
+							/** @type {HTMLVideoElement} */ (overlay.getElement()).play();
 						});
 						return button;
 					}

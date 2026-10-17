@@ -35,7 +35,7 @@
 				.addLayer(osm);
 
 			let lastPopup;
-			const keepInViewCheckbox = document.querySelector('#keepInView');
+			const keepInViewCheckbox = /** @type {HTMLInputElement} */ (document.querySelector('#keepInView'));
 
 			function getRandomLatLng(llbounds, expandRange) {
 				// How many degrees to expand the search range by

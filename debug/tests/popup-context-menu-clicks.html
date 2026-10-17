@@ -28,6 +28,7 @@
 
 			new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
+			/** @type {import('geojson').Polygon} */
 			const exampleGeoJSON = {
 				type: 'Polygon',
 				coordinates: [

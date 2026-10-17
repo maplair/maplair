@@ -25,8 +25,8 @@
 			import {MaplairMap, TileLayer, LayersControl, Circle, Polygon, GeoJSON} from 'maplair';
 
 			class GrayscaleTileLayer extends TileLayer {
-				createTile(...args) {
-					const element = super.createTile(...args);
+				createTile(coords, done) {
+					const element = super.createTile(coords, done);
 					element.classList.add('grayscale-tile');
 					return element;
 				}
@@ -41,7 +41,7 @@
 				'OSM': regularTiles,
 				'OSM BW': blackAndWhiteTiles
 			}, {
-				'Circle': new Circle([53, 4], 111111).addTo(map),
+				'Circle': new Circle([53, 4], {radius: 111111}).addTo(map),
 				'Polygon': new Polygon([[48, -3], [50, -4], [52, 4]]),
 				'GeoJSON': new GeoJSON({
 					type: 'Polygon',

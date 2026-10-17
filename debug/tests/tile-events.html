@@ -137,13 +137,13 @@
 			};
 
 			grid.on('tileload tileunload tileerror tileloadstart load', (ev) => {
-				document.getElementById(`grid-${ev.type}`).innerHTML = ++gridCounts[ev.type];
-				document.getElementById('grid-visible').innerHTML = grid._container.querySelectorAll('.maplair-tile').length;
+				document.getElementById(`grid-${ev.type}`).innerHTML = String(++gridCounts[ev.type]);
+				document.getElementById('grid-visible').innerHTML = String(grid.getContainer().querySelectorAll('.maplair-tile').length);
 			});
 
 			positron.on('tileload tileunload tileerror tileloadstart load', (ev) => {
-				document.getElementById(`positron-${ev.type}`).innerHTML = ++positronCounts[ev.type];
-				document.getElementById('positron-visible').innerHTML = positron._container.querySelectorAll('.maplair-tile').length;
+				document.getElementById(`positron-${ev.type}`).innerHTML = String(++positronCounts[ev.type]);
+				document.getElementById('positron-visible').innerHTML = String(positron.getContainer().querySelectorAll('.maplair-tile').length);
 			});
 
 			map.addLayer(positron);

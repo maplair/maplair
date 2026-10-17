@@ -94,7 +94,7 @@
 			}
 
 			async function run() {
-				const count = Number(document.getElementById('count').value);
+				const count = Number(/** @type {HTMLInputElement} */ (document.getElementById('count')).value);
 				markers.clearLayers();
 				map.setView(center, 15, {animate: false});
 				results.textContent = 'running…';

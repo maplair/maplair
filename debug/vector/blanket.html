@@ -37,12 +37,14 @@
 				}
 
 				_onSettled() {
-					this._container.innerHTML = `
-					lat: ${this._center.lat.toFixed(6)}<br>
-					lng: ${this._center.lng.toFixed(6)}<br>
-					zoom: ${this._zoom}<br>
-					map bounds: <br>${this._map.getBounds().toBBoxString().split(',').map(n => Number(n).toFixed(6)).join('<br>')}<br>
-					px bounds: ${this._bounds.min}, ${this._bounds.max}`;
+					// the state of the overlay, private members of BlanketOverlay
+					const self = /** @type {any} */ (this);
+					self._container.innerHTML = `
+					lat: ${self._center.lat.toFixed(6)}<br>
+					lng: ${self._center.lng.toFixed(6)}<br>
+					zoom: ${self._zoom}<br>
+					map bounds: <br>${self._map.getBounds().toBBoxString().split(',').map(n => Number(n).toFixed(6)).join('<br>')}<br>
+					px bounds: ${self._bounds.min}, ${self._bounds.max}`;
 				}
 			}
 
@@ -54,13 +56,13 @@
 			const canvas = new Canvas({
 				padding: -0.1,
 			}).addTo(map);
-			canvas._container.style.border = '2px solid red';
+			/** @type {any} */ (canvas)._container.style.border = '2px solid red';
 			new CircleMarker([40.5, -3.6], {radius: 20, color: 'red', renderer: canvas}).addTo(map);
 
 			const svg = new SVG({
 				padding: -0.1,
 			}).addTo(map);
-			svg._container.style.border = '2px solid blue';
+			/** @type {any} */ (svg)._container.style.border = '2px solid blue';
 			new CircleMarker([63.4, 10.4], {radius: 20, color: 'blue', renderer: svg}).addTo(map);
 			</script>
 	</body>

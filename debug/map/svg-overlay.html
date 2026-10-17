@@ -24,7 +24,7 @@
 			
 			new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 19}).addTo(map);
 
-			const svgElement = document.querySelector('#image');
+			const svgElement = /** @type {SVGElement} */ (document.querySelector('#image'));
 			const bounds = new LatLngBounds([[32, -130], [13, -100]]);
 
 			map.fitBounds(bounds);

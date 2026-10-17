@@ -42,7 +42,7 @@
 				maxBoundsViscosity: 1.0
 			});
 
-			const latlngs = new Rectangle(bounds).getLatLngs();
+			const latlngs = /** @type {import('maplair').LatLng[][]} */ (new Rectangle(bounds).getLatLngs());
 
 			new Polyline(latlngs[0].concat(latlngs[0][0])).addTo(map1);
 			new Polyline(latlngs[0].concat(latlngs[0][0])).addTo(map2);

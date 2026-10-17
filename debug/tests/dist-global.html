@@ -19,11 +19,12 @@
 			new L.TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
 			// It should be possible to extend the L namespace.
-			L.Util.foo = 'bar';
-			L.Foo = 'Bar';
+			const namespace = /** @type {any} */ (L);
+			namespace.Util.foo = 'bar';
+			namespace.Foo = 'Bar';
 
-			console.log('L.Util.foo:', L.Util.foo);
-			console.log('L.Foo:', L.Foo);
+			console.log('L.Util.foo:', namespace.Util.foo);
+			console.log('L.Foo:', namespace.Foo);
 		</script>
 	</body>
 </html>

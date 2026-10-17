@@ -91,7 +91,7 @@
 			function update(id) {
 				return function () {
 					const element = document.getElementById(id);
-					element.innerHTML = Date.now();
+					element.innerHTML = String(Date.now());
 					element.className = 'red';
 
 					window.setTimeout(() => {

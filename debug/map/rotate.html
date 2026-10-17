@@ -35,9 +35,9 @@
 			new Polygon([[47.28, 11.37], [47.29, 11.40], [47.28, 11.41]], {color: 'red'}).addTo(map);
 			new Polyline([[47.26, 11.37], [47.25, 11.40]], {renderer: new Canvas(), weight: 6}).addTo(map);
 
-			const input = document.getElementById('bearing');
-			input.addEventListener('input', () => map.setBearing(input.value));
-			map.on('rotate', () => { input.value = Math.round(map.getBearing()); });
+			const input = /** @type {HTMLInputElement} */ (document.getElementById('bearing'));
+			input.addEventListener('input', () => map.setBearing(Number(input.value)));
+			map.on('rotate', () => { input.value = String(Math.round(map.getBearing())); });
 		</script>
 	</body>
 </html>
