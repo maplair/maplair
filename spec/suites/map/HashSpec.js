@@ -223,4 +223,89 @@ describe('Hash', () => {
 			expect(map.hasLayer(osm)).to.be.false;
 		});
 	});
+
+	describe('query mode', () => {
+		let original;
+
+		beforeEach(() => {
+			original = location.search;
+		});
+
+		afterEach(() => {
+			history.replaceState(null, '', location.pathname + original);
+		});
+
+		function setSearch(params) {
+			const search = new URLSearchParams(original);
+			for (const [name, value] of Object.entries(params)) {
+				search.set(name, value);
+			}
+			history.replaceState(null, '', `${location.pathname}?${search}`);
+		}
+
+		it('parses and formats query strings', () => {
+			const view = Hash.parseQuery('?q=cafe&zoom=13&lat=47.2692&lng=11.4041&bearing=30&layers=A,B%2CC');
+			expect(view.zoom).to.equal(13);
+			expect(view.center).to.be.nearLatLng([47.2692, 11.4041]);
+			expect(view.bearing).to.equal(30);
+			expect(view.layers).to.eql(['A', 'B,C']);
+			expect(Hash.parseQuery('?lat=1&lng=2').zoom).to.be.undefined;
+			for (const value of ['', '?', '?q=cafe', '?lat=1', '?lat=1&lng=x']) {
+				expect(Hash.parseQuery(value), value).to.be.undefined;
+			}
+
+			map.setView([47.2692, 11.4041], 13);
+			expect(Hash.formatQuery(map, undefined, '?q=cafe&zoom=1&lat=0')).to.equal('?q=cafe&zoom=13&lat=47.2692&lng=11.4041');
+			expect(Hash.formatQuery(map)).to.equal('?zoom=13&lat=47.2692&lng=11.4041');
+		});
+
+		it('writes the view to the query string, keeping the other parameters and the hash', () => {
+			setSearch({q: 'cafe'});
+			history.replaceState(null, '', `${location.search}#section`);
+			map.setView([47.2692, 11.4041], 13);
+			hash = new Hash(map, {mode: 'query'});
+			const params = new URLSearchParams(location.search);
+			expect(params.get('q')).to.equal('cafe');
+			expect(params.get('zoom')).to.equal('13');
+			expect(params.get('lat')).to.equal('47.2692');
+			expect(params.get('lng')).to.equal('11.4041');
+			expect(location.hash).to.equal('#section');
+
+			map.setView([48, 12], 10);
+			expect(new URLSearchParams(location.search).get('zoom')).to.equal('10');
+			expect(location.hash).to.equal('#section');
+		});
+
+		it('restores the view from the query string and on popstate', () => {
+			setSearch({zoom: '13', lat: '47.2692', lng: '11.4041'});
+			hash = new Hash(map, {mode: 'query'});
+			expect(map.getZoom()).to.equal(13);
+			expect(map.getCenter()).to.be.nearLatLng([47.2692, 11.4041]);
+
+			setSearch({zoom: '10', lat: '48', lng: '12'});
+			window.dispatchEvent(new PopStateEvent('popstate'));
+			expect(map.getZoom()).to.equal(10);
+			expect(map.getCenter()).to.be.nearLatLng([48, 12]);
+		});
+
+		it('keeps the layers in the query string', () => {
+			const a = new GridLayer(), b = new GridLayer();
+			setSearch({zoom: '5', lat: '1', lng: '2', layers: 'B'});
+			a.addTo(map);
+			hash = new Hash(map, {mode: 'query', layers: {A: a, B: b}});
+			expect(map.hasLayer(a)).to.be.false;
+			expect(map.hasLayer(b)).to.be.true;
+
+			a.addTo(map);
+			expect(new URLSearchParams(location.search).get('layers')).to.equal('A,B');
+		});
+
+		it('ignores the hash in query mode', () => {
+			map.setView([1, 2], 5);
+			history.replaceState(null, '', `${location.pathname}${original}#13/47.2692/11.4041`);
+			hash = new Hash(map, {mode: 'query'});
+			expect(map.getZoom()).to.equal(5);
+			expect(location.hash).to.equal('#13/47.2692/11.4041');
+		});
+	});
 });

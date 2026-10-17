@@ -2426,6 +2426,8 @@ is restored from the hash (in either format) when creating the <a href="#hash"><
 the hash changes (e.g. with the back button of the browser).</p>
 <p>With the <code>layers</code> option, the hash also keeps the base layer and the overlays
 shown on the map, e.g. <code>#13/47.2692/11.4041?layers=OSM,Bike%20routes</code>.</p>
+<p>With the option <code>mode: 'query'</code>, the view is kept in the query string instead,
+e.g. <code>?zoom=13&amp;lat=47.2692&amp;lng=11.4041</code>, keeping the other parameters of the app.</p>
 <p>Inspired by the <a href="https://github.com/mlevans/leaflet-hash">leaflet-hash</a> plugin.</p>
 
 <section>
@@ -2444,6 +2446,9 @@ new Hash(map);
 const baseLayers = {OSM: osm, Topo: topo}, overlays = {'Bike routes': bikes};
 new LayersControl(baseLayers, overlays).addTo(map);
 new Hash(map, {layers: {...baseLayers, ...overlays}});
+
+// in the query string, e.g. ?q=cafe&amp;zoom=13&amp;lat=47.2692&amp;lng=11.4041
+new Hash(map, {mode: 'query'});
 </code></pre>
 
 
@@ -2509,6 +2514,16 @@ of a <a href="#layerscontrol"><code>LayersControl</code></a>: the names of those
 parameter <code>layers</code>, and restoring the hash adds the named layers to
 the map and removes the others.</td>
 	</tr>
+	<tr id='hash-mode'>
+		<td><code><b>mode</b></code></td>
+		<td><code>String</code></td>
+		<td><code>&#x27;hash&#x27;</code></td>
+		<td>Where to keep the view: <code>'hash'</code> for the hash of the URL, or <code>'query'</code> for
+the parameters <code>zoom</code>, <code>lat</code>, <code>lng</code>, <code>bearing</code> (of a rotated map) and
+<code>layers</code> of the query string (the <code>format</code> option is ignored), keeping the
+other parameters, e.g. <code>?q=cafe&amp;zoom=13&amp;lat=47.2692&amp;lng=11.4041</code>. The view is
+restored on navigating in the history of the browser (<code>popstate</code>).</td>
+	</tr>
 </tbody></table>
 
 </section>
@@ -2569,6 +2584,19 @@ the map and removes the others.</td>
 		<td>Returns the hash for the view of the map in the given <code>format</code> (see the
 options), with as many decimal places of the coordinates as needed for
 the precision of a pixel, and the names of the given <code>layers</code> on the map.</td>
+	</tr>
+	<tr id='hash-parsequery'>
+		<td><code><b>parseQuery</b>(<nobr>&lt;String&gt;</nobr> <i>search</i>)</code></td>
+		<td><code>Object</code></td>
+		<td>Parses the parameters <code>zoom</code>, <code>lat</code>, <code>lng</code>, <code>bearing</code> and <code>layers</code> of a query
+string like <code>?q=cafe&amp;zoom=13&amp;lat=47.2692&amp;lng=11.4041</code> like <code>parse()</code>, or
+returns <code>undefined</code> without <code>lat</code> and <code>lng</code>.</td>
+	</tr>
+	<tr id='hash-formatquery'>
+		<td><code><b>formatQuery</b>(<nobr>&lt;<a href='#maplairmap'>MaplairMap</a>&gt;</nobr> <i>map</i>, <nobr>&lt;Object&gt;</nobr> <i>layers?</i>, <nobr>&lt;String&gt;</nobr> <i>search?</i>)</code></td>
+		<td><code>String</code></td>
+		<td>Returns the query string <code>search</code> with the parameters for the view of the map
+(see <code>format()</code>) instead of the previous ones, keeping the other parameters.</td>
 	</tr>
 </tbody></table>
 
