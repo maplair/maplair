@@ -41,7 +41,7 @@ const apps = {
 		expected: feature === 'map-rotation' ? [feature, 'marker-rotation'] : [feature]
 	}])),
 	'search-control': {
-		code: `import {SearchControl} from 'maplair';\n${base}new SearchControl().addTo(map);\n`,
+		code: `import {SearchControl} from 'maplair';\n${base}new SearchControl({geocoder: SearchControl.nominatim({acceptUsagePolicy: true})}).addTo(map);\n`,
 		expected: ['search-control']
 	}
 };

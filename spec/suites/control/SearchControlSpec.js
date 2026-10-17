@@ -222,6 +222,10 @@ describe('SearchControl', () => {
 		expect(control.getContainer().classList.contains('maplair-control-search-expanded')).to.be.false;
 	});
 
+	it('requires a geocoder', () => {
+		expect(() => new SearchControl()).to.throw('the geocoder option is required');
+	});
+
 	it('removes the marker with the control', () => {
 		const control = new SearchControl({geocoder: geocoder()}).addTo(map);
 		control.select(places[1]);
@@ -239,7 +243,7 @@ describe('SearchControl', () => {
 				boundingbox: ['47.2100', '47.3600', '11.3000', '11.4600']
 			}]));
 			const signal = new AbortController().signal;
-			const results = await SearchControl.nominatim({params: {countrycodes: 'at'}})('Innsbruck', {signal});
+			const results = await SearchControl.nominatim({acceptUsagePolicy: true, params: {countrycodes: 'at'}})('Innsbruck', {signal});
 
 			const [url, init] = fetch.mock.calls[0];
 			expect(url).to.equal('https://nominatim.openstreetmap.org/search?q=Innsbruck&format=jsonv2&limit=5&countrycodes=at');
@@ -258,7 +262,7 @@ describe('SearchControl', () => {
 
 		it('caches the results', async () => {
 			const fetch = vi.spyOn(window, 'fetch').mockImplementation(() => Promise.resolve(Response.json([])));
-			const search = SearchControl.nominatim(), {signal} = new AbortController();
+			const search = SearchControl.nominatim({url: 'https://cache.example.org/search'}), {signal} = new AbortController();
 			const results = await search('Innsbruck', {signal});
 			expect(await search('Innsbruck', {signal})).to.equal(results);
 			expect(fetch).toHaveBeenCalledOnce();
@@ -268,7 +272,7 @@ describe('SearchControl', () => {
 			vi.useFakeTimers();
 			try {
 				const fetch = vi.spyOn(window, 'fetch').mockImplementation(() => Promise.resolve(Response.json([])));
-				const search = SearchControl.nominatim(), {signal} = new AbortController();
+				const search = SearchControl.nominatim({url: 'https://rate.example.org/search'}), {signal} = new AbortController();
 				await search('a', {signal});
 				const b = search('b', {signal});
 				const aborted = new AbortController();
@@ -288,7 +292,7 @@ describe('SearchControl', () => {
 		});
 
 		it('adds the OpenStreetMap attribution to the map', () => {
-			const control = new SearchControl().addTo(map);
+			const control = new SearchControl({geocoder: SearchControl.nominatim({url: 'https://attribution.example.org/search'})}).addTo(map);
 			expect(map.attributionControl.getContainer().textContent).to.contain('OpenStreetMap contributors');
 			control.remove();
 			expect(map.attributionControl.getContainer().textContent).not.to.contain('OpenStreetMap contributors');
@@ -298,9 +302,10 @@ describe('SearchControl', () => {
 			vi.useFakeTimers();
 			try {
 				const fetch = vi.spyOn(window, 'fetch').mockImplementation(() => Promise.resolve(Response.json([])));
-				expect(SearchControl.nominatim().autoComplete).to.be.false;
+				const geocoder = SearchControl.nominatim({acceptUsagePolicy: true});
+				expect(geocoder.autoComplete).to.be.false;
 				expect(SearchControl.nominatim({url: 'https://nominatim.example.org/search'}).autoComplete).to.be.true;
-				const control = new SearchControl({autoComplete: true}).addTo(map).expand();
+				const control = new SearchControl({geocoder, autoComplete: true}).addTo(map).expand();
 				type(control, 'Innsbruck');
 				vi.advanceTimersByTime(1000);
 				expect(fetch).not.toHaveBeenCalled();
@@ -309,11 +314,10 @@ describe('SearchControl', () => {
 			}
 		});
 
-		it('is the default geocoder', async () => {
-			const fetch = vi.spyOn(window, 'fetch').mockResolvedValue(Response.json([]));
-			const control = new SearchControl().addTo(map);
-			await control.search('Innsbruck');
-			expect(fetch.mock.calls[0][0]).to.contain('nominatim.openstreetmap.org');
+		it('requires accepting the usage policy for the public service', () => {
+			expect(() => SearchControl.nominatim()).to.throw('https://operations.osmfoundation.org/policies/nominatim/');
+			expect(() => SearchControl.nominatim({acceptUsagePolicy: true})).not.to.throw();
+			expect(() => SearchControl.nominatim({url: 'https://nominatim.example.org/search'})).not.to.throw();
 		});
 	});
 });

@@ -14,6 +14,9 @@ import {Marker} from '../layer/marker/Marker.js';
 
 const searchIcon = '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6.5" cy="6.5" r="4.5"/><path d="M10 10l4.5 4.5"/></svg>';
 
+// the time of the next allowed request to each Nominatim server, shared by all geocoders
+const nextRequests = new Map();
+
 // Resolves after `ms` milliseconds, rejects when the signal aborts
 function delay(ms, signal) {
 	return new Promise((resolve, reject) => {
@@ -51,8 +54,8 @@ function delay(ms, signal) {
  * @property {string} [position='topleft'] The position of the control (one of the map
  * corners). Possible values are `'topleft'`, `'topright'`, `'bottomleft'` or
  * `'bottomright'`.
- * @property {Geocoder} [geocoder] The function searching places, by default
- * [Nominatim](#searchcontrol-nominatim) of OpenStreetMap. Coordinates (see
+ * @property {Geocoder} geocoder The function searching places (required), e.g.
+ * [Nominatim](#searchcontrol-nominatim). Coordinates (see
  * [`LatLng.parse()`](#latlng-parse)) are found without it.
  * @property {boolean} [collapsed=true] If `true`, the control is collapsed into a button
  * and expanded on click.
@@ -84,8 +87,8 @@ function delay(ms, signal) {
 /**
  * A control with a search field for places, showing the results in a list to select
  * one with the pointer or the keyboard. The selected result is shown on the map with a
- * marker. It searches with [Nominatim](https://nominatim.org/) of OpenStreetMap by
- * default, or any other service with a custom [`geocoder`](#searchcontrol-geocoder).
+ * marker. It searches with a [`geocoder`](#searchcontrol-geocoder), e.g.
+ * [Nominatim](#searchcontrol-nominatim) of OpenStreetMap or any other service.
  * Coordinates like `47.27, 11.4` or `geo:47.27,11.4` are found without a service.
  *
  * The public Nominatim service is free, but limited by its
@@ -93,12 +96,15 @@ function delay(ms, signal) {
  * occasional searches of users, not for heavy use (an absolute maximum of one request
  * per second for all users of an app), and forbids auto-complete. The
  * [Nominatim geocoder](#searchcontrol-nominatim) follows the technical requirements,
- * but you are responsible for your use of the service: for more traffic, use your own
- * Nominatim server or a commercial provider.
+ * but you are responsible for your use of the service, which you confirm with the
+ * `acceptUsagePolicy` option: for more traffic, use your own Nominatim server or a
+ * commercial provider.
  *
  * @example
  * ```js
- * new SearchControl().addTo(map);
+ * new SearchControl({
+ *     geocoder: SearchControl.nominatim({acceptUsagePolicy: true})
+ * }).addTo(map);
  *
  * // Photon of Komoot, which allows auto-complete
  * new SearchControl({
@@ -123,7 +129,7 @@ export class SearchControl extends Control {
 	static {
 		this.setDefaultOptions({
 			position: 'topleft',
-			geocoder: this.nominatim(),
+			geocoder: undefined,
 			collapsed: true,
 			autoComplete: false,
 			autoCompleteDelay: 250,
@@ -137,9 +143,9 @@ export class SearchControl extends Control {
 	/**
 	 * Returns a [geocoder](#searchcontrol-geocoder) searching with
 	 * [Nominatim](https://nominatim.org/release-docs/latest/api/Search/), by default the
-	 * public service of OpenStreetMap. Respect its
-	 * [usage policy](https://operations.osmfoundation.org/policies/nominatim/): the
-	 * geocoder sends at most one request per second, caches the results of the last 100
+	 * public service of OpenStreetMap. Using it requires that you read and accept its
+	 * [usage policy](https://operations.osmfoundation.org/policies/nominatim/) with the
+	 * `acceptUsagePolicy` option, otherwise this throws an error. The geocoder sends at most one request per second, caches the results of the last 100
 	 * queries, adds the OpenStreetMap attribution to the map and does not search while
 	 * typing with the public service. For more traffic, use your own Nominatim server or a
 	 * commercial provider.
@@ -147,7 +153,7 @@ export class SearchControl extends Control {
 	 * @example
 	 * ```js
 	 * new SearchControl({
-	 *     geocoder: SearchControl.nominatim({params: {countrycodes: 'at,de'}})
+	 *     geocoder: SearchControl.nominatim({acceptUsagePolicy: true, params: {countrycodes: 'at,de'}})
 	 * }).addTo(map);
 	 * ```
 	 * @param {object} [options]
@@ -155,12 +161,20 @@ export class SearchControl extends Control {
 	 * of the search endpoint.
 	 * @param {Record<string, string>} [options.params] Further query parameters, e.g.
 	 * `countrycodes`, `viewbox` or `limit` (5 by default).
+	 * @param {boolean} [options.acceptUsagePolicy=false] Confirms that your use of the
+	 * public service complies with its
+	 * [usage policy](https://operations.osmfoundation.org/policies/nominatim/), required
+	 * for the public service.
 	 * @returns {Geocoder}
 	 */
-	static nominatim({url = 'https://nominatim.openstreetmap.org/search', params = {}} = {}) {
-		// the results of recent queries, and the time of the next allowed request
+	static nominatim({url = 'https://nominatim.openstreetmap.org/search', params = {}, acceptUsagePolicy = false} = {}) {
+		const {host} = new URL(url),
+		publicService = host === 'nominatim.openstreetmap.org';
+		if (publicService && !acceptUsagePolicy) {
+			throw new Error('Using the public Nominatim service requires that you read and accept its usage policy (https://operations.osmfoundation.org/policies/nominatim/) with the acceptUsagePolicy option.');
+		}
+		// the results of recent queries
 		const cache = new Map();
-		let nextRequest = 0;
 
 		async function geocoder(query, {signal}) {
 			const search = new URLSearchParams({q: query, format: 'jsonv2', limit: '5', ...params}),
@@ -170,8 +184,8 @@ export class SearchControl extends Control {
 			}
 
 			// at most one request per second
-			const now = Date.now(), wait = nextRequest - now;
-			nextRequest = Math.max(now, nextRequest) + 1000;
+			const now = Date.now(), next = nextRequests.get(host) ?? 0, wait = next - now;
+			nextRequests.set(host, Math.max(now, next) + 1000);
 			if (wait > 0) {
 				await delay(wait, signal);
 			}
@@ -200,7 +214,7 @@ export class SearchControl extends Control {
 		return Object.defineProperties(geocoder, {
 			// the same as of OpenStreetMap tiles, translated when added
 			attribution: {get: () => `&copy; <a href="https://www.openstreetmap.org/copyright">${I18n.translate('OpenStreetMap contributors')}</a>`},
-			autoComplete: {value: new URL(url).hostname !== 'nominatim.openstreetmap.org'}
+			autoComplete: {value: !publicService}
 		});
 	}
 
@@ -210,6 +224,9 @@ export class SearchControl extends Control {
 	 */
 	constructor(...args) {
 		super(...args);
+		if (!this.options.geocoder) {
+			throw new Error('SearchControl: the geocoder option is required, e.g. SearchControl.nominatim().');
+		}
 		this.callInitHooks(SearchControl);
 	}
 

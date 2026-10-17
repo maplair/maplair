@@ -27,7 +27,7 @@
 
 			// Nominatim, searching on Enter, see its usage policy:
 			// https://operations.osmfoundation.org/policies/nominatim/
-			new SearchControl().addTo(map);
+			new SearchControl({geocoder: SearchControl.nominatim({acceptUsagePolicy: true})}).addTo(map);
 
 			// Photon of Komoot, searching while typing
 			new SearchControl({
