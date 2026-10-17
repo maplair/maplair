@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Maplair debug page - Classification and legend</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
+		<link rel="stylesheet" href="../../dist/maplair.css" />
+		<link rel="stylesheet" href="../css/screen.css" />
+		<style>
+			body {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 16px;
+				font: 13px/1.4 Arial, Helvetica, sans-serif;
+			}
+			table {
+				border-collapse: collapse;
+			}
+			th, td {
+				padding: 1px 8px;
+				text-align: left;
+			}
+			th {
+				border-bottom: 1px solid #cccccc;
+			}
+			td.number {
+				text-align: right;
+			}
+			tr.selected {
+				background: #ffe4f2;
+			}
+			.dot {
+				display: inline-block;
+				width: 8px;
+				height: 8px;
+				margin-right: 4px;
+				border-radius: 50%;
+			}
+		</style>
+		<script type="importmap">
+			{
+				"imports": {
+					"maplair": "../../dist/esm/Maplair.js",
+					"maplair/geojson-loading": "../../dist/esm/layer/GeoJSON.Load.js"
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<div>
+			<div id="map"></div>
+			<p>
+				<button id="reload" type="button">Reload with other weather</button>
+				<label><input id="collapsed" type="checkbox" /> legend collapsed</label>
+			</p>
+		</div>
+		<table>
+			<thead>
+				<tr><th>Station</th><th>Altitude</th><th>Air temperature</th><th>Class</th></tr>
+			</thead>
+			<tbody id="table"></tbody>
+		</table>
+		<script type="module">
+			import 'maplair/geojson-loading';
+			import {CircleMarker, Classification, GeoJSON, LegendControl, MaplairMap, TileLayer} from 'maplair';
+
+			const map = new MaplairMap('map').setView([47.2, 11.2], 8);
+			new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				maxZoom: 19,
+				attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+			}).addTo(map);
+
+			// weather stations classified by air temperature (sample data)
+			const temperature = new Classification([
+				{value: null, symbol: {fillColor: '#000000'}, legend: 'No data', counted: false},
+				{upper: -10, symbol: {fillColor: '#1f78b4'}, legend: '< -10 °C'},
+				{lower: -10, upper: 0, symbol: {fillColor: '#5bc0de'}, legend: '-10–0 °C'},
+				{lower: 0, upper: 10, symbol: {fillColor: '#33ee33'}, legend: '0–10 °C'},
+				{lower: 10, symbol: {fillColor: '#f0a030'}, legend: '≥ 10 °C'}
+			], {
+				name: 'Air temperature',
+				value: 'temperature',
+				otherValues: {symbol: {fillColor: '#cccccc'}}
+			});
+
+			let selected;
+
+			const stations = new GeoJSON(null, {
+				url: 'stations.geojson',
+				pointToLayer: (feature, latlng) => new CircleMarker(latlng, {radius: 6, weight: 1, color: '#ffffff', fillOpacity: 1}),
+				style: temperature.style,
+				onEachFeature: (feature, layer) => layer
+					.bindTooltip(() => `${feature.properties.name}: ${formatTemperature(feature.properties.temperature)}`)
+					.on('click', () => select(feature.properties.name))
+			}).addTo(map);
+
+			const legend = new LegendControl({featureCount: true, bar: true}).addTo(map);
+			legend.addClassification(stations, temperature);
+
+			// the same symbol for the class column of the table
+			stations.on('load', ({data}) => renderTable(data.features));
+
+			document.getElementById('reload').addEventListener('click', () => {
+				stations.load(fetch('stations.geojson').then(response => response.json()).then(otherWeather));
+			});
+			document.getElementById('collapsed').addEventListener('change', (e) => {
+				legend.getContainer().querySelector('details').open = !e.target.checked;
+			});
+
+			function renderTable(features) {
+				const rows = features
+					.toSorted((a, b) => a.properties.name.localeCompare(b.properties.name))
+					.map((feature) => {
+						const {name, altitude, temperature: value} = feature.properties,
+						{legend: label, symbol} = temperature.classify(feature),
+						row = document.createElement('tr');
+						row.dataset.name = name;
+						row.innerHTML = `<td></td><td class="number">${altitude} m</td><td class="number">${formatTemperature(value)}</td>` +
+							`<td><span class="dot" style="background: ${symbol.fillColor}"></span>${label}</td>`;
+						row.firstChild.textContent = name;
+						row.addEventListener('click', () => select(name));
+						return row;
+					});
+				document.getElementById('table').replaceChildren(...rows);
+				select(selected);
+			}
+
+			// highlights a station on the map and in the table, on top of the class symbol
+			function select(name) {
+				selected = name;
+				stations.resetStyle();
+				for (const layer of stations.getLayers()) {
+					if (layer.feature.properties.name === name) {
+						layer.setStyle({color: '#ff00aa', weight: 4}).bringToFront();
+					}
+				}
+				for (const row of document.getElementById('table').children) {
+					row.classList.toggle('selected', row.dataset.name === name);
+				}
+			}
+
+			function formatTemperature(value) {
+				return value === null ? '–' : `${value.toFixed(1)} °C`;
+			}
+
+			// a colder or warmer day, some stations without data
+			function otherWeather(data) {
+				const offset = Math.random() * 14 - 10;
+				for (const {properties} of data.features) {
+					properties.temperature = Math.random() < 0.1 || properties.temperature === null ? null :
+						Math.round((properties.temperature + offset + Math.random() * 2 - 1) * 10) / 10;
+				}
+				return data;
+			}
+		</script>
+	</body>
+</html>
