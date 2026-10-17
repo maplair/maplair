@@ -482,7 +482,7 @@ package. Documents the required attributions.
 Features that Leaflet apps and plugins commonly build by monkey-patching or with
 private API (`_limitOffset`, `_controlCorners`, `_layers`, `_openTooltip`, …).
 Suggested order: quick wins first (47, 43, 42, 49, 48, 45, 46, 50), then 37, 44,
-41, 38, and the large ones last (39, 40).
+41, 38, 51, and the large ones last (39, 40).
 
 ## 37. Tooltip auto-panning and placement preferences
 
@@ -633,6 +633,71 @@ Effort: small
 `wmsLayer.getLegendUrl({layer, width, height})` building the `GetLegendGraphic`
 request with the layer's URL, version and format (e.g. for an `<img>` in the
 attribution or a legend control).
+
+## 51. Classified markers with a legend
+
+Effort: medium · ~2 kB
+
+Thematic maps color features by class: a measured value or API code maps to a
+class (label, fill and stroke color), and the map explains the classes with a
+legend, often with the count per class. Apps build this by hand: style each
+marker from the class, render the legend into the attribution, and rebuild it
+whenever the data changes. Common requirements:
+
+* classes by code (categorical: `'S2'`) or by thresholds (`< 15 min`, `< 30 min`,
+  …), with a tolerant lookup (label instead of code, whitespace variants)
+* several codes sharing one label or style appear once in the legend
+* classes such as "no data" are drawn but not counted
+* legend swatches in the shape of the feature (circle, square, line)
+* the distribution as text (`42 stations, < 15 min: 30 (71.4 %)`) and as a
+  stacked bar, accessible (`role="img"`, `aria-label`)
+* the colors reused elsewhere (charts, tables, filters)
+
+Ways to abstract it, from thin to integrated:
+
+**A. `Classification` as plain data.** `new Classification({name, classes:
+[{code | below, label, style: {fillColor, color}, counted}], normalize})` with
+`classify(value) → class`, `style(value) → PathOptions`, `legendItems()` (merged
+by label and style), `count(values) → [{label, count, share}]` and
+`toElement({counts, bar})` rendering the legend. The app passes
+`style(value)` to `circleMarker()`/`geoJSON({style})` and the element to
+`attribution` or a control. No layer changes, so it is the smallest, but the
+app still keeps counts and legend in sync.
+
+**B. Classified layer group.** `new ClassifiedGroup({classification, classify:
+layer => layer.feature.properties.klasse})`, a `FeatureGroup` styling each added
+path from its class, keeping counts on `layeradd`/`layerremove` and firing
+`classificationchange`. Its attribution (option `legend: 'attribution'`) is
+built from the current counts, so adding or removing markers updates the legend.
+`setClassVisible(label, visible)` hides classes (filtering). Integrated, but
+ties styling, counting and legend to one group.
+
+**C. A legend protocol and `LegendControl`.** Like `getAttribution()` collected
+by the attribution control, layers may implement `getLegend() → HTMLElement`,
+and a `LegendControl` collects the legends of all layers on the map, updated on
+`layeradd`/`layerremove` and a `legendchange` event. Classified groups (B),
+WMS layers (the `GetLegendGraphic` image of 50), heat layers (the gradient of
+25) and image overlays all plug into it; it renders in a control or inside the
+attribution (`<details>` to collapse it). Clicking an entry toggles the class,
+hovering highlights its features.
+
+**D. Style expressions.** MapLibre-like `step(value, [color, 15, color, 30,
+…])` and `match(value, {S1: color, …})` as path style values; the legend is
+derived from the expression. Most general, but a mini language to document
+and test, and labels and counting still need extra data.
+
+Recommended: A as the core data type, B on top of it, and C as the generic
+place for legends. Implementation: an opt-in module
+`maplair/classification` exporting `Classification`, `ClassifiedGroup` and
+`LegendControl`; `Layer.getLegend()` documented next to `getAttribution()`.
+Threshold lookup with a sorted array of breaks (binary search), categorical
+lookup with a `Map`, `normalize` for tolerant matching. Swatches as small inline
+SVG (circle for `CircleMarker`, square for polygons, line for polylines) with
+the class style, so that they match the map, also in dark mode via CSS
+variables. The bar as flex `<div>`s with `flex-grow` = count. Translated texts
+("{n} features", "Legend") via `I18n`. Specs: lookup by code, threshold and
+label; merging; uncounted classes; counts after adding and removing layers;
+legend update in the attribution and the control; class toggling.
 
 ## Also implemented
 
