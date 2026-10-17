@@ -1,4 +1,4 @@
-import {MaplairMap, AttributionControl, Layer} from 'maplair';
+import {MaplairMap, AttributionControl, Layer, Util} from 'maplair';
 import {createContainer, removeMapContainer} from '../SpecHelper.js';
 import {expect} from 'vite-plus/test';
 
@@ -47,6 +47,16 @@ describe('AttributionControl', () => {
 			control.addAttribution('foo');
 			control.addAttribution('bar');
 			expect(controlContainer.innerHTML).to.eql('prefix <span aria-hidden="true">|</span> foo, bar');
+		});
+	});
+
+	describe('#addAttribution with order', () => {
+		it('sorts by order, then by the order of adding', () => {
+			control.addAttribution('legend', 1);
+			control.addAttribution('foo');
+			control.addAttribution('first', -1);
+			control.addAttribution('bar');
+			expect(controlContainer.innerHTML).to.eql('prefix <span aria-hidden="true">|</span> first, foo, bar, legend');
 		});
 	});
 
@@ -122,6 +132,35 @@ describe('AttributionControl', () => {
 			expect(controlContainer.innerHTML).to.eql('prefix <span aria-hidden="true">|</span> foo');
 			map.removeLayer(fo3Layer);
 			expect(controlContainer.innerHTML).to.eql('prefix');
+		});
+	});
+
+	describe('Layer#setAttribution', () => {
+		it('changes the attribution of a layer on the map', () => {
+			const layer = dummyLayer().setAttribution('foo');
+			map.addLayer(layer);
+			control.addAttribution('bar');
+			layer.setAttribution('foo 2');
+			expect(controlContainer.innerHTML).to.eql('prefix <span aria-hidden="true">|</span> bar, foo 2');
+
+			map.removeLayer(layer);
+			expect(controlContainer.innerHTML).to.eql('prefix <span aria-hidden="true">|</span> bar');
+		});
+
+		it('changes only the option of a layer not on the map', () => {
+			const layer = dummyLayer().setAttribution('foo');
+			expect(layer.getAttribution()).to.equal('foo');
+			expect(new Layer().getAttribution()).to.equal(null);
+			expect(controlContainer.innerHTML).to.eql('prefix');
+		});
+
+		it('keeps a layer with a higher attributionOrder last', () => {
+			const legend = dummyLayer().setAttribution('legend'),
+			layer = dummyLayer().setAttribution('foo');
+			Util.setOptions(legend, {attributionOrder: 1});
+			map.addLayer(legend).addLayer(layer);
+			layer.setAttribution('foo 2');
+			expect(controlContainer.innerHTML).to.eql('prefix <span aria-hidden="true">|</span> foo 2, legend');
 		});
 	});
 });

@@ -2961,6 +2961,13 @@ map edge to start panning the map.</td>
 		<td><code>null</code></td>
 		<td>String to be shown in the attribution control, e.g. &quot;© OpenStreetMap contributors&quot;. It describes the layer data and is often a legal obligation towards copyright holders and tile providers.</td>
 	</tr>
+	<tr id='marker-attributionorder'>
+		<td><code><b>attributionOrder</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>The position of the attribution in the attribution control: attributions are
+sorted by it, then by the order of adding, e.g. <code>1</code> keeps a legend last.</td>
+	</tr>
 </tbody></table>
 
 </section></div>
@@ -3452,6 +3459,13 @@ e.g. to stop a layer from emitting pointer events while it is being edited.</p>
 		<td><p>Used by the <code>attribution control</code>, returns the <a href="#gridlayer-attribution">attribution option</a>.</p>
 </td>
 	</tr>
+	<tr id='marker-setattribution'>
+		<td><code><b>setAttribution</b>(<nobr>&lt;String&gt;</nobr> <i>attribution</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#layer-attribution">attribution option</a>, also in the attribution
+control while the layer is on the map.</p>
+</td>
+	</tr>
 </tbody></table>
 
 </section></div>
@@ -3866,6 +3880,13 @@ String content is rendered as HTML; sanitize untrusted input or pass an <code>HT
 		<td><code>null</code></td>
 		<td>String to be shown in the attribution control, e.g. &quot;© OpenStreetMap contributors&quot;. It describes the layer data and is often a legal obligation towards copyright holders and tile providers.</td>
 	</tr>
+	<tr id='divoverlay-attributionorder'>
+		<td><code><b>attributionOrder</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>The position of the attribution in the attribution control: attributions are
+sorted by it, then by the order of adding, e.g. <code>1</code> keeps a legend last.</td>
+	</tr>
 </tbody></table>
 
 </section></div>
@@ -4227,6 +4248,13 @@ e.g. to stop a layer from emitting pointer events while it is being edited.</p>
 		<td><code><b>getAttribution</b>()</code></td>
 		<td><code>String</code></td>
 		<td><p>Used by the <code>attribution control</code>, returns the <a href="#gridlayer-attribution">attribution option</a>.</p>
+</td>
+	</tr>
+	<tr id='divoverlay-setattribution'>
+		<td><code><b>setAttribution</b>(<nobr>&lt;String&gt;</nobr> <i>attribution</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#layer-attribution">attribution option</a>, also in the attribution
+control while the layer is on the map.</p>
 </td>
 	</tr>
 </tbody></table>
@@ -4793,6 +4821,13 @@ String content is rendered as HTML; sanitize untrusted input or pass an <code>HT
 		<td><code>null</code></td>
 		<td>String to be shown in the attribution control, e.g. &quot;© OpenStreetMap contributors&quot;. It describes the layer data and is often a legal obligation towards copyright holders and tile providers.</td>
 	</tr>
+	<tr id='popup-attributionorder'>
+		<td><code><b>attributionOrder</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>The position of the attribution in the attribution control: attributions are
+sorted by it, then by the order of adding, e.g. <code>1</code> keeps a legend last.</td>
+	</tr>
 </tbody></table>
 
 </section></div>
@@ -5182,6 +5217,13 @@ e.g. to stop a layer from emitting pointer events while it is being edited.</p>
 		<td><code><b>getAttribution</b>()</code></td>
 		<td><code>String</code></td>
 		<td><p>Used by the <code>attribution control</code>, returns the <a href="#gridlayer-attribution">attribution option</a>.</p>
+</td>
+	</tr>
+	<tr id='popup-setattribution'>
+		<td><code><b>setAttribution</b>(<nobr>&lt;String&gt;</nobr> <i>attribution</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#layer-attribution">attribution option</a>, also in the attribution
+control while the layer is on the map.</p>
 </td>
 	</tr>
 </tbody></table>
@@ -5696,6 +5738,13 @@ String content is rendered as HTML; sanitize untrusted input or pass an <code>HT
 		<td><code>null</code></td>
 		<td>String to be shown in the attribution control, e.g. &quot;© OpenStreetMap contributors&quot;. It describes the layer data and is often a legal obligation towards copyright holders and tile providers.</td>
 	</tr>
+	<tr id='tooltip-attributionorder'>
+		<td><code><b>attributionOrder</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>The position of the attribution in the attribution control: attributions are
+sorted by it, then by the order of adding, e.g. <code>1</code> keeps a legend last.</td>
+	</tr>
 </tbody></table>
 
 </section></div>
@@ -6071,6 +6120,13 @@ e.g. to stop a layer from emitting pointer events while it is being edited.</p>
 		<td><code><b>getAttribution</b>()</code></td>
 		<td><code>String</code></td>
 		<td><p>Used by the <code>attribution control</code>, returns the <a href="#gridlayer-attribution">attribution option</a>.</p>
+</td>
+	</tr>
+	<tr id='tooltip-setattribution'>
+		<td><code><b>setAttribution</b>(<nobr>&lt;String&gt;</nobr> <i>attribution</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#layer-attribution">attribution option</a>, also in the attribution
+control while the layer is on the map.</p>
 </td>
 	</tr>
 </tbody></table>
@@ -6651,6 +6707,13 @@ Useful for raster data, pixel art or scientific imagery.</td>
 		<td><code>null</code></td>
 		<td>String to be shown in the attribution control, e.g. &quot;© OpenStreetMap contributors&quot;. It describes the layer data and is often a legal obligation towards copyright holders and tile providers.</td>
 	</tr>
+	<tr id='tilelayer-attributionorder'>
+		<td><code><b>attributionOrder</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>The position of the attribution in the attribution control: attributions are
+sorted by it, then by the order of adding, e.g. <code>1</code> keeps a legend last.</td>
+	</tr>
 </tbody></table>
 
 </section></div>
@@ -7003,6 +7066,13 @@ Classes extending <a href="#tilelayer"><code>TileLayer</code></a> can override t
 		<td><code><b>getAttribution</b>()</code></td>
 		<td><code>String</code></td>
 		<td><p>Used by the <code>attribution control</code>, returns the <a href="#gridlayer-attribution">attribution option</a>.</p>
+</td>
+	</tr>
+	<tr id='tilelayer-setattribution'>
+		<td><code><b>setAttribution</b>(<nobr>&lt;String&gt;</nobr> <i>attribution</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#layer-attribution">attribution option</a>, also in the attribution
+control while the layer is on the map.</p>
 </td>
 	</tr>
 </tbody></table>
@@ -7640,6 +7710,13 @@ Useful for raster data, pixel art or scientific imagery.</td>
 		<td><code>null</code></td>
 		<td>String to be shown in the attribution control, e.g. &quot;© OpenStreetMap contributors&quot;. It describes the layer data and is often a legal obligation towards copyright holders and tile providers.</td>
 	</tr>
+	<tr id='wmstilelayer-attributionorder'>
+		<td><code><b>attributionOrder</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>The position of the attribution in the attribution control: attributions are
+sorted by it, then by the order of adding, e.g. <code>1</code> keeps a legend last.</td>
+	</tr>
 </tbody></table>
 
 </section></div>
@@ -8004,6 +8081,13 @@ callback is called when the tile has been loaded.</p>
 		<td><code><b>getAttribution</b>()</code></td>
 		<td><code>String</code></td>
 		<td><p>Used by the <code>attribution control</code>, returns the <a href="#gridlayer-attribution">attribution option</a>.</p>
+</td>
+	</tr>
+	<tr id='wmstilelayer-setattribution'>
+		<td><code><b>setAttribution</b>(<nobr>&lt;String&gt;</nobr> <i>attribution</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#layer-attribution">attribution option</a>, also in the attribution
+control while the layer is on the map.</p>
 </td>
 	</tr>
 </tbody></table>
@@ -8463,6 +8547,13 @@ Not effective if the <code>renderer</code> option is set (the <code>renderer</co
 		<td><code>null</code></td>
 		<td>String to be shown in the attribution control, e.g. &quot;© OpenStreetMap contributors&quot;. It describes the layer data and is often a legal obligation towards copyright holders and tile providers.</td>
 	</tr>
+	<tr id='imageoverlay-attributionorder'>
+		<td><code><b>attributionOrder</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>The position of the attribution in the attribution control: attributions are
+sorted by it, then by the order of adding, e.g. <code>1</code> keeps a legend last.</td>
+	</tr>
 </tbody></table>
 
 </section></div>
@@ -8803,6 +8894,13 @@ e.g. to stop a layer from emitting pointer events while it is being edited.</p>
 		<td><code><b>getAttribution</b>()</code></td>
 		<td><code>String</code></td>
 		<td><p>Used by the <code>attribution control</code>, returns the <a href="#gridlayer-attribution">attribution option</a>.</p>
+</td>
+	</tr>
+	<tr id='imageoverlay-setattribution'>
+		<td><code><b>setAttribution</b>(<nobr>&lt;String&gt;</nobr> <i>attribution</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#layer-attribution">attribution option</a>, also in the attribution
+control while the layer is on the map.</p>
 </td>
 	</tr>
 </tbody></table>
@@ -9323,6 +9421,13 @@ Not effective if the <code>renderer</code> option is set (the <code>renderer</co
 		<td><code>null</code></td>
 		<td>String to be shown in the attribution control, e.g. &quot;© OpenStreetMap contributors&quot;. It describes the layer data and is often a legal obligation towards copyright holders and tile providers.</td>
 	</tr>
+	<tr id='videooverlay-attributionorder'>
+		<td><code><b>attributionOrder</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>The position of the attribution in the attribution control: attributions are
+sorted by it, then by the order of adding, e.g. <code>1</code> keeps a legend last.</td>
+	</tr>
 </tbody></table>
 
 </section></div>
@@ -9705,6 +9810,13 @@ e.g. to stop a layer from emitting pointer events while it is being edited.</p>
 		<td><code><b>getAttribution</b>()</code></td>
 		<td><code>String</code></td>
 		<td><p>Used by the <code>attribution control</code>, returns the <a href="#gridlayer-attribution">attribution option</a>.</p>
+</td>
+	</tr>
+	<tr id='videooverlay-setattribution'>
+		<td><code><b>setAttribution</b>(<nobr>&lt;String&gt;</nobr> <i>attribution</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#layer-attribution">attribution option</a>, also in the attribution
+control while the layer is on the map.</p>
 </td>
 	</tr>
 </tbody></table>
@@ -10175,6 +10287,13 @@ Not effective if the <code>renderer</code> option is set (the <code>renderer</co
 		<td><code>null</code></td>
 		<td>String to be shown in the attribution control, e.g. &quot;© OpenStreetMap contributors&quot;. It describes the layer data and is often a legal obligation towards copyright holders and tile providers.</td>
 	</tr>
+	<tr id='svgoverlay-attributionorder'>
+		<td><code><b>attributionOrder</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>The position of the attribution in the attribution control: attributions are
+sorted by it, then by the order of adding, e.g. <code>1</code> keeps a legend last.</td>
+	</tr>
 </tbody></table>
 
 </section></div>
@@ -10543,6 +10662,13 @@ e.g. to stop a layer from emitting pointer events while it is being edited.</p>
 		<td><code><b>getAttribution</b>()</code></td>
 		<td><code>String</code></td>
 		<td><p>Used by the <code>attribution control</code>, returns the <a href="#gridlayer-attribution">attribution option</a>.</p>
+</td>
+	</tr>
+	<tr id='svgoverlay-setattribution'>
+		<td><code><b>setAttribution</b>(<nobr>&lt;String&gt;</nobr> <i>attribution</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#layer-attribution">attribution option</a>, also in the attribution
+control while the layer is on the map.</p>
 </td>
 	</tr>
 </tbody></table>
@@ -10992,6 +11118,13 @@ animations)</td>
 		<td><code>null</code></td>
 		<td>String to be shown in the attribution control, e.g. &quot;© OpenStreetMap contributors&quot;. It describes the layer data and is often a legal obligation towards copyright holders and tile providers.</td>
 	</tr>
+	<tr id='heatlayer-attributionorder'>
+		<td><code><b>attributionOrder</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>The position of the attribution in the attribution control: attributions are
+sorted by it, then by the order of adding, e.g. <code>1</code> keeps a legend last.</td>
+	</tr>
 </tbody></table>
 
 </section></div>
@@ -11196,6 +11329,13 @@ animations)</td>
 		<td><code><b>getAttribution</b>()</code></td>
 		<td><code>String</code></td>
 		<td><p>Used by the <code>attribution control</code>, returns the <a href="#gridlayer-attribution">attribution option</a>.</p>
+</td>
+	</tr>
+	<tr id='heatlayer-setattribution'>
+		<td><code><b>setAttribution</b>(<nobr>&lt;String&gt;</nobr> <i>attribution</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#layer-attribution">attribution option</a>, also in the attribution
+control while the layer is on the map.</p>
 </td>
 	</tr>
 </tbody></table>
@@ -11674,6 +11814,13 @@ Not effective if the <code>renderer</code> option is set (the <code>renderer</co
 		<td><code>null</code></td>
 		<td>String to be shown in the attribution control, e.g. &quot;© OpenStreetMap contributors&quot;. It describes the layer data and is often a legal obligation towards copyright holders and tile providers.</td>
 	</tr>
+	<tr id='path-attributionorder'>
+		<td><code><b>attributionOrder</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>The position of the attribution in the attribution control: attributions are
+sorted by it, then by the order of adding, e.g. <code>1</code> keeps a legend last.</td>
+	</tr>
 </tbody></table>
 
 </section></div>
@@ -11959,6 +12106,13 @@ e.g. to stop a layer from emitting pointer events while it is being edited.</p>
 		<td><code><b>getAttribution</b>()</code></td>
 		<td><code>String</code></td>
 		<td><p>Used by the <code>attribution control</code>, returns the <a href="#gridlayer-attribution">attribution option</a>.</p>
+</td>
+	</tr>
+	<tr id='path-setattribution'>
+		<td><code><b>setAttribution</b>(<nobr>&lt;String&gt;</nobr> <i>attribution</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#layer-attribution">attribution option</a>, also in the attribution
+control while the layer is on the map.</p>
 </td>
 	</tr>
 </tbody></table>
@@ -12563,6 +12717,13 @@ Not effective if the <code>renderer</code> option is set (the <code>renderer</co
 		<td><code>null</code></td>
 		<td>String to be shown in the attribution control, e.g. &quot;© OpenStreetMap contributors&quot;. It describes the layer data and is often a legal obligation towards copyright holders and tile providers.</td>
 	</tr>
+	<tr id='polyline-attributionorder'>
+		<td><code><b>attributionOrder</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>The position of the attribution in the attribution control: attributions are
+sorted by it, then by the order of adding, e.g. <code>1</code> keeps a legend last.</td>
+	</tr>
 </tbody></table>
 
 </section></div>
@@ -12920,6 +13081,13 @@ e.g. to stop a layer from emitting pointer events while it is being edited.</p>
 		<td><code><b>getAttribution</b>()</code></td>
 		<td><code>String</code></td>
 		<td><p>Used by the <code>attribution control</code>, returns the <a href="#gridlayer-attribution">attribution option</a>.</p>
+</td>
+	</tr>
+	<tr id='polyline-setattribution'>
+		<td><code><b>setAttribution</b>(<nobr>&lt;String&gt;</nobr> <i>attribution</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#layer-attribution">attribution option</a>, also in the attribution
+control while the layer is on the map.</p>
 </td>
 	</tr>
 </tbody></table>
@@ -13538,6 +13706,13 @@ Not effective if the <code>renderer</code> option is set (the <code>renderer</co
 		<td><code>null</code></td>
 		<td>String to be shown in the attribution control, e.g. &quot;© OpenStreetMap contributors&quot;. It describes the layer data and is often a legal obligation towards copyright holders and tile providers.</td>
 	</tr>
+	<tr id='polygon-attributionorder'>
+		<td><code><b>attributionOrder</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>The position of the attribution in the attribution control: attributions are
+sorted by it, then by the order of adding, e.g. <code>1</code> keeps a legend last.</td>
+	</tr>
 </tbody></table>
 
 </section></div>
@@ -13916,6 +14091,13 @@ e.g. to stop a layer from emitting pointer events while it is being edited.</p>
 		<td><code><b>getAttribution</b>()</code></td>
 		<td><code>String</code></td>
 		<td><p>Used by the <code>attribution control</code>, returns the <a href="#gridlayer-attribution">attribution option</a>.</p>
+</td>
+	</tr>
+	<tr id='polygon-setattribution'>
+		<td><code><b>setAttribution</b>(<nobr>&lt;String&gt;</nobr> <i>attribution</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#layer-attribution">attribution option</a>, also in the attribution
+control while the layer is on the map.</p>
 </td>
 	</tr>
 </tbody></table>
@@ -14517,6 +14699,13 @@ Not effective if the <code>renderer</code> option is set (the <code>renderer</co
 		<td><code>null</code></td>
 		<td>String to be shown in the attribution control, e.g. &quot;© OpenStreetMap contributors&quot;. It describes the layer data and is often a legal obligation towards copyright holders and tile providers.</td>
 	</tr>
+	<tr id='rectangle-attributionorder'>
+		<td><code><b>attributionOrder</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>The position of the attribution in the attribution control: attributions are
+sorted by it, then by the order of adding, e.g. <code>1</code> keeps a legend last.</td>
+	</tr>
 </tbody></table>
 
 </section></div>
@@ -14922,6 +15111,13 @@ e.g. to stop a layer from emitting pointer events while it is being edited.</p>
 		<td><code><b>getAttribution</b>()</code></td>
 		<td><code>String</code></td>
 		<td><p>Used by the <code>attribution control</code>, returns the <a href="#gridlayer-attribution">attribution option</a>.</p>
+</td>
+	</tr>
+	<tr id='rectangle-setattribution'>
+		<td><code><b>setAttribution</b>(<nobr>&lt;String&gt;</nobr> <i>attribution</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#layer-attribution">attribution option</a>, also in the attribution
+control while the layer is on the map.</p>
 </td>
 	</tr>
 </tbody></table>
@@ -15539,6 +15735,13 @@ Not effective if the <code>renderer</code> option is set (the <code>renderer</co
 		<td><code>null</code></td>
 		<td>String to be shown in the attribution control, e.g. &quot;© OpenStreetMap contributors&quot;. It describes the layer data and is often a legal obligation towards copyright holders and tile providers.</td>
 	</tr>
+	<tr id='circle-attributionorder'>
+		<td><code><b>attributionOrder</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>The position of the attribution in the attribution control: attributions are
+sorted by it, then by the order of adding, e.g. <code>1</code> keeps a legend last.</td>
+	</tr>
 </tbody></table>
 
 </section></div>
@@ -15929,6 +16132,13 @@ e.g. to stop a layer from emitting pointer events while it is being edited.</p>
 		<td><code><b>getAttribution</b>()</code></td>
 		<td><code>String</code></td>
 		<td><p>Used by the <code>attribution control</code>, returns the <a href="#gridlayer-attribution">attribution option</a>.</p>
+</td>
+	</tr>
+	<tr id='circle-setattribution'>
+		<td><code><b>setAttribution</b>(<nobr>&lt;String&gt;</nobr> <i>attribution</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#layer-attribution">attribution option</a>, also in the attribution
+control while the layer is on the map.</p>
 </td>
 	</tr>
 </tbody></table>
@@ -16505,6 +16715,13 @@ Not effective if the <code>renderer</code> option is set (the <code>renderer</co
 		<td><code>null</code></td>
 		<td>String to be shown in the attribution control, e.g. &quot;© OpenStreetMap contributors&quot;. It describes the layer data and is often a legal obligation towards copyright holders and tile providers.</td>
 	</tr>
+	<tr id='circlemarker-attributionorder'>
+		<td><code><b>attributionOrder</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>The position of the attribution in the attribution control: attributions are
+sorted by it, then by the order of adding, e.g. <code>1</code> keeps a legend last.</td>
+	</tr>
 </tbody></table>
 
 </section></div>
@@ -16861,6 +17078,13 @@ e.g. to stop a layer from emitting pointer events while it is being edited.</p>
 		<td><code><b>getAttribution</b>()</code></td>
 		<td><code>String</code></td>
 		<td><p>Used by the <code>attribution control</code>, returns the <a href="#gridlayer-attribution">attribution option</a>.</p>
+</td>
+	</tr>
+	<tr id='circlemarker-setattribution'>
+		<td><code><b>setAttribution</b>(<nobr>&lt;String&gt;</nobr> <i>attribution</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#layer-attribution">attribution option</a>, also in the attribution
+control while the layer is on the map.</p>
 </td>
 	</tr>
 </tbody></table>
@@ -17299,6 +17523,13 @@ Not effective if the <code>renderer</code> option is set (the <code>renderer</co
 		<td><code>null</code></td>
 		<td>String to be shown in the attribution control, e.g. &quot;© OpenStreetMap contributors&quot;. It describes the layer data and is often a legal obligation towards copyright holders and tile providers.</td>
 	</tr>
+	<tr id='svg-attributionorder'>
+		<td><code><b>attributionOrder</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>The position of the attribution in the attribution control: attributions are
+sorted by it, then by the order of adding, e.g. <code>1</code> keeps a legend last.</td>
+	</tr>
 </tbody></table>
 
 </section></div>
@@ -17486,6 +17717,13 @@ its map has moved</td>
 		<td><code><b>getAttribution</b>()</code></td>
 		<td><code>String</code></td>
 		<td><p>Used by the <code>attribution control</code>, returns the <a href="#gridlayer-attribution">attribution option</a>.</p>
+</td>
+	</tr>
+	<tr id='svg-setattribution'>
+		<td><code><b>setAttribution</b>(<nobr>&lt;String&gt;</nobr> <i>attribution</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#layer-attribution">attribution option</a>, also in the attribution
+control while the layer is on the map.</p>
 </td>
 	</tr>
 </tbody></table>
@@ -17905,6 +18143,13 @@ Not effective if the <code>renderer</code> option is set (the <code>renderer</co
 		<td><code>null</code></td>
 		<td>String to be shown in the attribution control, e.g. &quot;© OpenStreetMap contributors&quot;. It describes the layer data and is often a legal obligation towards copyright holders and tile providers.</td>
 	</tr>
+	<tr id='canvas-attributionorder'>
+		<td><code><b>attributionOrder</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>The position of the attribution in the attribution control: attributions are
+sorted by it, then by the order of adding, e.g. <code>1</code> keeps a legend last.</td>
+	</tr>
 </tbody></table>
 
 </section></div>
@@ -18092,6 +18337,13 @@ its map has moved</td>
 		<td><code><b>getAttribution</b>()</code></td>
 		<td><code>String</code></td>
 		<td><p>Used by the <code>attribution control</code>, returns the <a href="#gridlayer-attribution">attribution option</a>.</p>
+</td>
+	</tr>
+	<tr id='canvas-setattribution'>
+		<td><code><b>setAttribution</b>(<nobr>&lt;String&gt;</nobr> <i>attribution</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#layer-attribution">attribution option</a>, also in the attribution
+control while the layer is on the map.</p>
 </td>
 	</tr>
 </tbody></table>
@@ -18481,6 +18733,13 @@ Not effective if the <code>renderer</code> option is set (the <code>renderer</co
 		<td><code>null</code></td>
 		<td>String to be shown in the attribution control, e.g. &quot;© OpenStreetMap contributors&quot;. It describes the layer data and is often a legal obligation towards copyright holders and tile providers.</td>
 	</tr>
+	<tr id='layergroup-attributionorder'>
+		<td><code><b>attributionOrder</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>The position of the attribution in the attribution control: attributions are
+sorted by it, then by the order of adding, e.g. <code>1</code> keeps a legend last.</td>
+	</tr>
 </tbody></table>
 
 </section></div>
@@ -18817,6 +19076,13 @@ e.g. to stop a layer from emitting pointer events while it is being edited.</p>
 		<td><code><b>getAttribution</b>()</code></td>
 		<td><code>String</code></td>
 		<td><p>Used by the <code>attribution control</code>, returns the <a href="#gridlayer-attribution">attribution option</a>.</p>
+</td>
+	</tr>
+	<tr id='layergroup-setattribution'>
+		<td><code><b>setAttribution</b>(<nobr>&lt;String&gt;</nobr> <i>attribution</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#layer-attribution">attribution option</a>, also in the attribution
+control while the layer is on the map.</p>
 </td>
 	</tr>
 </tbody></table>
@@ -19212,6 +19478,13 @@ Not effective if the <code>renderer</code> option is set (the <code>renderer</co
 		<td><code>null</code></td>
 		<td>String to be shown in the attribution control, e.g. &quot;© OpenStreetMap contributors&quot;. It describes the layer data and is often a legal obligation towards copyright holders and tile providers.</td>
 	</tr>
+	<tr id='featuregroup-attributionorder'>
+		<td><code><b>attributionOrder</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>The position of the attribution in the attribution control: attributions are
+sorted by it, then by the order of adding, e.g. <code>1</code> keeps a legend last.</td>
+	</tr>
 </tbody></table>
 
 </section></div>
@@ -19595,6 +19868,13 @@ Returns a <a href="https://en.wikipedia.org/wiki/GeoJSON"><code>GeoJSON</code></
 		<td><code><b>getAttribution</b>()</code></td>
 		<td><code>String</code></td>
 		<td><p>Used by the <code>attribution control</code>, returns the <a href="#gridlayer-attribution">attribution option</a>.</p>
+</td>
+	</tr>
+	<tr id='featuregroup-setattribution'>
+		<td><code><b>setAttribution</b>(<nobr>&lt;String&gt;</nobr> <i>attribution</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#layer-attribution">attribution option</a>, also in the attribution
+control while the layer is on the map.</p>
 </td>
 	</tr>
 </tbody></table>
@@ -20067,6 +20347,13 @@ Not effective if the <code>renderer</code> option is set (the <code>renderer</co
 		<td><code>null</code></td>
 		<td>String to be shown in the attribution control, e.g. &quot;© OpenStreetMap contributors&quot;. It describes the layer data and is often a legal obligation towards copyright holders and tile providers.</td>
 	</tr>
+	<tr id='geojson-attributionorder'>
+		<td><code><b>attributionOrder</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>The position of the attribution in the attribution control: attributions are
+sorted by it, then by the order of adding, e.g. <code>1</code> keeps a legend last.</td>
+	</tr>
 </tbody></table>
 
 </section></div>
@@ -20491,6 +20778,13 @@ Returns a <a href="https://en.wikipedia.org/wiki/GeoJSON"><code>GeoJSON</code></
 		<td><code><b>getAttribution</b>()</code></td>
 		<td><code>String</code></td>
 		<td><p>Used by the <code>attribution control</code>, returns the <a href="#gridlayer-attribution">attribution option</a>.</p>
+</td>
+	</tr>
+	<tr id='geojson-setattribution'>
+		<td><code><b>setAttribution</b>(<nobr>&lt;String&gt;</nobr> <i>attribution</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#layer-attribution">attribution option</a>, also in the attribution
+control while the layer is on the map.</p>
 </td>
 	</tr>
 </tbody></table>
@@ -21082,6 +21376,13 @@ Useful for raster data, pixel art or scientific imagery.</td>
 		<td><code>null</code></td>
 		<td>String to be shown in the attribution control, e.g. &quot;© OpenStreetMap contributors&quot;. It describes the layer data and is often a legal obligation towards copyright holders and tile providers.</td>
 	</tr>
+	<tr id='gridlayer-attributionorder'>
+		<td><code><b>attributionOrder</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>The position of the attribution in the attribution control: attributions are
+sorted by it, then by the order of adding, e.g. <code>1</code> keeps a legend last.</td>
+	</tr>
 </tbody></table>
 
 </section></div>
@@ -21371,6 +21672,13 @@ is specified, it must be called when the tile has finished loading and drawing.<
 		<td><code><b>getAttribution</b>()</code></td>
 		<td><code>String</code></td>
 		<td><p>Used by the <code>attribution control</code>, returns the <a href="#gridlayer-attribution">attribution option</a>.</p>
+</td>
+	</tr>
+	<tr id='gridlayer-setattribution'>
+		<td><code><b>setAttribution</b>(<nobr>&lt;String&gt;</nobr> <i>attribution</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#layer-attribution">attribution option</a>, also in the attribution
+control while the layer is on the map.</p>
 </td>
 	</tr>
 </tbody></table>
@@ -23376,9 +23684,11 @@ Without <code>cls</code>, runs the hooks of all classes of this object.</p>
 </td>
 	</tr>
 	<tr id='attributioncontrol-addattribution'>
-		<td><code><b>addAttribution</b>(<nobr>&lt;String&gt;</nobr> <i>text</i>)</code></td>
+		<td><code><b>addAttribution</b>(<nobr>&lt;String&gt;</nobr> <i>text</i>, <nobr>&lt;Number&gt;</nobr> <i>order?</i>)</code></td>
 		<td><code>this</code></td>
-		<td><p>Adds an attribution text (e.g. <code>'&amp;copy; OpenStreetMap contributors'</code>).</p>
+		<td><p>Adds an attribution text (e.g. <code>'&amp;copy; OpenStreetMap contributors'</code>). Attributions
+are sorted by <code>order</code> (default 0, see the layer option <code>attributionOrder</code>), then by
+the order of adding.</p>
 </td>
 	</tr>
 	<tr id='attributioncontrol-removeattribution'>
@@ -26900,6 +27210,13 @@ Not effective if the <code>renderer</code> option is set (the <code>renderer</co
 		<td><code>null</code></td>
 		<td>String to be shown in the attribution control, e.g. &quot;© OpenStreetMap contributors&quot;. It describes the layer data and is often a legal obligation towards copyright holders and tile providers.</td>
 	</tr>
+	<tr id='layer-attributionorder'>
+		<td><code><b>attributionOrder</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>The position of the attribution in the attribution control: attributions are
+sorted by it, then by the order of adding, e.g. <code>1</code> keeps a legend last.</td>
+	</tr>
 </tbody></table>
 
 </section>
@@ -27033,6 +27350,13 @@ Not effective if the <code>renderer</code> option is set (the <code>renderer</co
 		<td><code><b>getAttribution</b>()</code></td>
 		<td><code>String</code></td>
 		<td><p>Used by the <code>attribution control</code>, returns the <a href="#gridlayer-attribution">attribution option</a>.</p>
+</td>
+	</tr>
+	<tr id='layer-setattribution'>
+		<td><code><b>setAttribution</b>(<nobr>&lt;String&gt;</nobr> <i>attribution</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#layer-attribution">attribution option</a>, also in the attribution
+control while the layer is on the map.</p>
 </td>
 	</tr>
 </tbody></table>
@@ -27413,6 +27737,13 @@ Not effective if the <code>renderer</code> option is set (the <code>renderer</co
 		<td><code>null</code></td>
 		<td>String to be shown in the attribution control, e.g. &quot;© OpenStreetMap contributors&quot;. It describes the layer data and is often a legal obligation towards copyright holders and tile providers.</td>
 	</tr>
+	<tr id='interactive-layer-attributionorder'>
+		<td><code><b>attributionOrder</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>The position of the attribution in the attribution control: attributions are
+sorted by it, then by the order of adding, e.g. <code>1</code> keeps a legend last.</td>
+	</tr>
 </tbody></table>
 
 </section></div>
@@ -27648,6 +27979,13 @@ e.g. to stop a layer from emitting pointer events while it is being edited.</p>
 		<td><code><b>getAttribution</b>()</code></td>
 		<td><code>String</code></td>
 		<td><p>Used by the <code>attribution control</code>, returns the <a href="#gridlayer-attribution">attribution option</a>.</p>
+</td>
+	</tr>
+	<tr id='interactive-layer-setattribution'>
+		<td><code><b>setAttribution</b>(<nobr>&lt;String&gt;</nobr> <i>attribution</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#layer-attribution">attribution option</a>, also in the attribution
+control while the layer is on the map.</p>
 </td>
 	</tr>
 </tbody></table>
@@ -28519,6 +28857,13 @@ Not effective if the <code>renderer</code> option is set (the <code>renderer</co
 		<td><code>null</code></td>
 		<td>String to be shown in the attribution control, e.g. &quot;© OpenStreetMap contributors&quot;. It describes the layer data and is often a legal obligation towards copyright holders and tile providers.</td>
 	</tr>
+	<tr id='blanketoverlay-attributionorder'>
+		<td><code><b>attributionOrder</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>The position of the attribution in the attribution control: attributions are
+sorted by it, then by the order of adding, e.g. <code>1</code> keeps a legend last.</td>
+	</tr>
 </tbody></table>
 
 </section></div>
@@ -28739,6 +29084,13 @@ any map state change (including <em>during</em> pan/zoom animations).</p>
 		<td><code><b>getAttribution</b>()</code></td>
 		<td><code>String</code></td>
 		<td><p>Used by the <code>attribution control</code>, returns the <a href="#gridlayer-attribution">attribution option</a>.</p>
+</td>
+	</tr>
+	<tr id='blanketoverlay-setattribution'>
+		<td><code><b>setAttribution</b>(<nobr>&lt;String&gt;</nobr> <i>attribution</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#layer-attribution">attribution option</a>, also in the attribution
+control while the layer is on the map.</p>
 </td>
 	</tr>
 </tbody></table>
@@ -29094,6 +29446,13 @@ Not effective if the <code>renderer</code> option is set (the <code>renderer</co
 		<td><code>null</code></td>
 		<td>String to be shown in the attribution control, e.g. &quot;© OpenStreetMap contributors&quot;. It describes the layer data and is often a legal obligation towards copyright holders and tile providers.</td>
 	</tr>
+	<tr id='renderer-attributionorder'>
+		<td><code><b>attributionOrder</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>The position of the attribution in the attribution control: attributions are
+sorted by it, then by the order of adding, e.g. <code>1</code> keeps a legend last.</td>
+	</tr>
 </tbody></table>
 
 </section></div>
@@ -29274,6 +29633,13 @@ its map has moved</td>
 		<td><code><b>getAttribution</b>()</code></td>
 		<td><code>String</code></td>
 		<td><p>Used by the <code>attribution control</code>, returns the <a href="#gridlayer-attribution">attribution option</a>.</p>
+</td>
+	</tr>
+	<tr id='renderer-setattribution'>
+		<td><code><b>setAttribution</b>(<nobr>&lt;String&gt;</nobr> <i>attribution</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#layer-attribution">attribution option</a>, also in the attribution
+control while the layer is on the map.</p>
 </td>
 	</tr>
 </tbody></table>

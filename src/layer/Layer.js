@@ -38,6 +38,11 @@ export class Layer extends Evented {
 			// String to be shown in the attribution control, e.g. "&copy; OpenStreetMap contributors". It describes the layer data and is often a legal obligation towards copyright holders and tile providers.
 			attribution: null,
 
+			// @option attributionOrder: Number = 0
+			// The position of the attribution in the attribution control: attributions are
+			// sorted by it, then by the order of adding, e.g. `1` keeps a legend last.
+			attributionOrder: 0,
+
 			bubblingPointerEvents: true
 		});
 	}
@@ -105,6 +110,17 @@ export class Layer extends Evented {
 	// Used by the `attribution control`, returns the [attribution option](#gridlayer-attribution).
 	getAttribution() {
 		return this.options.attribution;
+	}
+
+	// @method setAttribution(attribution: String): this
+	// Changes the [attribution option](#layer-attribution), also in the attribution
+	// control while the layer is on the map.
+	setAttribution(attribution) {
+		const control = this._map?.attributionControl;
+		control?.removeAttribution(this.getAttribution());
+		Util.setOptions(this, {attribution});
+		control?.addAttribution(this.getAttribution(), this.options.attributionOrder);
+		return this;
 	}
 
 	_layerAdd(e) {

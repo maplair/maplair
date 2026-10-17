@@ -41,6 +41,7 @@ export class AttributionControl extends Control {
 		}
 
 		this._attributions = {};
+		this._orders = {};
 
 		this.callInitHooks(AttributionControl);
 	}
@@ -53,7 +54,7 @@ export class AttributionControl extends Control {
 		// TODO ugly, refactor
 		for (const layer of Object.values(map._layers)) {
 			if (layer.getAttribution) {
-				this.addAttribution(layer.getAttribution());
+				this.addAttribution(layer.getAttribution(), layer.options?.attributionOrder);
 			}
 		}
 
@@ -70,7 +71,7 @@ export class AttributionControl extends Control {
 
 	_addAttribution(ev) {
 		if (ev.layer.getAttribution) {
-			this.addAttribution(ev.layer.getAttribution());
+			this.addAttribution(ev.layer.getAttribution(), ev.layer.options?.attributionOrder);
 			ev.layer.once('remove', () => this.removeAttribution(ev.layer.getAttribution()));
 		}
 	}
@@ -83,11 +84,14 @@ export class AttributionControl extends Control {
 		return this;
 	}
 
-	// @method addAttribution(text: String): this
-	// Adds an attribution text (e.g. `'&copy; OpenStreetMap contributors'`).
-	addAttribution(text) {
+	// @method addAttribution(text: String, order?: Number): this
+	// Adds an attribution text (e.g. `'&copy; OpenStreetMap contributors'`). Attributions
+	// are sorted by `order` (default 0, see the layer option `attributionOrder`), then by
+	// the order of adding.
+	addAttribution(text, order = 0) {
 		if (!text) { return this; }
 
+		this._orders[text] = order;
 		if (!this._attributions[text]) {
 			this._attributions[text] = 0;
 		}
@@ -114,7 +118,8 @@ export class AttributionControl extends Control {
 	_update() {
 		if (!this._map) { return; }
 
-		const attribs = Object.keys(this._attributions).filter(i => this._attributions[i]);
+		const attribs = Object.keys(this._attributions).filter(i => this._attributions[i])
+			.sort((a, b) => this._orders[a] - this._orders[b]);
 
 		const prefixAndAttribs = [];
 
