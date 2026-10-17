@@ -283,3 +283,141 @@ merging with CSS transitions.
 * [#9115](https://github.com/Leaflet/Leaflet/issues/9115) dark mode for controls and popups (`prefers-color-scheme`)
 * [#7117](https://github.com/Leaflet/Leaflet/issues/7117) requesting tiles via POST (partly possible with `fetchOptions`)
 * [#8277](https://github.com/Leaflet/Leaflet/issues/8277) `ImageOverlay.redraw()`
+
+## Round 3: features of popular plugins
+
+Widely used Leaflet plugins (by GitHub stars) whose features fit into Maplair
+core without exploding complexity or bundle size. Each is an opt-in,
+tree-shakeable module (not registered as default feature in `Map.js`), so maps
+not using it pay nothing; sizes are minified estimates. Suggested order: the
+smallest first (33, 27, 28, 35, 26, 31), then 30, 34, 29, 32, 25, 36.
+
+## 25. Heatmap layer
+
+[Leaflet.heat](https://github.com/Leaflet/Leaflet.heat) (1.7k ⭐) · ~2 kB
+
+`HeatLayer(latlngs, {radius, blur, gradient, max})` extending `BlanketOverlay`
+(canvas, padding and pan/zoom handling for free). Like simpleheat: draw a
+pre-blurred circle per point into a grayscale canvas with alpha = intensity,
+then colorize the pixels with a 256-entry gradient lookup table. Merge points per
+grid cell for speed; redraw on `moveend`/`zoomend`, scale the canvas while
+pinching or with `continuousZoom`.
+
+## 26. Colored markers with glyphs
+
+[Leaflet.awesome-markers](https://github.com/lennardv2/Leaflet.awesome-markers) (1.3k ⭐),
+[leaflet-color-markers](https://github.com/pointhi/leaflet-color-markers) (0.7k ⭐),
+[Leaflet.ExtraMarkers](https://github.com/coryasilva/Leaflet.ExtraMarkers) (0.35k ⭐) · ~1 kB
+
+`SvgIcon({color, glyph, size})` and a `color` option for the default icon: the
+marker is SVG already, so generate it inline with `currentColor` and an optional
+centered glyph (text, emoji or SVG path) – no image per color, retina-sharp. The
+shadow stays `marker-shadow.svg`.
+
+## 27. View in the URL hash
+
+[leaflet-hash](https://github.com/mlevans/leaflet-hash) (0.3k ⭐) · ~0.5 kB
+
+Map option `hash: true` (or a `Hash` helper): on `moveend` with `originalEvent`
+(see 4, avoiding feedback loops), write `#zoom/lat/lng[/bearing]` with
+`history.replaceState`; on `hashchange`, `setView()`. Precision depends on the
+zoom like in the plugin.
+
+## 28. Generic button control
+
+[Leaflet.EasyButton](https://github.com/CliffCloud/Leaflet.EasyButton) (0.5k ⭐) · ~0.5 kB
+
+`ButtonControl({content, title, onClick, states: […]})` with the `<button>` and
+`maplair-bar` markup of the zoom and fullscreen controls (keyboard and ARIA for
+free); optional states switch content and title; `ButtonControl.bar([…])` groups
+buttons. `FullscreenControl` and `RotateControl` could reuse it.
+
+## 29. Overview map
+
+[Leaflet-MiniMap](https://github.com/Norkart/Leaflet-MiniMap) (0.4k ⭐) · ~1.5 kB
+
+`MiniMapControl(layer, {zoomOffset: -5, toggleable})`: a second, non-interactive
+map in the control following `move` of the main map; the view's bounds drawn as
+rectangle (as polygon of the rotated corners on a rotated map); dragging it pans
+the main map; a toggle button collapses it.
+
+## 30. Side-by-side comparison
+
+[leaflet-side-by-side](https://github.com/digidem/leaflet-side-by-side) (0.4k ⭐) · ~1 kB
+
+`SideBySideControl(leftLayers, rightLayers)`: a draggable divider whose position
+clips the layer containers with `clip-path: inset()`, updated on `move`,
+`resize` and dragging; the divider is a `role="slider"` moved with arrow keys.
+
+## 31. Context menu
+
+[Leaflet.contextmenu](https://github.com/aratcliffe/Leaflet.contextmenu) (0.4k ⭐) · ~1.5 kB
+
+Map and layer option `contextmenu: [{text, callback, icon}, '-']`: on the
+`contextmenu` event (also simulated on long tap), show a `popover="auto"` menu
+(light dismiss and Escape for free) at the pointer, kept within the viewport;
+callbacks get `{latlng, containerPoint, relatedTarget}`; arrow-key navigation
+with `role="menu"`.
+
+## 32. Arrowheads and text along paths
+
+[Leaflet.PolylineDecorator](https://github.com/bbecquet/Leaflet.PolylineDecorator) (0.5k ⭐),
+[Leaflet.TextPath](https://github.com/makinacorpus/Leaflet.TextPath) (0.3k ⭐) · ~1.5 kB
+
+Path options `arrowheads: {size, frequency}` and `text: {content, repeat,
+offset}`. SVG: a shared `<marker>` in `<defs>` and `<textPath>` referring to the
+path's `id`. Canvas: walk the projected segments and draw arrowheads and text at
+the given distances and angles. Recomputed in `_update()`.
+
+## 33. Rotated marker icons
+
+[Leaflet.RotatedMarker](https://github.com/bbecquet/Leaflet.RotatedMarker) (0.27k ⭐) · ~0.3 kB
+
+Marker option `rotationAngle` and `setRotationAngle()`, rotating around the icon
+anchor (or `rotationOrigin`), e.g. for vehicle headings: extends the upright
+rotation of `_setPos()` (angle + bearing, or the angle only with
+`rotateWithView`).
+
+## 34. Animated markers and paths
+
+[Leaflet.MovingMarker](https://github.com/ewoken/Leaflet.MovingMarker) (0.35k ⭐),
+[Leaflet.AnimatedMarker](https://github.com/openplans/Leaflet.AnimatedMarker) (0.38k ⭐),
+[leaflet-ant-path](https://github.com/rubenspgcavalcante/leaflet-ant-path) (0.48k ⭐) · ~1 kB
+
+`marker.moveTo(latlng, {duration})` and `marker.moveAlong(latlngs, {speed})`
+interpolating in projected coordinates frame by frame, firing `move`,
+cancellable, with an `end` event. Path option `animate: {dashArray, speed}` for
+"marching ants" with a CSS animation of `stroke-dashoffset` (canvas: redraw with
+`lineDashOffset`). Both respect `prefers-reduced-motion`.
+
+## 35. Synchronized maps
+
+[Leaflet.Sync](https://github.com/jieter/Leaflet.Sync) (0.25k ⭐) · ~0.7 kB
+
+`map.sync(otherMap, {offset})`/`unsync()`: on user-caused `move`/`zoom` (see 4),
+call `_move()` on the other maps without animation and mirror
+`movestart`/`moveend`; changes by code on the synced maps are ignored, so there
+are no loops. Optionally sync the bearing.
+
+## 36. Tile provider presets
+
+[leaflet-providers](https://github.com/leaflet-extras/leaflet-providers) (2.4k ⭐) · ~0.5 kB per provider
+
+`TileLayer.provider('OpenStreetMap.HOT', {apikey})` backed by a separate data
+module (`maplair/providers`) mapping names to `{url, attribution, options}`; a
+small curated set of free providers in core, the full list could be a separate
+package. Documents the required attributions.
+
+## Covered elsewhere or left out
+
+* Already covered: Leaflet.markercluster (24), leaflet-locatecontrol (23),
+  Leaflet.GestureHandling (13), Leaflet.fullscreen (done), Leaflet.label
+  (tooltips), OverlappingMarkerSpiderfier (`DisplaceHandler`)
+* Too large or specialized: drawing and editing (leaflet-geoman, Leaflet.draw,
+  Leaflet.Editable), routing and geocoding (external services), esri-leaflet,
+  vector tiles (VectorGrid, protomaps-leaflet), WebGL renderers (Leaflet.glify,
+  Leaflet.PixiOverlay), image export (leaflet-image, leaflet-easyPrint),
+  Leaflet.TimeDimension, elevation profiles (d3)
+* Near misses: grouped layers control (leaflet-groupedlayercontrol,
+  leaflet-panel-layers), measuring (leaflet-measure), geometry utilities
+  (Leaflet.GeometryUtil), GPX/KML loading (leaflet-gpx, leaflet-omnivore)
