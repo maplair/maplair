@@ -652,6 +652,8 @@ attribution or a legend control).
 
 ## 51. Categorized and graduated symbology with a legend
 
+**Status:** implemented in 578aed6c, also `Classification.equalInterval()`. Not yet: a checkbox per class and highlighting on hover. The legend sits above the attribution (position `bottomright`) instead of inside it.
+
 Effort: medium · ~2 kB
 
 Thematic maps style features by class, in QGIS terms with a *categorized*
@@ -744,8 +746,8 @@ const stations = new GeoJSON(null, {
 	style: temperature.style, // fillColor of the class
 }).addTo(map);
 
-// here inside the attribution, also collecting getLegend() of all layers
-const legend = new LegendControl({container: 'attribution', featureCount: true}).addTo(map);
+// above the attribution, also collecting getLegend() of all layers
+const legend = new LegendControl({featureCount: true, bar: true}).addTo(map);
 legend.addClassification(stations, temperature);
 
 // reloading every 10 minutes restyles the markers and updates the counts
