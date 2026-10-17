@@ -466,15 +466,173 @@ package. Documents the required attributions.
 
 * Already covered: Leaflet.markercluster (24), leaflet-locatecontrol (23),
   Leaflet.GestureHandling (13), Leaflet.fullscreen (done), Leaflet.label
-  (tooltips), OverlappingMarkerSpiderfier (`DisplaceHandler`)
+  (tooltips), OverlappingMarkerSpiderfier (`DisplaceHandler`), `mix-blend-mode`
+  for overlays (`className` option)
 * Too large or specialized: drawing and editing (leaflet-geoman, Leaflet.draw,
   Leaflet.Editable), routing and geocoding (external services), esri-leaflet,
   vector tiles (VectorGrid, protomaps-leaflet), WebGL renderers (Leaflet.glify,
   Leaflet.PixiOverlay), image export (leaflet-image, leaflet-easyPrint),
-  Leaflet.TimeDimension, elevation profiles (d3)
-* Near misses: grouped layers control (leaflet-groupedlayercontrol,
-  leaflet-panel-layers), measuring (leaflet-measure), geometry utilities
+  elevation profiles (d3), geometry libraries (Turf; `LatLngBounds.intersects()`
+  covers simple pre-filters)
+* Near misses: measuring (leaflet-measure), geometry utilities
   (Leaflet.GeometryUtil), GPX/KML loading (leaflet-gpx, leaflet-omnivore)
+
+## Round 4: public API instead of patching
+
+Features that Leaflet apps and plugins commonly build by monkey-patching or with
+private API (`_limitOffset`, `_controlCorners`, `_layers`, `_openTooltip`, …).
+Suggested order: quick wins first (47, 43, 42, 49, 48, 45, 46, 50), then 37, 44,
+41, 38, and the large ones last (39, 40).
+
+## 37. Tooltip auto-panning and placement preferences
+
+Effort: small–medium
+
+Tooltip option `autoPan` (today `Tooltip._adjustPan()` is a no-op): pan the map
+so that an opened tooltip is in view, like popups, but limited by `maxBounds`
+(public `map.limitOffset(offset)` instead of `_limitOffset()`; `panBy()` itself
+overshoots and snaps back on `moveend`). The `auto` placement counts the space
+gained by panning. Option `autoDirections: ['top', 'bottom', 'right', 'left']`
+sets the order of preference (e.g. above/below first, sides only as
+fallback). `overflow: 'horizontal'` lets the tooltip extend beyond the map
+sideways only, so that it stays below sticky page headers.
+
+## 38. Tap-to-pin tooltips on touch screens
+
+Effort: small–medium
+
+Tooltip option `pinOnTap` (default: `matchMedia('(hover: none)')`): without
+hover, a tap opens and pins the tooltip instead of firing `click`; tapping
+elsewhere (also outside of the map) or Escape closes it; at most one pinned
+tooltip per map; a pinned tooltip is `interactive`, so links in it work. With
+hover, the default stays: hover opens, click acts. Events `tooltippin`/
+`tooltipunpin`. Replaces switching off the private `_openTooltip` and
+`_addFocusListeners` listeners.
+
+## 39. Search control
+
+[leaflet-search](https://github.com/stefanocudini/leaflet-search) · effort: medium
+
+`SearchControl({layer, property, zoom, placeholder})` searching the features of
+a layer group by a property, or with a `search(text) → Promise<[{label, latlng,
+layer}]>` callback (geocoders). An expanding `<input type="search">` with an
+ARIA combobox and listbox, keyboard navigation and translated texts. On
+selection: `setView()`/`fitBounds()`, a highlight ring and `searchfound` with
+the layer (the app opens its tooltip). The ring is a standalone
+`HighlightMarker` (pulsing circle, still with `prefers-reduced-motion`), also
+used for tapped markers.
+
+## 40. Time dimension: animated WMS time series
+
+[Leaflet.TimeDimension](https://github.com/socib/Leaflet.TimeDimension) (with
+iso8601-js-period), e.g. an animation of the last 24 h · effort: medium–large
+
+Opt-in module. `WMSTileLayer` option `time` and `setTime(date)` setting the
+`TIME` parameter with the flicker-free swapping of 7, prefetching the tiles of
+the next step. `TimeControl({times | interval: 'PT24H/2026-10-17T12:00Z',
+period: 'PT5M', loop, transitionTime})`: play/pause/step buttons (reusing 28)
+and a range slider; advances only once the frame has loaded (`load`), fires
+`timechange`. Parses ISO 8601 intervals and durations itself; formats dates with
+`Intl.DateTimeFormat` or an option `formatTime` (instead of overriding
+`_getDisplayDateFormat`). `ImageOverlay` takes part via a URL function of the
+time.
+
+## 41. Layers control: inline layout, groups and public API
+
+Effort: small–medium
+
+Option `layout: 'inline'`: never collapsed, entries next to each other, styled
+like the attribution. `addBaseLayer(layer, name, {group})` (also for overlays)
+renders the entries of a group under the group name once
+(`<fieldset>`/`<legend>`); covers leaflet-groupedlayercontrol. `getLayers()`
+returning `{layer, name, overlay, group}` instead of `_layers`;
+`selectLayer(layer)` behaving like a user click (`baselayerchange` with
+`originalEvent`, see 4); option `toggleContent` for a custom toggle icon (e.g. a
+filter) instead of styling `_layersLink`.
+
+## 42. Control order, text control and access keys
+
+Effort: small
+
+Control option `order`: controls in a corner are sorted by it instead of by the
+order of adding (instead of inserting into `_controlCorners` to put controls
+first). `TextControl({content})` with `setContent(html | element)`, hidden while
+empty (content passed through the sanitizer of 20). `ButtonControl` option
+`accessKey`, shown in the title and as `aria-keyshortcuts`.
+
+## 43. Changing attributions and their order
+
+Effort: small
+
+`layer.setAttribution(text)` updates the attribution control while the layer is
+on the map (instead of `removeAttribution()`, mutating `options.attribution` and
+`addAttribution()`). Layer option `attributionOrder` (a number, default 0):
+attributions are sorted by it, then by the order of adding, so that e.g. a
+legend stays last when another layer's attribution changes (today needs deleting
+from `_attributions`).
+
+## 44. Refreshing layers
+
+Effort: small–medium
+
+`refresh()` for `TileLayer` (incl. WMS), `ImageOverlay` and URL-backed `GeoJSON`
+(45): reload the current data without flickering, the old tiles or image staying
+until the new ones have loaded (as 7; solves #8277 `ImageOverlay.redraw()`),
+with a cache-busting parameter. Option `refreshInterval`, paused while the page
+is hidden (`visibilitychange`), refreshing once on return.
+
+## 45. GeoJSON from a URL
+
+[leaflet-ajax](https://github.com/calvinmetcalf/leaflet-ajax) · effort: small
+
+`geoJSON(url | Promise, options)` and `layer.load(url, {fetchOptions})`
+returning a promise: replaces the data (`clearLayers()` + `addData()`), aborts a
+running load with an `AbortController`, fires `load`/`error`; option
+`fitBounds` zooms to the data once loaded.
+
+## 46. Zoom-dependent styles
+
+Effort: small–medium
+
+Path options `radius` and `weight` as zoom stops, e.g. `radius: {7: 3.5, 9: 5,
+12: 6.5}` (stepped, or interpolated with `interpolate: true`, like MapLibre's
+zoom expressions), or as function `(zoom) => number`. Re-evaluated on
+`zoomend` (and while zooming with `continuousZoom`), before the relayout of
+`DisplaceHandler`.
+
+## 47. Hidden maps keep their view
+
+Effort: small
+
+The `ResizeObserver` of `trackResize` ignores a zero size, i.e. a container
+hidden with `display: none` (tabs, collapsed panels): the map keeps its size,
+view and `getBounds()` of the last visible state and updates when shown again.
+Today hiding a map collapses its bounds to a point.
+
+## 48. Following another map by bounds
+
+Effort: small
+
+`MapSync` options `oneWay: true` (only follow the other map) and `fit:
+'bounds'`: fit the bounds of the other map instead of copying center and zoom,
+for maps of different sizes such as thumbnails next to the main map.
+
+## 49. Hash: query parameters
+
+Effort: small
+
+`Hash` option `mode: 'query'` (`?zoom=&lat=&lng=` with `history.replaceState`,
+keeping the other parameters of the app). The base layer and the overlays are
+already kept with the `layers` option (2aedd723); in query mode as parameter
+`layers` too.
+
+## 50. WMS legend URL
+
+Effort: small
+
+`wmsLayer.getLegendUrl({layer, width, height})` building the `GetLegendGraphic`
+request with the layer's URL, version and format (e.g. for an `<img>` in the
+attribution or a legend control).
 
 ## Also implemented
 
