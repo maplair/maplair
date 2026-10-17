@@ -1,5 +1,5 @@
 import {expect} from 'vite-plus/test';
-import {CircleMarker, MaplairMap, Path, Polyline} from 'maplair';
+import {CircleMarker, MaplairMap, Polyline} from 'maplair';
 import {createContainer, removeMapContainer} from '../../SpecHelper.js';
 import 'maplair/zoom-styles';
 
@@ -34,19 +34,6 @@ describe('Path: zoom-dependent styles', () => {
 		expect(line._path.getAttribute('stroke-width')).to.equal('2.5');
 		map.setZoom(8);
 		expect(line._path.getAttribute('stroke-width')).to.equal('4');
-	});
-
-	it('interpolates between zoom stops with Path.interpolate()', () => {
-		const weight = Path.interpolate({5: 1, 15: 11});
-		expect(weight(0)).to.equal(1);
-		expect(weight(5)).to.equal(1);
-		expect(weight(7.5)).to.equal(3.5);
-		expect(weight(15)).to.equal(11);
-		expect(weight(20)).to.equal(11);
-
-		const line = new Polyline([[0, 0], [1, 1]], {weight}).addTo(map);
-		map.setZoom(10);
-		expect(line.options.weight).to.equal(6);
 	});
 
 	it('takes zoom-dependent styles from setStyle() and setRadius()', () => {

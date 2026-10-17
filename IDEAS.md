@@ -598,7 +598,7 @@ running load with an `AbortController`, fires `load`/`error`; option
 
 ## 46. Zoom-dependent styles
 
-**Status:** implemented in d6126dda as optional module `maplair/zoom-styles`; interpolation with `Path.interpolate(stops)` instead of an option.
+**Status:** implemented in d6126dda as optional module `maplair/zoom-styles`; no interpolation, apps pass a function of the zoom instead.
 
 Effort: small–medium
 
