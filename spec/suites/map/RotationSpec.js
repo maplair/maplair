@@ -16,6 +16,7 @@ describe('Map: rotation', () => {
 	}
 
 	afterEach(() => {
+		vi.restoreAllMocks();
 		removeMapContainer(map, container);
 	});
 
@@ -84,6 +85,9 @@ describe('Map: rotation', () => {
 			const bearings = [], moveend = vi.fn();
 			map.on('rotate', () => bearings.push(map.getBearing()));
 			map.on('moveend', moveend);
+			// advance the clock in fixed steps, independent of slow CI runners
+			let now = performance.now();
+			vi.spyOn(performance, 'now').mockImplementation(() => (now += 25));
 			map.setBearing(350, {animate: true});
 			await new Promise((resolve) => {
 				map.once('moveend', resolve);
