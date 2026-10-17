@@ -206,6 +206,12 @@
 	image-rendering: pixelated;
 }
 
+/* decorations of paths, see the arrowheads and text options */
+.maplair-path-arrowheads,
+.maplair-path-text {
+	pointer-events: none;
+}
+
 /* animated dashes of paths, see the dashSpeed option */
 .maplair-dash-animated {
 	animation: maplair-dash var(--maplair-dash-duration) linear infinite;

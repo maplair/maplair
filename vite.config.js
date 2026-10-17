@@ -246,7 +246,7 @@ export default defineConfig({
 		},
 		{...packOptions, entry: {maplair: 'src/Maplair.all.js'}, minify: true},
 		// one module per source file, so that bundlers can drop unused modules (see `sideEffects` in package.json)
-		{...packOptions, entry: ['src/Maplair.js', 'src/map/Map.Rotation.js', 'src/layer/marker/Marker.Rotation.js', 'src/layer/marker/Marker.Move.js', 'src/layer/vector/Path.DashAnimation.js'], unbundle: true, outDir: 'dist/esm', banner: undefined},
+		{...packOptions, entry: ['src/Maplair.js', 'src/map/Map.Rotation.js', 'src/layer/marker/Marker.Rotation.js', 'src/layer/marker/Marker.Move.js', 'src/layer/vector/Path.DashAnimation.js', 'src/layer/vector/Polyline.Decorations.js'], unbundle: true, outDir: 'dist/esm', banner: undefined},
 		{...globalPackOptions, entry: {'maplair-global-src': 'src/Maplair.all.js'}},
 		{...globalPackOptions, entry: {'maplair-global': 'src/Maplair.all.js'}, minify: true},
 	],
@@ -260,6 +260,7 @@ export default defineConfig({
 			{find: 'maplair/marker-rotation', replacement: fileURLToPath(new URL('./src/layer/marker/Marker.Rotation.js', import.meta.url))},
 			{find: 'maplair/marker-movement', replacement: fileURLToPath(new URL('./src/layer/marker/Marker.Move.js', import.meta.url))},
 			{find: 'maplair/dash-animation', replacement: fileURLToPath(new URL('./src/layer/vector/Path.DashAnimation.js', import.meta.url))},
+			{find: 'maplair/path-decorations', replacement: fileURLToPath(new URL('./src/layer/vector/Polyline.Decorations.js', import.meta.url))},
 			{find: /^maplair$/, replacement: fileURLToPath(new URL('./src/Maplair.js', import.meta.url))},
 		],
 	},

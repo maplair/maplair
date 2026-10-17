@@ -10876,6 +10876,23 @@ negative for the opposite direction. Not animated with</td>
 		<td>When <code>true</code>, a pointer event on this path will trigger the same event on the map
 (unless <a href="#domevent-stoppropagation"><code>DomEvent.stopPropagation</code></a> is used).</td>
 	</tr>
+	<tr id='path-arrowheads'>
+		<td><code><b>arrowheads</b></code></td>
+		<td><code>Boolean|Object</code></td>
+		<td><code>false</code></td>
+		<td>Arrowheads along a polyline: <code>true</code> for one at the end of each line, or an
+object with the <code>size</code> (in pixels, default <code>10</code>), <code>repeat</code> (an arrowhead
+every that many pixels instead) and <code>color</code> (default: the <code>color</code> of the path).</td>
+	</tr>
+	<tr id='path-text'>
+		<td><code><b>text</b></code></td>
+		<td><code>String|Object</code></td>
+		<td><code>null</code></td>
+		<td>Text along a polyline, e.g. a street name: the text, or an object with the
+<code>content</code>, <code>repeat</code> (repeat the text along the whole line), <code>center</code> (center
+it on the line), <code>offset</code> (in pixels, perpendicular to the line), <code>fontSize</code>
+(in pixels, default <code>12</code>) and <code>color</code> (default: the <code>color</code> of the path).</td>
+	</tr>
 	<tr id='path-renderer'>
 		<td><code><b>renderer</b></code></td>
 		<td><code><a href='#renderer'>Renderer</a></code></td>
@@ -11746,6 +11763,23 @@ negative for the opposite direction. Not animated with</td>
 		<td><code>true</code></td>
 		<td>When <code>true</code>, a pointer event on this path will trigger the same event on the map
 (unless <a href="#domevent-stoppropagation"><code>DomEvent.stopPropagation</code></a> is used).</td>
+	</tr>
+	<tr id='polyline-arrowheads'>
+		<td><code><b>arrowheads</b></code></td>
+		<td><code>Boolean|Object</code></td>
+		<td><code>false</code></td>
+		<td>Arrowheads along a polyline: <code>true</code> for one at the end of each line, or an
+object with the <code>size</code> (in pixels, default <code>10</code>), <code>repeat</code> (an arrowhead
+every that many pixels instead) and <code>color</code> (default: the <code>color</code> of the path).</td>
+	</tr>
+	<tr id='polyline-text'>
+		<td><code><b>text</b></code></td>
+		<td><code>String|Object</code></td>
+		<td><code>null</code></td>
+		<td>Text along a polyline, e.g. a street name: the text, or an object with the
+<code>content</code>, <code>repeat</code> (repeat the text along the whole line), <code>center</code> (center
+it on the line), <code>offset</code> (in pixels, perpendicular to the line), <code>fontSize</code>
+(in pixels, default <code>12</code>) and <code>color</code> (default: the <code>color</code> of the path).</td>
 	</tr>
 	<tr id='polyline-renderer'>
 		<td><code><b>renderer</b></code></td>
@@ -12704,6 +12738,23 @@ negative for the opposite direction. Not animated with</td>
 		<td><code>true</code></td>
 		<td>When <code>true</code>, a pointer event on this path will trigger the same event on the map
 (unless <a href="#domevent-stoppropagation"><code>DomEvent.stopPropagation</code></a> is used).</td>
+	</tr>
+	<tr id='polygon-arrowheads'>
+		<td><code><b>arrowheads</b></code></td>
+		<td><code>Boolean|Object</code></td>
+		<td><code>false</code></td>
+		<td>Arrowheads along a polyline: <code>true</code> for one at the end of each line, or an
+object with the <code>size</code> (in pixels, default <code>10</code>), <code>repeat</code> (an arrowhead
+every that many pixels instead) and <code>color</code> (default: the <code>color</code> of the path).</td>
+	</tr>
+	<tr id='polygon-text'>
+		<td><code><b>text</b></code></td>
+		<td><code>String|Object</code></td>
+		<td><code>null</code></td>
+		<td>Text along a polyline, e.g. a street name: the text, or an object with the
+<code>content</code>, <code>repeat</code> (repeat the text along the whole line), <code>center</code> (center
+it on the line), <code>offset</code> (in pixels, perpendicular to the line), <code>fontSize</code>
+(in pixels, default <code>12</code>) and <code>color</code> (default: the <code>color</code> of the path).</td>
 	</tr>
 	<tr id='polygon-renderer'>
 		<td><code><b>renderer</b></code></td>
@@ -13666,6 +13717,23 @@ negative for the opposite direction. Not animated with</td>
 		<td><code>true</code></td>
 		<td>When <code>true</code>, a pointer event on this path will trigger the same event on the map
 (unless <a href="#domevent-stoppropagation"><code>DomEvent.stopPropagation</code></a> is used).</td>
+	</tr>
+	<tr id='rectangle-arrowheads'>
+		<td><code><b>arrowheads</b></code></td>
+		<td><code>Boolean|Object</code></td>
+		<td><code>false</code></td>
+		<td>Arrowheads along a polyline: <code>true</code> for one at the end of each line, or an
+object with the <code>size</code> (in pixels, default <code>10</code>), <code>repeat</code> (an arrowhead
+every that many pixels instead) and <code>color</code> (default: the <code>color</code> of the path).</td>
+	</tr>
+	<tr id='rectangle-text'>
+		<td><code><b>text</b></code></td>
+		<td><code>String|Object</code></td>
+		<td><code>null</code></td>
+		<td>Text along a polyline, e.g. a street name: the text, or an object with the
+<code>content</code>, <code>repeat</code> (repeat the text along the whole line), <code>center</code> (center
+it on the line), <code>offset</code> (in pixels, perpendicular to the line), <code>fontSize</code>
+(in pixels, default <code>12</code>) and <code>color</code> (default: the <code>color</code> of the path).</td>
 	</tr>
 	<tr id='rectangle-renderer'>
 		<td><code><b>renderer</b></code></td>
@@ -14672,6 +14740,23 @@ negative for the opposite direction. Not animated with</td>
 		<td>When <code>true</code>, a pointer event on this path will trigger the same event on the map
 (unless <a href="#domevent-stoppropagation"><code>DomEvent.stopPropagation</code></a> is used).</td>
 	</tr>
+	<tr id='circle-arrowheads'>
+		<td><code><b>arrowheads</b></code></td>
+		<td><code>Boolean|Object</code></td>
+		<td><code>false</code></td>
+		<td>Arrowheads along a polyline: <code>true</code> for one at the end of each line, or an
+object with the <code>size</code> (in pixels, default <code>10</code>), <code>repeat</code> (an arrowhead
+every that many pixels instead) and <code>color</code> (default: the <code>color</code> of the path).</td>
+	</tr>
+	<tr id='circle-text'>
+		<td><code><b>text</b></code></td>
+		<td><code>String|Object</code></td>
+		<td><code>null</code></td>
+		<td>Text along a polyline, e.g. a street name: the text, or an object with the
+<code>content</code>, <code>repeat</code> (repeat the text along the whole line), <code>center</code> (center
+it on the line), <code>offset</code> (in pixels, perpendicular to the line), <code>fontSize</code>
+(in pixels, default <code>12</code>) and <code>color</code> (default: the <code>color</code> of the path).</td>
+	</tr>
 	<tr id='circle-renderer'>
 		<td><code><b>renderer</b></code></td>
 		<td><code><a href='#renderer'>Renderer</a></code></td>
@@ -15620,6 +15705,23 @@ negative for the opposite direction. Not animated with</td>
 		<td><code>true</code></td>
 		<td>When <code>true</code>, a pointer event on this path will trigger the same event on the map
 (unless <a href="#domevent-stoppropagation"><code>DomEvent.stopPropagation</code></a> is used).</td>
+	</tr>
+	<tr id='circlemarker-arrowheads'>
+		<td><code><b>arrowheads</b></code></td>
+		<td><code>Boolean|Object</code></td>
+		<td><code>false</code></td>
+		<td>Arrowheads along a polyline: <code>true</code> for one at the end of each line, or an
+object with the <code>size</code> (in pixels, default <code>10</code>), <code>repeat</code> (an arrowhead
+every that many pixels instead) and <code>color</code> (default: the <code>color</code> of the path).</td>
+	</tr>
+	<tr id='circlemarker-text'>
+		<td><code><b>text</b></code></td>
+		<td><code>String|Object</code></td>
+		<td><code>null</code></td>
+		<td>Text along a polyline, e.g. a street name: the text, or an object with the
+<code>content</code>, <code>repeat</code> (repeat the text along the whole line), <code>center</code> (center
+it on the line), <code>offset</code> (in pixels, perpendicular to the line), <code>fontSize</code>
+(in pixels, default <code>12</code>) and <code>color</code> (default: the <code>color</code> of the path).</td>
 	</tr>
 	<tr id='circlemarker-renderer'>
 		<td><code><b>renderer</b></code></td>

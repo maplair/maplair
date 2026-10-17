@@ -12,7 +12,8 @@ const features = {
 	'map-rotation': 'maplair-rotate-pane',
 	'marker-rotation': 'setRotationAngle',
 	'marker-movement': 'moveAlong',
-	'dash-animation': 'maplair-dash-animated'
+	'dash-animation': 'maplair-dash-animated',
+	'path-decorations': 'maplair-path-arrowheads'
 };
 
 const base = `import {MaplairMap, TileLayer, Marker, Polyline} from 'maplair';
