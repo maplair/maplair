@@ -3,8 +3,9 @@
 - [ ] Ensure all https://github.com/maplair/maplair/labels/blocker issues and pull requests are resolved.
 - [ ] Update [the changelog](https://github.com/maplair/maplair/blob/main/CHANGELOG.md) since last release and commit.
 - [ ] Make sure all tests pass on CI before proceeding.
-- [ ] Run `pnpm version <patch | minor | major>` (this will bump the version in `package.json` and create a new tag).
+- [ ] Run `pnpm version <patch | minor | major | prerelease>` (this will bump the version in `package.json` and create a new tag); `prerelease` bumps e.g. `4.0.0-alpha.1` to `4.0.0-alpha.2`.
 - [ ] Run `git push --follow-tags` to push the commit created by pnpm to Github (together with the tag).
+  If `main` already contains the docs of the new version (see below), push only the tag first, e.g. `git push origin vX.X.X`, and push `main` once the release is on npm: the website is deployed on every push to `main`, and its CDN links point to the new version.
 - [ ] Wait for the CI to complete and follow the logs to make sure it runs successfully.
 - [ ] Approve the release staged on npm by the CI, with 2FA: `pnpm stage approve` (picks from the staged versions), or on npmjs.com.
   For a pre-release, which is published with its pre-release tag (e.g. `alpha`), also run `pnpm dist-tag add maplair@X.X.X latest` while there's no stable version yet.
