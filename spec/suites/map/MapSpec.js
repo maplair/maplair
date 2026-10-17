@@ -1351,6 +1351,30 @@ describe('Map', () => {
 			});
 		});
 
+		it('keeps the size and the bounds of a hidden map', (done) => {
+			vi.useRealTimers();
+			map.setView([0, 0], 2, {animate: false});
+			const bounds = map.getBounds(),
+			spy = vi.fn();
+			map.on('resize', spy);
+
+			container.style.display = 'none';
+
+			setTimeout(() => {
+				expect(spy).not.toHaveBeenCalled();
+				expect(map.getSize()).to.eql(new Point(100, 100));
+				expect(map.getBounds()).to.eql(bounds);
+
+				container.style.display = '';
+				container.style.width = '200px';
+				map.on('resize', () => {
+					expect(map.getSize().x).to.equal(200);
+					expect(map.getCenter()).to.eqlLatLng(new LatLng(0, 0));
+					done();
+				});
+			}, 50);
+		});
+
 		it('disables auto invalidateSize', (done) => {
 			vi.useRealTimers();
 			map.remove();

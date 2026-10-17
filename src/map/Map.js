@@ -181,6 +181,8 @@ export class MaplairMap extends Evented {
 
 			// @option trackResize: Boolean = true
 			// Whether the map automatically handles browser window resize to update itself.
+			// A hidden map (with the size 0, e.g. `display: none` in an inactive tab) keeps its
+			// size, view and bounds until it is shown again.
 			trackResize: true
 		});
 	}
@@ -1550,7 +1552,12 @@ export class MaplairMap extends Evented {
 
 	_onResize() {
 		cancelAnimationFrame(this._resizeRequest);
-		this._resizeRequest = requestAnimationFrame(() => { this.invalidateSize({debounceMoveend: true}); });
+		this._resizeRequest = requestAnimationFrame(() => {
+			// a hidden map keeps the view of its last visible state
+			if (this._container.clientWidth || this._container.clientHeight) {
+				this.invalidateSize({debounceMoveend: true});
+			}
+		});
 	}
 
 	_onScroll() {
