@@ -2457,6 +2457,107 @@ the coordinates as needed for the precision of a pixel.</td>
 </section>
 
 
+</section><h2 id='mapsync'>MapSync</h2><p>Synchronizes the views (center, zoom and bearing) of several maps, e.g. to
+compare different layers side by side: whenever one of the maps moves (by the
+user or by code, including animations), the other maps follow.</p>
+<p>Inspired by the <a href="https://github.com/jieter/Leaflet.Sync">Leaflet.Sync</a> plugin.</p>
+
+<section>
+<h3 id='mapsync-example'>Usage example</h3>
+
+<section >
+
+
+
+
+
+<pre><code class="language-js">const sync = new MapSync([map1, map2]);
+// later
+sync.remove();
+</code></pre>
+
+
+
+</section>
+
+
+</section><section>
+<h3 id='mapsync-constructor'>Constructor</h3>
+
+<section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Constructor</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='mapsync-mapsync'>
+		<td><code><b>new MapSync</b>(<nobr>&lt;MaplairMap[]&gt;</nobr> <i>maps</i>, <nobr>&lt;<a href='#mapsync-option'>MapSync options</a>&gt;</nobr> <i>options?</i>)</code></td>
+		<td>Synchronizes the views of the given maps, starting with the view of the first map.</td>
+	</tr>
+</tbody></table>
+
+
+</section>
+
+
+</section><section>
+<h3 id='mapsync-option'>Options</h3>
+
+<section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Option</th>
+		<th>Type</th>
+		<th>Default</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='mapsync-bearing'>
+		<td><code><b>bearing</b></code></td>
+		<td><code>Boolean</code></td>
+		<td><code>true</code></td>
+		<td>Whether to synchronize the bearing of rotated maps, see <code>MaplairMap.setBearing()</code>.</td>
+	</tr>
+</tbody></table>
+
+</section>
+
+
+</section><section>
+<h3 id='mapsync-method'>Methods</h3>
+
+<section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Method</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='mapsync-remove'>
+		<td><code><b>remove</b>()</code></td>
+		<td><code>this</code></td>
+		<td><p>Stops synchronizing the maps.</p>
+</td>
+	</tr>
+</tbody></table>
+
+</section>
+
+
 </section><h2 id='marker'>Marker</h2><p>Marker is used to display clickable/draggable icons on the map. Extends <a href="#layer"><code>Layer</code></a>.</p>
 
 <section>
