@@ -1,11 +1,13 @@
 {
 	"A JavaScript library for interactive maps": "Knjižnica JavaScript za interaktivne zemljevide",
+	"All other values": "Vse druge vrednosti",
 	"Close popup": "Zapri pojavno okno",
 	"Divider between the compared layers": "Ločilnik med primerjanimi sloji",
 	"Exit fullscreen": "Izhod iz celozaslonskega načina",
 	"Hide the overview map": "Skrij pregledni zemljevid",
 	"Keyboard shortcuts": "Bližnjice na tipkovnici",
 	"Layers": "Sloji",
+	"Legend": "Legenda",
 	"Map": "Zemljevid",
 	"OpenStreetMap contributors": "sodelavci OpenStreetMap",
 	"Overview map": "Pregledni zemljevid",
@@ -20,5 +22,6 @@
 	"{feet} ft": "{feet} ft",
 	"{kilometers} km": "{kilometers} km",
 	"{meters} m": "{meters} m",
-	"{miles} mi": "{miles} mi"
+	"{miles} mi": "{miles} mi",
+	"{n} features": "Število elementov: {n}"
 }

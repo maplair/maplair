@@ -1,11 +1,13 @@
 {
 	"A JavaScript library for interactive maps": "Ina biblioteca JavaScript per chartas interactivas",
+	"All other values": "Tut las autras valurs",
 	"Close popup": "Serrar il popup",
 	"Divider between the compared layers": "Separader tranter ils nivels cumparads",
 	"Exit fullscreen": "Bandunar il visur entir",
 	"Hide the overview map": "Zuppentar la charta d'survista",
 	"Keyboard shortcuts": "Cumbinaziuns da tastas",
 	"Layers": "Nivels",
+	"Legend": "Legenda",
 	"Map": "Charta",
 	"OpenStreetMap contributors": "contribuents dad OpenStreetMap",
 	"Overview map": "Charta d'survista",
@@ -20,5 +22,6 @@
 	"{feet} ft": "{feet} ft",
 	"{kilometers} km": "{kilometers} km",
 	"{meters} m": "{meters} m",
-	"{miles} mi": "{miles} mi"
+	"{miles} mi": "{miles} mi",
+	"{n} features": "{n} objects"
 }

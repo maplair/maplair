@@ -1,11 +1,13 @@
 {
 	"A JavaScript library for interactive maps": "Knižnica JavaScript pre interaktívne mapy",
+	"All other values": "Všetky ostatné hodnoty",
 	"Close popup": "Zavrieť vyskakovacie okno",
 	"Divider between the compared layers": "Oddeľovač medzi porovnávanými vrstvami",
 	"Exit fullscreen": "Ukončiť celú obrazovku",
 	"Hide the overview map": "Skryť prehľadovú mapu",
 	"Keyboard shortcuts": "Klávesové skratky",
 	"Layers": "Vrstvy",
+	"Legend": "Legenda",
 	"Map": "Mapa",
 	"OpenStreetMap contributors": "prispievatelia OpenStreetMap",
 	"Overview map": "Prehľadová mapa",
@@ -20,5 +22,6 @@
 	"{feet} ft": "{feet} ft",
 	"{kilometers} km": "{kilometers} km",
 	"{meters} m": "{meters} m",
-	"{miles} mi": "{miles} mi"
+	"{miles} mi": "{miles} mi",
+	"{n} features": "Prvkov: {n}"
 }

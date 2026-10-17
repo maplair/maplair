@@ -1,11 +1,13 @@
 {
 	"A JavaScript library for interactive maps": "JavaScript-könyvtár interaktív térképekhez",
+	"All other values": "Minden más érték",
 	"Close popup": "Felugró ablak bezárása",
 	"Divider between the compared layers": "Elválasztó az összehasonlított rétegek között",
 	"Exit fullscreen": "Kilépés a teljes képernyőből",
 	"Hide the overview map": "Áttekintő térkép elrejtése",
 	"Keyboard shortcuts": "Billentyűparancsok",
 	"Layers": "Rétegek",
+	"Legend": "Jelmagyarázat",
 	"Map": "Térkép",
 	"OpenStreetMap contributors": "OpenStreetMap közreműködők",
 	"Overview map": "Áttekintő térkép",
@@ -20,5 +22,6 @@
 	"{feet} ft": "{feet} ft",
 	"{kilometers} km": "{kilometers} km",
 	"{meters} m": "{meters} m",
-	"{miles} mi": "{miles} mi"
+	"{miles} mi": "{miles} mi",
+	"{n} features": "{n} elem"
 }

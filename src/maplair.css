@@ -602,6 +602,72 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	}
 }
 
+/* legend control */
+
+.maplair-control-legend {
+	padding: var(--maplair-spacing-25) var(--maplair-spacing-50);
+	background: var(--maplair-background-color-base);
+	color: var(--maplair-color-base);
+	border-radius: var(--maplair-border-radius-base);
+	box-shadow: var(--maplair-box-shadow-medium);
+	font-size: var(--maplair-font-size-x-small);
+	line-height: var(--maplair-line-height-small);
+	max-height: 50vh;
+	overflow-y: auto;
+
+	&[hidden] {
+		display: none;
+	}
+
+	summary {
+		cursor: pointer;
+		font-weight: bold;
+	}
+
+	ul {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	li {
+		display: flex;
+		align-items: center;
+		gap: var(--maplair-spacing-25);
+	}
+}
+
+.maplair-control-legend-section {
+	margin-top: var(--maplair-spacing-25);
+}
+
+.maplair-control-legend-name {
+	font-weight: bold;
+}
+
+.maplair-control-legend-total,
+.maplair-control-legend-count {
+	color: var(--maplair-color-subtle);
+}
+
+.maplair-control-legend-count {
+	margin-left: auto;
+	padding-left: var(--maplair-spacing-50);
+	font-variant-numeric: tabular-nums;
+}
+
+.maplair-control-legend-patch {
+	flex: none;
+}
+
+.maplair-control-legend-bar {
+	display: flex;
+	height: var(--maplair-spacing-50);
+	margin-top: var(--maplair-spacing-25);
+	border-radius: var(--maplair-border-radius-small);
+	overflow: hidden;
+}
+
 /* attribution and scale controls */
 
 .maplair-container .maplair-control-attribution {

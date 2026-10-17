@@ -31,6 +31,7 @@ This file just defines the order of the classes in the docs.
 @class LayerGroup
 @class FeatureGroup
 @class GeoJSON
+@class Classification
 @class GridLayer
 
 @class LatLng
@@ -44,6 +45,7 @@ This file just defines the order of the classes in the docs.
 @class ZoomControl
 @class AttributionControl
 @class LayersControl
+@class LegendControl
 @class MiniMapControl
 @class ScaleControl
 @class SideBySideControl

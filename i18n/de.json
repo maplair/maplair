@@ -1,11 +1,13 @@
 {
 	"A JavaScript library for interactive maps": "Eine JavaScript-Bibliothek für interaktive Karten",
+	"All other values": "Alle anderen Werte",
 	"Close popup": "Popup schließen",
 	"Divider between the compared layers": "Trenner zwischen den verglichenen Ebenen",
 	"Exit fullscreen": "Vollbild beenden",
 	"Hide the overview map": "Übersichtskarte ausblenden",
 	"Keyboard shortcuts": "Tastenkürzel",
 	"Layers": "Ebenen",
+	"Legend": "Legende",
 	"Map": "Karte",
 	"OpenStreetMap contributors": "OpenStreetMap-Mitwirkende",
 	"Overview map": "Übersichtskarte",
@@ -20,5 +22,6 @@
 	"{feet} ft": "{feet} ft",
 	"{kilometers} km": "{kilometers} km",
 	"{meters} m": "{meters} m",
-	"{miles} mi": "{miles} mi"
+	"{miles} mi": "{miles} mi",
+	"{n} features": "{n} Objekte"
 }

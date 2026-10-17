@@ -2,6 +2,7 @@ export {Layer} from './Layer.js';
 export {LayerGroup} from './LayerGroup.js';
 export {FeatureGroup} from './FeatureGroup.js';
 export {GeoJSON} from './GeoJSON.js';
+export {Classification} from './Classification.js';
 
 export {BlanketOverlay} from './BlanketOverlay.js';
 export {HeatLayer} from './HeatLayer.js';

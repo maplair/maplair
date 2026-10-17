@@ -21406,6 +21406,211 @@ Coordinates values are rounded with <a href="#util-formatnum"><code>formatNum</c
 </section>
 
 
+</section><h2 id='classification'>Classification</h2><p>Classifies features by the value of an attribute, for thematic maps: each class
+has a symbol (path options such as <code>fillColor</code>) and a legend label. A class is
+either given by value (<code>{value: 'S2'}</code>, or several values sharing one class
+<code>{value: ['S1', 'S2']}</code>) or by range (<code>{lower: 0, upper: 10}</code> for
+<code>0 ≤ value &lt; 10</code>, either bound left out for an open end); both kinds may be
+mixed in one classification. A feature is classified by its exact value first,
+then by range, then by legend label, else it falls into the
+<a href="#classification-othervalues"><code>otherValues</code></a> class.</p>
+<p>Use <a href="#classification-style"><code>style</code></a> as <code>style</code> option of <a href="#geojson"><code>GeoJSON</code></a> to style
+the features by their class, and
+<a href="#legendcontrol-addclassification"><code>LegendControl.addClassification()</code></a> to
+show the classes in a legend, with the feature count per class.</p>
+
+<section>
+<h3 id='classification-example'>Usage example</h3>
+
+<section >
+
+
+
+
+
+<pre><code class="language-js">const temperature = new Classification([
+	{value: null, symbol: {fillColor: '#000000'}, legend: 'No data', counted: false},
+	{upper: 0, symbol: {fillColor: '#5bc0de'}, legend: '&lt; 0 °C'},
+	{lower: 0, upper: 10, symbol: {fillColor: '#33ee33'}, legend: '0–10 °C'},
+	{lower: 10, symbol: {fillColor: '#f0a030'}, legend: '≥ 10 °C'}
+], {name: 'Air temperature', value: 'temperature'});
+
+const stations = new GeoJSON(data, {
+	pointToLayer: (feature, latlng) =&gt; new CircleMarker(latlng, {color: '#ffffff'}),
+	style: temperature.style
+}).addTo(map);
+
+temperature.classify(data.features[0]).legend; // e.g. '0–10 °C'
+</code></pre>
+<p>Inspired by the categorized and graduated renderers of <a href="https://qgis.org/">QGIS</a>.</p>
+
+
+
+</section>
+
+
+</section><section>
+<h3 id='classification-constructor'>Constructor</h3>
+
+<section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Constructor</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='classification-classification'>
+		<td><code><b>new Classification</b>(<nobr>&lt;Object[]&gt;</nobr> <i>classes</i>, <nobr>&lt;<a href='#classification-option'>Classification options</a>&gt;</nobr> <i>options?</i>)</code></td>
+		<td>Creates a classification from the given classes. Each class is an object with
+<code>value</code> (a value or an array of values) or <code>lower</code>/<code>upper</code> (a range including
+<code>lower</code>, excluding <code>upper</code>), a <code>symbol</code> (path options), a <code>legend</code> label, and
+<code>counted: false</code> to exclude the class from the feature count (e.g. &quot;no data&quot;).</td>
+	</tr>
+</tbody></table>
+
+
+</section>
+
+
+</section><section>
+<h3 id='classification-option'>Options</h3>
+
+<section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Option</th>
+		<th>Type</th>
+		<th>Default</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='classification-name'>
+		<td><code><b>name</b></code></td>
+		<td><code>String</code></td>
+		<td><code>&#x27;&#x27;</code></td>
+		<td>The name of the classification, shown as title of its legend.</td>
+	</tr>
+	<tr id='classification-value'>
+		<td><code><b>value</b></code></td>
+		<td><code>String|Function</code></td>
+		<td><code>undefined</code></td>
+		<td>The value to classify by: the name of a property of the feature, or a
+function receiving the feature and returning the value. Without it, the
+argument of <code>classify()</code> is the value itself.</td>
+	</tr>
+	<tr id='classification-normalize'>
+		<td><code><b>normalize</b></code></td>
+		<td><code>Function</code></td>
+		<td><code>undefined</code></td>
+		<td>A function applied to the values of the classes and of the features before
+comparing them, for tolerant matching, e.g. <code>v =&gt; String(v).trim().toUpperCase()</code>.</td>
+	</tr>
+	<tr id='classification-othervalues'>
+		<td><code><b>otherValues</b></code></td>
+		<td><code>Object</code></td>
+		<td><code>undefined</code></td>
+		<td>The class of all values not matching any other class, with <code>symbol</code> and
+<code>legend</code> (default &quot;All other values&quot;). Without it, such features are not
+classified.</td>
+	</tr>
+</tbody></table>
+
+</section>
+
+
+</section><section>
+<h3 id='classification-method'>Methods</h3>
+
+<section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Method</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='classification-style'>
+		<td><code><b>style</b>(<nobr>&lt;Object&gt;</nobr> <i>feature</i>)</code></td>
+		<td><code>Object</code></td>
+		<td><p>Returns the symbol of the class of the feature (an empty object for features
+without class), bound to the classification for the <code>style</code> option of <a href="#geojson"><code>GeoJSON</code></a>.</p>
+</td>
+	</tr>
+	<tr id='classification-classify'>
+		<td><code><b>classify</b>(<nobr>&lt;Object&gt;</nobr> <i>feature</i>)</code></td>
+		<td><code>Object</code></td>
+		<td><p>Returns the class of the given GeoJSON feature, of a layer with a <code>feature</code>
+(as created by <a href="#geojson"><code>GeoJSON</code></a>) or, without the <code>value</code> option, of a value: one of the
+classes passed to the constructor, the <code>otherValues</code> class or <code>undefined</code>.</p>
+</td>
+	</tr>
+	<tr id='classification-legenditems'>
+		<td><code><b>legendItems</b>()</code></td>
+		<td><code>Object[]</code></td>
+		<td><p>Returns the items of the legend, <code>{legend, symbol, counted, classes}</code>, in the order
+of the classes and <code>otherValues</code> last. Classes with the same legend label and
+symbol share one item.</p>
+</td>
+	</tr>
+	<tr id='classification-featurecount'>
+		<td><code><b>featureCount</b>(<nobr>&lt;Object[]&gt;</nobr> <i>features</i>)</code></td>
+		<td><code>Object[]</code></td>
+		<td><p>Counts the given features (or layers with a <code>feature</code>) per legend item, returning
+the legend items with <code>count</code> and <code>share</code> (the fraction of the counted features).
+Classes with <code>counted: false</code> get a <code>count</code>, but no <code>share</code>, and do not count
+toward the total.</p>
+</td>
+	</tr>
+</tbody></table>
+
+</section>
+
+
+</section><section>
+<h3 id='classification-function'>Functions</h3>
+
+<section class='collapsable'>
+
+<h4 id='classification-classification-methods'>Classification methods</h4>
+
+
+<table><thead>
+	<tr>
+		<th>Function</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='classification-quantile'>
+		<td><code><b>quantile</b>(<nobr>&lt;Number[]&gt;</nobr> <i>values</i>, <nobr>&lt;Number&gt;</nobr> <i>n</i>)</code></td>
+		<td><code>Object[]</code></td>
+		<td>Returns <code>n</code> ranges <code>{lower, upper}</code> with about the same number of the given values
+each (fewer for repeated values), the first and last range open-ended. Add a
+<code>symbol</code> (and a <code>legend</code>) to each to create a <a href="#classification"><code>Classification</code></a>.</td>
+	</tr>
+	<tr id='classification-equalinterval'>
+		<td><code><b>equalInterval</b>(<nobr>&lt;Number[]&gt;</nobr> <i>values</i>, <nobr>&lt;Number&gt;</nobr> <i>n</i>)</code></td>
+		<td><code>Object[]</code></td>
+		<td>Returns <code>n</code> ranges <code>{lower, upper}</code> of equal width between the minimum and the
+maximum of the given values, the first and last range open-ended.</td>
+	</tr>
+</tbody></table>
+
+</section>
+
+
 </section><h2 id='gridlayer'>GridLayer</h2><p>Generic class for handling a tiled grid of HTML elements. This is the base class for all tile layers and replaces <code>TileLayer.Canvas</code>.
 GridLayer can be extended to create a tiled grid of HTML elements like <code>&lt;canvas&gt;</code>, <code>&lt;img&gt;</code> or <code>&lt;div&gt;</code>. GridLayer will handle creating and animating these DOM elements for you.</p>
 
@@ -24403,6 +24608,251 @@ closer to the corner of the map, those with the same order in the order of addin
 	</tr>
 	</thead><tbody>
 	<tr id='layerscontrol-callinithooks'>
+		<td><code><b>callInitHooks</b>(<nobr>&lt;Function&gt;</nobr> <i>cls?</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Runs the <a href="#class-constructor-hooks">constructor hooks</a> of the given class and
+of its parent classes, which haven't run yet for this object. Classes call it
+at the end of their constructor, e.g. <code>this.callInitHooks(MyClass)</code>.
+Without <code>cls</code>, runs the hooks of all classes of this object.</p>
+</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
+
+</section><h2 id='legendcontrol'>LegendControl</h2><p>A control showing the legend of the map: the classes of the layers added with
+<a href="#legendcontrol-addclassification"><code>addClassification()</code></a>, each with a patch in the
+shape and symbol of its features and optionally the feature count, and the
+legends of all layers on the map implementing <a href="#layer-getlegend"><code>getLegend()</code></a>,
+like the attribution control collects <a href="#layer-getattribution"><code>getAttribution()</code></a>.
+The legend is updated when features are added to or removed from the classified
+layers (e.g. when reloading the data) and when a layer fires <code>legendchange</code>. It
+is collapsible and hidden while empty. Placed at the bottom right, it sits right
+above the attribution.</p>
+<p>Inspired by the legend of <a href="https://qgis.org/">QGIS</a>.</p>
+
+<section>
+<h3 id='legendcontrol-example'>Usage example</h3>
+
+<section >
+
+
+
+
+
+<pre><code class="language-js">const legend = new LegendControl({featureCount: true, bar: true}).addTo(map);
+legend.addClassification(stations, temperature);
+</code></pre>
+
+
+
+</section>
+
+
+</section><section>
+<h3 id='legendcontrol-constructor'>Constructor</h3>
+
+<section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Constructor</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='legendcontrol-legendcontrol'>
+		<td><code><b>new LegendControl</b>(<nobr>&lt;<a href='#legendcontrol-option'>LegendControl options</a>&gt;</nobr> <i>options?</i>)</code></td>
+		<td>Creates a legend control.</td>
+	</tr>
+</tbody></table>
+
+
+</section>
+
+
+</section><section>
+<h3 id='legendcontrol-option'>Options</h3>
+
+<section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Option</th>
+		<th>Type</th>
+		<th>Default</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='legendcontrol-position'>
+		<td><code><b>position</b></code></td>
+		<td><code>String</code></td>
+		<td><code>&#x27;bottomright&#x27;</code></td>
+		<td>The position of the control (one of the map corners). Possible values are <code>'topleft'</code>,
+<code>'topright'</code>, <code>'bottomleft'</code> or <code>'bottomright'</code></td>
+	</tr>
+	<tr id='legendcontrol-collapsed'>
+		<td><code><b>collapsed</b></code></td>
+		<td><code>Boolean</code></td>
+		<td><code>false</code></td>
+		<td>If <code>true</code>, the legend starts collapsed to its title, which toggles it.</td>
+	</tr>
+	<tr id='legendcontrol-featurecount'>
+		<td><code><b>featureCount</b></code></td>
+		<td><code>Boolean</code></td>
+		<td><code>false</code></td>
+		<td>If <code>true</code>, the number of features is shown per class and per classification.</td>
+	</tr>
+	<tr id='legendcontrol-bar'>
+		<td><code><b>bar</b></code></td>
+		<td><code>Boolean</code></td>
+		<td><code>false</code></td>
+		<td>If <code>true</code>, the feature count of each classification is shown as a bar of the
+class symbols, each as wide as its share.</td>
+	</tr>
+</tbody></table>
+
+</section>
+
+
+<div class='accordion'>
+	<label><span class='expander'>▶</span> Options inherited from <a href='#control'>Control</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Option</th>
+		<th>Type</th>
+		<th>Default</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='legendcontrol-order'>
+		<td><code><b>order</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>The position of the control within its corner: controls with a lower order are
+closer to the corner of the map, those with the same order in the order of adding.</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
+
+</section><section>
+<h3 id='legendcontrol-method'>Methods</h3>
+
+<section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Method</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='legendcontrol-addclassification'>
+		<td><code><b>addClassification</b>(<nobr>&lt;<a href='#featuregroup'>FeatureGroup</a>&gt;</nobr> <i>layer</i>, <nobr>&lt;<a href='#classification'>Classification</a>&gt;</nobr> <i>classification</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Shows the classes of <code>classification</code> in the legend while <code>layer</code> is on the map,
+with the feature count of the layers of <code>layer</code> (e.g. a <a href="#geojson"><code>GeoJSON</code></a> layer styled
+with <a href="#classification-style"><code>classification.style</code></a>), kept up to date when
+layers are added and removed.</p>
+</td>
+	</tr>
+	<tr id='legendcontrol-removeclassification'>
+		<td><code><b>removeClassification</b>(<nobr>&lt;<a href='#featuregroup'>FeatureGroup</a>&gt;</nobr> <i>layer</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Removes the classification of <code>layer</code> from the legend.</p>
+</td>
+	</tr>
+</tbody></table>
+
+</section>
+
+
+<div class='accordion'>
+	<label><span class='expander'>▶</span> Methods inherited from <a href='#control'>Control</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Method</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='legendcontrol-getposition'>
+		<td><code><b>getPosition</b>()</code></td>
+		<td><code>string</code></td>
+		<td><p>Returns the position of the control.</p>
+</td>
+	</tr>
+	<tr id='legendcontrol-setposition'>
+		<td><code><b>setPosition</b>(<nobr>&lt;string&gt;</nobr> <i>position</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Sets the position of the control.</p>
+</td>
+	</tr>
+	<tr id='legendcontrol-getcontainer'>
+		<td><code><b>getContainer</b>()</code></td>
+		<td><code>HTMLElement</code></td>
+		<td><p>Returns the HTMLElement that contains the control.</p>
+</td>
+	</tr>
+	<tr id='legendcontrol-addto'>
+		<td><code><b>addTo</b>(<nobr>&lt;<a href='#maplairmap'>MaplairMap</a>&gt;</nobr> <i>map</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Adds the control to the given map.</p>
+</td>
+	</tr>
+	<tr id='legendcontrol-remove'>
+		<td><code><b>remove</b>()</code></td>
+		<td><code>this</code></td>
+		<td><p>Removes the control from the map it is currently active on.</p>
+</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
+
+<div class='accordion'>
+	<label><span class='expander'>▶</span> Methods inherited from <a href='#class'>Class</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Method</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='legendcontrol-callinithooks'>
 		<td><code><b>callInitHooks</b>(<nobr>&lt;Function&gt;</nobr> <i>cls?</i>)</code></td>
 		<td><code>this</code></td>
 		<td><p>Runs the <a href="#class-constructor-hooks">constructor hooks</a> of the given class and
@@ -28141,6 +28591,12 @@ control while the layer is on the map.</p>
 		<td><code><b>getAttribution</b>()</code></td>
 		<td><code>String</code></td>
 		<td><p>This optional method should return a string containing HTML to be shown on the <code>Attribution control</code> whenever the layer is visible.</p>
+</td>
+	</tr>
+	<tr id='layer-getlegend'>
+		<td><code><b>getLegend</b>()</code></td>
+		<td><code>HTMLElement|String</code></td>
+		<td><p>This optional method should return an element (or a string containing HTML) to be shown on the <a href="#legendcontrol"><code>LegendControl</code></a> whenever the layer is visible. Fire <code>legendchange</code> on the layer when the legend changes.</p>
 </td>
 	</tr>
 	<tr id='layer-beforeadd'>
