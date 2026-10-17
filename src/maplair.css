@@ -579,6 +579,42 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	}
 }
 
+/* side-by-side divider */
+
+.maplair-sidebyside-divider {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	z-index: 900;
+	width: 4px;
+	margin-left: -2px;
+	background: white;
+	box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+	cursor: ew-resize;
+	touch-action: none;
+
+	&:focus:not(:focus-visible) {
+		outline: none;
+	}
+
+	/* the handle */
+	&::before {
+		content: "⇔";
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 32px;
+		height: 32px;
+		margin: -16px 0 0 -16px;
+		border-radius: 50%;
+		background: white;
+		box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+		font: bold 18px/32px sans-serif;
+		text-align: center;
+		color: #333;
+	}
+}
+
 /* context menu */
 
 .maplair-contextmenu {
