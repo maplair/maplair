@@ -1,6 +1,6 @@
 // Checks that bundlers drop the optional features (see `exports` in package.json)
-// unless they are imported: bundles small apps against the ES modules in dist/esm
-// (run `pnpm run build` first) with Vite+, and looks for code of each feature.
+// and the controls unless they are imported: bundles small apps against the ES modules
+// in dist/esm (run `pnpm run build` first) with Vite+, and looks for code of each feature.
 import {build} from 'vite-plus';
 import {mkdirSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
@@ -18,6 +18,12 @@ const features = {
 	'zoom-styles': '_zoomStyles'
 };
 
+// code which only the respective control contains
+const controls = {
+	'search-control': 'nominatim.openstreetmap.org'
+};
+const markers = {...features, ...controls};
+
 const base = `import {MaplairMap, TileLayer, Marker, Polyline, GeoJSON} from 'maplair';
 const map = new MaplairMap('map').setView([0, 0], 2);
 new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
@@ -33,7 +39,11 @@ const apps = {
 		code: `import 'maplair/${feature}';\n${base}`,
 		// the map rotation keeps markers upright with the marker rotation
 		expected: feature === 'map-rotation' ? [feature, 'marker-rotation'] : [feature]
-	}]))
+	}])),
+	'search-control': {
+		code: `import {SearchControl} from 'maplair';\n${base}new SearchControl().addTo(map);\n`,
+		expected: ['search-control']
+	}
 };
 
 let failed = false;
@@ -57,7 +67,7 @@ try {
 			}
 		});
 		const bundle = readFileSync(`${dir}dist/app.js`, 'utf8');
-		const found = Object.keys(features).filter(feature => bundle.includes(features[feature]));
+		const found = Object.keys(markers).filter(feature => bundle.includes(markers[feature]));
 		const ok = found.length === expected.length && expected.every(feature => found.includes(feature));
 		failed ||= !ok;
 		console.log(`${ok ? '✔' : '✘'} ${name}: ${(bundle.length / 1024).toFixed(1)} kB, features: ${found.join(', ') || 'none'}`);
