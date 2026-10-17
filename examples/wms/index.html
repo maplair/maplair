@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>WMS and TMS - Maplair</title>
+	
+	
+	<meta charset="utf-8" />
+	
+
+	
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="../../docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="../../docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="../../docs/css/normalize.css" />
+	<link rel="stylesheet" href="../../docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="../../docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="../../docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body>
+
+<header>
+	<h1><a href="https://maplair.org/"><img src="../../docs/images/logo.png" alt="Maplair" width="300" /></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<a href="../../index.html">Overview</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../examples.html">Tutorials</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../download.html">Download</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../plugins.html">Plugins</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../blog.html">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		<p class="tutorials-back"><a href="../../examples.html">← Tutorials</a></p>
+
+<style>
+iframe {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+</style>
+
+<p><br /></p>
+
+<p>WMS, short for <a href="https://en.wikipedia.org/wiki/Web_Map_Service"><em>web map service</em></a>, is a popular way of publishing maps by professional GIS software (and seldomly used by non-GISers). This format is similar to map tiles, but more generic and not so well optimized for use in web maps. A WMS image is defined by the coordinates of its corners - a calculation that Maplair does under the hood.</p>
+
+<p>TMS stands for <a href="https://en.wikipedia.org/wiki/Tile_Map_Service"><em>tiled map service</em></a>, and is a map tiling standard more focused on web maps, very similar to the map tiles that Maplair expects in a <code class="language-plaintext highlighter-rouge">TileLayer</code>.</p>
+
+<p>WMTS, for <a href="https://en.wikipedia.org/wiki/Web_Map_Tile_Service"><em>web map tile service</em></a>, is the standard protocol for map tiles and serves map tiles directly usable in a <code class="language-plaintext highlighter-rouge">TileLayer</code>.</p>
+
+<h2 id="wms-in-maplair">WMS in Maplair</h2>
+
+<p>When somebody publishes a WMS service, most likely they link to something called a <code class="language-plaintext highlighter-rouge">GetCapabilities</code> document. For this tutorial, we&#8217;ll use the WMS offered by <a href="https://www.mundialis.de"><em>Mundialis</em></a> at http://ows.mundialis.de/services/service? . The service capabilities are described at the following URL:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://ows.mundialis.de/services/service?request=GetCapabilities
+</code></pre></div></div>
+
+<p>Maplair does not understand WMS <code class="language-plaintext highlighter-rouge">GetCapabilities</code> documents. Instead, you have to create a <code class="language-plaintext highlighter-rouge">WMSTileLayer</code> layer, provide the base WMS URL, and specify whatever WMS options you need.</p>
+
+<p>The base WMS URL is simply the <code class="language-plaintext highlighter-rouge">GetCapabilities</code> URL, without any parameters, like so:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://ows.mundialis.de/services/service?
+</code></pre></div></div>
+
+<p>And the way to use that in a Maplair map is simply:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>const map = new MaplairMap(mapDiv, mapOptions);
+
+const wmsLayer = new WMSTileLayer('http://ows.mundialis.de/services/service?', wmsOptions).addTo(map);
+</code></pre></div></div>
+
+<p>An instance of <code class="language-plaintext highlighter-rouge">WMSTileLayer</code> needs at least one option: <code class="language-plaintext highlighter-rouge">layers</code>. Be careful, as the concept of &#8220;layer&#8221; in Maplair is different from the concept of &#8220;layer&#8221; in WMS!</p>
+
+<p>WMS servers define a set of <em>layers</em> in the service. These are defined in the <code class="language-plaintext highlighter-rouge">GetCapabilities</code> XML document, which most times is tedious and difficult to understand. Usually it&#8217;s a good idea to use software such as <a href="https://www.qgistutorials.com/en/docs/3/working_with_wms.html">QGIS to see what layers are available in a WMS server</a> to see the layer names available:</p>
+
+<p><img src="qgis-wms-layers.png" alt="Discovering WMS layers with QGIS" /></p>
+
+<p>We can see that the <em>Mundialis</em> WMS has a WMS layer named <code class="language-plaintext highlighter-rouge">TOPO-OSM-WMS</code> with a basemap. Let&#8217;s see how it looks:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>const wmsLayer = new WMSTileLayer('http://ows.mundialis.de/services/service?', {
+	layers: 'TOPO-OSM-WMS'
+}).addTo(map);
+</code></pre></div></div>
+
+<table role="presentation">
+<tr><td style="text-align: center; border: none; padding: 0;">
+<iframe src="wms-example1.html" width="600" height="400" style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style="text-align: center; border: none">
+<small><a href="wms-example1.html">See this example stand-alone.</a></small>
+</td></tr></table>
+
+<p>Or we can try the <code class="language-plaintext highlighter-rouge">SRTM30-Colored-Hillshade</code> WMS layer:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>const wmsLayer = new WMSTileLayer('http://ows.mundialis.de/services/service?', {
+	layers: 'SRTM30-Colored-Hillshade'
+}).addTo(map);
+</code></pre></div></div>
+
+<table role="presentation">
+<tr><td style="text-align: center; border: none; padding: 0;">
+<iframe src="wms-example2.html" width="600" height="400" style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style="text-align: center; border: none">
+<small><a href="wms-example2.html">See this example stand-alone.</a></small>
+</td></tr></table>
+
+<p>The <code class="language-plaintext highlighter-rouge">layers</code> option is a comma-separated list of layers. If a WMS service has defined several layers, then a request for a map image can refer to more than one layer.</p>
+
+<p>For the example WMS server we&#8217;re using, there is a <code class="language-plaintext highlighter-rouge">TOPO-WMS</code> WMS layer showing the world topography, and a <code class="language-plaintext highlighter-rouge">OSM-Overlay-WMS</code> WMS layer showing the names of places. The WMS server will compose both layers in one image if we request both, separated with a comma:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>const topographyAndPlaces = new WMSTileLayer('http://ows.mundialis.de/services/service?', {
+	layers: 'TOPO-WMS,OSM-Overlay-WMS'
+}).addTo(map);
+</code></pre></div></div>
+
+<p>Note this will request <em>one</em> image to the WMS server. This is different than creating a <code class="language-plaintext highlighter-rouge">WMSTileLayer</code> for the topography, another one for the places, and adding them both to the map. In the first case, there is one image request and it&#8217;s the WMS server who decides how to compose (put on top of each other) the image. In the second case, there would be two image requests and it&#8217;s the Maplair code running in the web browser who decides how to compose them.</p>
+
+<p>If we combine this with the <a href="/examples/layers-control.html">layers control</a>, then we can build a simple map to see the difference:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>const basemaps = {
+	Topography: new WMSTileLayer('http://ows.mundialis.de/services/service?', {
+		layers: 'TOPO-WMS'
+	}),
+
+	Places: new WMSTileLayer('http://ows.mundialis.de/services/service?', {
+		layers: 'OSM-Overlay-WMS'
+	}),
+
+	'Topography, then places': new WMSTileLayer('http://ows.mundialis.de/services/service?', {
+		layers: 'TOPO-WMS,OSM-Overlay-WMS'
+	}),
+
+	'Places, then topography': new WMSTileLayer('http://ows.mundialis.de/services/service?', {
+		layers: 'OSM-Overlay-WMS,TOPO-WMS'
+	})
+};
+
+new LayersControl(basemaps).addTo(map);
+
+basemaps.Topography.addTo(map);
+</code></pre></div></div>
+
+<p>Change to the &#8220;Topography, then places&#8221; option, so you can see the places &#8220;on top&#8221; of the topography, but the WMS server is clever enough to display building labels on top of that. It&#8217;s up to the WMS server how to compose layers when asked for many.</p>
+
+<table role="presentation">
+<tr><td style="text-align: center; border: none; padding: 0;">
+<iframe src="wms-example3.html" width="600" height="400" style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style="text-align: center; border: none">
+<small><a href="wms-example3.html">See this example stand-alone.</a></small>
+</td></tr></table>
+
+<h3 id="notes-to-gis-users-of-wms-services">Notes to GIS Users of WMS Services</h3>
+
+<p>From a GIS point of view, WMS handling in Maplair is quite basic. There&#8217;s no <code class="language-plaintext highlighter-rouge">GetCapabilities</code> support, no legend support, and no <code class="language-plaintext highlighter-rouge">GetFeatureInfo</code> support.</p>
+
+<p><code class="language-plaintext highlighter-rouge">WMSTileLayer</code> has extra options, which can be found in <a href="/reference.html#tilelayer-wms">Maplair&#8217;s API documentation</a>. Any option not described there will be passed to the WMS server in the <code class="language-plaintext highlighter-rouge">getImage</code> URLs.</p>
+
+<p>Also note that Maplair supports very few <a href="https://en.wikipedia.org/wiki/Spatial_reference_system">coordinate systems</a>: <code class="language-plaintext highlighter-rouge">CRS:3857</code>, <code class="language-plaintext highlighter-rouge">CRS:3395</code> and <code class="language-plaintext highlighter-rouge">CRS:4326</code> (See the documentation for <code class="language-plaintext highlighter-rouge">CRS</code>). If your WMS service doesn&#8217;t serve images in those coordinate systems, you might need to use <a href="https://github.com/kartena/Proj4Leaflet">Proj4Maplair</a> to use a different coordinate system in Maplair. Other than that, just use the right CRS when initializing your map, and any WMS layers added will use it:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>const map = new MaplairMap('map', {
+	crs: EPSG4326
+});
+
+const wmsLayer = new WMSTileLayer('http://ows.mundialis.de/services/service?', {
+	layers: 'TOPO-OSM-WMS'
+}).addTo(map);
+</code></pre></div></div>
+
+<table role="presentation">
+<tr><td style="text-align: center; border: none; padding: 0;">
+<iframe src="wms-example-crs.html" width="600" height="400" style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style="text-align: center; border: none">
+<small><a href="wms-example-crs.html">See this example stand-alone.</a></small>
+</td></tr></table>
+
+<h2 id="tms-in-maplair">TMS in Maplair</h2>
+
+<p>Maplair doesn&#8217;t have explicit support for TMS services, but the tile naming structure is so similar to the common <code class="language-plaintext highlighter-rouge">TileLayer</code> naming scheme, that displaying a TMS service is almost trivial.</p>
+
+<p>Let&#8217;s consider a TMS server with the following endpoint:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://base_url/tms/1.0.0
+</code></pre></div></div>
+
+<p>Checking the <a href="http://mapserver.org/mapcache/services.html">MapCache help about TMS</a> and the <a href="https://wiki.osgeo.org/wiki/Tile_Map_Service_Specification">TMS specification</a> you can see that the URL for a map tile in TMS looks like:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://base_url/tms/1.0.0/ {tileset} / {z} / {x} / {y} .png
+</code></pre></div></div>
+
+<p>To use the TMS services as a <code class="language-plaintext highlighter-rouge">TileLayer</code>, we can check the capabilities document (the same as the base endpoint, in our case <a href="http://base_url/tms/1.0.0"><code class="language-plaintext highlighter-rouge">http://base_url/tms/1.0.0</code></a>) to see what <code class="language-plaintext highlighter-rouge">tileset</code>s are available, and build our base URLs:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://base_url/tms/1.0.0/{example_layer}@png/{z}/{x}/{y}.png
+</code></pre></div></div>
+
+<p>And use the <code class="language-plaintext highlighter-rouge">tms:true</code> option when instantiating the layers, like so:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>const tms_example = new TileLayer('http://base_url/tms/1.0.0/example_layer@png/{z}/{x}/{y}.png', {
+	tms: true
+}).addTo(map);
+</code></pre></div></div>
+
+<p>In Maplair you also have the option to use <code class="language-plaintext highlighter-rouge">{-y}</code> in the URL instead of a <code class="language-plaintext highlighter-rouge">tms: true</code> option, e.g.:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>const layer = new TileLayer('http://base_url/tms/1.0.0/tileset/{z}/{x}/{-y}.png');
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">tms: true</code> option or <code class="language-plaintext highlighter-rouge">{-y}</code> are needed because the origin of coordinates of vanilla <code class="language-plaintext highlighter-rouge">TileLayer</code>s is the top left corner, so the Y coordinate goes <em>down</em>. In TMS, the origin of coordinates is the <em>bottom</em> left corner so the Y coordinate goes <em>up</em>.</p>
+
+<p>Besides the difference in the <code class="language-plaintext highlighter-rouge">y</code> coordinate and the discovery of tilesets, TMS services serve tiles exactly in the way that <code class="language-plaintext highlighter-rouge">TileLayer</code> expects.</p>
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="../../docs/js/docs.js"></script>
+
+</body>
+</html>

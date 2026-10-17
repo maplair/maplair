@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>Announcing Leaflet 1.3.4 - Maplair</title>
+	
+	
+	<meta charset="utf-8" />
+	
+
+	
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="../../../docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="../../../docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="../../../docs/css/normalize.css" />
+	<link rel="stylesheet" href="../../../docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="../../../docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="../../../docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body>
+
+<header>
+	<h1><a href="https://maplair.org/"><img src="../../../docs/images/logo.png" alt="Maplair" width="300" /></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<a href="../../../index.html">Overview</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../examples.html">Tutorials</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../download.html">Download</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../plugins.html">Plugins</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../blog.html">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		<p><a href="../../../blog.html">← Back to the list of blog posts</a></p>
+
+<h2>Announcing Leaflet 1.3.4</h2>
+
+<p class="post-meta">Posted on 21 August 2018 by <a href="https://github.com/cherniavskii">Andrew Cherniavskii</a></p>
+
+<p>Leaflet 1.3.4 is out!</p>
+
+<p>This release contains some bugfixes and improvements :)
+Big thanks to all contributors who made this release possible!</p>
+
+<p>Changelog is available <a href="https://github.com/Leaflet/Leaflet/blob/main/CHANGELOG.md">here</a>.</p>
+
+<p>Want to receive notification when new Leaflet release is available? Subscribe to <a href="https://github.com/Leaflet/Leaflet/issues/6295">this issue</a>.</p>
+
+<p>To get the new release, update your dependencies in your favorite package manager, or check the <a href="https://leafletjs.com/download.html">downloads page</a>.</p>
+
+<p>Cheers,<br />
+The Leaflet team.</p>
+
+
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="../../../docs/js/docs.js"></script>
+
+</body>
+</html>

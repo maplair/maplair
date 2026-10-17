@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<base target="_top">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<title>SVG Overlay Tutorial - Maplair</title>
+	
+	<link rel="icon" type="image/svg+xml" href="docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+
+	<style>
+		html, body {
+			height: 100%;
+			margin: 0;
+		}
+		.maplair-container {
+			height: 400px;
+			width: 600px;
+			max-width: 100%;
+			max-height: 100%;
+		}
+	</style>
+
+	
+</head>
+<body>
+
+<div id='map'></div>
+
+<script type="module">
+	import {MaplairMap, TileLayer, LatLngBounds, SVGOverlay} from 'maplair';
+
+	const map = new MaplairMap('map');
+
+	const tiles = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		maxZoom: 19,
+		attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+	}).addTo(map);
+
+	const svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+	svgElement.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+	svgElement.setAttribute('viewBox', '0 0 200 200');
+	svgElement.innerHTML = '<rect width="200" height="200"/><rect x="75" y="23" width="50" height="50" style="fill:red"/><rect x="75" y="123" width="50" height="50" style="fill:#0013ff"/>';
+	const latLngBounds = new LatLngBounds([[32, -130], [13, -100]]);
+
+	map.fitBounds(latLngBounds);
+
+	const svgOverlay = new SVGOverlay(svgElement, latLngBounds, {
+		opacity: 0.7,
+		interactive: true
+	}).addTo(map);
+</script>
+
+
+
+</body>
+</html>

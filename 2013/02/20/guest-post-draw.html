@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>Leaflet.draw 0.2 Released - Maplair</title>
+	
+	
+	<meta charset="utf-8" />
+	
+
+	
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="../../../docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="../../../docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="../../../docs/css/normalize.css" />
+	<link rel="stylesheet" href="../../../docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="../../../docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="../../../docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body>
+
+<header>
+	<h1><a href="https://maplair.org/"><img src="../../../docs/images/logo.png" alt="Maplair" width="300" /></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<a href="../../../index.html">Overview</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../examples.html">Tutorials</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../download.html">Download</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../plugins.html">Plugins</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../blog.html">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		<p><a href="../../../blog.html">← Back to the list of blog posts</a></p>
+
+<h2>Leaflet.draw 0.2 Released</h2>
+
+<p class="post-meta">Posted on 20 February 2013 by <a href="https://github.com/jacobtoye/">Jacob Toye</a></p>
+
+<p><em>This is a guest post from Jacob Toye, an active Leaflet contributor and also the author of the most sophisticated vector drawing and editing plugin out there, which is presented in this post.</em></p>
+
+<p><a href="https://github.com/Leaflet/Leaflet.draw/">Leaflet.draw</a> was born from the need to provide users with the ability draw polygons on the map. Leaflet already provided a very nice way of editing existing polylines and polygons. The logical next step was to expand on this functionality to allow the creation of these layers, and ultimately the other vector layers.</p>
+
+<p>Upon release the immediate response from the Leaflet community was very positive. It became clear that the next step would be progressing this tool to a state where users could edit and delete shapes in addition to creating them. This is ultimately what Leaflet.draw 0.2 set out to do.</p>
+
+<p>After a few months of off and on development, with most of this spare time kindly sponsored by my employer <a href="http://www.smartrak.co.nz" title="GPS Fleet Management solutions" target="_blank">Smartrak</a>, we proudly present Leaflet.draw 0.2 &#8211; your one stop plugin for drawing, editing and deleting vectors and markers on Leaflet maps. :)</p>
+
+<p><em>Note from Vladimir: the polyline/polygon editing functionality from Leaflet core has been moved into this plugin where it fits much better. The plugin in turn has moved into <a href="https://github.com/Leaflet">Leaflet organization on GitHub</a> and is now officially supported by the Leaflet development team. Note that version 0.2 currently depends on Leaflet master (in-progress development version) to work.</em></p>
+
+<p>You can download the latest version from the <a href="https://github.com/Leaflet/Leaflet.draw/" target="_blank">github repo</a>. Please report any bugs you come across on the <a href="https://github.com/Leaflet/Leaflet.draw/issues" target="_blank">issues page</a>.</p>
+
+<div id="map" class="map" style="height: 288px"></div>
+
+<h3 id="plugin-features">Features</h3>
+
+<p>Leaflet.draw is designed to not only be easy for end users to use, but also for developers to integrate.</p>
+
+<ul>
+  <li>Draw shapes on your map with easy to use drawing tools.</li>
+  <li>Edit and delete vectors and markers.</li>
+  <li>Super customizable:
+    <ul>
+      <li>Customize the styles of each shape to fit in with your maps theme.</li>
+      <li>Pick and choose the which tools you want to use.</li>
+      <li>Roll your own by simply using the drawing and editing handlers.</li>
+    </ul>
+  </li>
+  <li>Event based system allows you to perform any necessary actions when shapes are created, edited or deleted.</li>
+</ul>
+
+<h3 id="how-to-use">How to use</h3>
+
+<p>Leaflet.draw is very simple to drop into you Leaflet application. The following example will add both the draw and edit toolbars to a map:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>// create a map in the "map" div, set the view to a given place and zoom
+var map = L.map('map').setView([175.30867, -37.77914], 13);
+
+// add an OpenStreetMap tile layer
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	attribution: '&amp;copy; &lt;a href="https://www.openstreetmap.org/copyright"&gt;OpenStreetMap&lt;/a&gt; contributors'
+}).addTo(map);
+
+// Initialize the FeatureGroup to store editable layers
+var drawnItems = new L.FeatureGroup();
+map.addLayer(drawnItems);
+
+// Initialize the draw control and pass it the FeatureGroup of editable layers
+var drawControl = new L.Control.Draw({
+	edit: {
+		featureGroup: drawnItems
+	}
+});
+map.addControl(drawControl);
+</code></pre></div></div>
+
+<h4 id="handling-newly-created-layers">Handling newly created layers</h4>
+
+<p>Once you have successfully added the Leaflet.draw plugin your map you will want to respond to the different actions users can trigger.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>map.on('draw:created', function (e) {
+	var type = e.layerType,
+		layer = e.layer;
+
+	if (type === 'marker') {
+		// Do marker specific actions
+	}
+
+	// Do whatever else you need to. (save to db, add to map etc)
+	drawnItems.addLayer(layer);
+});
+
+map.on('draw:edited', function () {
+	// Update db to save latest changes.
+});
+
+map.on('draw:deleted', function () {
+	// Update db to save latest changes.
+});
+</code></pre></div></div>
+
+<p>See the <a href="https://github.com/Leaflet/Leaflet.draw" target="_blank">Leaflet.draw README</a> for more details on how to configure the plugin.</p>
+
+<h3 id="thanks">Thanks</h3>
+
+<p>First and foremost I would like to thank my employer <a href="http://www.smartrak.co.nz" title="GPS Fleet Management solutions" target="_blank">Smartrak</a>. Without their attitude to open source software I would not have had the time to complete this plugin.</p>
+
+<p>The Leaflet developer community have been great in supporting this plugin through inspiration, pull requests and issue reports. Special thanks to: <a href="https://github.com/mourner" title="@mourner" target="_blank">@mourner</a>, <a href="https://github.com/danzel" title="@danzel" target="_blank">@danzel</a>, <a href="https://github.com/brunob" title="@brunob" target="_blank">@brunob</a>, <a href="https://github.com/tnightingale" title="@tnightingale" target="_blank">@tnightingale</a>, <a href="https://github.com/Starefossen" title="@Starefossen" target="_blank">@Starefossen</a>, and <a href="https://github.com/shramov" title="@shramov" target="_blank">@shramov</a>.</p>
+
+<h3 id="closing">Closing</h3>
+
+<p>I&#8217;ve had a great time implementing this plugin. I hope you enjoy using it. If you have a question or just want to say hi, send me an email at <a href="mailto:jacob.toye@gmail.com">jacob.toye@gmail.com</a>.</p>
+
+<p>Cheers,
+Jacob Toye</p>
+
+<link rel="stylesheet" href="https://leaflet.github.io/Leaflet.draw/lib/leaflet/leaflet.css" />
+
+<link rel="stylesheet" href="https://leaflet.github.io/Leaflet.draw/leaflet.draw.css" />
+
+<!--[if lte IE 8]>
+	<link rel="stylesheet" href="https://leaflet.github.io/Leaflet.draw/lib/leaflet/leaflet.ie.css" />
+	<link rel="stylesheet" href="https://leaflet.github.io/Leaflet.draw/leaflet.draw.ie.css" />
+<![endif]-->
+<script src="https://leaflet.github.io/Leaflet.draw/libs/leaflet/leaflet.js"></script>
+
+<script src="https://leaflet.github.io/Leaflet.draw/leaflet.draw.js"></script>
+
+<style>
+	.leaflet-bar {
+		border: none;
+	}
+</style>
+
+<script>
+	// create a map in the "map" div, set the view to a given place and zoom
+	var map = L.map('map').setView([-37.77914, 175.30867], 16);
+
+	// add an OpenStreetMap tile layer
+	L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+	}).addTo(map);
+
+	// Initialize the FeatureGroup to store editable layers
+	var drawnItems = new L.FeatureGroup();
+	map.addLayer(drawnItems);
+
+	// Initialize the draw control and pass it the FeatureGroup of editable layers
+	var drawControl = new L.Control.Draw({
+		edit: {
+			featureGroup: drawnItems
+		}
+	});
+	map.addControl(drawControl);
+
+	map.on('draw:created', function (e) {
+		var layer = e.layer;
+
+		if (e.layerType === 'marker') {
+			layer.bindPopup('A popup!');
+		}
+
+		// Do whatever else you need to. (save to db, add to map etc)
+		drawnItems.addLayer(layer);
+	});
+</script>
+
+
+
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="../../../docs/js/docs.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>Leaflet 0.7.5 Release - Maplair</title>
+	
+	
+	<meta charset="utf-8" />
+	
+
+	
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="../../../docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="../../../docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="../../../docs/css/normalize.css" />
+	<link rel="stylesheet" href="../../../docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="../../../docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="../../../docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body>
+
+<header>
+	<h1><a href="https://maplair.org/"><img src="../../../docs/images/logo.png" alt="Maplair" width="300" /></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<a href="../../../index.html">Overview</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../examples.html">Tutorials</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../download.html">Download</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../plugins.html">Plugins</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../blog.html">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		<p><a href="../../../blog.html">← Back to the list of blog posts</a></p>
+
+<h2>Leaflet 0.7.5 Release</h2>
+
+<p class="post-meta">Posted on 01 September 2015 by <a href="">Iván Sánchez Ortega</a></p>
+
+<p>While the Leaflet development team is busy with the 1.0 betas, there have been a few bugs affecting 0.7.3, important enough to spend some effort in porting a fix back. They are not much, though:</p>
+
+<ul>
+  <li>Workarounds for issues derived from new browsers (touch-capable browsers, tile loading in recent Chrome)</li>
+  <li>Backport fixes for styling and events for canvas-based vector layers</li>
+  <li>Fix edge cases involving <code class="language-plaintext highlighter-rouge">maxZoom</code>, <code class="language-plaintext highlighter-rouge">minZoom</code>, <code class="language-plaintext highlighter-rouge">maxNativeZoom</code> on tile layers and popup events</li>
+  <li>Revert a regression bug in 0.7.4 which conflicted with marker clusters</li>
+</ul>
+
+<p>The detailed list of changes can be found <a href="https://github.com/Leaflet/Leaflet/blob/main/CHANGELOG.md#074-sep-01-2015">in the changelog</a></p>
+
+<p>The fact that it has been over <em>a year and half</em> since the last stable release should be a testament of the quality and stability of the Leaflet API. If you think that development of Leaflet 1.0 is taking a long time, remember that we want to keep the same level of quality for the final 1.0 release.</p>
+
+<p>The 0.7.x releases will not implement new features. Stay tuned for more news on the 1.0 beta releases instead!</p>
+
+<h3 id="get-the-update">Get the update</h3>
+
+<p>Developers using Leaflet 0.7.3 are advised to upgrade to 0.7.5 to prevent problems arising from modern browsers.</p>
+
+<p>The release is also available through NPM, Bower, <a href="http://cdn.leafletjs.com/downloads/leaflet-0.7.5.zip">direct download</a>, or through our CDN:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;link rel="stylesheet" href="cdn.leafletjs.com/leaflet-0.7.5/leaflet.css" /&gt;
+&lt;script src="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.js"&gt;&lt;/script&gt;
+</code></pre></div></div>
+
+
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="../../../docs/js/docs.js"></script>
+
+</body>
+</html>

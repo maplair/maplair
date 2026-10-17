@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>Download - Maplair</title>
+	
+	
+	<meta charset="utf-8" />
+	
+
+	
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="docs/css/normalize.css" />
+	<link rel="stylesheet" href="docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body class="download-page">
+
+<header>
+	<h1><a href="https://maplair.org/"><img src="docs/images/logo.png" alt="Maplair" width="300" /></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<a href="index.html">Overview</a>
+			
+		</li>
+		<li>
+			
+				<a href="examples.html">Tutorials</a>
+			
+		</li>
+		<li>
+			
+				<a href="reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<span>Download</span>
+			
+		</li>
+		<li>
+			
+				<a href="plugins.html">Plugins</a>
+			
+		</li>
+		<li>
+			
+				<a href="blog.html">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		<h2 id="download-maplair">Download Maplair</h2>
+
+<table>
+	<tr>
+		<th>Version</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td><a href="https://github.com/maplair/maplair/releases/tag/v4.0.0-alpha.1">Maplair 4.0.0-alpha.1</a></td>
+		<td>Prerelease version, released on October 15, 2026 (<a href="2026/10/15/maplair-4.0.0-alpha.html">what's new</a>).</td>
+	</tr>
+	<tr>
+		<td><a href="https://github.com/Leaflet/Leaflet/releases/download/v1.9.4/leaflet.zip">Leaflet 1.9.4</a></td>
+		<td>Stable version of Leaflet, which Maplair is a fork of, released on May 18, 2023.</td>
+	</tr>
+		<tr>
+		<td><a href="https://github.com/maplair/maplair/releases/download/dev/maplair.zip">Development Snapshot</a> / (<a href="https://github.com/maplair/maplair/releases/tag/dev" target="_blank">Single files</a>)</td>
+		<td>In-progress version, developed on the <code>main</code> branch.</td>
+	</tr>
+</table>
+
+<p><a href="https://github.com/maplair/maplair/blob/main/CHANGELOG.md">View Changelog</a></p>
+
+<p>Note that the main version can contain incompatible changes,
+so please read the changelog carefully when upgrading to it.</p>
+
+<h3 id="using-a-hosted-version-of-maplair">Using a Hosted Version of Maplair</h3>
+
+<p>The latest stable Maplair release is available on several CDNs. To start using it with an <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script/type/importmap">importmap</a>, place the following in the <code class="language-plaintext highlighter-rouge">head</code> of your HTML code:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"stylesheet"</span> <span class="na">href=</span><span class="s">"https://cdn.jsdelivr.net/npm/maplair@4.0.0-alpha.1/dist/maplair.css"</span> <span class="nt">/&gt;</span>
+
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"importmap"</span><span class="nt">&gt;</span>
+<span class="p">{</span>
+	<span class="dl">"</span><span class="s2">imports</span><span class="dl">"</span><span class="p">:</span> <span class="p">{</span>
+		<span class="dl">"</span><span class="s2">maplair</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">https://cdn.jsdelivr.net/npm/maplair@4.0.0-alpha.1/dist/maplair.js</span><span class="dl">"</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></div></div>
+
+<p>A <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script/type/importmap"><strong><code class="language-plaintext highlighter-rouge">importmap</code></strong></a> allows defining module specifiers (<code class="language-plaintext highlighter-rouge">import</code> paths) in the browser without relying on a bundler. It enables the use of named imports directly from a CDN or local files, making module resolution more flexible and readable.</p>
+
+<p>Then, in your script, import the needed Maplair Classes as follows:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="dl">"</span><span class="s2">module</span><span class="dl">"</span><span class="o">&gt;</span>
+	<span class="k">import</span> <span class="p">{</span><span class="nx">MaplairMap</span><span class="p">,</span> <span class="nx">TileLayer</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">maplair</span><span class="dl">'</span><span class="p">;</span>
+
+	<span class="kd">const</span> <span class="nx">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MaplairMap</span><span class="p">(</span><span class="dl">'</span><span class="s1">map</span><span class="dl">'</span><span class="p">).</span><span class="nx">setView</span><span class="p">([</span><span class="mf">51.505</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.09</span><span class="p">],</span> <span class="mi">13</span><span class="p">);</span>
+	
+	<span class="k">new</span> <span class="nx">TileLayer</span><span class="p">(</span><span class="dl">'</span><span class="s1">https://tile.openstreetmap.org/{z}/{x}/{y}.png</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+		<span class="na">maxZoom</span><span class="p">:</span> <span class="mi">19</span><span class="p">,</span>
+		<span class="na">attribution</span><span class="p">:</span> <span class="dl">'</span><span class="s1">© &lt;a href="http://www.openstreetmap.org/copyright"&gt;OpenStreetMap&lt;/a&gt;</span><span class="dl">'</span>
+	<span class="p">}).</span><span class="nx">addTo</span><span class="p">(</span><span class="nx">map</span><span class="p">);</span>
+<span class="o">&lt;</span><span class="sr">/script</span><span class="err">&gt;
+</span></code></pre></div></div>
+<h4 id="including-maplair-with-a-global-scope">Including Maplair with a Global Scope</h4>
+
+<p>The old (and no longer recommended) way to include Maplair in your project without using modules is by relying on the global variable <code class="language-plaintext highlighter-rouge">L</code>.</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"https://unpkg.com/maplair@4.0.0-alpha.1/dist/maplair-global.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+</code></pre></div></div>
+
+<p>Maplair is available on the following free CDNs: <a href="https://www.jsdelivr.com/package/npm/maplair?path=dist">jsDelivr</a>, <a href="https://unpkg.com/maplair/dist/">unpkg</a>.</p>
+
+<p><em>Disclaimer: These services are external to Maplair; for questions or support, please contact them directly.</em></p>
+
+<h3 id="using-a-downloaded-version-of-maplair">Using a Downloaded Version of Maplair</h3>
+
+<p>Inside the archives downloaded from the above links, you will see four things:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">maplair.js</code> - This is the minified Maplair JavaScript code.</li>
+  <li><code class="language-plaintext highlighter-rouge">maplair.js.map</code> - This is a source map file for <code class="language-plaintext highlighter-rouge">maplair.js</code>, allowing browser developer tools to map minified code back to the original source for easier debugging.</li>
+  <li><code class="language-plaintext highlighter-rouge">maplair-src.js</code> - This is the readable, unminified Maplair JavaScript, which is sometimes helpful for debugging.</li>
+  <li><code class="language-plaintext highlighter-rouge">maplair-src.js.map</code> - This is a source map file for <code class="language-plaintext highlighter-rouge">maplair-src.js</code>, providing debugging support for the unminified version of Maplair.</li>
+  <li><code class="language-plaintext highlighter-rouge">maplair.css</code> - This is the stylesheet for Maplair.</li>
+  <li><code class="language-plaintext highlighter-rouge">images</code> - This is a folder that contains images referenced by <code class="language-plaintext highlighter-rouge">maplair.css</code>. It must be in the same directory as <code class="language-plaintext highlighter-rouge">maplair.css</code>.</li>
+</ul>
+
+<p>Unzip the downloaded archive to your website&#8217;s directory and add this to the <code class="language-plaintext highlighter-rouge">head</code> of your HTML code:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"stylesheet"</span> <span class="na">href=</span><span class="s">"/path/to/maplair.css"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"importmap"</span><span class="nt">&gt;</span>
+<span class="p">{</span>
+  <span class="dl">"</span><span class="s2">imports</span><span class="dl">"</span><span class="p">:</span> <span class="p">{</span>
+    <span class="dl">"</span><span class="s2">maplair</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">/path/to/maplair.js</span><span class="dl">"</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></div></div>
+
+<p>Then, import Maplair in your JavaScript file:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span><span class="nx">MaplairMap</span><span class="p">,</span> <span class="nx">TileLayer</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">maplair</span><span class="dl">'</span><span class="p">;</span>
+
+<span class="kd">const</span> <span class="nx">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MaplairMap</span><span class="p">(</span><span class="dl">'</span><span class="s1">map</span><span class="dl">'</span><span class="p">).</span><span class="nx">setView</span><span class="p">([</span><span class="mf">51.505</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.09</span><span class="p">],</span> <span class="mi">13</span><span class="p">);</span>
+
+<span class="k">new</span> <span class="nx">TileLayer</span><span class="p">(</span><span class="dl">'</span><span class="s1">https://tile.openstreetmap.org/{z}/{x}/{y}.png</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+	<span class="na">maxZoom</span><span class="p">:</span> <span class="mi">19</span><span class="p">,</span>
+	<span class="na">attribution</span><span class="p">:</span> <span class="dl">'</span><span class="s1">© &lt;a href="http://www.openstreetmap.org/copyright"&gt;OpenStreetMap&lt;/a&gt;</span><span class="dl">'</span>
+<span class="p">}).</span><span class="nx">addTo</span><span class="p">(</span><span class="nx">map</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h3 id="using-a-javascript-package-manager">Using a JavaScript Package Manager</h3>
+
+<p>If you use the <a href="https://www.npmjs.com/"><code class="language-plaintext highlighter-rouge">npm</code> package manager</a>, you can fetch a local copy of Maplair by running:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm <span class="nb">install </span>maplair
+</code></pre></div></div>
+
+<p>Then, import Maplair in your JavaScript file:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span><span class="nx">MaplairMap</span><span class="p">,</span> <span class="nx">TileLayer</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">maplair</span><span class="dl">'</span><span class="p">;</span>
+
+<span class="kd">const</span> <span class="nx">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MaplairMap</span><span class="p">(</span><span class="dl">'</span><span class="s1">map</span><span class="dl">'</span><span class="p">).</span><span class="nx">setView</span><span class="p">([</span><span class="mf">51.505</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.09</span><span class="p">],</span> <span class="mi">13</span><span class="p">);</span>
+
+<span class="k">new</span> <span class="nx">TileLayer</span><span class="p">(</span><span class="dl">'</span><span class="s1">https://tile.openstreetmap.org/{z}/{x}/{y}.png</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+	<span class="na">maxZoom</span><span class="p">:</span> <span class="mi">19</span><span class="p">,</span>
+	<span class="na">attribution</span><span class="p">:</span> <span class="dl">'</span><span class="s1">© &lt;a href="http://www.openstreetmap.org/copyright"&gt;OpenStreetMap&lt;/a&gt;</span><span class="dl">'</span>
+<span class="p">}).</span><span class="nx">addTo</span><span class="p">(</span><span class="nx">map</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>You will find a copy of the Maplair release files in <code class="language-plaintext highlighter-rouge">node_modules/maplair/dist</code>.</p>
+
+<h3 id="maplair-source-code">Maplair Source Code</h3>
+
+<p>These download packages above only contain the library itself.
+If you want to download the full source code, including unit tests, files for debugging, build scripts, etc.,
+you can <a href="https://github.com/maplair/maplair/releases">download it</a>
+from the <a href="https://github.com/maplair/maplair">GitHub repository</a>.</p>
+
+<h3 id="building-maplair-from-the-source">Building Maplair from the Source</h3>
+
+<p>Maplair&#8217;s build system is powered by the <a href="http://nodejs.org">Node.js</a> platform,
+which installs easily and works well across all major platforms.
+Here are the steps to set it up:</p>
+
+<ol>
+  <li><a href="http://nodejs.org">Download and install Node</a></li>
+  <li><a href="https://pnpm.io/installation">Install pnpm</a></li>
+  <li>Run the following command in the command line:</li>
+</ol>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pnpm <span class="nb">install</span>
+</code></pre></div></div>
+
+<p>Now that you have everything installed, run <code class="language-plaintext highlighter-rouge">pnpm run build</code> inside the Maplair directory.
+This will combine and compress the Maplair source files, saving the build to the <code class="language-plaintext highlighter-rouge">dist</code> folder.</p>
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="docs/js/docs.js"></script>
+
+</body>
+</html>

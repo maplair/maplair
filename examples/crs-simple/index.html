@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>Non-geographical Maps - Maplair</title>
+	
+	
+	<meta charset="utf-8" />
+	
+
+	
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="../../docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="../../docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="../../docs/css/normalize.css" />
+	<link rel="stylesheet" href="../../docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="../../docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="../../docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body>
+
+<header>
+	<h1><a href="https://maplair.org/"><img src="../../docs/images/logo.png" alt="Maplair" width="300" /></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<a href="../../index.html">Overview</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../examples.html">Tutorials</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../download.html">Download</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../plugins.html">Plugins</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../blog.html">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		<p class="tutorials-back"><a href="../../examples.html">← Tutorials</a></p>
+
+<style>
+iframe {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+</style>
+
+<h2 id="not-of-this-earth">Not of This Earth</h2>
+
+<p>Sometimes, maps do not represent things on the surface of the earth and, as such, do not have a concept of geographical latitude and geographical longitude. Most times this refers to big scanned images, such as game maps.</p>
+
+<p>For this tutorial we&#8217;ve picked a starmap from Star Control II, a game that is now available as the <a href="https://en.wikipedia.org/wiki/Star_Control_II#The_Ur-Quan_Masters">open-source project The Ur-Quan Masters</a>. These maps were made with a <a href="http://www.highprogrammer.com/alan/games/video/uqm/index.html">tool to read the open-source data files</a> of the game (webpage seems to have been taken down, see the <a href="https://web.archive.org/web/20171112052528/https://www.highprogrammer.com/alan/games/video/uqm/index.html">archived version</a>), and look like this:</p>
+
+<center>
+<img src="uqm_map_400px.png" style="border: 1px solid #ccc; border-radius: 5px" /><br />
+</center>
+
+<p>The game has a built-in square coordinate system, as can be seen in the corners. This will allow us to establish a coordinate system.</p>
+
+<center>
+<img src="uqm_map_detail.png" style="border: 1px solid #ccc; border-radius: 5px" /><br />
+</center>
+
+<h2 id="simplecrs">SimpleCRS</h2>
+
+<p><strong>CRS</strong> stands for <a href="https://en.wikipedia.org/wiki/Spatial_reference_system">coordinate reference system</a>, a term used by geographers to explain what the coordinates mean in a coordinate vector. For example, <code class="language-plaintext highlighter-rouge">[15, 60]</code> represents a point in the Indian Ocean if using latitude-longitude on the earth, or the solar system Krueger-Z in our starmap.</p>
+
+<p>A Maplair map has one CRS (and <em>one</em> CRS <em>only</em>), that can be changed when creating the map. For our game map we&#8217;ll use <code class="language-plaintext highlighter-rouge">SimpleCRS</code>, which represents a square grid:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>const map = new MaplairMap('map', {
+	crs: SimpleCRS
+});
+</code></pre></div></div>
+
+<p>Then we can just add an <code class="language-plaintext highlighter-rouge">ImageOverlay</code> with the starmap image and its <em>approximate</em> bounds:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>const bounds = [[0,0], [1000,1000]];
+const image = new ImageOverlay('uqm_map_full.png', bounds).addTo(map);
+</code></pre></div></div>
+
+<p>And show the whole map:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>map.fitBounds(bounds);
+</code></pre></div></div>
+
+<table role="presentation">
+<tr><td style="text-align: center; border: none; padding: 0;">
+<iframe src="crs-simple-example1.html" width="600" height="400" style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style="text-align: center; border: none">
+<small><a href="crs-simple-example1.html">See this example stand-alone.</a></small>
+</td></tr></table>
+
+<p>This example doesn&#8217;t quite work, as we cannot see the whole map after doing a <code class="language-plaintext highlighter-rouge">fitBounds()</code>.</p>
+
+<h2 id="common-gotchas-in-simplecrs-maps">Common Gotchas in SimpleCRS Maps</h2>
+
+<p>In the default Maplair CRS, <code class="language-plaintext highlighter-rouge">EarthCRS</code>, 360 degrees of longitude are mapped to 256 horizontal pixels (at zoom level 0) and approximately 170 degrees of latitude are mapped to 256 vertical pixels (at zoom level 0).</p>
+
+<p>In a <code class="language-plaintext highlighter-rouge">SimpleCRS</code>, one horizontal map unit is mapped to one horizontal pixel, and <em>idem</em> with vertical. This means that the whole map is about 1000x1000 pixels big and won&#8217;t fit in our HTML container. Luckily, we can set <code class="language-plaintext highlighter-rouge">minZoom</code> to values lower than zero:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>const map = new MaplairMap('map', {
+	crs: SimpleCRS,
+	minZoom: -5
+});
+</code></pre></div></div>
+
+<h3 id="pixels-vs-map-units">Pixels vs. Map Units</h3>
+
+<p>One common mistake when using <code class="language-plaintext highlighter-rouge">SimpleCRS</code> is assuming that the map units equal image pixels. In this case, the map covers 1000x1000 units, but the image is 2315x2315 pixels big. Different cases will call for one pixel = one map unit, or 64 pixels = one map unit, or anything. <strong>Think in map units</strong> in a grid, and then add your layers (<code class="language-plaintext highlighter-rouge">ImageOverlay</code>s, <code class="language-plaintext highlighter-rouge">Marker</code>s and so on) accordingly.</p>
+
+<p>In fact, the image we&#8217;re using covers more than 1000 map units - there is a sizable margin. Measuring how many pixels there are between the 0 and 1000 coordinates, and extrapolating, we can have the right coordinate bounds for this image:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>const bounds = [[-26.5,-25], [1021.5,1023]];
+const image = new ImageOverlay('uqm_map_full.png', bounds).addTo(map);
+</code></pre></div></div>
+
+<p>While we&#8217;re at it, let&#8217;s add some markers:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>const sol = new LatLng([ 145, 175.2 ]);
+new Marker(sol).addTo(map);
+map.setView( [70, 120], 1);
+</code></pre></div></div>
+
+<table role="presentation">
+<tr><td style="text-align: center; border: none; padding: 0;">
+<iframe src="crs-simple-example2.html" width="600" height="400" style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style="text-align: center; border: none">
+<small><a href="crs-simple-example2.html">See this example stand-alone.</a></small>
+</td></tr></table>
+
+<h3 id="this-is-not-the-latlng-youre-looking-for">This is not the <code class="language-plaintext highlighter-rouge">LatLng</code> You&#8217;re Looking for</h3>
+
+<p>You&#8217;ll notice that Sol is at coordinates <code class="language-plaintext highlighter-rouge">[145,175]</code> instead of <code class="language-plaintext highlighter-rouge">[175,145]</code>, and the same happens with the map center. Coordinates in <code class="language-plaintext highlighter-rouge">SimpleCRS</code> take the form of <code class="language-plaintext highlighter-rouge">[y, x]</code> instead of <code class="language-plaintext highlighter-rouge">[x, y]</code>, in the same way Maplair uses <code class="language-plaintext highlighter-rouge">[lat, lng]</code> instead of <code class="language-plaintext highlighter-rouge">[lng, lat]</code>.</p>
+
+<p><small>(In technical terms, Maplair prefers to use <a href="https://en.wikipedia.org/wiki/Easting_and_northing"><code class="language-plaintext highlighter-rouge">[northing, easting]</code></a> over <code class="language-plaintext highlighter-rouge">[easting, northing]</code> - the first coordinate in a coordinate pair points &#8220;north&#8221; and the second points &#8220;east&#8221;)</small></p>
+
+<p>The debate about whether <code class="language-plaintext highlighter-rouge">[lng, lat]</code> or <code class="language-plaintext highlighter-rouge">[lat, lng]</code> or <code class="language-plaintext highlighter-rouge">[y, x]</code> or <code class="language-plaintext highlighter-rouge">[x, y]</code> <a href="http://www.macwright.org/lonlat/">is not new, and there is no clear consensus</a>. This lack of consensus is why Maplair has a class named <code class="language-plaintext highlighter-rouge">LatLng</code> instead of the more confusion-prone <code class="language-plaintext highlighter-rouge">Coordinate</code>.</p>
+
+<p>If working with <code class="language-plaintext highlighter-rouge">[y, x]</code> coordinates with something named <code class="language-plaintext highlighter-rouge">LatLng</code> doesn&#8217;t make much sense to you, you can easily create wrappers for them:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>const yx = LatLng;
+
+const xy = function(x, y) {
+	if (Array.isArray(x)) {    // When doing xy([x, y]);
+		return new yx(x[1], x[0]);
+	}
+	return new yx(y, x);  // When doing xy(x, y);
+};
+</code></pre></div></div>
+
+<p>Now we can add a few stars and even a navigation line with <code class="language-plaintext highlighter-rouge">[x, y]</code> coordinates:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>const sol      = xy(175.2, 145.0);
+const mizar    = xy( 41.6, 130.1);
+const kruegerZ = xy( 13.4,  56.5);
+const deneb    = xy(218.7,   8.3);
+
+new Marker(     sol).addTo(map).bindPopup(      'Sol');
+new Marker(   mizar).addTo(map).bindPopup(    'Mizar');
+new Marker(kruegerZ).addTo(map).bindPopup('Krueger-Z');
+new Marker(   deneb).addTo(map).bindPopup(    'Deneb');
+
+const travel = new Polyline([sol, deneb]).addTo(map);
+</code></pre></div></div>
+
+<p>The map looks pretty much the same, but the code is a bit more readable:</p>
+
+<table role="presentation">
+<tr><td style="text-align: center; border: none; padding: 0;">
+<iframe src="crs-simple-example3.html" width="600" height="400" style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style="text-align: center; border: none">
+<small><a href="crs-simple-example3.html">See this example stand-alone.</a></small>
+</td></tr></table>
+
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="../../docs/js/docs.js"></script>
+
+</body>
+</html>

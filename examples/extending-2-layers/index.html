@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>Extending Maplair, New Layers - Maplair</title>
+	
+	
+	<meta charset="utf-8" />
+	
+
+	
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="../../docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="../../docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="../../docs/css/normalize.css" />
+	<link rel="stylesheet" href="../../docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="../../docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="../../docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body>
+
+<header>
+	<h1><a href="https://maplair.org/"><img src="../../docs/images/logo.png" alt="Maplair" width="300" /></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<a href="../../index.html">Overview</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../examples.html">Tutorials</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../download.html">Download</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../plugins.html">Plugins</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../blog.html">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		<p class="tutorials-back"><a href="../../examples.html">← Tutorials</a></p>
+
+<p><br /></p>
+
+<p>This tutorial assumes you&#8217;ve read the <a href="./extending-1-classes.html">theory of Maplair class inheritance</a>.</p>
+
+<p>In Maplair, a &#8220;layer&#8221; is anything that moves around when the map is moved around. Before seeing how to create them from scratch, it&#8217;s easier to explain how to do simple extensions.</p>
+
+<h2 id="extension-methods">&#8220;Extension Methods&#8221;</h2>
+
+<p>A few of the Maplair classes have so-called &#8220;extension methods&#8221;: entry points for writing code for sub-classes.</p>
+
+<p>One of them is <code class="language-plaintext highlighter-rouge">TileLayer.getTileUrl()</code>. This method is called internally by <code class="language-plaintext highlighter-rouge">TileLayer</code> whenever a new tile needs to know which image to load. By making a subclass of <code class="language-plaintext highlighter-rouge">TileLayer</code> and rewriting its <code class="language-plaintext highlighter-rouge">getTileUrl()</code> function, we can create custom behaviour.</p>
+
+<p>Let&#8217;s illustrate with a custom <code class="language-plaintext highlighter-rouge">TileLayer</code> that will display random kitten images from <a href="https://cataas.com">Cataas</a>:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">KittenTileLayer</span> <span class="kd">extends</span> <span class="nx">TileLayer</span> <span class="p">{</span>
+	<span class="nx">getTileUrl</span><span class="p">(</span><span class="nx">coords</span><span class="p">)</span> <span class="p">{</span>
+		<span class="kd">const</span> <span class="nx">i</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">ceil</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+		<span class="kd">const</span> <span class="nx">tag</span> <span class="o">=</span> <span class="p">[</span><span class="dl">'</span><span class="s1">orange</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">hat</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">cute</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">small</span><span class="dl">'</span><span class="p">];</span>
+		<span class="k">return</span> <span class="s2">`https://cataas.com/cat/</span><span class="p">${</span><span class="nx">tag</span><span class="p">[</span><span class="nx">i</span><span class="p">]}</span><span class="s2">?width=256&amp;height=256`</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="nx">getAttribution</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="dl">'</span><span class="s1">&lt;a href="https://cataas.com/"&gt;CATAAS - Cat as a service&lt;/a&gt;</span><span class="dl">'</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">new</span> <span class="nx">KittenTileLayer</span><span class="p">().</span><span class="nx">addTo</span><span class="p">(</span><span class="nx">map</span><span class="p">);</span>
+</code></pre></div></div>
+
+<table role="presentation">
+<tr><td style="text-align: center; border: none; padding: 0;">
+<iframe src="kittenlayer.html" width="600" height="400" style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style="text-align: center; border: none">
+<small><a href="kittenlayer.html">See this example stand-alone.</a></small>
+</td></tr></table>
+
+<p>Normally, <code class="language-plaintext highlighter-rouge">getTileUrl()</code> receives the tile coordinates (as <code class="language-plaintext highlighter-rouge">coords.x</code>, <code class="language-plaintext highlighter-rouge">coords.y</code> and <code class="language-plaintext highlighter-rouge">coords.z</code>) and generates a tile URL from them. In our example, we ignore those and simply use a random number to get a different kitten every time.</p>
+
+<h3 id="gridlayer-and-dom-elements"><code class="language-plaintext highlighter-rouge">GridLayer</code> and DOM Elements</h3>
+
+<p>Another extension method is <code class="language-plaintext highlighter-rouge">GridLayer.createTile()</code>. Where <code class="language-plaintext highlighter-rouge">TileLayer</code> assumes that there is a grid of images (as <code class="language-plaintext highlighter-rouge">&lt;img&gt;</code> elements), <code class="language-plaintext highlighter-rouge">GridLayer</code> doesn&#8217;t assume that - it allows creating grids of any kind of <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element">HTML Elements</a>.</p>
+
+<p><code class="language-plaintext highlighter-rouge">GridLayer</code> allows creating grids of <code class="language-plaintext highlighter-rouge">&lt;img&gt;</code>s, but grids of <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/div"><code class="language-plaintext highlighter-rouge">&lt;div&gt;</code>s</a>, <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas"><code class="language-plaintext highlighter-rouge">&lt;canvas&gt;</code>es</a> or <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/picture"><code class="language-plaintext highlighter-rouge">&lt;picture&gt;</code>s</a> (or anything) are possible. <code class="language-plaintext highlighter-rouge">createTile()</code> just has to return an instance of <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement"><code class="language-plaintext highlighter-rouge">HTMLElement</code></a> given the tile coordinates. Knowing how to manipulate elements in the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Introduction">DOM</a> is important here: Maplair expects instances of <code class="language-plaintext highlighter-rouge">HTMLElement</code>, so elements created with libraries like jQuery will be problematic.</p>
+
+<p>An example of a custom <code class="language-plaintext highlighter-rouge">GridLayer</code> is showing the tile coordinates in a <code class="language-plaintext highlighter-rouge">&lt;div&gt;</code>. This is particularly useful when debugging the internals of Maplair, and for understanding how the tile coordinates work:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">DebugCoordsGridLayer</span> <span class="kd">extends</span> <span class="nx">GridLayer</span> <span class="p">{</span>
+	<span class="nx">createTile</span><span class="p">(</span><span class="nx">coords</span><span class="p">)</span> <span class="p">{</span>
+		<span class="kd">const</span> <span class="nx">tile</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="dl">'</span><span class="s1">div</span><span class="dl">'</span><span class="p">);</span>
+		<span class="nx">tile</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="p">[</span><span class="nx">coords</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="nx">coords</span><span class="p">.</span><span class="nx">y</span><span class="p">,</span> <span class="nx">coords</span><span class="p">.</span><span class="nx">z</span><span class="p">].</span><span class="nx">join</span><span class="p">(</span><span class="dl">'</span><span class="s1">, </span><span class="dl">'</span><span class="p">);</span>
+		<span class="nx">tile</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">outline</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">1px solid red</span><span class="dl">'</span><span class="p">;</span>
+		<span class="k">return</span> <span class="nx">tile</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">map</span><span class="p">.</span><span class="nx">addLayer</span><span class="p">(</span><span class="k">new</span> <span class="nx">DebugCoordsGridLayer</span><span class="p">());</span>
+</code></pre></div></div>
+
+<p>If the element has to do some asynchronous initialization, then use the second function parameter <code class="language-plaintext highlighter-rouge">done</code> and call it back when the tile is ready (for example, when an image has been fully loaded) or when there is an error. In here, we&#8217;ll just delay the tiles artificially:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">createTile</span><span class="p">(</span><span class="nx">coords</span><span class="p">,</span> <span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
+	<span class="kd">const</span> <span class="nx">tile</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="dl">'</span><span class="s1">div</span><span class="dl">'</span><span class="p">);</span>
+	<span class="nx">tile</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="p">[</span><span class="nx">coords</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="nx">coords</span><span class="p">.</span><span class="nx">y</span><span class="p">,</span> <span class="nx">coords</span><span class="p">.</span><span class="nx">z</span><span class="p">].</span><span class="nx">join</span><span class="p">(</span><span class="dl">'</span><span class="s1">, </span><span class="dl">'</span><span class="p">);</span>
+	<span class="nx">tile</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">outline</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">1px solid red</span><span class="dl">'</span><span class="p">;</span>
+
+	<span class="c1">// Syntax is 'done(error, tile)'</span>
+	<span class="nx">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="nx">done</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">tile</span><span class="p">),</span> <span class="mi">500</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">1500</span><span class="p">);</span>
+
+	<span class="k">return</span> <span class="nx">tile</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<table role="presentation">
+<tr><td style="text-align: center; border: none; padding: 0;">
+<iframe src="gridcoords.html" width="600" height="400" style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style="text-align: center; border: none">
+<small><a href="gridcoords.html">See this example stand-alone.</a></small>
+</td></tr></table>
+
+<p>With these custom <code class="language-plaintext highlighter-rouge">GridLayer</code>s, a plugin can have full control of the HTML elements that make up the grid. A few plugins already use <code class="language-plaintext highlighter-rouge">&lt;canvas&gt;</code>es in this way to do advanced rendering.</p>
+
+<p>A very basic <code class="language-plaintext highlighter-rouge">&lt;canvas&gt;</code> <code class="language-plaintext highlighter-rouge">GridLayer</code> looks like:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">CanvasCirclesGridLayer</span> <span class="kd">extends</span> <span class="nx">GridLayer</span> <span class="p">{</span>
+	<span class="nx">createTile</span><span class="p">(</span><span class="nx">coords</span><span class="p">)</span> <span class="p">{</span>
+		<span class="kd">const</span> <span class="nx">tile</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="dl">'</span><span class="s1">canvas</span><span class="dl">'</span><span class="p">);</span>
+
+		<span class="kd">const</span> <span class="nx">tileSize</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getTileSize</span><span class="p">();</span>
+		<span class="nx">tile</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="dl">'</span><span class="s1">width</span><span class="dl">'</span><span class="p">,</span> <span class="nx">tileSize</span><span class="p">.</span><span class="nx">x</span><span class="p">);</span>
+		<span class="nx">tile</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="dl">'</span><span class="s1">height</span><span class="dl">'</span><span class="p">,</span> <span class="nx">tileSize</span><span class="p">.</span><span class="nx">y</span><span class="p">);</span>
+
+		<span class="kd">const</span> <span class="nx">ctx</span> <span class="o">=</span> <span class="nx">tile</span><span class="p">.</span><span class="nx">getContext</span><span class="p">(</span><span class="dl">'</span><span class="s1">2d</span><span class="dl">'</span><span class="p">);</span>
+
+		<span class="c1">// Draw whatever is needed in the canvas context</span>
+		<span class="c1">// For example, circles which get bigger as we zoom in</span>
+		<span class="nx">ctx</span><span class="p">.</span><span class="nx">beginPath</span><span class="p">();</span>
+		<span class="nx">ctx</span><span class="p">.</span><span class="nx">arc</span><span class="p">(</span><span class="nx">tileSize</span><span class="p">.</span><span class="nx">x</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="nx">tileSize</span><span class="p">.</span><span class="nx">x</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span> <span class="o">+</span> <span class="nx">coords</span><span class="p">.</span><span class="nx">z</span><span class="o">*</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="nb">Math</span><span class="p">.</span><span class="nx">PI</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+		<span class="nx">ctx</span><span class="p">.</span><span class="nx">fill</span><span class="p">();</span>
+
+		<span class="k">return</span> <span class="nx">tile</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<table role="presentation">
+<tr><td style="text-align: center; border: none; padding: 0;">
+<iframe src="canvascircles.html" width="600" height="400" style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style="text-align: center; border: none">
+<small><a href="canvascircles.html">See this example stand-alone.</a></small>
+</td></tr></table>
+
+<h2 id="the-pixel-origin">The Pixel Origin</h2>
+
+<p>Creating custom <code class="language-plaintext highlighter-rouge">Layer</code>s is possible, but needs a deeper knowledge of how Maplair positions HTML elements. The abridged version is:</p>
+
+<ul>
+  <li>The <code class="language-plaintext highlighter-rouge">MaplairMap</code> container has &#8220;map panes&#8221;, which are <code class="language-plaintext highlighter-rouge">&lt;div&gt;</code>s.</li>
+  <li><code class="language-plaintext highlighter-rouge">Layer</code>s are HTML elements inside a map pane</li>
+  <li>The map transforms all <code class="language-plaintext highlighter-rouge">LatLng</code>s to coordinates in the map&#8217;s CRS, and from that into absolute &#8220;pixel coordinates&#8221; (the origin of the CRS is the same as the origin of the pixel coordinates)</li>
+  <li>When the <code class="language-plaintext highlighter-rouge">MaplairMap</code> is ready (has a center <code class="language-plaintext highlighter-rouge">LatLng</code> and a zoom level), the absolute pixel coordinates of the top-left corner become the &#8220;pixel origin&#8221;</li>
+  <li>Each <code class="language-plaintext highlighter-rouge">Layer</code> is offset from its map pane according to the pixel origin and the absolute pixel coordinates of the layer&#8217;s <code class="language-plaintext highlighter-rouge">LatLng</code>s</li>
+  <li>The pixel origin is reset after each <code class="language-plaintext highlighter-rouge">zoomend</code> or <code class="language-plaintext highlighter-rouge">viewreset</code> event on the <code class="language-plaintext highlighter-rouge">MaplairMap</code>, and every <code class="language-plaintext highlighter-rouge">Layer</code> has to recalculate its position (if needed)</li>
+  <li>The pixel origin is <em>not</em> reset when panning the map around; instead, the whole panes are repositioned.</li>
+</ul>
+
+<p>This might be a bit overwhelming, so consider the following explanatory map:</p>
+
+<table role="presentation">
+<tr><td style="text-align: center; border: none; padding: 0;">
+<iframe src="pixelorigin.html" width="600" height="400" style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style="text-align: center; border: none">
+<small><a href="pixelorigin.html">See this example stand-alone.</a></small>
+</td></tr></table>
+
+<p>The CRS origin (green) stays in the same <code class="language-plaintext highlighter-rouge">LatLng</code>. The pixel origin (red) always starts at the top-left corner. The pixel origin moves around when the map is panned (map panes are repositioned relative to the map&#8217;s container), and stays in the same place in the screen when zooming (map panes are <em>not</em> repositioned, but layers might redraw themselves). The absolute pixel coordinate to the pixel origin is updated when zooming, but is not updated when panning. Note how the absolute pixel coordinates (the distance to the green bracket) double every time the map is zoomed in.</p>
+
+<p>To position anything (for example, a blue <code class="language-plaintext highlighter-rouge">Marker</code>), its <code class="language-plaintext highlighter-rouge">LatLng</code> is converted to an absolute pixel coordinate inside the map&#8217;s <code class="language-plaintext highlighter-rouge">CRS</code>. Then the absolute pixel coordinate of the pixel origin is subtracted from its absolute pixel coordinate, giving an offset relative to the pixel origin (light blue). As the pixel origin is the top-left corner of all map panes, this offset can be applied to the HTML element of the marker&#8217;s icon. The marker&#8217;s <code class="language-plaintext highlighter-rouge">iconAnchor</code> (dark blue line) is achieved via negative CSS margins.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">Map.project()</code> and <code class="language-plaintext highlighter-rouge">Map.unproject()</code> methods operate with these absolute pixel coordinates. Likewise, <code class="language-plaintext highlighter-rouge">Map.latLngToLayerPoint()</code> and <code class="language-plaintext highlighter-rouge">Map.layerPointToLatLng()</code> work with the offset relative to the pixel origin.</p>
+
+<p>Different layers apply these calculations in different ways. <code class="language-plaintext highlighter-rouge">Marker</code>s simply reposition their icons; <code class="language-plaintext highlighter-rouge">GridLayer</code>s calculate the bounds of the map (in absolute pixel coordinates) and then calculate the list of tile coordinates to request; vector layers (polylines, polygons, circle markers, etc) transform each <code class="language-plaintext highlighter-rouge">LatLng</code> to pixels and draw the geometries using SVG or <code class="language-plaintext highlighter-rouge">&lt;canvas&gt;</code>.</p>
+
+<h3 id="onadd-and-onremove"><code class="language-plaintext highlighter-rouge">onAdd</code> and <code class="language-plaintext highlighter-rouge">onRemove</code></h3>
+
+<p>At their core, all <code class="language-plaintext highlighter-rouge">Layer</code>s are HTML elements inside a map pane, their positions and contents defined by the layer&#8217;s code. However, HTML elements cannot be created when a layer is instantiated; rather, this is done when the layer is added to the map - the layer doesn&#8217;t know about the map (or even about the <code class="language-plaintext highlighter-rouge">document</code>) until then.</p>
+
+<p>In other words: the map calls the <code class="language-plaintext highlighter-rouge">onAdd()</code> method of the layer, then the layer creates its HTML element(s) (commonly named &#8216;container&#8217; element) and adds them to the map pane. Conversely, when the layer is removed from the map, its <code class="language-plaintext highlighter-rouge">onRemove()</code> method is called. The layer must update its contents when added to the map, and reposition them when the map view is updated. A layer skeleton looks like:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">CustomLayer</span> <span class="kd">extends</span> <span class="nx">Layer</span> <span class="p">{</span>
+	<span class="nx">onAdd</span><span class="p">(</span><span class="nx">map</span><span class="p">)</span> <span class="p">{</span>
+		<span class="kd">const</span> <span class="nx">pane</span> <span class="o">=</span> <span class="nx">map</span><span class="p">.</span><span class="nx">getPane</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">pane</span><span class="p">);</span>
+		<span class="k">this</span><span class="p">.</span><span class="nx">_container</span> <span class="o">=</span> <span class="nx">DomUtil</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="err">…</span><span class="p">);</span>
+
+		<span class="nx">pane</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_container</span><span class="p">);</span>
+
+		<span class="c1">// Calculate initial position of container with `Map.latLngToLayerPoint()`, `getPixelOrigin()` and/or `getPixelBounds()`</span>
+
+		<span class="nx">DomUtil</span><span class="p">.</span><span class="nx">setPosition</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_container</span><span class="p">,</span> <span class="nx">point</span><span class="p">);</span>
+
+		<span class="c1">// Add and position children elements if needed</span>
+
+		<span class="nx">map</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">'</span><span class="s1">zoomend viewreset</span><span class="dl">'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_update</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+	<span class="p">}</span>
+
+	<span class="nx">onRemove</span><span class="p">(</span><span class="nx">map</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">this</span><span class="p">.</span><span class="nx">_container</span><span class="p">.</span><span class="nx">remove</span><span class="p">();</span>
+		<span class="nx">map</span><span class="p">.</span><span class="nx">off</span><span class="p">(</span><span class="dl">'</span><span class="s1">zoomend viewreset</span><span class="dl">'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_update</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+	<span class="p">}</span>
+
+	<span class="nx">_update</span><span class="p">()</span> <span class="p">{</span>
+		<span class="c1">// Recalculate position of container</span>
+
+		<span class="nx">DomUtil</span><span class="p">.</span><span class="nx">setPosition</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_container</span><span class="p">,</span> <span class="nx">point</span><span class="p">);</span>        
+
+		<span class="c1">// Add/remove/reposition children elements if needed</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>How to exactly position the HTML elements for a layer depends on the specifics of the layer, but this introduction should help you to read Maplair&#8217;s layer code, and create new layers.</p>
+
+<h3 id="using-the-parents-onadd">Using the Parent&#8217;s <code class="language-plaintext highlighter-rouge">onAdd</code></h3>
+
+<p>Some use cases don&#8217;t need the whole <code class="language-plaintext highlighter-rouge">onAdd</code> code to be recreated, but instead the code for the parent can be reused, then some specifics can be added before <em>or</em> after that initialization (as needed).</p>
+
+<p>To give an example, we can have a subclass of <code class="language-plaintext highlighter-rouge">Polyline</code> that will always be red (ignoring the options), like:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">RedPolyline</span> <span class="kd">extends</span> <span class="nx">Polyline</span> <span class="p">{</span>
+	<span class="nx">onAdd</span><span class="p">(</span><span class="nx">map</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">color</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">red</span><span class="dl">'</span><span class="p">;</span>
+		<span class="k">super</span><span class="p">.</span><span class="nx">onAdd</span><span class="p">(</span><span class="nx">map</span><span class="p">);</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="../../docs/js/docs.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,137 @@
+import { Point } from "../../geometry/Point.js";
+import { Bounds } from "../../geometry/Bounds.js";
+import { LatLng } from "../../geo/LatLng.js";
+import { clipPolygon, polygonCenter } from "../../geometry/PolyUtil.js";
+import { isFlat } from "../../geometry/LineUtil.js";
+import { Polyline } from "./Polyline.js";
+//#region src/layer/vector/Polygon.js
+/** @import {LatLngExpression} from '../../geo/LatLng.js' */
+/** @import {PolylineOptions} from './Polyline.js' */
+/**
+* Options of `Polygon`.
+* @typedef {object} PolygonOptions
+* @property {boolean} [fill=true] Whether to fill the polygon with color.
+* @extends PolylineOptions
+*/
+/**
+* A class for drawing polygon overlays on a map. Extends `Polyline`.
+*
+* Note that points you pass when creating a polygon shouldn't have an additional last
+* point equal to the first one — it's better to filter out such points.
+*
+* @example
+* ```js
+* // create a red polygon from an array of LatLng points
+* const latlngs = [[37, -109.05],[41, -109.03],[41, -102.05],[37, -102.04]];
+*
+* const polygon = new Polygon(latlngs, {color: 'red'}).addTo(map);
+*
+* // zoom the map to the polygon
+* map.fitBounds(polygon.getBounds());
+* ```
+*
+* You can also pass an array of arrays of latlngs, with the first array representing
+* the outer shape and the other arrays representing holes in the outer shape:
+*
+* ```js
+* const latlngs = [
+*   [[37, -109.05],[41, -109.03],[41, -102.05],[37, -102.04]], // outer ring
+*   [[37.29, -108.58],[40.71, -108.58],[40.71, -102.50],[37.29, -102.50]] // hole
+* ];
+* ```
+*
+* Additionally, you can pass a multi-dimensional array to represent a MultiPolygon shape.
+*
+* ```js
+* const latlngs = [
+*   [ // first polygon
+*     [[37, -109.05],[41, -109.03],[41, -102.05],[37, -102.04]], // outer ring
+*     [[37.29, -108.58],[40.71, -108.58],[40.71, -102.50],[37.29, -102.50]] // hole
+*   ],
+*   [ // second polygon
+*     [[41, -111.03],[45, -111.04],[45, -104.05],[41, -104.05]]
+*   ]
+* ];
+* ```
+*/
+var Polygon = class Polygon extends Polyline {
+	static {
+		this.setDefaultOptions({ fill: true });
+	}
+	/**
+	* Instantiates a polygon object given an array of geographical points (or arrays
+	* of them for holes and multi-polygons) and optionally an options object.
+	* @overload
+	* @param {LatLngExpression[]|LatLngExpression[][]|LatLngExpression[][][]} latlngs
+	* @param {PolygonOptions} [options]
+	*/
+	/**
+	* @param {...any} args
+	*/
+	constructor(...args) {
+		super(...args);
+		this.callInitHooks(Polygon);
+	}
+	/**
+	* Returns `true` if the Polygon has no LatLngs.
+	* @returns {boolean}
+	*/
+	isEmpty() {
+		return !this._latlngs.length || !this._latlngs[0].length;
+	}
+	/**
+	* Returns the center ([centroid](http://en.wikipedia.org/wiki/Centroid)) of the Polygon.
+	* @returns {LatLng}
+	*/
+	getCenter() {
+		if (!this._map) throw new Error("Must add layer to map before using getCenter()");
+		return polygonCenter(this._defaultShape(), this._map.options.crs);
+	}
+	_convertLatLngs(latlngs) {
+		const result = super._convertLatLngs(latlngs), len = result.length;
+		if (len >= 2 && result[0] instanceof LatLng && result[0].equals(result[len - 1])) result.pop();
+		return result;
+	}
+	_setLatLngs(latlngs) {
+		super._setLatLngs(latlngs);
+		if (isFlat(this._latlngs)) this._latlngs = [this._latlngs];
+	}
+	_defaultShape() {
+		return isFlat(this._latlngs[0]) ? this._latlngs[0] : this._latlngs[0][0];
+	}
+	_clipPoints() {
+		let bounds = this._renderer._bounds;
+		const w = this.options.weight, p = new Point(w, w);
+		bounds = new Bounds(bounds.min.subtract(p), bounds.max.add(p));
+		this._parts = [];
+		if (!this._pxBounds || !this._pxBounds.intersects(bounds)) return;
+		if (this.options.noClip) {
+			this._parts = this._rings;
+			return;
+		}
+		for (const ring of this._rings) {
+			const clipped = clipPolygon(ring, bounds, true);
+			if (clipped.length) this._parts.push(clipped);
+		}
+	}
+	_updatePath() {
+		this._renderer._updatePoly(this, true);
+	}
+	_containsPoint(p) {
+		let inside = false, part, p1, p2, i, j, k, len, len2;
+		if (!this._pxBounds || !this._pxBounds.contains(p)) return false;
+		for (i = 0, len = this._parts.length; i < len; i++) {
+			part = this._parts[i];
+			for (j = 0, len2 = part.length, k = len2 - 1; j < len2; k = j++) {
+				p1 = part[j];
+				p2 = part[k];
+				if (p1.y > p.y !== p2.y > p.y && p.x < (p2.x - p1.x) * (p.y - p1.y) / (p2.y - p1.y) + p1.x) inside = !inside;
+			}
+		}
+		return inside || super._containsPoint(p, true);
+	}
+};
+//#endregion
+export { Polygon };
+
+//# sourceMappingURL=Polygon.js.map
