@@ -13,12 +13,20 @@ geoRe = /^geo:(-?[\d.]+),(-?[\d.]+)$/;
  * is restored from the hash (in either format) when creating the `Hash` and when
  * the hash changes (e.g. with the back button of the browser).
  *
+ * With the `layers` option, the hash also keeps the base layer and the overlays
+ * shown on the map, e.g. `#13/47.2692/11.4041?layers=OSM,Bike%20routes`.
+ *
  * Inspired by the [leaflet-hash](https://github.com/mlevans/leaflet-hash) plugin.
  *
  * @example
  * ```js
  * const map = new MaplairMap('map').setView([47.27, 11.40], 13);
  * new Hash(map);
+ *
+ * // with the layers of a layers control
+ * const baseLayers = {OSM: osm, Topo: topo}, overlays = {'Bike routes': bikes};
+ * new LayersControl(baseLayers, overlays).addTo(map);
+ * new Hash(map, {layers: {...baseLayers, ...overlays}});
  * ```
  */
 
@@ -36,13 +44,20 @@ export class Hash {
 			// zoom as parameter `z` like in Android, `#geo:47.2692,11.4041?z=13`. The
 			// bearing of a rotated map is added as fourth number or parameter `bearing`.
 			format: 'zoom/lat/lng',
+
+			// @option layers: Object = undefined
+			// The layers to keep in the hash by name, e.g. the base layers and overlays
+			// of a `LayersControl`: the names of those on the map are added as
+			// parameter `layers`, and restoring the hash adds the named layers to
+			// the map and removes the others.
+			layers: undefined,
 			...options
 		};
 		this._map = map;
 		this._onHashChange = this._onHashChange.bind(this);
 
 		window.addEventListener('hashchange', this._onHashChange);
-		map.on('moveend', this._onMoveEnd, this);
+		map.on('moveend layeradd layerremove', this._onMoveEnd, this);
 
 		if (!this._onHashChange() && map._loaded) {
 			this._onMoveEnd();
@@ -53,7 +68,7 @@ export class Hash {
 	// Stops synchronizing the view with the hash of the URL.
 	remove() {
 		window.removeEventListener('hashchange', this._onHashChange);
-		this._map.off('moveend', this._onMoveEnd, this);
+		this._map.off('moveend layeradd layerremove', this._onMoveEnd, this);
 		return this;
 	}
 
@@ -64,16 +79,31 @@ export class Hash {
 		if (view.hash === this._hash) { return true; }
 
 		this._hash = view.hash;
-		this._map.setView(view.center, view.zoom ?? this._map.getZoom(), {animate: false});
+		this._restoring = true;
+		const map = this._map;
+		map.setView(view.center, view.zoom ?? map.getZoom(), {animate: false});
 		// with the map rotation (see `MaplairMap.setBearing()`)
-		if (this._map.setBearing && (view.bearing !== undefined || this._map.getBearing())) {
-			this._map.setBearing(view.bearing ?? 0);
+		if (map.setBearing && (view.bearing !== undefined || map.getBearing())) {
+			map.setBearing(view.bearing ?? 0);
 		}
+		if (view.layers && this.options.layers) {
+			for (const [name, layer] of Object.entries(this.options.layers)) {
+				if (view.layers.includes(name)) {
+					map.addLayer(layer);
+				} else if (map.hasLayer(layer)) {
+					map.removeLayer(layer);
+				}
+			}
+		}
+		this._restoring = false;
+		// e.g. adding the layers to a hash without them
+		this._onMoveEnd();
 		return true;
 	}
 
 	_onMoveEnd() {
-		const hash = Hash.format(this._map, this.options.format);
+		if (this._restoring || !this._map._loaded) { return; }
+		const hash = Hash.format(this._map, this.options.format, this.options.layers);
 		if (hash === this._hash || hash === location.hash) { return; }
 		this._hash = hash;
 		// without adding entries to the history of the browser
@@ -81,12 +111,16 @@ export class Hash {
 	}
 
 	// @function parse(hash: String): Object
-	// Parses a hash like `#13/47.2692/11.4041[/30]` or `#geo:47.2692,11.4041[?z=13]`
-	// to an object with the `center` (`LatLng`), the `zoom` (if any) and the
-	// optional `bearing`, or returns `undefined` for other hashes.
+	// Parses a hash like `#13/47.2692/11.4041[/30][?layers=A,B]` or
+	// `#geo:47.2692,11.4041[?z=13][&layers=A,B]` to an object with the `center`
+	// (`LatLng`), the `zoom` (if any), the optional `bearing` and the names of the
+	// `layers` (if any), or returns `undefined` for other hashes.
 	static parse(hash) {
 		const [path, query] = hash.replace(leadingHashRe, '').split('?'),
-		params = new URLSearchParams(query);
+		params = new URLSearchParams(query),
+		// layer names may contain commas, which are encoded
+		rawLayers = (query ?? '').split('&').find(param => param.startsWith('layers='))?.slice(7),
+		layers = rawLayers === undefined ? undefined : rawLayers.split(',').filter(Boolean).map(decodeURIComponent);
 		let zoom, lat, lng, bearing;
 
 		const geo = geoRe.exec(path);
@@ -100,14 +134,14 @@ export class Hash {
 			[zoom, lat, lng, bearing] = parts.map(Number);
 		}
 		if ([zoom, lat, lng, bearing].some(Number.isNaN)) { return undefined; }
-		return {zoom, center: new LatLng(lat, lng), bearing, hash: `#${hash.replace(leadingHashRe, '')}`};
+		return {zoom, center: new LatLng(lat, lng), bearing, layers, hash: `#${hash.replace(leadingHashRe, '')}`};
 	}
 
-	// @function format(map: MaplairMap, format?: String): String
+	// @function format(map: MaplairMap, format?: String, layers?: Object): String
 	// Returns the hash for the view of the map in the given `format` (see the
 	// options), with as many decimal places of the coordinates as needed for
-	// the precision of a pixel.
-	static format(map, format = 'zoom/lat/lng') {
+	// the precision of a pixel, and the names of the given `layers` on the map.
+	static format(map, format = 'zoom/lat/lng', layers = undefined) {
 		const zoom = Math.round(map.getZoom() * 100) / 100,
 		center = map.getCenter(),
 		bearing = Math.round((map.getBearing?.() ?? 0) * 10) / 10,
@@ -115,9 +149,11 @@ export class Hash {
 		precision = Math.max(0, Math.ceil(Math.log10(256 * 2 ** map.getZoom() / 360))),
 		lat = center.lat.toFixed(precision),
 		lng = center.lng.toFixed(precision);
+		const names = layers && Object.keys(layers).filter(name => map.hasLayer(layers[name])),
+		layerParam = names ? `layers=${names.map(encodeURIComponent).join(',')}` : '';
 		if (format === 'geo') {
-			return `#geo:${lat},${lng}?z=${zoom}${bearing ? `&bearing=${bearing}` : ''}`;
+			return `#geo:${lat},${lng}?z=${zoom}${bearing ? `&bearing=${bearing}` : ''}${layerParam ? `&${layerParam}` : ''}`;
 		}
-		return `#${zoom}/${lat}/${lng}${bearing ? `/${bearing}` : ''}`;
+		return `#${zoom}/${lat}/${lng}${bearing ? `/${bearing}` : ''}${layerParam ? `?${layerParam}` : ''}`;
 	}
 }

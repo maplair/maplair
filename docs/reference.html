@@ -2422,6 +2422,8 @@ to obscure objects you're zooming to.</td>
 (see the <code>format</code> option), so that it can be bookmarked and shared. The view
 is restored from the hash (in either format) when creating the <a href="#hash"><code>Hash</code></a> and when
 the hash changes (e.g. with the back button of the browser).</p>
+<p>With the <code>layers</code> option, the hash also keeps the base layer and the overlays
+shown on the map, e.g. <code>#13/47.2692/11.4041?layers=OSM,Bike%20routes</code>.</p>
 <p>Inspired by the <a href="https://github.com/mlevans/leaflet-hash">leaflet-hash</a> plugin.</p>
 
 <section>
@@ -2435,6 +2437,11 @@ the hash changes (e.g. with the back button of the browser).</p>
 
 <pre><code class="language-js">const map = new MaplairMap('map').setView([47.27, 11.40], 13);
 new Hash(map);
+
+// with the layers of a layers control
+const baseLayers = {OSM: osm, Topo: topo}, overlays = {'Bike routes': bikes};
+new LayersControl(baseLayers, overlays).addTo(map);
+new Hash(map, {layers: {...baseLayers, ...overlays}});
 </code></pre>
 
 
@@ -2491,6 +2498,15 @@ new Hash(map);
 zoom as parameter <code>z</code> like in Android, <code>#geo:47.2692,11.4041?z=13</code>. The
 bearing of a rotated map is added as fourth number or parameter <code>bearing</code>.</td>
 	</tr>
+	<tr id='hash-layers'>
+		<td><code><b>layers</b></code></td>
+		<td><code>Object</code></td>
+		<td><code>undefined</code></td>
+		<td>The layers to keep in the hash by name, e.g. the base layers and overlays
+of a <a href="#layerscontrol"><code>LayersControl</code></a>: the names of those on the map are added as
+parameter <code>layers</code>, and restoring the hash adds the named layers to
+the map and removes the others.</td>
+	</tr>
 </tbody></table>
 
 </section>
@@ -2540,16 +2556,17 @@ bearing of a rotated map is added as fourth number or parameter <code>bearing</c
 	<tr id='hash-parse'>
 		<td><code><b>parse</b>(<nobr>&lt;String&gt;</nobr> <i>hash</i>)</code></td>
 		<td><code>Object</code></td>
-		<td>Parses a hash like <code>#13/47.2692/11.4041[/30]</code> or <code>#geo:47.2692,11.4041[?z=13]</code>
-to an object with the <code>center</code> (<a href="#latlng"><code>LatLng</code></a>), the <code>zoom</code> (if any) and the
-optional <code>bearing</code>, or returns <code>undefined</code> for other hashes.</td>
+		<td>Parses a hash like <code>#13/47.2692/11.4041[/30][?layers=A,B]</code> or
+<code>#geo:47.2692,11.4041[?z=13][&amp;layers=A,B]</code> to an object with the <code>center</code>
+(<a href="#latlng"><code>LatLng</code></a>), the <code>zoom</code> (if any), the optional <code>bearing</code> and the names of the
+<code>layers</code> (if any), or returns <code>undefined</code> for other hashes.</td>
 	</tr>
 	<tr id='hash-format'>
-		<td><code><b>format</b>(<nobr>&lt;<a href='#maplairmap'>MaplairMap</a>&gt;</nobr> <i>map</i>, <nobr>&lt;String&gt;</nobr> <i>format?</i>)</code></td>
+		<td><code><b>format</b>(<nobr>&lt;<a href='#maplairmap'>MaplairMap</a>&gt;</nobr> <i>map</i>, <nobr>&lt;String&gt;</nobr> <i>format?</i>, <nobr>&lt;Object&gt;</nobr> <i>layers?</i>)</code></td>
 		<td><code>String</code></td>
 		<td>Returns the hash for the view of the map in the given <code>format</code> (see the
 options), with as many decimal places of the coordinates as needed for
-the precision of a pixel.</td>
+the precision of a pixel, and the names of the given <code>layers</code> on the map.</td>
 	</tr>
 </tbody></table>
 

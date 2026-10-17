@@ -1,5 +1,5 @@
 import {expect} from 'vite-plus/test';
-import {Hash, MaplairMap} from 'maplair';
+import {GridLayer, Hash, LayersControl, MaplairMap} from 'maplair';
 import {createContainer, removeMapContainer} from '../SpecHelper.js';
 import 'maplair/map-rotation';
 
@@ -142,5 +142,85 @@ describe('Hash', () => {
 		expect(location.hash).to.equal('#2/0.0/0.0');
 		await setHash('#7/10.000/20.000');
 		expect(map.getZoom()).to.equal(5);
+	});
+
+	describe('layers', () => {
+		let osm, topo, bikes, labels, layers;
+
+		function gridLayer() {
+			const grid = new GridLayer();
+			grid.createTile = () => document.createElement('div');
+			return grid;
+		}
+
+		beforeEach(() => {
+			osm = gridLayer();
+			topo = gridLayer();
+			bikes = gridLayer();
+			labels = gridLayer();
+			layers = {OSM: osm, Topo: topo, 'Bike, routes': bikes, Labels: labels};
+		});
+
+		it('formats and parses the names of the layers', () => {
+			map.setView([1, 2], 4);
+			osm.addTo(map);
+			bikes.addTo(map);
+			const value = Hash.format(map, 'zoom/lat/lng', layers);
+			expect(value).to.equal('#4/1.00/2.00?layers=OSM,Bike%2C%20routes');
+			expect(Hash.parse(value).layers).to.eql(['OSM', 'Bike, routes']);
+			expect(Hash.format(map, 'geo', layers)).to.equal('#geo:1.00,2.00?z=4&layers=OSM,Bike%2C%20routes');
+			expect(Hash.parse('#geo:1,2?z=4&layers=Topo').layers).to.eql(['Topo']);
+			expect(Hash.parse('#4/1/2?layers=').layers).to.eql([]);
+			expect(Hash.parse('#4/1/2').layers).to.be.undefined;
+		});
+
+		it('writes the layers on the map to the hash', () => {
+			map.setView([1, 2], 4);
+			osm.addTo(map);
+			hash = new Hash(map, {layers});
+			expect(location.hash).to.equal('#4/1.00/2.00?layers=OSM');
+
+			labels.addTo(map);
+			expect(location.hash).to.equal('#4/1.00/2.00?layers=OSM,Labels');
+			osm.remove();
+			topo.addTo(map);
+			expect(location.hash).to.equal('#4/1.00/2.00?layers=Topo,Labels');
+		});
+
+		it('restores the layers from the hash, with a layers control', async () => {
+			const control = new LayersControl({OSM: osm, Topo: topo}, {'Bike, routes': bikes, Labels: labels}).addTo(map);
+			map.setView([1, 2], 4);
+			osm.addTo(map);
+			labels.addTo(map);
+			hash = new Hash(map, {layers, format: 'geo'});
+
+			await setHash('#geo:1.00,2.00?z=4&layers=Topo,Bike%2C%20routes');
+			expect(map.hasLayer(topo)).to.be.true;
+			expect(map.hasLayer(bikes)).to.be.true;
+			expect(map.hasLayer(osm)).to.be.false;
+			expect(map.hasLayer(labels)).to.be.false;
+			// the checkboxes of the control follow
+			const checked = [...control.getContainer().querySelectorAll('input')].filter(i => i.checked).map(i => i.nextSibling.textContent.trim());
+			expect(checked).to.eql(['Topo', 'Bike, routes']);
+			expect(location.hash).to.equal('#geo:1.00,2.00?z=4&layers=Topo,Bike%2C%20routes');
+		});
+
+		it('keeps the layers for hashes without them', async () => {
+			map.setView([1, 2], 4);
+			osm.addTo(map);
+			hash = new Hash(map, {layers});
+			await setHash('#5/1.00/2.00');
+			expect(map.getZoom()).to.equal(5);
+			expect(map.hasLayer(osm)).to.be.true;
+			expect(location.hash).to.equal('#5/1.00/2.00?layers=OSM');
+		});
+
+		it('restores the layers when created', () => {
+			history.replaceState(null, '', '#4/1.00/2.00?layers=Labels');
+			osm.addTo(map);
+			hash = new Hash(map, {layers});
+			expect(map.hasLayer(labels)).to.be.true;
+			expect(map.hasLayer(osm)).to.be.false;
+		});
 	});
 });
