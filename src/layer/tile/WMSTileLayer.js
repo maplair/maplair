@@ -137,6 +137,32 @@ export class WMSTileLayer extends TileLayer {
 		return url.toString();
 	}
 
+	// @method getLegendUrl(params?: Object): String
+	// Returns the URL of the legend image (a `GetLegendGraphic` request) of the first
+	// of the `layers` (with its style, if any), with the version, format and `uppercase`
+	// option of the layer. `params` change or add parameters, e.g. `{layer: 'roads',
+	// width: 20, height: 20}` or vendor parameters like `legend_options`.
+	getLegendUrl(params) {
+		const {version, format, layers, styles} = this.wmsParams,
+		url = new URL(this._url, document.baseURI);
+		for (const [k, v] of Object.entries({
+			service: 'WMS',
+			request: 'GetLegendGraphic',
+			version,
+			format,
+			layer: layers.split(',')[0],
+			style: styles?.split(',')[0] || undefined,
+			// required by the WMS 1.3 profile of SLD
+			sld_version: parseFloat(version) >= 1.3 ? '1.1.0' : undefined,
+			...params
+		})) {
+			if (v !== undefined) {
+				url.searchParams.set(this.options.uppercase ? k.toUpperCase() : k, v);
+			}
+		}
+		return url.toString();
+	}
+
 	// @method setParams(params: Object, noRedraw?: Boolean): this
 	// Merges an object with the new parameters and re-requests tiles on the current screen (unless `noRedraw` was set to true).
 	setParams(params, noRedraw) {

@@ -7962,6 +7962,14 @@ sorted by it, then by the order of adding, e.g. <code>1</code> keeps a legend la
 		<th>Description</th>
 	</tr>
 	</thead><tbody>
+	<tr id='wmstilelayer-getlegendurl'>
+		<td><code><b>getLegendUrl</b>(<nobr>&lt;Object&gt;</nobr> <i>params?</i>)</code></td>
+		<td><code>String</code></td>
+		<td><p>Returns the URL of the legend image (a <code>GetLegendGraphic</code> request) of the first
+of the <code>layers</code> (with its style, if any), with the version, format and <code>uppercase</code>
+option of the layer. <code>params</code> change or add parameters, e.g. <code>{layer: 'roads', width: 20, height: 20}</code> or vendor parameters like <code>legend_options</code>.</p>
+</td>
+	</tr>
 	<tr id='wmstilelayer-setparams'>
 		<td><code><b>setParams</b>(<nobr>&lt;Object&gt;</nobr> <i>params</i>, <nobr>&lt;Boolean&gt;</nobr> <i>noRedraw?</i>)</code></td>
 		<td><code>this</code></td>
