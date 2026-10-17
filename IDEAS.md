@@ -634,70 +634,80 @@ Effort: small
 request with the layer's URL, version and format (e.g. for an `<img>` in the
 attribution or a legend control).
 
-## 51. Classified markers with a legend
+## 51. Categorized and graduated symbology with a legend
 
 Effort: medium · ~2 kB
 
-Thematic maps color features by class: a measured value or API code maps to a
-class (label, fill and stroke color), and the map explains the classes with a
-legend, often with the count per class. Apps build this by hand: style each
-marker from the class, render the legend into the attribution, and rebuild it
-whenever the data changes. Common requirements:
+Thematic maps style features by class, in QGIS terms with a *categorized*
+renderer (one symbol per distinct value, e.g. an API code `'S2'`) or a
+*graduated* renderer (one symbol per range of a numeric value, e.g. `< 15 min`,
+`< 30 min`, …), and explain the classes in the *legend*, optionally with the
+*feature count* per class. Apps build this by hand: style each marker from its
+class, render the legend into the attribution, and rebuild it whenever the data
+changes. Common requirements:
 
-* classes by code (categorical: `'S2'`) or by thresholds (`< 15 min`, `< 30 min`,
-  …), with a tolerant lookup (label instead of code, whitespace variants)
-* several codes sharing one label or style appear once in the legend
-* classes such as "no data" are drawn but not counted
-* legend swatches in the shape of the feature (circle, square, line)
-* the distribution as text (`42 stations, < 15 min: 30 (71.4 %)`) and as a
+* classes by value (categorized) or by range (graduated), the value given by an
+  attribute or a function of the feature, with a tolerant lookup (legend label
+  instead of value, whitespace variants) and an *all other values* class
+* several values sharing one legend label or symbol appear once in the legend
+* classes such as "no data" are rendered but excluded from the feature count
+* legend patches in the shape of the feature (circle, square, line), like QGIS
+  legend patch shapes
+* the feature count as text (`42 stations, < 15 min: 30 (71.4 %)`) and as a
   stacked bar, accessible (`role="img"`, `aria-label`)
-* the colors reused elsewhere (charts, tables, filters)
+* the symbol colors reused elsewhere (charts, tables, filters)
 
 Ways to abstract it, from thin to integrated:
 
-**A. `Classification` as plain data.** `new Classification({name, classes:
-[{code | below, label, style: {fillColor, color}, counted}], normalize})` with
-`classify(value) → class`, `style(value) → PathOptions`, `legendItems()` (merged
-by label and style), `count(values) → [{label, count, share}]` and
-`toElement({counts, bar})` rendering the legend. The app passes
-`style(value)` to `circleMarker()`/`geoJSON({style})` and the element to
-`attribution` or a control. No layer changes, so it is the smallest, but the
-app still keeps counts and legend in sync.
+**A. Symbology as plain data.** `new Categorized({name, value, categories:
+[{value, symbol: {fillColor, color}, legend, counted}], otherValues,
+normalize})` and `new Graduated({name, value, ranges: [{lower, upper, symbol,
+legend}]})`, sharing `classify(feature) → class`, `symbol(feature) →
+PathOptions`, `legendItems()` (merged by legend label and symbol),
+`featureCount(features) → [{legend, count, share}]` and `toElement({featureCount,
+bar})` rendering the legend. The app passes `symbol()` to
+`circleMarker()`/`geoJSON({style})` and the element to `attribution` or a
+control. No layer changes, so it is the smallest, but the app still keeps
+counts and legend in sync. The QGIS classification modes (equal interval,
+quantile, pretty breaks, …) could later compute `ranges` from data.
 
-**B. Classified layer group.** `new ClassifiedGroup({classification, classify:
-layer => layer.feature.properties.klasse})`, a `FeatureGroup` styling each added
-path from its class, keeping counts on `layeradd`/`layerremove` and firing
-`classificationchange`. Its attribution (option `legend: 'attribution'`) is
-built from the current counts, so adding or removing markers updates the legend.
-`setClassVisible(label, visible)` hides classes (filtering). Integrated, but
+**B. Layer group with a symbology.** `new FeatureGroup(layers, {symbology})`
+(or a `SymbologyGroup`) styling each added path from its class, keeping the
+feature count on `layeradd`/`layerremove` and firing `symbologychange`. Its
+attribution (option `legend: 'attribution'`) is built from the current counts,
+so adding or removing markers updates the legend. `setClassVisible(legend,
+visible)` hides a class, like unchecking it in the QGIS legend. Integrated, but
 ties styling, counting and legend to one group.
 
 **C. A legend protocol and `LegendControl`.** Like `getAttribution()` collected
 by the attribution control, layers may implement `getLegend() → HTMLElement`,
 and a `LegendControl` collects the legends of all layers on the map, updated on
-`layeradd`/`layerremove` and a `legendchange` event. Classified groups (B),
-WMS layers (the `GetLegendGraphic` image of 50), heat layers (the gradient of
-25) and image overlays all plug into it; it renders in a control or inside the
-attribution (`<details>` to collapse it). Clicking an entry toggles the class,
+`layeradd`/`layerremove` and a `legendchange` event. Groups with a symbology
+(B), WMS layers (the `GetLegendGraphic` image of 50), heat layers (the gradient
+of 25) and image overlays all plug into it; it renders in a control or inside
+the attribution (`<details>` to collapse it). A checkbox per class toggles it,
 hovering highlights its features.
 
-**D. Style expressions.** MapLibre-like `step(value, [color, 15, color, 30,
-…])` and `match(value, {S1: color, …})` as path style values; the legend is
-derived from the expression. Most general, but a mini language to document
-and test, and labels and counting still need extra data.
+**D. Data-defined styles.** MapLibre-like expressions as path style values,
+`step(value, [color, 15, color, 30, …])` and `match(value, {S1: color, …})`,
+the counterpart of QGIS data-defined overrides; the legend is derived from the
+expression. Most general, but a mini language to document and test, and legend
+labels and feature counts still need extra data.
 
 Recommended: A as the core data type, B on top of it, and C as the generic
-place for legends. Implementation: an opt-in module
-`maplair/classification` exporting `Classification`, `ClassifiedGroup` and
-`LegendControl`; `Layer.getLegend()` documented next to `getAttribution()`.
-Threshold lookup with a sorted array of breaks (binary search), categorical
-lookup with a `Map`, `normalize` for tolerant matching. Swatches as small inline
-SVG (circle for `CircleMarker`, square for polygons, line for polylines) with
-the class style, so that they match the map, also in dark mode via CSS
-variables. The bar as flex `<div>`s with `flex-grow` = count. Translated texts
-("{n} features", "Legend") via `I18n`. Specs: lookup by code, threshold and
-label; merging; uncounted classes; counts after adding and removing layers;
-legend update in the attribution and the control; class toggling.
+place for legends. Implementation: an opt-in module `maplair/symbology`
+exporting `Categorized`, `Graduated` and `LegendControl` and adding the
+`symbology` option to `FeatureGroup`; `Layer.getLegend()` documented next to
+`getAttribution()`. Graduated lookup with a sorted array of range bounds
+(binary search), categorized lookup with a `Map`, `normalize` for tolerant
+matching. Legend patches as small inline SVG (circle for `CircleMarker`, square
+for polygons, line for polylines) with the class symbol, so that they match the
+map, also in dark mode via CSS variables. The bar as flex `<div>`s with
+`flex-grow` = count. Translated texts ("{n} features", "Legend", "All other
+values") via `I18n`. Specs: lookup by value, range and legend label; all other
+values; merging; classes excluded from the count; counts after adding and
+removing layers; legend update in the attribution and the control; toggling
+classes.
 
 ## Also implemented
 
