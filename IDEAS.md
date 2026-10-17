@@ -749,21 +749,41 @@ the attribution (`<details>` to collapse it). A checkbox per class toggles it,
 hovering highlights its features.
 
 ```js
-import {LegendControl} from 'maplair/symbology';
+import {Graduated, LegendControl} from 'maplair/symbology';
 
-new LegendControl({position: 'bottomright', collapsed: true}).addTo(map);
+// weather stations classified by air temperature, as circle markers
+const temperature = new Graduated([
+	{upper: -10, symbol: {fillColor: '#1f78b4'}, legend: '< -10 °C'},
+	{lower: -10, upper: 0, symbol: {fillColor: '#5bc0de'}, legend: '-10–0 °C'},
+	{lower: 0, upper: 10, symbol: {fillColor: '#33ee33'}, legend: '0–10 °C'},
+	{lower: 10, upper: 20, symbol: {fillColor: '#f0a030'}, legend: '10–20 °C'},
+], {
+	value: f => f.properties.temperature,
+	otherValues: {symbol: {fillColor: '#000000'}, legend: 'No data', counted: false},
+});
 
-stations.addTo(map); // legend of the symbology
+const stations = new GeoJSON(data, {
+	symbology: temperature, // getLegend() and the feature count of this layer
+	pointToLayer: (feature, latlng) => new CircleMarker(latlng, {radius: 6, color: '#ffffff'}),
+	style: temperature.style, // fillColor of the class
+}).addTo(map);
+
+// collects getLegend() of all layers, here inside the attribution
+new LegendControl({container: 'attribution', featureCount: true}).addTo(map);
+
+// refreshing the data restyles the markers and fires legendchange
+stations.clearLayers().addData(newData);
+
+// the same symbol for the class column of a table
+const {legend, symbol} = temperature.classify(feature);
+
+// any other layer may provide a legend
 wmsLayer.addTo(map); // GetLegendGraphic image
-
 const CustomLayer = Layer.extend({
 	getLegend() {
 		const el = document.createElement('div');
 		el.textContent = 'Custom';
 		return el;
-	},
-	update() {
-		this.fire('legendchange');
 	},
 });
 ```
