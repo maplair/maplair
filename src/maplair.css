@@ -206,6 +206,21 @@
 	image-rendering: pixelated;
 }
 
+/* animated dashes of paths, see the dashSpeed option */
+.maplair-dash-animated {
+	animation: maplair-dash var(--maplair-dash-duration) linear infinite;
+}
+
+@keyframes maplair-dash {
+	from {
+		stroke-dashoffset: 0;
+	}
+
+	to {
+		stroke-dashoffset: calc(-1 * var(--maplair-dash-length));
+	}
+}
+
 /* zoom and fade animations */
 
 .maplair-fade-anim {
@@ -900,6 +915,9 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	}
 	.maplair-zoom-anim .maplair-zoom-animated {
 		transition: none;
+	}
+	.maplair-dash-animated {
+		animation: none;
 	}
 }
 

@@ -2674,15 +2674,6 @@ sync.remove();
 
 
 
-<div class='section-comments'>The rotation of marker icons is an optional feature: import this module to add
-the <code>rotationAngle</code>, <code>rotationOrigin</code> and <code>rotateWithView</code> options and
-<code>setRotationAngle()</code>/<code>setRotationOrigin()</code> to <a href="#marker"><code>Marker</code></a> (it is also part of the
-map rotation, see <code>MaplairMap.setBearing()</code>).
-<pre><code class="language-js">import 'maplair/marker-rotation';
-
-new Marker([47.27, 11.40], {rotationAngle: 45}).addTo(map);
-</code></pre>
-<p>Inspired by the <a href="https://github.com/bbecquet/Leaflet.RotatedMarker">Leaflet.RotatedMarker</a> plugin.</p></div>
 
 <table><thead>
 	<tr>
@@ -2692,6 +2683,25 @@ new Marker([47.27, 11.40], {rotationAngle: 45}).addTo(map);
 		<th>Description</th>
 	</tr>
 	</thead><tbody>
+	<tr id='marker-duration'>
+		<td><code><b>duration</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>1000</code></td>
+		<td>The duration of the movement in milliseconds.</td>
+	</tr>
+	<tr id='marker-speed'>
+		<td><code><b>speed</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>undefined</code></td>
+		<td>The speed in meters (or units of the CRS) per second instead of the <code>duration</code>.</td>
+	</tr>
+	<tr id='marker-rotate'>
+		<td><code><b>rotate</b></code></td>
+		<td><code>Boolean</code></td>
+		<td><code>false</code></td>
+		<td>Whether to set the <code>rotationAngle</code> of the icon to the heading of the movement
+(for icons pointing up; needs the marker rotation, see <code>rotationAngle</code>).</td>
+	</tr>
 	<tr id='marker-rotationangle'>
 		<td><code><b>rotationAngle</b></code></td>
 		<td><code>Number</code></td>
@@ -2967,6 +2977,25 @@ map edge to start panning the map.</td>
 	</tr>
 </tbody></table>
 
+</section><section class='collapsable'>
+
+<h4 id='marker-movement-events'>Movement events</h4>
+
+
+<table><thead>
+	<tr>
+		<th>Event</th>
+		<th>Data</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='marker-moveend'>
+		<td><code><b>moveend</b></code></td>
+		<td><code><a href='#event'>Event</a></code></td>
+		<td>Fired when the marker stops moving (after dragging or <code>moveAlong()</code>).</td>
+	</tr>
+</tbody></table>
+
 </section>
 
 
@@ -3129,6 +3158,15 @@ for a second (also called long press).</td>
 
 
 
+<div class='section-comments'>The rotation of marker icons is an optional feature: import this module to add
+the <code>rotationAngle</code>, <code>rotationOrigin</code> and <code>rotateWithView</code> options and
+<code>setRotationAngle()</code>/<code>setRotationOrigin()</code> to <a href="#marker"><code>Marker</code></a> (it is also part of the
+map rotation, see <code>MaplairMap.setBearing()</code>).
+<pre><code class="language-js">import 'maplair/marker-rotation';
+
+new Marker([47.27, 11.40], {rotationAngle: 45}).addTo(map);
+</code></pre>
+<p>Inspired by the <a href="https://github.com/bbecquet/Leaflet.RotatedMarker">Leaflet.RotatedMarker</a> plugin.</p></div>
 
 <table><thead>
 	<tr>
@@ -3211,6 +3249,71 @@ used by Marker layer.</p>
 		<td><code>Object</code></td>
 		<td><p>Coordinates values are rounded with <a href="#util-formatnum"><code>formatNum</code></a> function with given <code>precision</code>.
 Returns a <a href="https://en.wikipedia.org/wiki/GeoJSON"><code>GeoJSON</code></a> representation of the marker (as a GeoJSON <a href="#point"><code>Point</code></a> Feature).</p>
+</td>
+	</tr>
+</tbody></table>
+
+</section><section class='collapsable'>
+
+<h4 id='marker-marker-movement'>Marker movement</h4>
+
+<div class='section-comments'>The animated movement of markers is an optional feature: import this module to
+add <code>moveTo()</code>, <code>moveAlong()</code>, <code>stopMoving()</code> and <code>isMoving()</code> to <a href="#marker"><code>Marker</code></a>.
+<pre><code class="language-js">import 'maplair/marker-movement';
+
+marker.moveAlong([[47.27, 11.40], [47.28, 11.42]], {duration: 5000});
+</code></pre>
+<p>Inspired by the <a href="https://github.com/ewoken/Leaflet.MovingMarker">Leaflet.MovingMarker</a>
+and <a href="https://github.com/openplans/Leaflet.AnimatedMarker">Leaflet.AnimatedMarker</a> plugins.</p></div>
+
+<table><thead>
+	<tr>
+		<th>Method</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='marker-moveto'>
+		<td><code><b>moveTo</b>(<nobr>&lt;<a href='#latlng'>LatLng</a>&gt;</nobr> <i>latlng</i>, <nobr>&lt;<a href='#marker-option'>Marker movement options</a>&gt;</nobr> <i>options?</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Moves the marker smoothly to <code>latlng</code>, see <code>moveAlong()</code>.</p>
+</td>
+	</tr>
+	<tr id='marker-movealong'>
+		<td><code><b>moveAlong</b>(<nobr>&lt;LatLng[]&gt;</nobr> <i>latlngs</i>, <nobr>&lt;<a href='#marker-option'>Marker movement options</a>&gt;</nobr> <i>options?</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Moves the marker smoothly along the given points, frame by frame at a constant
+speed, e.g. to follow a vehicle or to replay a track. Fires <code>move</code> with each
+frame and <code>moveend</code> at the end. A new movement or <code>stopMoving()</code> stops it; with
+the marker jumps to the end.
+Inspired by the <a href="https://github.com/ewoken/Leaflet.MovingMarker">Leaflet.MovingMarker</a>
+and <a href="https://github.com/openplans/Leaflet.AnimatedMarker">Leaflet.AnimatedMarker</a> plugins.</p>
+</td>
+	</tr>
+</tbody></table>
+
+</section><section class='collapsable'>
+
+<h4 id='marker-movement-events'>Movement events</h4>
+
+
+<table><thead>
+	<tr>
+		<th>Method</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='marker-stopmoving'>
+		<td><code><b>stopMoving</b>()</code></td>
+		<td><code>this</code></td>
+		<td><p>Stops the movement of <code>moveTo()</code> or <code>moveAlong()</code>.</p>
+</td>
+	</tr>
+	<tr id='marker-ismoving'>
+		<td><code><b>isMoving</b>()</code></td>
+		<td><code>Boolean</code></td>
+		<td><p>Returns <code>true</code> while the marker moves with <code>moveTo()</code> or <code>moveAlong()</code>.</p>
 </td>
 	</tr>
 </tbody></table>
@@ -10670,6 +10773,13 @@ overlays (Polygon, Polyline, Circle). Do not use it directly. Extends <a href="#
 
 
 
+<div class='section-comments'>The animation of dashes is an optional feature: import this module to add the
+<code>dashSpeed</code> option to <a href="#path"><code>Path</code></a>.
+<pre><code class="language-js">import 'maplair/dash-animation';
+
+new Polyline(latlngs, {dashArray: '10, 10', dashSpeed: 20}).addTo(map);
+</code></pre>
+<p>Inspired by the <a href="https://github.com/rubenspgcavalcante/leaflet-ant-path">leaflet-ant-path</a> plugin.</p></div>
 
 <table><thead>
 	<tr>
@@ -10679,6 +10789,14 @@ overlays (Polygon, Polyline, Circle). Do not use it directly. Extends <a href="#
 		<th>Description</th>
 	</tr>
 	</thead><tbody>
+	<tr id='path-dashspeed'>
+		<td><code><b>dashSpeed</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>Animates the dashes of the <code>dashArray</code> along the path (&quot;marching ants&quot;),
+e.g. to show the direction of a flow: the speed in pixels per second,
+negative for the opposite direction. Not animated with</td>
+	</tr>
 	<tr id='path-stroke'>
 		<td><code><b>stroke</b></code></td>
 		<td><code>Boolean</code></td>
@@ -11020,9 +11138,9 @@ for a second (also called long press).</td>
 </td>
 	</tr>
 	<tr id='path-setstyle'>
-		<td><code><b>setStyle</b>(<nobr>&lt;<a href='#path-option'>Path options</a>&gt;</nobr> <i>style</i>)</code></td>
+		<td><code><b>setStyle</b>(<nobr>&lt;<a href='#path-method'>Path options</a>&gt;</nobr> <i>style</i>)</code></td>
 		<td><code>this</code></td>
-		<td><p>Changes the appearance of a Path based on the options in the <a href="#path-option"><code>Path options</code></a> object.</p>
+		<td><p>Changes the appearance of a Path based on the options in the <a href="#path-method"><code>Path options</code></a> object.</p>
 </td>
 	</tr>
 	<tr id='path-bringtofront'>
@@ -11542,6 +11660,14 @@ accuracy; lower values mean more accuracy but slower rendering.</td>
 		<th>Description</th>
 	</tr>
 	</thead><tbody>
+	<tr id='polyline-dashspeed'>
+		<td><code><b>dashSpeed</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>Animates the dashes of the <code>dashArray</code> along the path (&quot;marching ants&quot;),
+e.g. to show the direction of a flow: the speed in pixels per second,
+negative for the opposite direction. Not animated with</td>
+	</tr>
 	<tr id='polyline-stroke'>
 		<td><code><b>stroke</b></code></td>
 		<td><code>Boolean</code></td>
@@ -11955,9 +12081,9 @@ a specific ring as a LatLng array (that you can earlier access with <a href="#po
 </td>
 	</tr>
 	<tr id='polyline-setstyle'>
-		<td><code><b>setStyle</b>(<nobr>&lt;<a href='#path-option'>Path options</a>&gt;</nobr> <i>style</i>)</code></td>
+		<td><code><b>setStyle</b>(<nobr>&lt;<a href='#path-method'>Path options</a>&gt;</nobr> <i>style</i>)</code></td>
 		<td><code>this</code></td>
-		<td><p>Changes the appearance of a Path based on the options in the <a href="#path-option"><code>Path options</code></a> object.</p>
+		<td><p>Changes the appearance of a Path based on the options in the <a href="#path-method"><code>Path options</code></a> object.</p>
 </td>
 	</tr>
 	<tr id='polyline-bringtofront'>
@@ -12492,6 +12618,14 @@ accuracy; lower values mean more accuracy but slower rendering.</td>
 		<th>Description</th>
 	</tr>
 	</thead><tbody>
+	<tr id='polygon-dashspeed'>
+		<td><code><b>dashSpeed</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>Animates the dashes of the <code>dashArray</code> along the path (&quot;marching ants&quot;),
+e.g. to show the direction of a flow: the speed in pixels per second,
+negative for the opposite direction. Not animated with</td>
+	</tr>
 	<tr id='polygon-stroke'>
 		<td><code><b>stroke</b></code></td>
 		<td><code>Boolean</code></td>
@@ -12926,9 +13060,9 @@ a specific ring as a LatLng array (that you can earlier access with <a href="#po
 </td>
 	</tr>
 	<tr id='polygon-setstyle'>
-		<td><code><b>setStyle</b>(<nobr>&lt;<a href='#path-option'>Path options</a>&gt;</nobr> <i>style</i>)</code></td>
+		<td><code><b>setStyle</b>(<nobr>&lt;<a href='#path-method'>Path options</a>&gt;</nobr> <i>style</i>)</code></td>
 		<td><code>this</code></td>
-		<td><p>Changes the appearance of a Path based on the options in the <a href="#path-option"><code>Path options</code></a> object.</p>
+		<td><p>Changes the appearance of a Path based on the options in the <a href="#path-method"><code>Path options</code></a> object.</p>
 </td>
 	</tr>
 	<tr id='polygon-bringtofront'>
@@ -13446,6 +13580,14 @@ accuracy; lower values mean more accuracy but slower rendering.</td>
 		<th>Description</th>
 	</tr>
 	</thead><tbody>
+	<tr id='rectangle-dashspeed'>
+		<td><code><b>dashSpeed</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>Animates the dashes of the <code>dashArray</code> along the path (&quot;marching ants&quot;),
+e.g. to show the direction of a flow: the speed in pixels per second,
+negative for the opposite direction. Not animated with</td>
+	</tr>
 	<tr id='rectangle-stroke'>
 		<td><code><b>stroke</b></code></td>
 		<td><code>Boolean</code></td>
@@ -13907,9 +14049,9 @@ a specific ring as a LatLng array (that you can earlier access with <a href="#po
 </td>
 	</tr>
 	<tr id='rectangle-setstyle'>
-		<td><code><b>setStyle</b>(<nobr>&lt;<a href='#path-option'>Path options</a>&gt;</nobr> <i>style</i>)</code></td>
+		<td><code><b>setStyle</b>(<nobr>&lt;<a href='#path-method'>Path options</a>&gt;</nobr> <i>style</i>)</code></td>
 		<td><code>this</code></td>
-		<td><p>Changes the appearance of a Path based on the options in the <a href="#path-option"><code>Path options</code></a> object.</p>
+		<td><p>Changes the appearance of a Path based on the options in the <a href="#path-method"><code>Path options</code></a> object.</p>
 </td>
 	</tr>
 	<tr id='rectangle-bringtofront'>
@@ -14443,6 +14585,14 @@ displaced position.</td>
 		<th>Description</th>
 	</tr>
 	</thead><tbody>
+	<tr id='circle-dashspeed'>
+		<td><code><b>dashSpeed</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>Animates the dashes of the <code>dashArray</code> along the path (&quot;marching ants&quot;),
+e.g. to show the direction of a flow: the speed in pixels per second,
+negative for the opposite direction. Not animated with</td>
+	</tr>
 	<tr id='circle-stroke'>
 		<td><code><b>stroke</b></code></td>
 		<td><code>Boolean</code></td>
@@ -14889,9 +15039,9 @@ Returns a <a href="https://en.wikipedia.org/wiki/GeoJSON"><code>GeoJSON</code></
 </td>
 	</tr>
 	<tr id='circle-setstyle'>
-		<td><code><b>setStyle</b>(<nobr>&lt;<a href='#path-option'>Path options</a>&gt;</nobr> <i>style</i>)</code></td>
+		<td><code><b>setStyle</b>(<nobr>&lt;<a href='#path-method'>Path options</a>&gt;</nobr> <i>style</i>)</code></td>
 		<td><code>this</code></td>
-		<td><p>Changes the appearance of a Path based on the options in the <a href="#path-option"><code>Path options</code></a> object.</p>
+		<td><p>Changes the appearance of a Path based on the options in the <a href="#path-method"><code>Path options</code></a> object.</p>
 </td>
 	</tr>
 	<tr id='circle-bringtofront'>
@@ -15384,6 +15534,14 @@ displaced position.</td>
 		<th>Description</th>
 	</tr>
 	</thead><tbody>
+	<tr id='circlemarker-dashspeed'>
+		<td><code><b>dashSpeed</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>Animates the dashes of the <code>dashArray</code> along the path (&quot;marching ants&quot;),
+e.g. to show the direction of a flow: the speed in pixels per second,
+negative for the opposite direction. Not animated with</td>
+	</tr>
 	<tr id='circlemarker-stroke'>
 		<td><code><b>stroke</b></code></td>
 		<td><code>Boolean</code></td>
@@ -15796,9 +15954,9 @@ Returns a <a href="https://en.wikipedia.org/wiki/GeoJSON"><code>GeoJSON</code></
 </td>
 	</tr>
 	<tr id='circlemarker-setstyle'>
-		<td><code><b>setStyle</b>(<nobr>&lt;<a href='#path-option'>Path options</a>&gt;</nobr> <i>style</i>)</code></td>
+		<td><code><b>setStyle</b>(<nobr>&lt;<a href='#path-method'>Path options</a>&gt;</nobr> <i>style</i>)</code></td>
 		<td><code>this</code></td>
-		<td><p>Changes the appearance of a Path based on the options in the <a href="#path-option"><code>Path options</code></a> object.</p>
+		<td><p>Changes the appearance of a Path based on the options in the <a href="#path-method"><code>Path options</code></a> object.</p>
 </td>
 	</tr>
 	<tr id='circlemarker-bringtofront'>
@@ -18451,7 +18609,7 @@ for a second (also called long press).</td>
 	</tr>
 	</thead><tbody>
 	<tr id='featuregroup-setstyle'>
-		<td><code><b>setStyle</b>(<nobr>&lt;<a href='#path-option'>Path options</a>&gt;</nobr> <i>style</i>)</code></td>
+		<td><code><b>setStyle</b>(<nobr>&lt;<a href='#path-method'>Path options</a>&gt;</nobr> <i>style</i>)</code></td>
 		<td><code>this</code></td>
 		<td><p>Sets the given path options to each layer of the group that has a <code>setStyle</code> method.</p>
 </td>
@@ -18987,7 +19145,7 @@ The default is to spawn a default <a href="#marker"><code>Marker</code></a>:
 		<td><code><b>style</b></code></td>
 		<td><code>Function</code></td>
 		<td><code>*</code></td>
-		<td>A <code>Function</code> defining the <a href="#path-option"><code>Path options</code></a> for styling GeoJSON lines and polygons,
+		<td>A <code>Function</code> defining the <a href="#path-method"><code>Path options</code></a> for styling GeoJSON lines and polygons,
 called internally when data is added.
 The default value is to not override any defaults:
 <pre><code class="language-js">function (geoJsonFeature) {

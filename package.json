@@ -40,6 +40,8 @@
     },
     "./map-rotation": "./dist/esm/map/Map.Rotation.js",
     "./marker-rotation": "./dist/esm/layer/marker/Marker.Rotation.js",
+    "./marker-movement": "./dist/esm/layer/marker/Marker.Move.js",
+    "./dash-animation": "./dist/esm/layer/vector/Path.DashAnimation.js",
     "./src/": "./src/",
     "./styles.css": "./dist/maplair.css",
     "./i18n/*.json": "./i18n/*.json"
@@ -53,11 +55,15 @@
     "./src/map/Map.js",
     "./src/map/Map.Rotation.js",
     "./src/layer/marker/Marker.Rotation.js",
+    "./src/layer/marker/Marker.Move.js",
+    "./src/layer/vector/Path.DashAnimation.js",
     "./dist/esm/core/Handler.js",
     "./dist/esm/layer/GeoJSON.js",
     "./dist/esm/map/Map.js",
     "./dist/esm/map/Map.Rotation.js",
-    "./dist/esm/layer/marker/Marker.Rotation.js"
+    "./dist/esm/layer/marker/Marker.Rotation.js",
+    "./dist/esm/layer/marker/Marker.Move.js",
+    "./dist/esm/layer/vector/Path.DashAnimation.js"
   ],
   "files": [
     "dist",

@@ -10,7 +10,9 @@ const dir = fileURLToPath(new URL('./.tree-shaking/', import.meta.url));
 // code which only the respective feature contains
 const features = {
 	'map-rotation': 'maplair-rotate-pane',
-	'marker-rotation': 'setRotationAngle'
+	'marker-rotation': 'setRotationAngle',
+	'marker-movement': 'moveAlong',
+	'dash-animation': 'maplair-dash-animated'
 };
 
 const base = `import {MaplairMap, TileLayer, Marker, Polyline} from 'maplair';

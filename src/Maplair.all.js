@@ -3,3 +3,5 @@
 export * from './Maplair.js';
 export {RotateControl} from './map/Map.Rotation.js';
 import './layer/marker/Marker.Rotation.js';
+import './layer/marker/Marker.Move.js';
+import './layer/vector/Path.DashAnimation.js';
