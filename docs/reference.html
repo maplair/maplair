@@ -12463,6 +12463,37 @@ into &quot;M..L..L..&quot; instructions</td>
 	</tr>
 </tbody></table>
 
+</section><section class='collapsable'>
+
+<h4 id='path-zoom-dependent-styles'>Zoom-dependent styles</h4>
+
+<div class='section-comments'>Zoom-dependent styles are an optional feature: import this module to let the
+<code>weight</code> option of paths and the <code>radius</code> of circle markers depend on the zoom,
+like the zoom expressions of MapLibre. The value is either a function of the
+zoom or an object of zoom stops <code>{zoom: value}</code>, using the value of the highest
+stop not above the zoom (or of the lowest stop); <code>Path.interpolate()</code>
+interpolates between stops instead. The styles are updated on <code>zoomend</code>.
+<pre><code class="language-js">import 'maplair/zoom-styles';
+
+new CircleMarker(latlng, {radius: {5: 3, 10: 6, 15: 10}}).addTo(map);
+new Polyline(latlngs, {weight: Path.interpolate({5: 1, 15: 8})}).addTo(map);
+</code></pre></div>
+
+<table><thead>
+	<tr>
+		<th>Function</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='path-interpolate'>
+		<td><code><b>interpolate</b>(<nobr>&lt;Object&gt;</nobr> <i>stops</i>)</code></td>
+		<td><code>Function</code></td>
+		<td>Returns a function of the zoom interpolating linearly between the given zoom
+stops <code>{zoom: value}</code>, e.g. for the <a href="#path-zoom-dependent-styles">zoom-dependent styles</a>.</td>
+	</tr>
+</tbody></table>
+
 </section>
 
 
@@ -13441,6 +13472,33 @@ an instance of <a href="https://developer.mozilla.org/docs/Web/API/SVGLineElemen
 		<td><code>String</code></td>
 		<td>Generates a SVG path string for multiple rings, with each ring turning
 into &quot;M..L..L..&quot; instructions</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
+
+<div class='accordion'>
+	<label><span class='expander'>▶</span> Zoom-dependent styles inherited from <a href='#path'>Path</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Function</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='polyline-interpolate'>
+		<td><code><b>interpolate</b>(<nobr>&lt;Object&gt;</nobr> <i>stops</i>)</code></td>
+		<td><code>Function</code></td>
+		<td>Returns a function of the zoom interpolating linearly between the given zoom
+stops <code>{zoom: value}</code>, e.g. for the <a href="#path-zoom-dependent-styles">zoom-dependent styles</a>.</td>
 	</tr>
 </tbody></table>
 
@@ -14451,6 +14509,33 @@ an instance of <a href="https://developer.mozilla.org/docs/Web/API/SVGLineElemen
 		<td><code>String</code></td>
 		<td>Generates a SVG path string for multiple rings, with each ring turning
 into &quot;M..L..L..&quot; instructions</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
+
+<div class='accordion'>
+	<label><span class='expander'>▶</span> Zoom-dependent styles inherited from <a href='#path'>Path</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Function</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='polygon-interpolate'>
+		<td><code><b>interpolate</b>(<nobr>&lt;Object&gt;</nobr> <i>stops</i>)</code></td>
+		<td><code>Function</code></td>
+		<td>Returns a function of the zoom interpolating linearly between the given zoom
+stops <code>{zoom: value}</code>, e.g. for the <a href="#path-zoom-dependent-styles">zoom-dependent styles</a>.</td>
 	</tr>
 </tbody></table>
 
@@ -15471,6 +15556,33 @@ an instance of <a href="https://developer.mozilla.org/docs/Web/API/SVGLineElemen
 		<td><code>String</code></td>
 		<td>Generates a SVG path string for multiple rings, with each ring turning
 into &quot;M..L..L..&quot; instructions</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
+
+<div class='accordion'>
+	<label><span class='expander'>▶</span> Zoom-dependent styles inherited from <a href='#path'>Path</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Function</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='rectangle-interpolate'>
+		<td><code><b>interpolate</b>(<nobr>&lt;Object&gt;</nobr> <i>stops</i>)</code></td>
+		<td><code>Function</code></td>
+		<td>Returns a function of the zoom interpolating linearly between the given zoom
+stops <code>{zoom: value}</code>, e.g. for the <a href="#path-zoom-dependent-styles">zoom-dependent styles</a>.</td>
 	</tr>
 </tbody></table>
 
@@ -16499,6 +16611,33 @@ into &quot;M..L..L..&quot; instructions</td>
 	</div>
 </div>
 
+<div class='accordion'>
+	<label><span class='expander'>▶</span> Zoom-dependent styles inherited from <a href='#path'>Path</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Function</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='circle-interpolate'>
+		<td><code><b>interpolate</b>(<nobr>&lt;Object&gt;</nobr> <i>stops</i>)</code></td>
+		<td><code>Function</code></td>
+		<td>Returns a function of the zoom interpolating linearly between the given zoom
+stops <code>{zoom: value}</code>, e.g. for the <a href="#path-zoom-dependent-styles">zoom-dependent styles</a>.</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
+
 </section><h2 id='circlemarker'>CircleMarker</h2><p>A circle of a fixed size with radius specified in CSS pixels. Extends <a href="#path"><code>Path</code></a>.</p>
 
 <section>
@@ -17438,6 +17577,33 @@ an instance of <a href="https://developer.mozilla.org/docs/Web/API/SVGLineElemen
 		<td><code>String</code></td>
 		<td>Generates a SVG path string for multiple rings, with each ring turning
 into &quot;M..L..L..&quot; instructions</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
+
+<div class='accordion'>
+	<label><span class='expander'>▶</span> Zoom-dependent styles inherited from <a href='#path'>Path</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Function</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='circlemarker-interpolate'>
+		<td><code><b>interpolate</b>(<nobr>&lt;Object&gt;</nobr> <i>stops</i>)</code></td>
+		<td><code>Function</code></td>
+		<td>Returns a function of the zoom interpolating linearly between the given zoom
+stops <code>{zoom: value}</code>, e.g. for the <a href="#path-zoom-dependent-styles">zoom-dependent styles</a>.</td>
 	</tr>
 </tbody></table>
 

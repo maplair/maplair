@@ -14,7 +14,8 @@ const features = {
 	'marker-movement': 'moveAlong',
 	'dash-animation': 'maplair-dash-animated',
 	'path-decorations': 'maplair-path-arrowheads',
-	'geojson-loading': '_loadAbort'
+	'geojson-loading': '_loadAbort',
+	'zoom-styles': '_zoomStyles'
 };
 
 const base = `import {MaplairMap, TileLayer, Marker, Polyline, GeoJSON} from 'maplair';
