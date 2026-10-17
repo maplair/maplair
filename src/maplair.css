@@ -579,6 +579,50 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	}
 }
 
+/* context menu */
+
+.maplair-contextmenu {
+	position: fixed;
+	inset: auto;
+	margin: 0;
+	padding: 4px 0;
+	min-width: 150px;
+	border: 0;
+	border-radius: 4px;
+	background: white;
+	color: #222;
+	box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
+	font: 12px/1.5 "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+
+.maplair-contextmenu-item {
+	display: block;
+	width: 100%;
+	padding: 4px 12px;
+	border: 0;
+	background: none;
+	color: inherit;
+	font: inherit;
+	text-align: left;
+	cursor: pointer;
+
+	&:hover,
+	&:focus {
+		background: #f4f4f4;
+	}
+
+	&:disabled {
+		color: #999;
+		cursor: default;
+		background: none;
+	}
+}
+
+.maplair-contextmenu-separator {
+	margin: 4px 0;
+	border-top: 1px solid #ccc;
+}
+
 /* keyboard shortcuts help */
 
 .maplair-keyboard-help {

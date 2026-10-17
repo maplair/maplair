@@ -23681,6 +23681,166 @@ Without <code>cls</code>, runs the hooks of all classes of this object.</p>
 	</div>
 </div>
 
+</section><h2 id='contextmenu'>ContextMenu</h2><p>A menu opened with the <code>contextmenu</code> event (right click, or long tap on touch
+screens) on the map or on a layer. Each item calls a function with the location
+of the event. The menu is a <a href="https://developer.mozilla.org/docs/Web/API/Popover_API">popover</a>,
+closed by clicking outside of it or pressing Escape, and can be used with the
+keyboard (arrow keys, Enter).</p>
+<p>Inspired by the <a href="https://github.com/aratcliffe/Leaflet.contextmenu">Leaflet.contextmenu</a> plugin.</p>
+
+<section>
+<h3 id='contextmenu-example'>Usage example</h3>
+
+<section >
+
+
+
+
+
+<pre><code class="language-js">new ContextMenu([
+	{text: 'Center the map here', callback: e =&gt; map.panTo(e.latlng)},
+	'-',
+	{text: 'Zoom in', callback: () =&gt; map.zoomIn()}
+]).addTo(map);
+
+new ContextMenu([
+	{text: 'Remove', callback: e =&gt; e.relatedTarget.remove()}
+]).addTo(marker);
+</code></pre>
+
+
+
+</section>
+
+
+</section><section>
+<h3 id='contextmenu-constructor'>Constructor</h3>
+
+<section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Constructor</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='contextmenu-contextmenu'>
+		<td><code><b>new ContextMenu</b>(<nobr>&lt;Object[]&gt;</nobr> <i>items</i>, <nobr>&lt;<a href='#contextmenu-option'>ContextMenu options</a>&gt;</nobr> <i>options?</i>)</code></td>
+		<td>Creates a context menu. Each item is an object with <code>text</code>, <code>callback</code> and the
+optional <code>disabled</code>, or <code>'-'</code> for a separator. The <code>callback</code> gets an event with
+<code>latlng</code>, <code>containerPoint</code>, <code>layerPoint</code>, <code>originalEvent</code> and <code>relatedTarget</code>
+(the layer, for menus of layers).</td>
+	</tr>
+</tbody></table>
+
+
+</section>
+
+
+</section><section>
+<h3 id='contextmenu-option'>Options</h3>
+
+<section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Option</th>
+		<th>Type</th>
+		<th>Default</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='contextmenu-classname'>
+		<td><code><b>className</b></code></td>
+		<td><code>String</code></td>
+		<td><code>&#x27;&#x27;</code></td>
+		<td>A custom CSS class name to assign to the menu.</td>
+	</tr>
+</tbody></table>
+
+</section>
+
+
+</section><section>
+<h3 id='contextmenu-method'>Methods</h3>
+
+<section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Method</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='contextmenu-addto'>
+		<td><code><b>addTo</b>(<nobr>&lt;MaplairMap|Layer&gt;</nobr> <i>target</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Opens the menu on <code>contextmenu</code> events of the map or the layer.</p>
+</td>
+	</tr>
+	<tr id='contextmenu-remove'>
+		<td><code><b>remove</b>()</code></td>
+		<td><code>this</code></td>
+		<td><p>Removes the menu from its map or layer.</p>
+</td>
+	</tr>
+	<tr id='contextmenu-close'>
+		<td><code><b>close</b>()</code></td>
+		<td><code>this</code></td>
+		<td><p>Closes the menu.</p>
+</td>
+	</tr>
+	<tr id='contextmenu-isopen'>
+		<td><code><b>isOpen</b>()</code></td>
+		<td><code>Boolean</code></td>
+		<td><p>Returns <code>true</code> if the menu is open.</p>
+</td>
+	</tr>
+</tbody></table>
+
+</section>
+
+
+<div class='accordion'>
+	<label><span class='expander'>▶</span> Methods inherited from <a href='#class'>Class</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Method</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='contextmenu-callinithooks'>
+		<td><code><b>callInitHooks</b>(<nobr>&lt;Function&gt;</nobr> <i>cls?</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Runs the <a href="#class-constructor-hooks">constructor hooks</a> of the given class and
+of its parent classes, which haven't run yet for this object. Classes call it
+at the end of their constructor, e.g. <code>this.callInitHooks(MyClass)</code>.
+Without <code>cls</code>, runs the hooks of all classes of this object.</p>
+</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
+
 </section><h2 id='browser'>Browser</h2><p>A namespace with static properties for browser/feature detection used by Maplair internally.</p>
 
 <section>
