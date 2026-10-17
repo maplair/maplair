@@ -143,10 +143,143 @@ resolution follow when moving the window to another screen or zooming the page.
 Option `pixelated` for grid layers and image/video overlays setting
 `image-rendering: pixelated`, for raster data, game maps and scientific imagery.
 
+## Round 2
+
+More widely desired features of Leaflet, after implementing 1–12. Suggested
+order: quick wins first (15, 21, 19, 23, 13, 17), then 22, 16, 18, 20, and the
+large ones last (14, 24).
+
+## 13. Cooperative gestures
+
+[#9448](https://github.com/Leaflet/Leaflet/issues/9448),
+[#2501](https://github.com/Leaflet/Leaflet/issues/2501) · effort: small–medium
+
+Map option `cooperativeGestures`, so that the map does not hijack page scrolling
+(like Google Maps): the mouse wheel zooms only with Ctrl/⌘, otherwise the page
+scrolls and a translated hint ("Use Ctrl + scroll to zoom") shows briefly; on
+touch screens, one finger scrolls the page (`touch-action: pan-y`, `DragHandler`
+ignores single touches) and two fingers pan and zoom (`PinchZoomHandler` also
+pans with the midpoint). Touchpad pinching keeps working.
+
+## 14. Vectors and markers across the antimeridian
+
+[#5179](https://github.com/Leaflet/Leaflet/issues/5179),
+[#82](https://github.com/Leaflet/Leaflet/issues/82) 3/18 · effort: medium
+
+Option `worldCopies` for paths and markers: paths are projected once and drawn
+again offset by the world width in pixels; markers get icons for the visible
+world copies. Option `wrapLongitudes` shifts each coordinate to within 180° of
+the previous one, so that lines crossing ±180° take the short way. Events on a
+copy report the latlng of that copy.
+
+## 15. `setStyle({className})` and a `change` event for paths
+
+[#2662](https://github.com/Leaflet/Leaflet/issues/2662) 8/21,
+[#2235](https://github.com/Leaflet/Leaflet/issues/2235) 5/1 · effort: small
+
+`SVG._updateStyle()` replaces the classes previously added from `className` (the
+canvas renderer ignores it). `setLatLngs()`, `addLatLng()`, `setRadius()` and
+`setLatLng()` fire `change`.
+
+## 16. Accessible vectors and markers
+
+[#7822](https://github.com/Leaflet/Leaflet/issues/7822),
+[#4179](https://github.com/Leaflet/Leaflet/issues/4179),
+[#8116](https://github.com/Leaflet/Leaflet/issues/8116),
+[#3472](https://github.com/Leaflet/Leaflet/issues/3472) 1/8 · effort: medium
+
+Path options `title`/`ariaLabel` (SVG `<title>` and `aria-label`); interactive
+SVG paths are focusable (`tabindex`, `role="button"`) and fire `click` on Enter;
+canvas paths get a hidden, focusable list mirroring them. Non-interactive
+markers get no tab stop, and changing `keyboard` takes effect via a setter.
+
+## 17. Updating markers in place
+
+[#4259](https://github.com/Leaflet/Leaflet/issues/4259),
+[#3788](https://github.com/Leaflet/Leaflet/issues/3788),
+[#4484](https://github.com/Leaflet/Leaflet/issues/4484) 3/13 · effort: small–medium
+
+`DivIcon` option `html` as function of the marker; `marker.setIconContent(html)`
+and `marker.setStyle({className, opacity, zIndexOffset})` change the existing
+element. `setIcon()` keeps the element when the icon type and size are the same,
+which also keeps drag listeners alive during dragging (#4484).
+
+## 18. Decluttering and culling of tooltips
+
+[#5104](https://github.com/Leaflet/Leaflet/issues/5104) 0/8,
+[#6734](https://github.com/Leaflet/Leaflet/issues/6734) · effort: medium
+
+Map option `tooltipCollision: 'hide'`: on `moveend`, sort permanent tooltips by
+a `priority` option and hide those whose screen boxes overlap a higher-priority
+one (reusing the measured sizes of the `auto` placement). Extend `markerCulling`
+to take tooltips far outside of the view off the page.
+
+## 19. Control layout: center positions, no overlap
+
+[#791](https://github.com/Leaflet/Leaflet/issues/791),
+[#4658](https://github.com/Leaflet/Leaflet/issues/4658),
+[#10075](https://github.com/Leaflet/Leaflet/issues/10075) · effort: small
+
+Positions `topcenter`, `bottomcenter`, `centerleft` and `centerright`; lay out
+the control corners with a CSS grid, so that controls of different corners do
+not overlap; the layers control limits its height to the space left.
+
+## 20. Trusted Types and strict CSP
+
+[#9773](https://github.com/Leaflet/Leaflet/issues/9773) 1/16,
+[#8423](https://github.com/Leaflet/Leaflet/issues/8423),
+[#9168](https://github.com/Leaflet/Leaflet/issues/9168) 0/7 · effort: medium
+
+Build internal markup (control buttons, icons) with DOM APIs instead of
+`innerHTML`; pass user HTML strings through an optional `sanitizer` or a
+configured Trusted Types policy; replace inline `style` attributes in generated
+SVG with classes, so that pages don't need `'unsafe-inline'` styles.
+
+## 21. Richer event data
+
+[#1509](https://github.com/Leaflet/Leaflet/issues/1509),
+[#6953](https://github.com/Leaflet/Leaflet/issues/6953),
+[#8641](https://github.com/Leaflet/Leaflet/issues/8641) · effort: small
+
+`zoomstart`/`movestart` carry the target `zoom` and `center` (known in
+`setView()`, `flyTo()` and pinch zoom, passed to `_moveStart()`); marker
+`dragstart` has the `originalEvent` (already provided by `Draggable`); map
+pointer events carry the clicked `layer` (from `propagatedFrom`).
+
+## 22. Fallback for missing tiles
+
+[#3127](https://github.com/Leaflet/Leaflet/issues/3127) 1/14,
+[#6802](https://github.com/Leaflet/Leaflet/issues/6802) · effort: small–medium
+
+TileLayer option `errorTileFallback: 'parent'`: on `tileerror`, keep or load the
+parent tile and show the matching quarter, scaled up (reusing the parent tile
+retention of `GridLayer._retainParent()`); optionally a list of URL templates
+tried in turn.
+
+## 23. Locate control
+
+[#10097](https://github.com/Leaflet/Leaflet/issues/10097), leaflet-locatecontrol
+(875 ⭐) · effort: small
+
+`LocateControl` (map option `locateControl`) on top of `map.locate()`: a position
+marker with an accuracy circle, following the position until the user pans,
+translated error messages; uses the new `<geolocation>` element where available
+for an explicit permission prompt.
+
+## 24. Marker clustering
+
+Leaflet.markercluster (4172 ⭐, the most used plugin; upstream it is left to
+plugins) · effort: large
+
+`MarkerClusterGroup` layer group with a per-zoom index (grid or kd-tree like
+supercluster) of the projected marker positions; on `moveend`/`zoomend` it shows
+cluster markers (`DivIcon` with the count) for the visible bounds, zooms to the
+cluster bounds on click, culls like `markerCulling`, and animates splitting and
+merging with CSS transitions.
+
 ## Near misses
 
 * [#3575](https://github.com/Leaflet/Leaflet/issues/3575) gaps between tiles on fractional zoom levels (a bug, see 2)
-* [#4259](https://github.com/Leaflet/Leaflet/issues/4259) `DivIcon` `setContent`
-* [#2235](https://github.com/Leaflet/Leaflet/issues/2235) `change` event for paths
-* [#4179](https://github.com/Leaflet/Leaflet/issues/4179) `title` option for paths
-* [#6734](https://github.com/Leaflet/Leaflet/issues/6734) culling of off-screen tooltips
+* [#9115](https://github.com/Leaflet/Leaflet/issues/9115) dark mode for controls and popups (`prefers-color-scheme`)
+* [#7117](https://github.com/Leaflet/Leaflet/issues/7117) requesting tiles via POST (partly possible with `fetchOptions`)
+* [#8277](https://github.com/Leaflet/Leaflet/issues/8277) `ImageOverlay.redraw()`
