@@ -38,6 +38,7 @@ This file just defines the order of the classes in the docs.
 @class Bounds
 @class Icon
 @class DivIcon
+@class SvgIcon
 
 @class ZoomControl
 @class AttributionControl

@@ -21864,6 +21864,244 @@ styled according to the options.</p>
 	</div>
 </div>
 
+</section><h2 id='svgicon'>SvgIcon</h2><p>A marker icon in the shape of the default marker (with its shadow), drawn as
+inline SVG in any color and with an optional glyph – a character, an emoji or an
+SVG path (e.g. of an icon set) – instead of the white maple leaf. No image per
+color is needed, and it stays sharp on any screen.</p>
+<p>Inspired by the <a href="https://github.com/lennardv2/Leaflet.awesome-markers">Leaflet.awesome-markers</a>,
+<a href="https://github.com/pointhi/leaflet-color-markers">leaflet-color-markers</a> and
+<a href="https://github.com/coryasilva/Leaflet.ExtraMarkers">Leaflet.ExtraMarkers</a> plugins.</p>
+
+<section>
+<h3 id='svgicon-example'>Usage example</h3>
+
+<section >
+
+
+
+
+
+<pre><code class="language-js">new Marker([47.27, 11.40], {icon: new SvgIcon({color: '#2a81cb', glyph: 'P'})}).addTo(map);
+new Marker([47.28, 11.41], {icon: new SvgIcon({color: 'green', glyph: '🚲'})}).addTo(map);
+// a 24×24 SVG path, e.g. from Material Design Icons
+new Marker([47.29, 11.42], {icon: new SvgIcon({color: 'purple', glyphPath: 'M12 2L2 22h20z'})}).addTo(map);
+</code></pre>
+
+
+
+</section>
+
+
+</section><section>
+<h3 id='svgicon-constructor'>Constructor</h3>
+
+<section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Constructor</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='svgicon-svgicon'>
+		<td><code><b>new SvgIcon</b>(<nobr>&lt;<a href='#svgicon-option'>SvgIcon options</a>&gt;</nobr> <i>options</i>)</code></td>
+		<td>Creates an <a href="#svgicon"><code>SvgIcon</code></a> with the given options.</td>
+	</tr>
+</tbody></table>
+
+
+</section>
+
+
+</section><section>
+<h3 id='svgicon-option'>Options</h3>
+
+<section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Option</th>
+		<th>Type</th>
+		<th>Default</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='svgicon-color'>
+		<td><code><b>color</b></code></td>
+		<td><code>String</code></td>
+		<td><code>&#x27;#d4462c&#x27;</code></td>
+		<td>The fill color of the marker, any CSS color. The outline is a darker shade of it.</td>
+	</tr>
+	<tr id='svgicon-glyph'>
+		<td><code><b>glyph</b></code></td>
+		<td><code>String</code></td>
+		<td><code>undefined</code></td>
+		<td>A character or emoji (or short text) shown in the marker instead of the maple leaf.</td>
+	</tr>
+	<tr id='svgicon-glyphpath'>
+		<td><code><b>glyphPath</b></code></td>
+		<td><code>String</code></td>
+		<td><code>undefined</code></td>
+		<td>The path data of an SVG glyph in a 24×24 view box (like Material Design
+Icons), shown in the marker instead of the maple leaf.</td>
+	</tr>
+	<tr id='svgicon-glyphcolor'>
+		<td><code><b>glyphColor</b></code></td>
+		<td><code>String</code></td>
+		<td><code>&#x27;white&#x27;</code></td>
+		<td>The color of the glyph or the maple leaf.</td>
+	</tr>
+</tbody></table>
+
+</section>
+
+
+<div class='accordion'>
+	<label><span class='expander'>▶</span> Options inherited from <a href='#icon'>Icon</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Option</th>
+		<th>Type</th>
+		<th>Default</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='svgicon-iconurl'>
+		<td><code><b>iconUrl</b></code></td>
+		<td><code>String</code></td>
+		<td><code>null</code></td>
+		<td><strong>(required)</strong> The URL to the icon image (absolute or relative to your script path).</td>
+	</tr>
+	<tr id='svgicon-iconretinaurl'>
+		<td><code><b>iconRetinaUrl</b></code></td>
+		<td><code>String</code></td>
+		<td><code>null</code></td>
+		<td>The URL to a retina sized version of the icon image (absolute or relative to your
+script path). Used for Retina screen devices.</td>
+	</tr>
+	<tr id='svgicon-iconsize'>
+		<td><code><b>iconSize</b></code></td>
+		<td><code><a href='#point'>Point</a></code></td>
+		<td><code>null</code></td>
+		<td>Size of the icon image in pixels.</td>
+	</tr>
+	<tr id='svgicon-iconanchor'>
+		<td><code><b>iconAnchor</b></code></td>
+		<td><code><a href='#point'>Point</a></code></td>
+		<td><code>null</code></td>
+		<td>The coordinates of the &quot;tip&quot; of the icon (relative to its top left corner). The icon
+will be aligned so that this point is at the marker's geographical location. Centered
+by default if size is specified, also can be set in CSS with negative margins.</td>
+	</tr>
+	<tr id='svgicon-popupanchor'>
+		<td><code><b>popupAnchor</b></code></td>
+		<td><code><a href='#point'>Point</a></code></td>
+		<td><code>[0, 0]</code></td>
+		<td>The coordinates of the point from which popups will &quot;open&quot;, relative to the icon anchor.</td>
+	</tr>
+	<tr id='svgicon-tooltipanchor'>
+		<td><code><b>tooltipAnchor</b></code></td>
+		<td><code><a href='#point'>Point</a></code></td>
+		<td><code>[0, 0]</code></td>
+		<td>The coordinates of the point from which tooltips will &quot;open&quot;, relative to the icon anchor.</td>
+	</tr>
+	<tr id='svgicon-shadowurl'>
+		<td><code><b>shadowUrl</b></code></td>
+		<td><code>String</code></td>
+		<td><code>null</code></td>
+		<td>The URL to the icon shadow image. If not specified, no shadow image will be created.</td>
+	</tr>
+	<tr id='svgicon-shadowretinaurl'>
+		<td><code><b>shadowRetinaUrl</b></code></td>
+		<td><code>String</code></td>
+		<td><code>null</code></td>
+		<td></td>
+	</tr>
+	<tr id='svgicon-shadowsize'>
+		<td><code><b>shadowSize</b></code></td>
+		<td><code><a href='#point'>Point</a></code></td>
+		<td><code>null</code></td>
+		<td>Size of the shadow image in pixels.</td>
+	</tr>
+	<tr id='svgicon-shadowanchor'>
+		<td><code><b>shadowAnchor</b></code></td>
+		<td><code><a href='#point'>Point</a></code></td>
+		<td><code>null</code></td>
+		<td>The coordinates of the &quot;tip&quot; of the shadow (relative to its top left corner) (the same
+as iconAnchor if not specified).</td>
+	</tr>
+	<tr id='svgicon-classname'>
+		<td><code><b>className</b></code></td>
+		<td><code>String</code></td>
+		<td><code>&#x27;&#x27;</code></td>
+		<td>A custom class name to assign to both icon and shadow images. Empty by default.</td>
+	</tr>
+	<tr id='svgicon-crossorigin'>
+		<td><code><b>crossOrigin</b></code></td>
+		<td><code>Boolean|String</code></td>
+		<td><code>false</code></td>
+		<td>Whether the crossOrigin attribute will be added to the tiles.
+If a String is provided, all tiles will have their crossOrigin attribute set to the String provided. This is needed if you want to access tile pixel data.
+Refer to <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_settings_attributes">CORS Settings</a> for valid String values.</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
+
+</section><section>
+<h3 id=''>Methods</h3>
+
+
+
+
+<div class='accordion'>
+	<label><span class='expander'>▶</span> Methods inherited from <a href='#icon'>Icon</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Method</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='svgicon-createicon'>
+		<td><code><b>createIcon</b>(<nobr>&lt;HTMLElement&gt;</nobr> <i>oldIcon?</i>)</code></td>
+		<td><code>HTMLElement</code></td>
+		<td><p>Called internally when the icon has to be shown, returns a <code>&lt;img&gt;</code> HTML element
+styled according to the options.</p>
+</td>
+	</tr>
+	<tr id='svgicon-createshadow'>
+		<td><code><b>createShadow</b>(<nobr>&lt;HTMLElement&gt;</nobr> <i>oldIcon?</i>)</code></td>
+		<td><code>HTMLElement</code></td>
+		<td><p>As <code>createIcon</code>, but for the shadow beneath it.</p>
+</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
+
 </section><h2 id='zoomcontrol'>ZoomControl</h2><p>A basic zoom control with two buttons (zoom in and zoom out). It is put on the map by default unless you set its <a href="#map-zoomcontrol"><code>zoomControl</code> option</a> to <code>false</code>. Extends <a href="#control"><code>Control</code></a>.</p>
 
 <section>
