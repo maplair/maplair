@@ -54,4 +54,38 @@ describe('Control', () => {
 			expect(control.remove()).to.equal(control);
 		});
 	});
+
+	describe('order option', () => {
+		function addControl(position, order) {
+			const c = new Control({position, order});
+			c.onAdd = onAdd;
+			return c.addTo(map);
+		}
+
+		function names(corner, controls) {
+			return Array.from(corner.children, el => Object.keys(controls).find(name => controls[name].getContainer() === el)).join('');
+		}
+
+		it('sorts the controls of a top corner from the corner of the map', () => {
+			const corner = map._controlCorners.topleft;
+			corner.replaceChildren();
+			const a = addControl('topleft'),
+			b = addControl('topleft', 2),
+			c = addControl('topleft', -1),
+			d = addControl('topleft', 1),
+			e = addControl('topleft');
+			expect(names(corner, {a, b, c, d, e})).to.equal('caedb');
+		});
+
+		it('sorts the controls of a bottom corner from the corner of the map', () => {
+			const corner = map._controlCorners.bottomright;
+			corner.replaceChildren();
+			const a = addControl('bottomright'),
+			b = addControl('bottomright', 2),
+			c = addControl('bottomright', -1),
+			d = addControl('bottomright', 1),
+			e = addControl('bottomright');
+			expect(names(corner, {a, b, c, d, e})).to.equal('bdeac');
+		});
+	});
 });

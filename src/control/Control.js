@@ -11,6 +11,9 @@ import * as DomUtil from '../dom/DomUtil.js';
  * All other controls extend from this class.
  */
 
+// The `order` option of the containers of added controls
+const controlOrders = new WeakMap();
+
 export class Control extends Class {
 
 	static {
@@ -20,7 +23,12 @@ export class Control extends Class {
 			// @option position: String = 'topright'
 			// The position of the control (one of the map corners). Possible values are `'topleft'`,
 			// `'topright'`, `'bottomleft'` or `'bottomright'`
-			position: 'topright'
+			position: 'topright',
+
+			// @option order: Number = 0
+			// The position of the control within its corner: controls with a lower order are
+			// closer to the corner of the map, those with the same order in the order of adding.
+			order: 0
 		});
 	}
 
@@ -73,11 +81,15 @@ export class Control extends Class {
 
 		container.classList.add('maplair-control');
 
-		if (pos.includes('bottom')) {
-			corner.insertBefore(container, corner.firstChild);
-		} else {
-			corner.appendChild(container);
-		}
+		// sorted by order from the corner of the map (bottom corners are filled upwards),
+		// farther than the controls with the same order
+		const order = this.options.order ?? 0,
+		bottom = pos.includes('bottom'),
+		children = [...corner.children];
+		controlOrders.set(container, order);
+		corner.insertBefore(container, children.find(el => bottom ?
+			(controlOrders.get(el) ?? 0) <= order :
+			(controlOrders.get(el) ?? 0) > order) ?? null);
 
 		this._map.on('unload', this.remove, this);
 

@@ -587,6 +587,21 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	background-image: url(images/marker-icon.svg);
 }
 
+/* text control */
+
+.maplair-control-text {
+	padding: var(--maplair-spacing-25) var(--maplair-spacing-50);
+	background: var(--maplair-background-color-base);
+	color: var(--maplair-color-base);
+	border-radius: var(--maplair-border-radius-base);
+	box-shadow: var(--maplair-box-shadow-medium);
+	line-height: var(--maplair-line-height-small);
+
+	&[hidden] {
+		display: none;
+	}
+}
+
 /* attribution and scale controls */
 
 .maplair-container .maplair-control-attribution {

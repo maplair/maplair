@@ -51,6 +51,7 @@ This file just defines the order of the classes in the docs.
 @class RotateControl
 @class ButtonControl
 @class ButtonBarControl
+@class TextControl
 @class ContextMenu
 
 @class Browser

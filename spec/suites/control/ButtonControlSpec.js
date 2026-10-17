@@ -109,4 +109,12 @@ describe('ButtonControl', () => {
 		bar.remove();
 		expect(bar.getButtons()[0]._map).to.equal(null);
 	});
+
+	it('has an access key, shown in the title', () => {
+		const button = new ButtonControl({content: '⌂', title: 'Home', accessKey: 'h'}).addTo(map).getButton();
+		expect(button.accessKey).to.equal('h');
+		expect(button.title.startsWith('Home [')).to.be.true;
+		expect(button.title.endsWith('H]')).to.be.true;
+		expect(button.getAttribute('aria-label')).to.equal('Home');
+	});
 });

@@ -71,7 +71,13 @@ export class ButtonControl extends Control {
 
 			// @option className: String = ''
 			// A custom CSS class name to assign to the button.
-			className: ''
+			className: '',
+
+			// @option accessKey: String = ''
+			// A key to activate the button with the browser's
+			// [access key](https://developer.mozilla.org/docs/Web/HTML/Reference/Global_attributes/accesskey)
+			// modifiers (e.g. Alt+Shift+K), shown in the title.
+			accessKey: ''
 		});
 	}
 
@@ -91,6 +97,7 @@ export class ButtonControl extends Control {
 	_createButton(container) {
 		const button = this._button = DomUtil.create('button', `maplair-control-button-button ${this.options.className}`, container);
 		button.type = 'button';
+		button.accessKey = this.options.accessKey;
 
 		DomEvent.disableClickPropagation(button);
 		DomEvent.on(button, 'click', DomEvent.stop);
@@ -116,7 +123,8 @@ export class ButtonControl extends Control {
 		} else {
 			button.replaceChildren(content);
 		}
-		button.title = title ?? '';
+		const key = button.accessKeyLabel || this.options.accessKey.toUpperCase();
+		button.title = [title, key && `[${key}]`].filter(Boolean).join(' ');
 		button.setAttribute('aria-label', title ?? '');
 		if (this._state) {
 			button.dataset.state = this._state.name;
