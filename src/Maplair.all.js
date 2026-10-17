@@ -6,3 +6,4 @@ import './layer/marker/Marker.Rotation.js';
 import './layer/marker/Marker.Move.js';
 import './layer/vector/Path.DashAnimation.js';
 import './layer/vector/Polyline.Decorations.js';
+import './layer/GeoJSON.Load.js';

@@ -40,6 +40,7 @@
     "./marker-movement": "./dist/esm/layer/marker/Marker.Move.js",
     "./dash-animation": "./dist/esm/layer/vector/Path.DashAnimation.js",
     "./path-decorations": "./dist/esm/layer/vector/Polyline.Decorations.js",
+    "./geojson-loading": "./dist/esm/layer/GeoJSON.Load.js",
     "./src/": "./src/",
     "./styles.css": "./dist/maplair.css",
     "./i18n/*.json": "./i18n/*.json"
@@ -56,6 +57,7 @@
     "./src/layer/marker/Marker.Move.js",
     "./src/layer/vector/Path.DashAnimation.js",
     "./src/layer/vector/Polyline.Decorations.js",
+    "./src/layer/GeoJSON.Load.js",
     "./dist/esm/core/Handler.js",
     "./dist/esm/layer/GeoJSON.js",
     "./dist/esm/map/Map.js",
@@ -63,7 +65,8 @@
     "./dist/esm/layer/marker/Marker.Rotation.js",
     "./dist/esm/layer/marker/Marker.Move.js",
     "./dist/esm/layer/vector/Path.DashAnimation.js",
-    "./dist/esm/layer/vector/Polyline.Decorations.js"
+    "./dist/esm/layer/vector/Polyline.Decorations.js",
+    "./dist/esm/layer/GeoJSON.Load.js"
   ],
   "files": [
     "dist",

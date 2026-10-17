@@ -20236,7 +20236,7 @@ GeoJSON data and display it on the map. Extends <a href="#featuregroup"><code>Fe
 	</tr>
 	</thead><tbody>
 	<tr id='geojson-geojson'>
-		<td><code><b>new GeoJSON</b>(<nobr>&lt;Object&gt;</nobr> <i>geojson?</i>, <nobr>&lt;<a href='#geojson-option'>GeoJSON options</a>&gt;</nobr> <i>options?</i>)</code></td>
+		<td><code><b>new GeoJSON</b>(<nobr>&lt;Object&gt;</nobr> <i>geojson?</i>, <nobr>&lt;<a href='#geojson-function'>GeoJSON options</a>&gt;</nobr> <i>options?</i>)</code></td>
 		<td>Creates a GeoJSON layer. Optionally accepts an object in
 <a href="https://tools.ietf.org/html/rfc7946">GeoJSON format</a> to display on the map
 (you can alternatively add it later with <code>addData</code> method) and an <code>options</code> object.</td>
@@ -20254,7 +20254,15 @@ GeoJSON data and display it on the map. Extends <a href="#featuregroup"><code>Fe
 
 
 
-<div class='section-comments'></div>
+<div class='section-comments'>Loading GeoJSON from a URL is an optional feature: import this module to add the
+<code>url</code>, <code>fetchOptions</code> and <code>fitBounds</code> options and <code>load()</code> to <a href="#geojson"><code>GeoJSON</code></a>.
+<pre><code class="language-js">import 'maplair/geojson-loading';
+
+const layer = new GeoJSON(null, {url: 'districts.json', fitBounds: true}).addTo(map);
+// later, replacing the data
+layer.load('districts.json?year=2026');
+</code></pre>
+<p>Inspired by the <a href="https://github.com/calvinmetcalf/leaflet-ajax">leaflet-ajax</a> plugin.</p></div>
 
 <table><thead>
 	<tr>
@@ -20264,6 +20272,25 @@ GeoJSON data and display it on the map. Extends <a href="#featuregroup"><code>Fe
 		<th>Description</th>
 	</tr>
 	</thead><tbody>
+	<tr id='geojson-url'>
+		<td><code><b>url</b></code></td>
+		<td><code>String</code></td>
+		<td><code>undefined</code></td>
+		<td>A URL to <a href="#geojson-load">load</a> the GeoJSON data from when creating the layer.</td>
+	</tr>
+	<tr id='geojson-fetchoptions'>
+		<td><code><b>fetchOptions</b></code></td>
+		<td><code>Object</code></td>
+		<td><code>undefined</code></td>
+		<td>Options for <a href="https://developer.mozilla.org/docs/Web/API/Window/fetch"><code>fetch()</code></a>
+when loading, e.g. <code>{headers: {Authorization: 'Bearer …'}}</code>.</td>
+	</tr>
+	<tr id='geojson-fitbounds'>
+		<td><code><b>fitBounds</b></code></td>
+		<td><code>Boolean</code></td>
+		<td><code>false</code></td>
+		<td>Whether to fit the map to the bounds of the data once loaded.</td>
+	</tr>
 	<tr id='geojson-pointtolayer'>
 		<td><code><b>pointToLayer</b></code></td>
 		<td><code>Function</code></td>
@@ -20409,9 +20436,38 @@ sorted by it, then by the order of adding, e.g. <code>1</code> keeps a legend la
 </div>
 
 </section><section>
-<h3 id=''>Events</h3>
+<h3 id='geojson-event'>Events</h3>
+
+<section class='collapsable'>
+
+<h4 id='geojson-loading-geojson-events'>Loading GeoJSON events</h4>
 
 
+<table><thead>
+	<tr>
+		<th>Event</th>
+		<th>Data</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='geojson-loading'>
+		<td><code><b>loading</b></code></td>
+		<td><code><a href='#event'>Event</a></code></td>
+		<td>Fired when starting to load data with <code>load()</code>.</td>
+	</tr>
+	<tr id='geojson-load'>
+		<td><code><b>load</b></code></td>
+		<td><code><a href='#event'>Event</a></code></td>
+		<td>Fired when the data of <code>load()</code> has been added, with the <code>data</code>.</td>
+	</tr>
+	<tr id='geojson-error'>
+		<td><code><b>error</b></code></td>
+		<td><code><a href='#errorevent'>ErrorEvent</a></code></td>
+		<td>Fired when <code>load()</code> fails, with the <code>error</code>.</td>
+	</tr>
+</tbody></table>
+
+</section>
 
 
 <div class='accordion'>
@@ -20612,6 +20668,13 @@ for a second (also called long press).</td>
 		<th>Description</th>
 	</tr>
 	</thead><tbody>
+	<tr id='geojson-load'>
+		<td><code><b>load</b>(<nobr>&lt;String|Promise&gt;</nobr> <i>source</i>, <nobr>&lt;Object&gt;</nobr> <i>fetchOptions?</i>)</code></td>
+		<td><code>Promise</code></td>
+		<td><p>Loads GeoJSON data from a URL (or a promise of the data) and replaces the
+layers with it. A running load is aborted. Returns a promise of this layer.</p>
+</td>
+	</tr>
 	<tr id='geojson-adddata'>
 		<td><code><b>addData</b>(<i>data</i>)</code></td>
 		<td><code>this</code></td>
@@ -21122,7 +21185,7 @@ Without <code>cls</code>, runs the hooks of all classes of this object.</p>
 	</tr>
 	</thead><tbody>
 	<tr id='geojson-geometrytolayer'>
-		<td><code><b>geometryToLayer</b>(<nobr>&lt;Object&gt;</nobr> <i>featureData</i>, <nobr>&lt;<a href='#geojson-option'>GeoJSON options</a>&gt;</nobr> <i>options?</i>)</code></td>
+		<td><code><b>geometryToLayer</b>(<nobr>&lt;Object&gt;</nobr> <i>featureData</i>, <nobr>&lt;<a href='#geojson-function'>GeoJSON options</a>&gt;</nobr> <i>options?</i>)</code></td>
 		<td><code><a href='#layer'>Layer</a></code></td>
 		<td>Creates a <a href="#layer"><code>Layer</code></a> from a given GeoJSON feature. Can use a custom
 <a href="#geojson-pointtolayer"><code>pointToLayer</code></a> and/or <a href="#geojson-coordstolatlng"><code>coordsToLatLng</code></a>

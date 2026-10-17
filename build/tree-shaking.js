@@ -13,14 +13,16 @@ const features = {
 	'marker-rotation': 'setRotationAngle',
 	'marker-movement': 'moveAlong',
 	'dash-animation': 'maplair-dash-animated',
-	'path-decorations': 'maplair-path-arrowheads'
+	'path-decorations': 'maplair-path-arrowheads',
+	'geojson-loading': '_loadAbort'
 };
 
-const base = `import {MaplairMap, TileLayer, Marker, Polyline} from 'maplair';
+const base = `import {MaplairMap, TileLayer, Marker, Polyline, GeoJSON} from 'maplair';
 const map = new MaplairMap('map').setView([0, 0], 2);
 new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 new Marker([0, 0]).addTo(map).bindPopup('Hello');
 new Polyline([[0, 0], [1, 1]]).addTo(map);
+new GeoJSON({type: 'Point', coordinates: [0, 0]}).addTo(map);
 `;
 
 // the features expected in the bundle of each app
