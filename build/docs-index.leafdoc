@@ -43,6 +43,7 @@ This file just defines the order of the classes in the docs.
 @class ZoomControl
 @class AttributionControl
 @class LayersControl
+@class MiniMapControl
 @class ScaleControl
 @class SideBySideControl
 @class FullscreenControl

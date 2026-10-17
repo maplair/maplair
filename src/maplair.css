@@ -594,6 +594,56 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	}
 }
 
+/* overview map */
+
+.maplair-control-minimap {
+	position: relative;
+	border: 2px solid rgba(0, 0, 0, 0.2);
+	border-radius: 4px;
+	background-clip: padding-box;
+	box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
+
+	&.maplair-control-minimap-collapsed {
+		width: 30px !important;
+		height: 30px !important;
+
+		.maplair-control-minimap-map {
+			display: none;
+		}
+
+		.maplair-control-minimap-toggle {
+			transform: none;
+		}
+	}
+}
+
+.maplair-control-minimap-map {
+	width: 100%;
+	height: 100%;
+	border-radius: 2px;
+}
+
+.maplair-control-minimap-toggle {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	z-index: 1000;
+	width: 30px;
+	height: 30px;
+	padding: 0;
+	border: 0;
+	border-radius: 2px;
+	background: white;
+	color: #333;
+	font: bold 16px/30px sans-serif;
+	cursor: pointer;
+	transform: rotate(180deg);
+
+	&::before {
+		content: "⇱";
+	}
+}
+
 /* side-by-side divider */
 
 .maplair-sidebyside-divider {

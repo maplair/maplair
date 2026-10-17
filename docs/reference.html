@@ -22950,6 +22950,231 @@ Without <code>cls</code>, runs the hooks of all classes of this object.</p>
 	</div>
 </div>
 
+</section><h2 id='minimapcontrol'>MiniMapControl</h2><p>An overview map in a corner of the map, showing the view of the map as a
+rectangle (or rotated rectangle on a rotated map) at a smaller zoom level.
+Dragging the overview map pans the map, clicking it centers the map there, and
+a button collapses it.</p>
+<p>Inspired by the <a href="https://github.com/Norkart/Leaflet-MiniMap">Leaflet-MiniMap</a> plugin.</p>
+
+<section>
+<h3 id='minimapcontrol-example'>Usage example</h3>
+
+<section >
+
+
+
+
+
+<pre><code class="language-js">// a layer of its own, a layer can only be on one map
+const overviewLayer = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png');
+new MiniMapControl(overviewLayer).addTo(map);
+</code></pre>
+
+
+
+</section>
+
+
+</section><section>
+<h3 id='minimapcontrol-constructor'>Constructor</h3>
+
+<section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Constructor</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='minimapcontrol-minimapcontrol'>
+		<td><code><b>new MiniMapControl</b>(<nobr>&lt;<a href='#layer'>Layer</a>&gt;</nobr> <i>layer</i>, <nobr>&lt;<a href='#minimapcontrol-option'>MiniMapControl options</a>&gt;</nobr> <i>options?</i>)</code></td>
+		<td>Creates an overview map control showing <code>layer</code> (which must not be on another map).</td>
+	</tr>
+</tbody></table>
+
+
+</section>
+
+
+</section><section>
+<h3 id='minimapcontrol-option'>Options</h3>
+
+<section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Option</th>
+		<th>Type</th>
+		<th>Default</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='minimapcontrol-position'>
+		<td><code><b>position</b></code></td>
+		<td><code>String</code></td>
+		<td><code>&#x27;bottomright&#x27;</code></td>
+		<td>The position of the control (one of the map corners).</td>
+	</tr>
+	<tr id='minimapcontrol-width'>
+		<td><code><b>width</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>150</code></td>
+		<td>The width of the overview map in pixels.</td>
+	</tr>
+	<tr id='minimapcontrol-height'>
+		<td><code><b>height</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>150</code></td>
+		<td>The height of the overview map in pixels.</td>
+	</tr>
+	<tr id='minimapcontrol-zoomoffset'>
+		<td><code><b>zoomOffset</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>-5</code></td>
+		<td>The zoom level of the overview map relative to the map.</td>
+	</tr>
+	<tr id='minimapcontrol-collapsed'>
+		<td><code><b>collapsed</b></code></td>
+		<td><code>Boolean</code></td>
+		<td><code>false</code></td>
+		<td>Whether the overview map is collapsed initially.</td>
+	</tr>
+	<tr id='minimapcontrol-rectangleoptions'>
+		<td><code><b>rectangleOptions</b></code></td>
+		<td><code><a href='#path-method'>Path options</a></code></td>
+		<td><code>{color: &#x27;#ff7800&#x27;, weight: 1, fillOpacity: 0.2}</code></td>
+		<td>The style of the rectangle showing the view of the map.</td>
+	</tr>
+	<tr id='minimapcontrol-mapoptions'>
+		<td><code><b>mapOptions</b></code></td>
+		<td><code>MaplairMap options</code></td>
+		<td><code>{}</code></td>
+		<td>Further options of the overview map.</td>
+	</tr>
+</tbody></table>
+
+</section>
+
+
+</section><section>
+<h3 id='minimapcontrol-method'>Methods</h3>
+
+<section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Method</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='minimapcontrol-getminimap'>
+		<td><code><b>getMiniMap</b>()</code></td>
+		<td><code><a href='#maplairmap'>MaplairMap</a></code></td>
+		<td><p>Returns the overview map.</p>
+</td>
+	</tr>
+	<tr id='minimapcontrol-toggle'>
+		<td><code><b>toggle</b>()</code></td>
+		<td><code>this</code></td>
+		<td><p>Collapses or expands the overview map.</p>
+</td>
+	</tr>
+</tbody></table>
+
+</section>
+
+
+<div class='accordion'>
+	<label><span class='expander'>▶</span> Methods inherited from <a href='#control'>Control</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Method</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='minimapcontrol-getposition'>
+		<td><code><b>getPosition</b>()</code></td>
+		<td><code>string</code></td>
+		<td><p>Returns the position of the control.</p>
+</td>
+	</tr>
+	<tr id='minimapcontrol-setposition'>
+		<td><code><b>setPosition</b>(<nobr>&lt;string&gt;</nobr> <i>position</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Sets the position of the control.</p>
+</td>
+	</tr>
+	<tr id='minimapcontrol-getcontainer'>
+		<td><code><b>getContainer</b>()</code></td>
+		<td><code>HTMLElement</code></td>
+		<td><p>Returns the HTMLElement that contains the control.</p>
+</td>
+	</tr>
+	<tr id='minimapcontrol-addto'>
+		<td><code><b>addTo</b>(<nobr>&lt;<a href='#maplairmap'>MaplairMap</a>&gt;</nobr> <i>map</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Adds the control to the given map.</p>
+</td>
+	</tr>
+	<tr id='minimapcontrol-remove'>
+		<td><code><b>remove</b>()</code></td>
+		<td><code>this</code></td>
+		<td><p>Removes the control from the map it is currently active on.</p>
+</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
+
+<div class='accordion'>
+	<label><span class='expander'>▶</span> Methods inherited from <a href='#class'>Class</a></label>
+	<div class='accordion-overflow'>
+		<div class='accordion-content'><section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Method</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='minimapcontrol-callinithooks'>
+		<td><code><b>callInitHooks</b>(<nobr>&lt;Function&gt;</nobr> <i>cls?</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Runs the <a href="#class-constructor-hooks">constructor hooks</a> of the given class and
+of its parent classes, which haven't run yet for this object. Classes call it
+at the end of their constructor, e.g. <code>this.callInitHooks(MyClass)</code>.
+Without <code>cls</code>, runs the hooks of all classes of this object.</p>
+</td>
+	</tr>
+</tbody></table>
+
+</section></div>
+	</div>
+</div>
+
 </section><h2 id='scalecontrol'>ScaleControl</h2><p>A simple scale control that shows the scale of the current center of screen in metric (m/km) and imperial (mi/ft) systems. Extends <a href="#control"><code>Control</code></a>.</p>
 
 <section>

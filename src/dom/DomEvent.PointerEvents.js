@@ -42,7 +42,10 @@ function _onUpdate(e) {
 
 // NOTE: idem as _onSet.
 function _onDelete(e) {
-	e.target.releasePointerCapture(e.pointerId);
+	// released already if the document has nested maps (e.g. an overview map)
+	if (e.target.hasPointerCapture(e.pointerId)) {
+		e.target.releasePointerCapture(e.pointerId);
+	}
 	activePointers.delete(e.pointerId);
 }
 
