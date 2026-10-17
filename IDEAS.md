@@ -652,7 +652,7 @@ attribution or a legend control).
 
 ## 51. Categorized and graduated symbology with a legend
 
-Effort: medium · ~2.5 kB
+Effort: medium · ~2 kB
 
 Thematic maps style features by class, in QGIS terms with a *categorized*
 renderer (one symbol per distinct value, e.g. an API code `'S2'`) or a
@@ -673,97 +673,69 @@ changes. Common requirements:
   stacked bar, accessible (`role="img"`, `aria-label`)
 * the symbol colors reused elsewhere (charts, tables, filters)
 
-Ways to abstract it, from thin to integrated:
+Wa**Legend protocol and `LegendControl`.** Like `getAttribution()` collected by
+the attribution control, layers may implement `getLegend() → HTMLElement`, and a
+`LegendControl` (a plain `Control` with flat options like `position` and
+`collapsed`) collects the legends of all layers on the map, updated on
+`layeradd`/`layerremove` and a `legendchange` event (like `crschange`). It
+renders in a control or inside the attribution (`<details>` to collapse it). A
+checkbox per class toggles it, hovering highlights its features. Layers with a
+classification, WMS layers (the `GetLegendGraphic` image of 50), heat layers
+(the gradient of 25) and image overlays all plug into it, like QGIS layers
+providing legend nodes to the layer tree.
 
-**A. Symbology as plain data.** `new Categorized({name, value, categories:
-[{value, symbol: {fillColor, color}, legend, counted}], otherValues,
-normalize})` and `new Graduated({name, value, ranges: [{lower, upper, symbol,
-legend}]})`, sharing `classify(feature) → class`, `symbol(feature) →
-PathOptions`, `legendItems()` (merged by legend label and symbol),
-`featureCount(features) → [{legend, count, share}]` and `toElement({featureCount,
-bar})` rendering the legend. The app passes `symbol()` to
-`circleMarker()`/`geoJSON({style})` and the element to `attribution` or a
-control. No layer changes, so it is the smallest, but the app still keeps
-counts and legend in sync. The QGIS classification modes (equal interval,
-quantile, pretty breaks, …) could later compute `ranges` from data.
+**One `Classification` for categories and ranges.** The classes are the
+constructor argument (like the layers of `new LayersControl(baseLayers,
+overlays, options)`), each class either by value or by range, so both kinds mix
+in one list (e.g. a "no data" class next to temperature ranges):
 
-```js
-import {Categorized, Graduated} from 'maplair/symbology';
+* `{value: 'S2'}` or `{value: ['S1', 'S2']}`: one class for one or several
+  values (QGIS merged categories); an array always means several values, never a
+  range, so `[15, 30]` is not ambiguous
+* `{lower: 15, upper: 30}`: a range `lower ≤ v < upper`, either bound left out
+  for an open end (no `[-Infinity, -10]`), the names of QGIS `QgsRendererRange`
+  (`min`/`max` would leave open whether `max` is included)
+* later `{filter: f => …}` for rule-based classes, without changing the format
 
-const service = new Categorized({
-	name: 'Service',
-	value: 'code', // or feature => feature.properties.code
-	normalize: v => v.trim().toUpperCase(),
-	categories: [
-		{value: 'S1', symbol: {fillColor: '#1f78b4'}, legend: 'S-Bahn'},
-		{value: 'S2', symbol: {fillColor: '#1f78b4'}, legend: 'S-Bahn'},
-		{value: 'RE', symbol: {fillColor: '#e31a1c'}, legend: 'Regional'},
-		{value: null, symbol: {fillColor: '#999999'}, legend: 'No data', counted: false},
-	],
-	otherValues: {symbol: {fillColor: '#cccccc'}, legend: 'Other'},
-});
+Lookup first by exact value (`Map`), then by range (binary search over the
+sorted bounds), then `otherValues`; option `normalize` for tolerant matching
+(legend label instead of value, whitespace variants). Methods: `classify(feature)
+→ class`, `style(feature) → PathOptions` (bound, for the `style` option),
+`legendItems()` (merged by legend label and symbol), `featureCount(features) →
+[{legend, count, share}]`. Classification methods (equal interval, quantile,
+pretty breaks) as static methods computing ranges, e.g.
+`Classification.quantile(values, n)` (like `Hash.parse`), not as exported
+helpers.
 
-const travelTime = new Graduated({
-	name: 'Travel time',
-	value: feature => feature.properties.minutes,
-	ranges: [
-		{upper: 15, symbol: {fillColor: '#1a9850'}, legend: '< 15 min'},
-		{lower: 15, upper: 30, symbol: {fillColor: '#fee08b'}, legend: '< 30 min'},
-		{lower: 30, symbol: {fillColor: '#d73027'}, legend: '≥ 30 min'},
-	],
-});
+Naming: the terms differ between tools. QGIS *categorized* / *graduated*,
+ArcGIS *unique values* / *class breaks*, MapLibre `match` / `step`, d3
+`scaleOrdinal` / `scaleThreshold`, and OGC SLD/SE `Recode` / `Categorize`, where
+*categorize* means ranges, the opposite of QGIS. "Graduated" is shared by QGIS
+and ArcGIS, "categorized" is QGIS only. One `Classification` class avoids
+picking either, and reads naturally next to `classify()`.
 
-new GeoJSON(data, {
-	pointToLayer: (feature, latlng) => new CircleMarker(latlng, travelTime.symbol(feature)),
-}).addTo(map);
-
-const featureCount = travelTime.featureCount(data.features);
-// → [{legend: '< 15 min', count: 30, share: 0.714}, …]
-map.attributionControl.addAttribution(travelTime.toElement({featureCount, bar: true}));
-```
-
-**B. Layer group with a symbology.** `new FeatureGroup(layers, {symbology})`
-(or a `SymbologyGroup`) styling each added path from its class, keeping the
-feature count on `layeradd`/`layerremove` and firing `symbologychange`. Its
-attribution (option `legend: 'attribution'`) is built from the current counts,
-so adding or removing markers updates the legend. `setClassVisible(legend,
-visible)` hides a class, like unchecking it in the QGIS legend. Integrated, but
-ties styling, counting and legend to one group.
+The option `classification` of `FeatureGroup` (and so `GeoJSON`) connects both:
+the group implements `getLegend()` from the classification and the feature
+count of its layers, and fires `legendchange` on `layeradd`/`layerremove`, so
+refreshing the data updates the legend without app code. Example, weather
+stations classified by air temperature, as circle markers:
 
 ```js
-const stations = new FeatureGroup([], {symbology: travelTime, legend: 'attribution'})
-	.addTo(map);
+import {Classification, LegendControl} from 'maplair/classification';
 
-stations.addLayer(new CircleMarker(latlng, {feature})); // styled and counted
-stations.on('symbologychange', () => updateChart(stations.getFeatureCount()));
-stations.setClassVisible('≥ 30 min', false);
-```
-
-**C. A legend protocol and `LegendControl`.** Like `getAttribution()` collected
-by the attribution control, layers may implement `getLegend() → HTMLElement`,
-and a `LegendControl` collects the legends of all layers on the map, updated on
-`layeradd`/`layerremove` and a `legendchange` event. Groups with a symbology
-(B), WMS layers (the `GetLegendGraphic` image of 50), heat layers (the gradient
-of 25) and image overlays all plug into it; it renders in a control or inside
-the attribution (`<details>` to collapse it). A checkbox per class toggles it,
-hovering highlights its features.
-
-```js
-import {Graduated, LegendControl} from 'maplair/symbology';
-
-// weather stations classified by air temperature, as circle markers
-const temperature = new Graduated([
+const temperature = new Classification([
+	{value: null, symbol: {fillColor: '#000000'}, legend: 'No data', counted: false},
 	{upper: -10, symbol: {fillColor: '#1f78b4'}, legend: '< -10 °C'},
 	{lower: -10, upper: 0, symbol: {fillColor: '#5bc0de'}, legend: '-10–0 °C'},
 	{lower: 0, upper: 10, symbol: {fillColor: '#33ee33'}, legend: '0–10 °C'},
-	{lower: 10, upper: 20, symbol: {fillColor: '#f0a030'}, legend: '10–20 °C'},
+	{lower: 10, symbol: {fillColor: '#f0a030'}, legend: '≥ 10 °C'},
 ], {
-	value: f => f.properties.temperature,
-	otherValues: {symbol: {fillColor: '#000000'}, legend: 'No data', counted: false},
+	value: f => f.properties.temperature, // or an attribute name
+	otherValues: {symbol: {fillColor: '#cccccc'}, legend: 'All other values'},
 });
 
 const stations = new GeoJSON(data, {
-	symbology: temperature, // getLegend() and the feature count of this layer
+	classification: temperature, // getLegend() and the feature count of this layer
 	pointToLayer: (feature, latlng) => new CircleMarker(latlng, {radius: 6, color: '#ffffff'}),
 	style: temperature.style, // fillColor of the class
 }).addTo(map);
@@ -788,87 +760,20 @@ const CustomLayer = Layer.extend({
 });
 ```
 
-**D. Data-defined styles.** MapLibre-like expressions as path style values,
-`step(value, [color, 15, color, 30, …])` and `match(value, {S1: color, …})`,
-the counterpart of QGIS data-defined overrides; the legend is derived from the
-expression. Most general, but a mini language to document and test, and legend
-labels and feature counts still need extra data.
-
-```js
-new GeoJSON(data, {
-	style: {
-		fillColor: step(['get', 'minutes'], ['#1a9850', 15, '#fee08b', 30, '#d73027']),
-		color: match(['get', 'code'], {S1: '#1f78b4', S2: '#1f78b4'}, '#cccccc'),
-	},
-}).addTo(map);
-```
-
-**E. Rule-based renderer with legend keys.** As in QGIS, where categorized
-and graduated renderers are special cases of the rule-based renderer and the
-layer tree only talks to the renderer by legend keys: a renderer is an ordered
-tree of rules `{key, filter, symbol, legend, counted, minZoom, maxZoom,
-children}` with an `else` rule. `Categorized` and `Graduated` generate rules
-(keeping the `Map` lookup and the binary search as fast paths). The renderer
-only offers `symbol(feature, zoom) → PathOptions`, `legendKeys(feature) →
-[key]` and `legendItems() → [{key, legend, symbol, checkable}]`. The feature
-count groups `legendKeys` over the features of a layer and belongs to the
-legend (C), not to the renderer or the group; classes are toggled by key with
-`setKeyVisible(key, visible)`, so two classes may share a label. Classification
-methods (`quantile`, `equalInterval`, …) only produce `ranges`, like
-`QgsClassificationMethod`. `renderer.style` plugs into the existing
-`GeoJSON({style})`, scale ranges come as `minZoom`/`maxZoom`. Most flexible,
-~0.5 kB more than A.
-
-```js
-import {RuleRenderer, Graduated, quantile} from 'maplair/symbology';
-
-const renderer = new RuleRenderer({
-	rules: [
-		{key: 'closed', filter: f => f.properties.closed, symbol: {fillColor: '#999999'}, legend: 'Closed', counted: false},
-		...Graduated.rules({
-			value: f => f.properties.minutes,
-			ranges: quantile(data.features.map(f => f.properties.minutes), 3),
-			colors: ['#1a9850', '#fee08b', '#d73027'],
-		}),
-		{else: true, symbol: {fillColor: '#cccccc'}, legend: 'All other values'},
-	],
-});
-
-new GeoJSON(data, {style: renderer.style}).addTo(map);
-renderer.setKeyVisible('closed', false);
-```
-
-Recommended, ranked by how they match the Maplair style: C first (the
-`getAttribution()`/`AttributionControl` pattern, a plain `Control` with flat
-options like `position` and `collapsed`, a `legendchange` event like
-`crschange`), then A (a standalone class feeding the existing `style` and
-`pointToLayer` options), B (an object-valued option like `Path`'s `renderer`,
-but wrapping `addLayer` of a core class), E (cleanest concept, but nested rule
-objects, exported helpers and a name clashing with the SVG/Canvas `Renderer`)
-and D (a mini language in style values, nothing alike in Maplair). So: C as the
-generic place for legends and feature counts, and E as the core in Maplair
-shape: `new Symbology(rules, options)` instead of `RuleRenderer` (the rules as
-constructor argument like the layers of `new LayersControl(baseLayers,
-overlays, options)`, flat options such as `minZoom`/`maxZoom`), A's
-`new Categorized(categories, {value, normalize, otherValues})` and
-`new Graduated(ranges, {value})` as subclasses generating rules, classification
-methods as static methods (`Graduated.quantile(values, n)`, like `Hash.parse`)
-instead of exported helpers, and B reduced to the `symbology` option of
-`FeatureGroup`. Implementation: an opt-in module `maplair/symbology` exporting
-`Symbology`, `Categorized`, `Graduated` and `LegendControl`, adding
-`Layer.getLegend()` (documented next to `getAttribution()`) and the
-`symbology` option to `FeatureGroup` with `include()`, leaving the core classes
-untouched. Graduated lookup with a sorted array of range bounds (binary
-search), categorized lookup with a `Map`, `normalize` for tolerant matching. Legend patches as small inline SVG (circle for `CircleMarker`, square
-for polygons, line for polylines) with the class symbol, so that they match the
-map, also in dark mode via CSS variables. The bar as flex `<div>`s with
+Implementation: an opt-in module `maplair/classification` exporting
+`Classification` and `LegendControl`, adding `Layer.getLegend()` (documented
+next to `getAttribution()`) and the `classification` option to `FeatureGroup`
+with `include()`, leaving the core classes untouched. Legend patches as small
+inline SVG (circle for `CircleMarker`, square for polygons, line for
+polylines) with the class symbol, so that they match the map, also in dark mode
+via CSS variables. The feature count as text and as a bar of flex `<div>`s with
 `flex-grow` = count. Translated texts ("{n} features", "Legend", "All other
-values") via `I18n`. Specs: rule order and the `else` rule; lookup by value,
-range and legend label; all other values; merging; classes excluded from the
-count; counts after adding and removing layers; legend update in the
-attribution and the control; toggling classes by key; zoom-dependent rules.
+values") via `I18n`. Specs: lookup by value, merged values, range, open ranges
+and legend label; mixed values and ranges; all other values; merging in the
+legend; classes excluded from the count; counts after adding and removing
+layers; legend update in the attribution and the control; toggling classes.
 
-## Also implemented
+ Also implemented
 
 Features done in this fork besides the ideas above:
 
