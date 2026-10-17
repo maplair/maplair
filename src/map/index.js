@@ -1,4 +1,5 @@
 export {Map, MaplairMap} from './Map.js';
+export {Hash} from './Hash.js';
 export {BoxZoomHandler} from './handler/BoxZoomHandler.js';
 export {DoubleClickZoomHandler} from './handler/DoubleClickZoomHandler.js';
 export {DragHandler} from './handler/DragHandler.js';

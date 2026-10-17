@@ -2350,6 +2350,113 @@ to obscure objects you're zooming to.</td>
 	</div>
 </div>
 
+</section><h2 id='hash'>Hash</h2><p>Keeps the view of the map in the hash of the URL, e.g. <code>#13/47.2692/11.4041</code>
+(zoom, latitude, longitude, and the bearing of a rotated map), so that it can be
+bookmarked and shared. The view is restored from the hash when creating the
+<a href="#hash"><code>Hash</code></a> and when the hash changes (e.g. with the back button of the browser).</p>
+<p>Inspired by the <a href="https://github.com/mlevans/leaflet-hash">leaflet-hash</a> plugin.</p>
+
+<section>
+<h3 id='hash-example'>Usage example</h3>
+
+<section >
+
+
+
+
+
+<pre><code class="language-js">const map = new MaplairMap('map').setView([47.27, 11.40], 13);
+new Hash(map);
+</code></pre>
+
+
+
+</section>
+
+
+</section><section>
+<h3 id='hash-constructor'>Constructor</h3>
+
+<section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Constructor</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='hash-hash'>
+		<td><code><b>new Hash</b>(<nobr>&lt;<a href='#maplairmap'>MaplairMap</a>&gt;</nobr> <i>map</i>)</code></td>
+		<td>Synchronizes the view of <code>map</code> with the hash of the URL.</td>
+	</tr>
+</tbody></table>
+
+
+</section>
+
+
+</section><section>
+<h3 id='hash-method'>Methods</h3>
+
+<section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Method</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='hash-remove'>
+		<td><code><b>remove</b>()</code></td>
+		<td><code>this</code></td>
+		<td><p>Stops synchronizing the view with the hash of the URL.</p>
+</td>
+	</tr>
+</tbody></table>
+
+</section>
+
+
+</section><section>
+<h3 id='hash-function'>Functions</h3>
+
+<section >
+
+
+
+
+<table><thead>
+	<tr>
+		<th>Function</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='hash-parse'>
+		<td><code><b>parse</b>(<nobr>&lt;String&gt;</nobr> <i>hash</i>)</code></td>
+		<td><code>Object</code></td>
+		<td>Parses a hash like <code>#13/47.2692/11.4041[/30]</code> to an object with the
+<code>zoom</code>, <code>center</code> (<a href="#latlng"><code>LatLng</code></a>) and the optional <code>bearing</code>, or returns
+<code>undefined</code> for other hashes.</td>
+	</tr>
+	<tr id='hash-format'>
+		<td><code><b>format</b>(<nobr>&lt;<a href='#maplairmap'>MaplairMap</a>&gt;</nobr> <i>map</i>)</code></td>
+		<td><code>String</code></td>
+		<td>Returns the hash for the view of the map, with as many decimal places of
+the coordinates as needed for the precision of a pixel.</td>
+	</tr>
+</tbody></table>
+
+</section>
+
+
 </section><h2 id='marker'>Marker</h2><p>Marker is used to display clickable/draggable icons on the map. Extends <a href="#layer"><code>Layer</code></a>.</p>
 
 <section>

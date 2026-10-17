@@ -4,6 +4,7 @@ This file just defines the order of the classes in the docs.
 
 
 @class MaplairMap
+@class Hash
 
 @class Marker
 @class DivOverlay
