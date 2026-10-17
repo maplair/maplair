@@ -3,11 +3,71 @@ Maplair Changelog
 
 (all changes of Leaflet without author notice are by [@mourner](https://github.com/mourner))
 
+## 4.0.0-alpha.2 (2026-10-17)
+
+For an overview and a migration guide from Leaflet 1.9.4, see the blog post: https://maplair.org/2026/10/17/maplair-4.0.0-alpha.2.html
+
+(changes without author notice are by [@simon04](https://github.com/simon04))
+
+#### ❇️ New Features
+
+* Add `FullscreenControl` with `toggleFullscreen()`, `isFullscreen()` and the events `enterfullscreen`, `exitfullscreen` and `fullscreenchange`
+* Add `SearchControl` with custom geocoders and `SearchControl.nominatim()`, complying with the Nominatim usage policy (`acceptUsagePolicy`)
+* Add `ButtonControl`, `ButtonBarControl` and `TextControl`, and the Control option `order`
+* Add `MiniMapControl` with an overview map
+* Add `SideBySideControl` to compare layers with a divider
+* Add `Classification` and `LegendControl` for classified features with a legend
+* Add `ContextMenu` for menus on right click or long tap
+* Add `Hash` to keep the view and the layers in the URL hash (also as geo URI) or in the query string
+* Add `MapSync` to synchronize the views of several maps, with the options `oneWay` and `fit`
+* Add `SvgIcon` for markers in any color with a glyph
+* Add `HeatLayer` for heatmaps of points
+* Add `DisplaceHandler` for the displacement of overlapping circle markers
+* Add `TapDragZoomHandler` to zoom by double tapping and dragging up/down
+* Add `LatLng.parse()` for coordinates in decimal degrees and geo URIs
+* Map: add rotation with `bearing`, `setBearing()`, `pinchRotate` and `RotateControl` (optional module `maplair/map-rotation`)
+* Marker: add the options `rotationAngle` and `rotationOrigin` (optional module `maplair/marker-rotation`)
+* Animate markers along routes with `moveTo()`/`moveAlong()` (optional module `maplair/marker-movement`) and dashes along paths with `dashSpeed` (optional module `maplair/dash-animation`)
+* Path: add `arrowheads` and `text` along lines (optional module `maplair/path-decorations`)
+* GeoJSON: add `load()` and the option `url` (optional module `maplair/geojson-loading`)
+* Path: add zoom-dependent `weight` and `radius` (optional module `maplair/zoom-styles`)
+* Map: add the option `continuousZoom` for zooming through fractional zoom levels
+* Map: add `setCrs()` to change the CRS at runtime
+* Map: add the `idle` event, and `originalEvent` to view changes caused by the user
+* Map: follow changes of the `devicePixelRatio` and fire `pixelratiochange`
+* Map: keep the view of a hidden map
+* ScrollWheelZoom: support touchpad gestures, and `scrollWheelZoom: 'trackpad'`
+* DivOverlay: add the option `overflow` to let popups and tooltips extend beyond the map
+* Tooltip: choose the auto direction by the available space
+* Layer: add `setInteractive()`, `setAttribution()` and the option `attributionOrder`
+* TileLayer: add the option `fetchOptions` to load tiles with `fetch()`, swap tiles without flickering on `setUrl()`, and add the option `placeholder`
+* Add the option `pixelated` for nearest-neighbour scaling of tiles and image overlays
+* WMSTileLayer: add `getLegendUrl()`
+* Accessibility: map label (`ariaLabel`), keyboard shortcuts help (<kbd>?</kbd>), `<button>` elements in controls, popup focus
+* Use CSS variables for the colors, borders, shadows, fonts and spacing
+* Ship TypeScript type declarations (`dist/types/`)
+
+#### 🐞 Bugfixes
+
+* TileLayer: with `detectRetina`, no longer request tiles beyond `maxNativeZoom`
+* Release the pointer capture only if it is still active
+
+#### 📝 Docs
+
+* Replace Leafdoc with JSDoc, and generate the API reference from the type declarations
+* Explain the name Maplair, mention tree-shaking and update the bundle sizes on the homepage
+
+#### 🔧 Workflow
+
+* Migrate from npm to pnpm 12, upgrade Vite+ to 1.3.0 and Vitest to 5.0.5
+* Check that optional features are dropped by tree-shaking unless imported (`pnpm run test:tree-shaking`)
+* Type-check the type declarations and the debug pages (`pnpm run types:check`)
+
 ## 4.0.0-alpha.1 (2026-10-15) 🍁 Maplair, a fork of Leaflet
 
 The first pre-release of Maplair, a fork of Leaflet. It contains all changes since Leaflet 1.9.4: those of Leaflet 2.0.0-alpha and 2.0.0-alpha.1 (see below), the unreleased changes of Leaflet until the fork, and Maplair's own changes.
 
-For an overview and a migration guide from Leaflet 1.9.4, see the blog post: https://maplair.org/2026/10/15/maplair-4.0.0-alpha.html
+For an overview and a migration guide from Leaflet 1.9.4, see the blog post: https://maplair.org/2026/10/17/maplair-4.0.0-alpha.2.html
 
 ### Maplair
 
