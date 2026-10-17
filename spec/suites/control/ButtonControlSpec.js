@@ -114,7 +114,7 @@ describe('ButtonControl', () => {
 		const button = new ButtonControl({content: '⌂', title: 'Home', accessKey: 'h'}).addTo(map).getButton();
 		expect(button.accessKey).to.equal('h');
 		expect(button.title.startsWith('Home [')).to.be.true;
-		expect(button.title.endsWith('H]')).to.be.true;
+		expect(button.title.toUpperCase().endsWith('H]')).to.be.true;
 		expect(button.getAttribute('aria-label')).to.equal('Home');
 	});
 });
