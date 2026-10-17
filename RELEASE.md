@@ -1,5 +1,31 @@
 ## Releasing a new version of Maplair
 
+### TL;DR
+
+Production release (e.g. `4.0.0` → `4.0.1`), with the changelog committed and CI green:
+
+```sh
+pnpm version patch         # or minor, major: bumps package.json, commits and tags
+git push --follow-tags     # CI tests and stages the release on npm with the dist-tag latest
+pnpm stage approve         # after CI: approve with 2FA (or on npmjs.com)
+```
+
+Then make the GitHub release with the npm tarball, and update the docs in a PR (see below).
+
+Pre-release (e.g. `4.0.0-alpha.1` → `4.0.0-alpha.2`), with the changelog and the docs of the new version already committed to `main`:
+
+```sh
+pnpm version prerelease                        # bumps package.json, commits and tags
+git push origin v4.0.0-alpha.2                 # only the tag: CI tests and stages the release with the dist-tag alpha
+pnpm stage approve                             # after CI: approve with 2FA (or on npmjs.com)
+pnpm dist-tag add maplair@4.0.0-alpha.2 latest # while there's no stable version yet
+git push                                       # deploys the website, whose CDN links now work
+```
+
+Then make the GitHub release (as pre-release) with the npm tarball.
+
+### Checklist
+
 - [ ] Ensure all https://github.com/maplair/maplair/labels/blocker issues and pull requests are resolved.
 - [ ] Update [the changelog](https://github.com/maplair/maplair/blob/main/CHANGELOG.md) since last release and commit.
 - [ ] Make sure all tests pass on CI before proceeding.
