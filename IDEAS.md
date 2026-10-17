@@ -673,8 +673,9 @@ changes. Common requirements:
   stacked bar, accessible (`role="img"`, `aria-label`)
 * the symbol colors reused elsewhere (charts, tables, filters)
 
-Wa**Legend protocol and `LegendControl`.** Like `getAttribution()` collected by
-the attribution control, layers may implement `getLegend() → HTMLElement`, and a
+**Legend protocol and `LegendControl`.** Like `getAttribution()` collected by
+the attribution control, layers may implement `getLegend() → HTMLElement`
+(checked with `layer.getLegend`, no default on `Layer`), and a
 `LegendControl` (a plain `Control` with flat options like `position` and
 `collapsed`) collects the legends of all layers on the map, updated on
 `layeradd`/`layerremove` and a `legendchange` event (like `crschange`). It
@@ -714,14 +715,16 @@ ArcGIS *unique values* / *class breaks*, MapLibre `match` / `step`, d3
 and ArcGIS, "categorized" is QGIS only. One `Classification` class avoids
 picking either, and reads naturally next to `classify()`.
 
-The option `classification` of `FeatureGroup` (and so `GeoJSON`) connects both:
-the group implements `getLegend()` from the classification and the feature
-count of its layers, and fires `legendchange` on `layeradd`/`layerremove`, so
-refreshing the data updates the legend without app code. Example, weather
-stations classified by air temperature, as circle markers:
+`legendControl.addClassification(layer, classification)` connects both, like
+`LayersControl.addOverlay(layer, name)`: the control counts the features of the
+group through the `layeradd`/`layerremove` events `FeatureGroup` already fires
+and re-renders the legend, so refreshing the data updates it without app code.
+The classification is passed twice only, as `style` and to the control, with no
+new layer option. Example, weather stations classified by air temperature, as
+circle markers:
 
 ```js
-import {Classification, LegendControl} from 'maplair/classification';
+import {Classification, LegendControl} from 'maplair';
 import 'maplair/geojson-loading';
 
 const temperature = new Classification([
@@ -737,15 +740,15 @@ const temperature = new Classification([
 
 const stations = new GeoJSON(null, {
 	url: 'stations.geojson',
-	classification: temperature, // getLegend() and the feature count of this layer
 	pointToLayer: (feature, latlng) => new CircleMarker(latlng, {radius: 6, color: '#ffffff'}),
 	style: temperature.style, // fillColor of the class
 }).addTo(map);
 
-// collects getLegend() of all layers, here inside the attribution
-new LegendControl({container: 'attribution', featureCount: true}).addTo(map);
+// here inside the attribution, also collecting getLegend() of all layers
+const legend = new LegendControl({container: 'attribution', featureCount: true}).addTo(map);
+legend.addClassification(stations, temperature);
 
-// reloading every 10 minutes restyles the markers and fires legendchange
+// reloading every 10 minutes restyles the markers and updates the counts
 setInterval(() => stations.load('stations.geojson'), 10 * 60 * 1000);
 
 // the same symbol for the class column of a table
@@ -765,10 +768,11 @@ const CustomLayer = Layer.extend({
 });
 ```
 
-Implementation: an opt-in module `maplair/classification` exporting
-`Classification` and `LegendControl`, adding `Layer.getLegend()` (documented
-next to `getAttribution()`) and the `classification` option to `FeatureGroup`
-with `include()`, leaving the core classes untouched. Legend patches as small
+Implementation: `Classification` and `LegendControl` exported from `maplair`
+like `Hash` and `HeatLayer` (no opt-in module, as no existing class changes,
+and tree-shaken when unused); `getLegend()` documented next to
+`getAttribution()`, WMS and heat layers implementing it in their own ideas (50,
+25). Legend patches as small
 inline SVG (circle for `CircleMarker`, square for polygons, line for
 polylines) with the class symbol, so that they match the map, also in dark mode
 via CSS variables. The feature count as text and as a bar of flex `<div>`s with
@@ -778,7 +782,7 @@ and legend label; mixed values and ranges; all other values; merging in the
 legend; classes excluded from the count; counts after adding and removing
 layers; legend update in the attribution and the control; toggling classes.
 
- Also implemented
+## Also implemented
 
 Features done in this fork besides the ideas above:
 
