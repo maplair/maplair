@@ -149,7 +149,7 @@ export class GridLayer extends Layer {
 			tileSize: 256,
 			opacity: 1,
 			placeholder: null,
-			updateWhenIdle: !Browser.reducedMotion,
+			updateWhenIdle: Browser.reducedMotion,
 			updateWhenZooming: true,
 			updateInterval: Browser.reducedMotion ? 5000 : 200,
 			zIndex: 1,
