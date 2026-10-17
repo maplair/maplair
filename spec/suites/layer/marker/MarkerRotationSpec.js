@@ -1,6 +1,8 @@
 import {expect} from 'vite-plus/test';
 import {DivIcon, MaplairMap, Marker} from 'maplair';
 import {createContainer, removeMapContainer} from '../../SpecHelper.js';
+import 'maplair/marker-rotation';
+import 'maplair/map-rotation';
 
 describe('Marker: rotationAngle', () => {
 	let container, map;

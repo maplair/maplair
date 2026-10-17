@@ -38,6 +38,8 @@
       "import": "./dist/esm/Maplair.js",
       "default": "./dist/maplair-src.js"
     },
+    "./map-rotation": "./dist/esm/map/Map.Rotation.js",
+    "./marker-rotation": "./dist/esm/layer/marker/Marker.Rotation.js",
     "./src/": "./src/",
     "./styles.css": "./dist/maplair.css",
     "./i18n/*.json": "./i18n/*.json"
@@ -49,9 +51,13 @@
     "./src/core/Handler.js",
     "./src/layer/GeoJSON.js",
     "./src/map/Map.js",
+    "./src/map/Map.Rotation.js",
+    "./src/layer/marker/Marker.Rotation.js",
     "./dist/esm/core/Handler.js",
     "./dist/esm/layer/GeoJSON.js",
-    "./dist/esm/map/Map.js"
+    "./dist/esm/map/Map.js",
+    "./dist/esm/map/Map.Rotation.js",
+    "./dist/esm/layer/marker/Marker.Rotation.js"
   ],
   "files": [
     "dist",
@@ -68,6 +74,7 @@
     "test:ui": "vp test watch --project=chromium --ui --browser.headless=false",
     "coverage": "vp test run --project=chromium --coverage",
     "build": "vp pack",
+    "test:tree-shaking": "node ./build/tree-shaking.js",
     "watch": "vp pack --watch",
     "lint": "vp lint",
     "lintfix": "vp lint --fix",

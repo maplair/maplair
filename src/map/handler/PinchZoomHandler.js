@@ -3,16 +3,8 @@ import * as DomEvent from '../../dom/DomEvent.js';
 import * as PointerEvents from '../../dom/DomEvent.PointerEvents.js';
 
 /*
- * Handler.PinchZoom is used by Map to add pinch zoom on supported mobile browsers,
- * and with the `pinchRotate` option rotation with two fingers.
+ * Handler.PinchZoom is used by Map to add pinch zoom on supported mobile browsers.
  */
-
-// The angle (degrees) the fingers have to turn before the map starts rotating
-const rotateThreshold = 15;
-
-function angleOf(p1, p2) {
-	return Math.atan2(p2.y - p1.y, p2.x - p1.x) * 180 / Math.PI;
-}
 
 export class PinchZoomHandler extends Handler {
 	constructor(...args) {
@@ -49,9 +41,6 @@ export class PinchZoomHandler extends Handler {
 
 		this._startDist = p1.distanceTo(p2);
 		this._startZoom = map.getZoom();
-		this._startAngle = angleOf(p1, p2);
-		this._startBearing = map.getBearing();
-		this._rotating = false;
 
 		this._moved = false;
 		this._zooming = true;
@@ -75,21 +64,6 @@ export class PinchZoomHandler extends Handler {
 
 		this._zoom = map.getScaleZoom(scale, this._startZoom);
 
-		if (map.options.pinchRotate) {
-			const angle = angleOf(p1, p2);
-			let delta = ((angle - this._startAngle + 540) % 360) - 180;
-			if (!this._rotating && Math.abs(delta) > rotateThreshold) {
-				// start rotating from the threshold on, without a jump
-				this._rotating = true;
-				this._startAngle += Math.sign(delta) * rotateThreshold;
-				delta -= Math.sign(delta) * rotateThreshold;
-			}
-			if (this._rotating) {
-				// turning the fingers clockwise turns the map clockwise
-				map._rotate(this._startBearing - delta);
-			}
-		}
-
 		if (!map.options.bounceAtZoomLimits && (
 			(this._zoom < map.getMinZoom() && scale < 1) ||
 			(this._zoom > map.getMaxZoom() && scale > 1))) {
@@ -98,11 +72,11 @@ export class PinchZoomHandler extends Handler {
 
 		if (map.options.pinchZoom === 'center') {
 			this._center = this._startLatLng;
-			if (scale === 1 && !this._rotating) { return; }
+			if (scale === 1) { return; }
 		} else {
 			// Get delta from pinch to center, so centerLatLng is delta applied to initial pinchLatLng
-			const delta = map._rotateToPane(p1._add(p2)._divideBy(2)._subtract(this._centerPoint));
-			if (scale === 1 && delta.x === 0 && delta.y === 0 && !this._rotating) { return; }
+			const delta = p1._add(p2)._divideBy(2)._subtract(this._centerPoint);
+			if (scale === 1 && delta.x === 0 && delta.y === 0) { return; }
 			this._center = map.unproject(map.project(this._pinchStartLatLng, this._zoom).subtract(delta), this._zoom);
 		}
 
@@ -152,10 +126,6 @@ export class PinchZoomHandler extends Handler {
 			// where the touch events (fingers) were. Enabled for touch-capable web
 			// browsers.
 			pinchZoom: true,
-
-			// @option pinchRotate: Boolean = false
-			// Whether the map can be rotated by turning two fingers, see `setBearing()`.
-			pinchRotate: false,
 
 			// @option bounceAtZoomLimits: Boolean = true
 			// Set it to false if you don't want the map to zoom beyond min/max zoom

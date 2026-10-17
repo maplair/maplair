@@ -26,7 +26,6 @@ export class DragHandler extends Handler {
 				dragend: this._onDragEnd
 			}, this);
 
-			this._draggable.on('predrag', this._onPreDragRotate, this);
 			this._draggable.on('predrag', this._onPreDragLimit, this);
 			if (map.options.worldCopyJump) {
 				this._draggable.on('predrag', this._onPreDragWrap, this);
@@ -113,13 +112,6 @@ export class DragHandler extends Handler {
 		this._worldWidth = this._map.getPixelWorldBounds().getSize().x;
 	}
 
-	// On a rotated map, the map pane moves in its own rotated frame
-	_onPreDragRotate() {
-		const draggable = this._draggable;
-		if (!this._map._bearing) { return; }
-		draggable._newPos = draggable._startPos.add(this._map._rotateToPane(draggable._newPos.subtract(draggable._startPos)));
-	}
-
 	_viscousLimit(value, threshold) {
 		return value - (value - threshold) * this._viscosity;
 	}
@@ -186,8 +178,7 @@ export class DragHandler extends Handler {
 				offset = map._limitOffset(offset, map.options.maxBounds);
 
 				requestAnimationFrame(() => {
-					// the offset of the map pane, `panBy()` takes container pixels
-					map.panBy(map._rotateToContainer(offset), {
+					map.panBy(offset, {
 						duration: decelerationDuration,
 						easeLinearity: ease,
 						noMoveStart: true,

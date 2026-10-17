@@ -156,9 +156,7 @@ export function restoreOutline() {
 export function getSizedParentNode(element) {
 	do {
 		element = element.parentNode;
-	} while ((!element.offsetWidth || !element.offsetHeight ||
-		// the rotated pane of a map is scaled by its bounding box (see `getScale()`)
-		element.classList.contains('maplair-rotate-pane')) && element !== document.body);
+	} while ((!element.offsetWidth || !element.offsetHeight) && element !== document.body);
 	return element;
 }
 

@@ -1,6 +1,7 @@
 import {expect} from 'vite-plus/test';
 import {Hash, MaplairMap} from 'maplair';
 import {createContainer, removeMapContainer} from '../SpecHelper.js';
+import 'maplair/map-rotation';
 
 describe('Hash', () => {
 	let container, map, hash;

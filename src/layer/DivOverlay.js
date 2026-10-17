@@ -235,8 +235,7 @@ export class DivOverlay extends Layer {
 	getEvents() {
 		const events = {
 			zoom: this._updatePosition,
-			viewreset: this._updatePosition,
-			rotate: this._updatePosition
+			viewreset: this._updatePosition
 		};
 
 		if (this._zoomAnimated) {
@@ -353,14 +352,13 @@ export class DivOverlay extends Layer {
 	_updatePosition() {
 		if (!this._map) { return; }
 
-		const map = this._map,
-		pos = map.latLngToLayerPoint(this._latlng),
-		// on a rotated map, the anchor is relative to the upright overlay
-		anchor = map._rotateToPane(new Point(this._getAnchor()));
+		const pos = this._map.latLngToLayerPoint(this._latlng),
+		anchor = this._getAnchor();
 		let offset = new Point(this.options.offset);
 
-		const transformed = this._zoomAnimated || this.options.overflow || map._bearing;
-		if (!transformed) {
+		if (this._zoomAnimated || this.options.overflow) {
+			this._setContainerPosition(pos.add(anchor));
+		} else {
 			offset = offset.add(pos).add(anchor);
 		}
 
@@ -376,17 +374,11 @@ export class DivOverlay extends Layer {
 			this._container.style.bottom = `${bottom}px`;
 		}
 		this._container.style.left = `${left}px`;
-
-		if (transformed) {
-			// upright around the anchored point (below the bottom margin, see `Popup`)
-			this._setContainerPosition(pos.add(anchor), `${-left}px calc(100% + ${bottom + (this._containerMarginBottom ?? 0)}px)`);
-		}
 	}
 
 	// Positions the container at the given layer point. An overflowing overlay
 	// lives in the top layer of the page, so it is positioned in viewport coordinates.
-	// `transformOrigin` is the point around which the container is kept upright on a rotated map.
-	_setContainerPosition(pos, transformOrigin) {
+	_setContainerPosition(pos) {
 		this._containerPos = pos;
 		if (this.options.overflow) {
 			const mapContainer = this._map._container,
@@ -395,9 +387,6 @@ export class DivOverlay extends Layer {
 				._add(new Point(rect.left + mapContainer.clientLeft, rect.top + mapContainer.clientTop));
 		}
 		DomUtil.setPosition(this._container, pos);
-		if (!this.options.overflow) {
-			this._map._rotateUpright(this._container, transformOrigin);
-		}
 	}
 
 	// Returns the layer point the container was positioned at, see `_setContainerPosition`.

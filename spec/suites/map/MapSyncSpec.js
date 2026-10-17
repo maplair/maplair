@@ -2,6 +2,7 @@ import {expect, vi} from 'vite-plus/test';
 import {MaplairMap, MapSync, Marker} from 'maplair';
 import Hand from 'prosthetic-hand';
 import {createContainer, removeMapContainer} from '../SpecHelper.js';
+import 'maplair/map-rotation';
 
 describe('MapSync', () => {
 	let containers, maps, sync;

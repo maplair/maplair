@@ -3,6 +3,7 @@ import {GridLayer, ImageOverlay, MaplairMap, SideBySideControl} from 'maplair';
 import Hand from 'prosthetic-hand';
 import UIEventSimulator from 'ui-event-simulator';
 import {createContainer, removeMapContainer} from '../SpecHelper.js';
+import 'maplair/map-rotation';
 
 describe('SideBySideControl', () => {
 	let container, map, left, right, style;

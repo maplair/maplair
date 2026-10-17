@@ -1,8 +1,9 @@
 import {expect, vi} from 'vite-plus/test';
-import {Canvas, GridLayer, MaplairMap, Marker, Point, Polygon, Popup, RotateControl, SVG, Tooltip} from 'maplair';
+import {Canvas, GridLayer, MaplairMap, Marker, Point, Polygon, Popup, SVG, Tooltip} from 'maplair';
 import Hand from 'prosthetic-hand';
 import UIEventSimulator from 'ui-event-simulator';
 import {createContainer, removeMapContainer, pointerEventType} from '../SpecHelper.js';
+import {RotateControl} from 'maplair/map-rotation';
 
 describe('Map: rotation', () => {
 	let container, map;

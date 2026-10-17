@@ -66,24 +66,6 @@ export class Marker extends Layer {
 			// The z-index offset used for the `riseOnHover` feature.
 			riseOffset: 250,
 
-			// @option rotateWithView: Boolean = false
-			// On a rotated map (see `MaplairMap.setBearing()`), whether the icon rotates
-			// with the map (e.g. for arrows pointing in a geographic direction) instead
-			// of staying upright.
-			rotateWithView: false,
-
-			// @option rotationAngle: Number = 0
-			// Rotation of the icon in degrees, clockwise, e.g. for the heading of a
-			// vehicle. On a rotated map, the angle is relative to the screen, or to
-			// north with `rotateWithView`. The shadow is not rotated.
-			// Inspired by the [Leaflet.RotatedMarker](https://github.com/bbecquet/Leaflet.RotatedMarker) plugin.
-			rotationAngle: 0,
-
-			// @option rotationOrigin: String = undefined
-			// The CSS [`transform-origin`](https://developer.mozilla.org/docs/Web/CSS/transform-origin)
-			// to rotate the icon around, e.g. `'center'`. By default the anchor of the icon.
-			rotationOrigin: undefined,
-
 			// @option pane: String = 'markerPane'
 			// `Map pane` where the markers icon will be added.
 			pane: 'markerPane',
@@ -178,8 +160,7 @@ export class Marker extends Layer {
 	getEvents() {
 		const events = {
 			zoom: this.update,
-			viewreset: this.update,
-			rotate: this.update
+			viewreset: this.update
 		};
 		if (this._map?.options.markerCulling) {
 			events.moveend = this._updateCulling;
@@ -386,43 +367,10 @@ export class Marker extends Layer {
 		if (this._shadow) {
 			DomUtil.setPosition(this._shadow, pos);
 		}
-		this._rotateUpright();
 
 		this._zIndex = pos.y + this.options.zIndexOffset;
 
 		this._resetZIndex();
-	}
-
-	// Keeps the icon and shadow upright on a rotated map, rotating them around their anchor
-	_rotateUpright() {
-		const bearing = this.options.rotateWithView ? 0 : this._map.getBearing();
-		this._rotateElement(this._icon, bearing + (this.options.rotationAngle || 0), this.options.rotationOrigin);
-		this._rotateElement(this._shadow, bearing);
-	}
-
-	// Rotates an element positioned with `DomUtil.setPosition()` around its anchor (or `origin`)
-	_rotateElement(el, angle, origin) {
-		if (!el) { return; }
-		if (angle % 360) {
-			el.style.transform += ` rotate(${angle}deg)`;
-			el.style.transformOrigin = origin ?? `${-parseFloat(el.style.marginLeft) || 0}px ${-parseFloat(el.style.marginTop) || 0}px`;
-		} else if (el.style.transformOrigin) {
-			el.style.transformOrigin = '';
-		}
-	}
-
-	// @method setRotationAngle(angle: Number): this
-	// Changes the [`rotationAngle`](#marker-rotationangle) of the icon.
-	setRotationAngle(angle) {
-		this.options.rotationAngle = angle;
-		return this.update();
-	}
-
-	// @method setRotationOrigin(origin: String): this
-	// Changes the [`rotationOrigin`](#marker-rotationorigin) of the icon.
-	setRotationOrigin(origin) {
-		this.options.rotationOrigin = origin;
-		return this.update();
 	}
 
 	_updateZIndex(offset) {

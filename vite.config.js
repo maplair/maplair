@@ -235,27 +235,31 @@ export default defineConfig({
 		],
 	},
 	pack: [
+		// the bundles contain all optional features
 		{
 			...packOptions,
-			entry: {'maplair-src': 'src/Maplair.js'},
+			entry: {'maplair-src': 'src/Maplair.all.js'},
 			copy: [
 				'src/maplair.css',
 				{from: 'src/images/{logo,layers,marker-icon,marker-shadow}.svg', to: 'dist/images'},
 			],
 		},
-		{...packOptions, entry: {maplair: 'src/Maplair.js'}, minify: true},
+		{...packOptions, entry: {maplair: 'src/Maplair.all.js'}, minify: true},
 		// one module per source file, so that bundlers can drop unused modules (see `sideEffects` in package.json)
-		{...packOptions, entry: ['src/Maplair.js'], unbundle: true, outDir: 'dist/esm', banner: undefined},
-		{...globalPackOptions, entry: {'maplair-global-src': 'src/Maplair.js'}},
-		{...globalPackOptions, entry: {'maplair-global': 'src/Maplair.js'}, minify: true},
+		{...packOptions, entry: ['src/Maplair.js', 'src/map/Map.Rotation.js', 'src/layer/marker/Marker.Rotation.js'], unbundle: true, outDir: 'dist/esm', banner: undefined},
+		{...globalPackOptions, entry: {'maplair-global-src': 'src/Maplair.all.js'}},
+		{...globalPackOptions, entry: {'maplair-global': 'src/Maplair.all.js'}, minify: true},
 	],
 	build: {
 		assetsInlineLimit: 0,
 	},
 	resolve: {
-		alias: {
-			maplair: fileURLToPath(new URL('./src/Maplair.js', import.meta.url)),
-		},
+		alias: [
+			// the optional features, see `exports` in package.json
+			{find: 'maplair/map-rotation', replacement: fileURLToPath(new URL('./src/map/Map.Rotation.js', import.meta.url))},
+			{find: 'maplair/marker-rotation', replacement: fileURLToPath(new URL('./src/layer/marker/Marker.Rotation.js', import.meta.url))},
+			{find: /^maplair$/, replacement: fileURLToPath(new URL('./src/Maplair.js', import.meta.url))},
+		],
 	},
 	staged: {
 		'*.{js,mjs}': 'vp lint --fix',

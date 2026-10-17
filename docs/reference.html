@@ -179,8 +179,7 @@ and optionally an object literal with <code>Map options</code>.</td>
 	<tr id='maplairmap-map'>
 		<td><code><b>new Map</b>(<nobr>&lt;HTMLElement&gt;</nobr> <i>el</i>, <nobr>&lt;Map options&gt;</nobr> <i>options?</i>)</code></td>
 		<td>Instantiates a map object given an instance of a <code>&lt;div&gt;</code> HTML element
-and optionally an object literal with <code>Map options</code>.
-The bearing in degrees in the range [0, 360)</td>
+and optionally an object literal with <code>Map options</code>.</td>
 	</tr>
 </tbody></table>
 
@@ -332,6 +331,21 @@ view regardless of where the pointer was.</td>
 
 <h4 id='maplairmap-map-state-options'>Map State Options</h4>
 
+<div class='section-comments'>The rotation of the map is an optional feature: import this module to add the
+<code>bearing</code>, <code>pinchRotate</code> and <code>rotateControl</code> options, <code>setBearing()</code>,
+<code>getBearing()</code> and the <code>rotate</code> event to <a href="#maplairmap"><code>MaplairMap</code></a>, and the <a href="#rotatecontrol"><code>RotateControl</code></a>.
+Maps not using it don't contain its code.
+<pre><code class="language-js">import {MaplairMap} from 'maplair';
+import {RotateControl} from 'maplair/map-rotation';
+
+const map = new MaplairMap('map', {bearing: 30, pinchRotate: true, rotateControl: true});
+</code></pre>
+<p>The map pane is wrapped in a pane rotated around the center of the container.
+Container/layer point conversions, <code>getPixelBounds()</code> and <code>getBounds()</code> account
+for the rotation; grid layers and vector renderers cover the bounding box of
+the rotated view; markers, popups and tooltips stay upright (see the Marker
+option <code>rotateWithView</code>); dragging, <code>panBy()</code>, the keyboard, pinch, tap-drag,
+touchpad and continuous zoom work in container pixels.</p></div>
 
 <table><thead>
 	<tr>
@@ -341,6 +355,13 @@ view regardless of where the pointer was.</td>
 		<th>Description</th>
 	</tr>
 	</thead><tbody>
+	<tr id='maplairmap-bearing'>
+		<td><code><b>bearing</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>Initial rotation of the map in degrees: the compass direction pointing up,
+clockwise from north (e.g. <code>90</code> for east up), see <code>setBearing()</code>.</td>
+	</tr>
 	<tr id='maplairmap-crs'>
 		<td><code><b>crs</b></code></td>
 		<td><code><a href='#crs'>CRS</a></code></td>
@@ -382,13 +403,6 @@ the highest of their <code>maxZoom</code> options will be used instead.</td>
 		<td><code>[]</code></td>
 		<td>Array of layers that will be added to the map initially</td>
 	</tr>
-	<tr id='maplairmap-bearing'>
-		<td><code><b>bearing</b></code></td>
-		<td><code>Number</code></td>
-		<td><code>0</code></td>
-		<td>Initial rotation of the map in degrees: the compass direction pointing up,
-clockwise from north (e.g. <code>90</code> for east up), see <code>setBearing()</code>.</td>
-	</tr>
 	<tr id='maplairmap-arialabel'>
 		<td><code><b>ariaLabel</b></code></td>
 		<td><code>String</code></td>
@@ -412,6 +426,65 @@ outside the view. To set the restriction dynamically, use
 		<td><code>*</code></td>
 		<td>The default method for drawing vector layers on the map. <a href="#svg"><code>SVG</code></a>
 or <a href="#canvas"><code>Canvas</code></a> by default depending on browser support.</td>
+	</tr>
+</tbody></table>
+
+</section><section class='collapsable'>
+
+<h4 id='maplairmap-touch-interaction-options'>Touch interaction options</h4>
+
+
+<table><thead>
+	<tr>
+		<th>Option</th>
+		<th>Type</th>
+		<th>Default</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
+	<tr id='maplairmap-pinchrotate'>
+		<td><code><b>pinchRotate</b></code></td>
+		<td><code>Boolean</code></td>
+		<td><code>false</code></td>
+		<td>Whether the map can be rotated by turning two fingers, see <code>setBearing()</code>.</td>
+	</tr>
+	<tr id='maplairmap-pinchzoom'>
+		<td><code><b>pinchZoom</b></code></td>
+		<td><code>Boolean|String</code></td>
+		<td><code>*</code></td>
+		<td>Whether the map can be zoomed by touch-dragging with two fingers. If
+passed <code>'center'</code>, it will zoom to the center of the view regardless of
+where the touch events (fingers) were. Enabled for touch-capable web
+browsers.</td>
+	</tr>
+	<tr id='maplairmap-bounceatzoomlimits'>
+		<td><code><b>bounceAtZoomLimits</b></code></td>
+		<td><code>Boolean</code></td>
+		<td><code>true</code></td>
+		<td>Set it to false if you don't want the map to zoom beyond min/max zoom
+and then bounce back when pinch-zooming.</td>
+	</tr>
+	<tr id='maplairmap-tapdragzoom'>
+		<td><code><b>tapDragZoom</b></code></td>
+		<td><code>Boolean|String</code></td>
+		<td><code>true</code></td>
+		<td>Whether the map can be zoomed with one finger by tapping once, then
+touching again and dragging down (zoom in) or up (zoom out). If
+passed <code>'center'</code>, it will zoom to the center of the view regardless
+of where the finger was.</td>
+	</tr>
+	<tr id='maplairmap-taphold'>
+		<td><code><b>tapHold</b></code></td>
+		<td><code>Boolean</code></td>
+		<td><code></code></td>
+		<td>Enables simulation of <code>contextmenu</code> event, default is <code>true</code> for mobile Safari.</td>
+	</tr>
+	<tr id='maplairmap-taptolerance'>
+		<td><code><b>tapTolerance</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>15</code></td>
+		<td>The max number of pixels a user can shift his finger during touch
+for it to be considered a valid tap.</td>
 	</tr>
 </tbody></table>
 
@@ -570,65 +643,6 @@ arrows and <code>+</code>/<code>-</code> keys.</td>
 		<td><code>Number</code></td>
 		<td><code>80</code></td>
 		<td>Amount of pixels to pan when pressing an arrow key.</td>
-	</tr>
-</tbody></table>
-
-</section><section class='collapsable'>
-
-<h4 id='maplairmap-touch-interaction-options'>Touch interaction options</h4>
-
-
-<table><thead>
-	<tr>
-		<th>Option</th>
-		<th>Type</th>
-		<th>Default</th>
-		<th>Description</th>
-	</tr>
-	</thead><tbody>
-	<tr id='maplairmap-pinchzoom'>
-		<td><code><b>pinchZoom</b></code></td>
-		<td><code>Boolean|String</code></td>
-		<td><code>*</code></td>
-		<td>Whether the map can be zoomed by touch-dragging with two fingers. If
-passed <code>'center'</code>, it will zoom to the center of the view regardless of
-where the touch events (fingers) were. Enabled for touch-capable web
-browsers.</td>
-	</tr>
-	<tr id='maplairmap-pinchrotate'>
-		<td><code><b>pinchRotate</b></code></td>
-		<td><code>Boolean</code></td>
-		<td><code>false</code></td>
-		<td>Whether the map can be rotated by turning two fingers, see <code>setBearing()</code>.</td>
-	</tr>
-	<tr id='maplairmap-bounceatzoomlimits'>
-		<td><code><b>bounceAtZoomLimits</b></code></td>
-		<td><code>Boolean</code></td>
-		<td><code>true</code></td>
-		<td>Set it to false if you don't want the map to zoom beyond min/max zoom
-and then bounce back when pinch-zooming.</td>
-	</tr>
-	<tr id='maplairmap-tapdragzoom'>
-		<td><code><b>tapDragZoom</b></code></td>
-		<td><code>Boolean|String</code></td>
-		<td><code>true</code></td>
-		<td>Whether the map can be zoomed with one finger by tapping once, then
-touching again and dragging down (zoom in) or up (zoom out). If
-passed <code>'center'</code>, it will zoom to the center of the view regardless
-of where the finger was.</td>
-	</tr>
-	<tr id='maplairmap-taphold'>
-		<td><code><b>tapHold</b></code></td>
-		<td><code>Boolean</code></td>
-		<td><code></code></td>
-		<td>Enables simulation of <code>contextmenu</code> event, default is <code>true</code> for mobile Safari.</td>
-	</tr>
-	<tr id='maplairmap-taptolerance'>
-		<td><code><b>tapTolerance</b></code></td>
-		<td><code>Number</code></td>
-		<td><code>15</code></td>
-		<td>The max number of pixels a user can shift his finger during touch
-for it to be considered a valid tap.</td>
 	</tr>
 </tbody></table>
 
@@ -810,7 +824,8 @@ to adding or removing a layer.</td>
 	<tr id='maplairmap-resize'>
 		<td><code><b>resize</b></code></td>
 		<td><code><a href='#resizeevent'>ResizeEvent</a></code></td>
-		<td>Fired when the map is resized.</td>
+		<td>Fired when the map is resized.
+Fired when the map is resized.</td>
 	</tr>
 	<tr id='maplairmap-unload'>
 		<td><code><b>unload</b></code></td>
@@ -897,7 +912,8 @@ including pan and fly animations.</td>
 	<tr id='maplairmap-autopanstart'>
 		<td><code><b>autopanstart</b></code></td>
 		<td><code><a href='#event'>Event</a></code></td>
-		<td>Fired when the map starts autopanning when opening a popup.</td>
+		<td>Fired when the map starts autopanning when opening a popup.
+Fired when the map starts autopanning when opening a popup.</td>
 	</tr>
 </tbody></table>
 
@@ -1294,7 +1310,7 @@ with the CRS their tiles were made for.</p>
 
 </section><section class='collapsable'>
 
-<h4 id='maplairmap-other-events'>Other Events</h4>
+<h4 id='maplairmap-touch-interaction-options'>Touch interaction options</h4>
 
 
 <table><thead>
@@ -1333,6 +1349,50 @@ shorter way round).</p>
 		<td><p>Returns the rotation of the map, see <code>setBearing()</code>.</p>
 </td>
 	</tr>
+	<tr id='maplairmap-containerpointtolayerpoint'>
+		<td><code><b>containerPointToLayerPoint</b>(<nobr>&lt;<a href='#point'>Point</a>&gt;</nobr> <i>point</i>)</code></td>
+		<td><code><a href='#point'>Point</a></code></td>
+		<td><p>Given a pixel coordinate relative to the map container, returns the corresponding
+pixel coordinate relative to the <a href="#map-getpixelorigin">origin pixel</a>.</p>
+</td>
+	</tr>
+	<tr id='maplairmap-layerpointtocontainerpoint'>
+		<td><code><b>layerPointToContainerPoint</b>(<nobr>&lt;<a href='#point'>Point</a>&gt;</nobr> <i>point</i>)</code></td>
+		<td><code><a href='#point'>Point</a></code></td>
+		<td><p>Given a pixel coordinate relative to the <a href="#map-getpixelorigin">origin pixel</a>,
+returns the corresponding pixel coordinate relative to the map container.</p>
+</td>
+	</tr>
+	<tr id='maplairmap-getpixelbounds'>
+		<td><code><b>getPixelBounds</b>(<nobr>&lt;<a href='#latlng'>LatLng</a>&gt;</nobr> <i>center?</i>, <nobr>&lt;Number&gt;</nobr> <i>zoom?</i>)</code></td>
+		<td><code><a href='#bounds'>Bounds</a></code></td>
+		<td><p>Returns the bounds of the current map view in projected pixel
+coordinates (sometimes useful in layer and overlay implementations).
+If <code>center</code> and <code>zoom</code> is omitted, the map's current zoom level and center is used.</p>
+</td>
+	</tr>
+	<tr id='maplairmap-invalidatesize'>
+		<td><code><b>invalidateSize</b>(<nobr>&lt;Boolean&gt;</nobr> <i>animate</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Checks if the map container size changed and updates the map if so —
+call it after you've changed the map size dynamically, also animating
+pan by default.</p>
+</td>
+	</tr>
+</tbody></table>
+
+</section><section class='collapsable'>
+
+<h4 id='maplairmap-other-events'>Other Events</h4>
+
+
+<table><thead>
+	<tr>
+		<th>Method</th>
+		<th>Returns</th>
+		<th>Description</th>
+	</tr>
+	</thead><tbody>
 	<tr id='maplairmap-setmaxbounds'>
 		<td><code><b>setMaxBounds</b>(<nobr>&lt;<a href='#latlngbounds'>LatLngBounds</a>&gt;</nobr> <i>bounds</i>)</code></td>
 		<td><code>this</code></td>
@@ -2531,7 +2591,7 @@ sync.remove();
 		<td><code><b>bearing</b></code></td>
 		<td><code>Boolean</code></td>
 		<td><code>true</code></td>
-		<td>Whether to synchronize the bearing of rotated maps, see <code>MaplairMap.setBearing()</code>.</td>
+		<td>Whether to synchronize the bearing of rotated maps (with the map rotation, see <code>MaplairMap.setBearing()</code>).</td>
 	</tr>
 </tbody></table>
 
@@ -2598,7 +2658,7 @@ sync.remove();
 	</tr>
 	</thead><tbody>
 	<tr id='marker-marker'>
-		<td><code><b>new Marker</b>(<nobr>&lt;<a href='#latlng'>LatLng</a>&gt;</nobr> <i>latlng</i>, <nobr>&lt;<a href='#marker-option'>Marker options</a>&gt;</nobr> <i>options?</i>)</code></td>
+		<td><code><b>new Marker</b>(<nobr>&lt;<a href='#latlng'>LatLng</a>&gt;</nobr> <i>latlng</i>, <nobr>&lt;<a href='#marker-draggable-marker-options'>Marker options</a>&gt;</nobr> <i>options?</i>)</code></td>
 		<td>Instantiates a Marker object given a geographical point and optionally an options object.</td>
 	</tr>
 </tbody></table>
@@ -2614,6 +2674,15 @@ sync.remove();
 
 
 
+<div class='section-comments'>The rotation of marker icons is an optional feature: import this module to add
+the <code>rotationAngle</code>, <code>rotationOrigin</code> and <code>rotateWithView</code> options and
+<code>setRotationAngle()</code>/<code>setRotationOrigin()</code> to <a href="#marker"><code>Marker</code></a> (it is also part of the
+map rotation, see <code>MaplairMap.setBearing()</code>).
+<pre><code class="language-js">import 'maplair/marker-rotation';
+
+new Marker([47.27, 11.40], {rotationAngle: 45}).addTo(map);
+</code></pre>
+<p>Inspired by the <a href="https://github.com/bbecquet/Leaflet.RotatedMarker">Leaflet.RotatedMarker</a> plugin.</p></div>
 
 <table><thead>
 	<tr>
@@ -2623,6 +2692,29 @@ sync.remove();
 		<th>Description</th>
 	</tr>
 	</thead><tbody>
+	<tr id='marker-rotationangle'>
+		<td><code><b>rotationAngle</b></code></td>
+		<td><code>Number</code></td>
+		<td><code>0</code></td>
+		<td>Rotation of the icon in degrees, clockwise, e.g. for the heading of a
+vehicle. On a rotated map, the angle is relative to the screen, or to
+north with <code>rotateWithView</code>. The shadow is not rotated.</td>
+	</tr>
+	<tr id='marker-rotationorigin'>
+		<td><code><b>rotationOrigin</b></code></td>
+		<td><code>String</code></td>
+		<td><code>undefined</code></td>
+		<td>The CSS <a href="https://developer.mozilla.org/docs/Web/CSS/transform-origin"><code>transform-origin</code></a>
+to rotate the icon around, e.g. <code>'center'</code>. By default the anchor of the icon.</td>
+	</tr>
+	<tr id='marker-rotatewithview'>
+		<td><code><b>rotateWithView</b></code></td>
+		<td><code>Boolean</code></td>
+		<td><code>false</code></td>
+		<td>On a rotated map (see <code>MaplairMap.setBearing()</code>), whether the icon rotates
+with the map (e.g. for arrows pointing in a geographic direction) instead
+of staying upright.</td>
+	</tr>
 	<tr id='marker-icon'>
 		<td><code><b>icon</b></code></td>
 		<td><code><a href='#icon'>Icon</a></code></td>
@@ -2674,30 +2766,6 @@ If not specified, a common instance of <a href="#defaulticon"><code>DefaultIcon<
 		<td><code>Number</code></td>
 		<td><code>250</code></td>
 		<td>The z-index offset used for the <code>riseOnHover</code> feature.</td>
-	</tr>
-	<tr id='marker-rotatewithview'>
-		<td><code><b>rotateWithView</b></code></td>
-		<td><code>Boolean</code></td>
-		<td><code>false</code></td>
-		<td>On a rotated map (see <code>MaplairMap.setBearing()</code>), whether the icon rotates
-with the map (e.g. for arrows pointing in a geographic direction) instead
-of staying upright.</td>
-	</tr>
-	<tr id='marker-rotationangle'>
-		<td><code><b>rotationAngle</b></code></td>
-		<td><code>Number</code></td>
-		<td><code>0</code></td>
-		<td>Rotation of the icon in degrees, clockwise, e.g. for the heading of a
-vehicle. On a rotated map, the angle is relative to the screen, or to
-north with <code>rotateWithView</code>. The shadow is not rotated.
-Inspired by the <a href="https://github.com/bbecquet/Leaflet.RotatedMarker">Leaflet.RotatedMarker</a> plugin.</td>
-	</tr>
-	<tr id='marker-rotationorigin'>
-		<td><code><b>rotationOrigin</b></code></td>
-		<td><code>String</code></td>
-		<td><code>undefined</code></td>
-		<td>The CSS <a href="https://developer.mozilla.org/docs/Web/CSS/transform-origin"><code>transform-origin</code></a>
-to rotate the icon around, e.g. <code>'center'</code>. By default the anchor of the icon.</td>
 	</tr>
 	<tr id='marker-pane'>
 		<td><code><b>pane</b></code></td>
@@ -2844,6 +2912,7 @@ map edge to start panning the map.</td>
 
 
 
+<div class='section-comments'>In addition to <a href="#layer">shared layer methods</a> like <code>addTo()</code> and <code>remove()</code> and <a href="#popup">popup methods</a> like bindPopup() you can also use the following methods:</div>
 
 <table><thead>
 	<tr>
@@ -3060,7 +3129,6 @@ for a second (also called long press).</td>
 
 
 
-<div class='section-comments'>In addition to <a href="#layer">shared layer methods</a> like <code>addTo()</code> and <code>remove()</code> and <a href="#popup">popup methods</a> like bindPopup() you can also use the following methods:</div>
 
 <table><thead>
 	<tr>
@@ -3069,6 +3137,18 @@ for a second (also called long press).</td>
 		<th>Description</th>
 	</tr>
 	</thead><tbody>
+	<tr id='marker-setrotationangle'>
+		<td><code><b>setRotationAngle</b>(<nobr>&lt;Number&gt;</nobr> <i>angle</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#marker-rotationangle"><code>rotationAngle</code></a> of the icon.</p>
+</td>
+	</tr>
+	<tr id='marker-setrotationorigin'>
+		<td><code><b>setRotationOrigin</b>(<nobr>&lt;String&gt;</nobr> <i>origin</i>)</code></td>
+		<td><code>this</code></td>
+		<td><p>Changes the <a href="#marker-rotationorigin"><code>rotationOrigin</code></a> of the icon.</p>
+</td>
+	</tr>
 	<tr id='marker-getlatlng'>
 		<td><code><b>getLatLng</b>()</code></td>
 		<td><code><a href='#latlng'>LatLng</a></code></td>
@@ -3104,18 +3184,6 @@ for a second (also called long press).</td>
 		<td><code>HTMLElement</code></td>
 		<td><p>Returns the instance of <a href="https://developer.mozilla.org/docs/Web/API/HTMLElement"><code>HTMLElement</code></a>
 used by Marker layer.</p>
-</td>
-	</tr>
-	<tr id='marker-setrotationangle'>
-		<td><code><b>setRotationAngle</b>(<nobr>&lt;Number&gt;</nobr> <i>angle</i>)</code></td>
-		<td><code>this</code></td>
-		<td><p>Changes the <a href="#marker-rotationangle"><code>rotationAngle</code></a> of the icon.</p>
-</td>
-	</tr>
-	<tr id='marker-setrotationorigin'>
-		<td><code><b>setRotationOrigin</b>(<nobr>&lt;String&gt;</nobr> <i>origin</i>)</code></td>
-		<td><code>this</code></td>
-		<td><p>Changes the <a href="#marker-rotationorigin"><code>rotationOrigin</code></a> of the icon.</p>
 </td>
 	</tr>
 	<tr id='marker-setopacity'>

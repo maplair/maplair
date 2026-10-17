@@ -66,14 +66,6 @@ const directions = ['top', 'bottom', 'center', 'right', 'left'];
 const tipSize = 6,
 autoPadding = 4;
 
-// The margins of the directions, see `.maplair-tooltip-top` etc. in maplair.css
-const directionMargins = {
-	top: [0, -tipSize],
-	bottom: [0, tipSize],
-	left: [-tipSize, 0],
-	right: [tipSize, 0]
-};
-
 // The shift moving a box from `start` with `size` into the range `[min, max]`.
 function shiftInto(start, size, min, max) {
 	return Math.max(0, min - start) - Math.max(0, start + size - max);
@@ -230,8 +222,7 @@ export class Tooltip extends DivOverlay {
 			subX = tooltipWidth;
 		}
 
-		// relative to the source, in container pixels
-		const delta = offset.add(anchor).add(shift).subtract(new Point(subX, subY, true));
+		pos = pos.subtract(new Point(subX, subY, true)).add(offset).add(anchor).add(shift);
 
 		container.classList.remove(
 			'maplair-tooltip-right',
@@ -251,17 +242,7 @@ export class Tooltip extends DivOverlay {
 			container.style.removeProperty('--maplair-tooltip-tip-shift');
 		}
 
-		if (this._map._bearing) {
-			// On a rotated map, the tooltip is positioned at its source and kept upright
-			// around it (taking the margin of the direction into account, see maplair.css)
-			const margin = directionMargins[direction] ?? [0, 0];
-			container.style.left = `${delta.x}px`;
-			container.style.top = `${delta.y}px`;
-			this._setContainerPosition(pos, `${-delta.x - margin[0]}px ${-delta.y - margin[1]}px`);
-		} else {
-			container.style.left = container.style.top = '';
-			this._setContainerPosition(pos.add(delta));
-		}
+		this._setContainerPosition(pos);
 	}
 
 	// Chooses the direction of an `auto` tooltip by the available space:

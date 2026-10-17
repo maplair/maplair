@@ -86,7 +86,7 @@ export class MarkerDrag extends Handler {
 				(Math.min(panBounds.min.y, iconPos.y) - panBounds.min.y) / (bounds.min.y - panBounds.min.y)
 			).multiplyBy(speed);
 
-			map.panBy(map._rotateToContainer(movement), {animate: false});
+			map.panBy(movement, {animate: false});
 
 			this._draggable._newPos._add(movement);
 			this._draggable._startPos._add(movement);
@@ -117,13 +117,6 @@ export class MarkerDrag extends Handler {
 	}
 
 	_onPreDrag(e) {
-		const map = this._marker._map,
-		draggable = this._draggable;
-		if (map._bearing) {
-			// the icon moves in the rotated frame of the map pane
-			draggable._newPos = draggable._startPos.add(map._rotateToPane(draggable._newPos.subtract(draggable._startPos)));
-		}
-
 		if (this._marker.options.autoPan) {
 			cancelAnimationFrame(this._panRequest);
 			this._panRequest = requestAnimationFrame(this._adjustPan.bind(this, e));
@@ -140,7 +133,6 @@ export class MarkerDrag extends Handler {
 		if (shadow) {
 			DomUtil.setPosition(shadow, iconPos);
 		}
-		marker._rotateUpright();
 
 		marker._latlng = latlng;
 		e.latlng = latlng;

@@ -118,7 +118,7 @@ export class ScrollWheelZoomHandler extends Handler {
 	_getPinchCenter(zoom) {
 		const {aroundLatLng, offset} = this._pinch,
 		map = this._map;
-		return map.unproject(map.project(aroundLatLng, zoom).subtract(map._rotateToPane(offset)), zoom);
+		return map.unproject(map.project(aroundLatLng, zoom).subtract(offset), zoom);
 	}
 
 	_endPinch() {
@@ -151,8 +151,6 @@ export class ScrollWheelZoomHandler extends Handler {
 			// Shift with a mouse wheel scrolls horizontally
 			offset = new Point(offset.y, 0);
 		}
-		// in the rotated frame of the map pane
-		offset = map._rotateToPane(offset);
 		if (map.options.maxBounds) {
 			offset = map._limitOffset(offset, map.options.maxBounds);
 		}

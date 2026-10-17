@@ -51,7 +51,8 @@ export class Hash {
 
 		this._hash = view.hash;
 		this._map.setView(view.center, view.zoom, {animate: false});
-		if (view.bearing !== undefined || this._map.getBearing()) {
+		// with the map rotation (see `MaplairMap.setBearing()`)
+		if (this._map.setBearing && (view.bearing !== undefined || this._map.getBearing())) {
 			this._map.setBearing(view.bearing ?? 0);
 		}
 		return true;
@@ -83,7 +84,7 @@ export class Hash {
 	static format(map) {
 		const zoom = map.getZoom(),
 		center = map.getCenter(),
-		bearing = map.getBearing(),
+		bearing = map.getBearing?.(),
 		// degrees per pixel ≈ 360 / (256 · 2^zoom)
 		precision = Math.max(0, Math.ceil(Math.log10(256 * 2 ** zoom / 360)));
 		let hash = `#${Math.round(zoom * 100) / 100}/${center.lat.toFixed(precision)}/${center.lng.toFixed(precision)}`;

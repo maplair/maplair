@@ -24,7 +24,7 @@ export class MapSync {
 		// @aka MapSync options
 		this.options = {
 			// @option bearing: Boolean = true
-			// Whether to synchronize the bearing of rotated maps, see `MaplairMap.setBearing()`.
+			// Whether to synchronize the bearing of rotated maps (with the map rotation, see `MaplairMap.setBearing()`).
 			bearing: true,
 			...options
 		};
@@ -142,7 +142,7 @@ export class MapSync {
 	_onRotate(map) {
 		if (!this.options.bearing) { return; }
 		for (const other of this._followers(map)) {
-			if (other.getBearing() !== map.getBearing()) {
+			if (other._rotate && other.getBearing() !== map.getBearing()) {
 				other._rotate(map.getBearing());
 			}
 		}
@@ -168,7 +168,7 @@ export class MapSync {
 	// Sets the view of all other maps to the one of `map`, without animation
 	_syncAll(map) {
 		for (const other of this._maps.filter(m => m !== map)) {
-			if (this.options.bearing && other.getBearing() !== map.getBearing()) {
+			if (this.options.bearing && other._rotate && other.getBearing() !== map.getBearing()) {
 				other._rotate(map.getBearing());
 			}
 			if (!other._loaded || other.getZoom() !== map.getZoom() ||
