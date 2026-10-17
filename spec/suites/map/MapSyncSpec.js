@@ -161,4 +161,65 @@ describe('MapSync', () => {
 			expectSameView(maps[1], maps[2]);
 		});
 	});
+
+	describe('oneWay and fit bounds', () => {
+		function createThumbnail(width, height, options) {
+			const container = createContainer(width, height);
+			container.style.top = '210px';
+			containers.push(container);
+			const map = new MaplairMap(container, {fadeAnimation: false, inertia: false, ...options});
+			maps.push(map);
+			return map;
+		}
+
+		it('follows only the first map with oneWay', () => {
+			createMaps(2, {zoomAnimation: false});
+			sync = new MapSync(maps, {oneWay: true});
+			expectSameView(maps[0], maps[1]);
+
+			maps[1].setView([48, 12], 8);
+			expect(maps[0].getZoom()).to.equal(10);
+			expect(maps[0].getCenter()).to.be.nearLatLng([47.27, 11.40]);
+
+			maps[0].setView([46, 10], 9);
+			expectSameView(maps[0], maps[1]);
+		});
+
+		it('fits the bounds of the leading map', () => {
+			createMaps(1, {zoomAnimation: false});
+			const thumbnail = createThumbnail('75px', '50px', {zoomAnimation: false});
+			sync = new MapSync(maps, {oneWay: true, fit: 'bounds'});
+			expect(thumbnail.getZoom()).to.equal(8);
+			expect(thumbnail.getCenter()).to.be.nearLatLng(maps[0].getCenter());
+
+			maps[0].setView([46, 10], 11);
+			expect(thumbnail.getZoom()).to.equal(9);
+			expect(thumbnail.getCenter()).to.be.nearLatLng([46, 10]);
+			expect(thumbnail.getBounds().pad(0.05).contains(maps[0].getBounds())).to.be.true;
+		});
+
+		it('zooms out to whole zoom levels so that the bounds fit', () => {
+			createMaps(1, {zoomAnimation: false});
+			const thumbnail = createThumbnail('100px', '100px', {zoomAnimation: false});
+			sync = new MapSync(maps, {fit: 'bounds'});
+			// 10 + log2(1/3)
+			expect(thumbnail.getZoom()).to.equal(8);
+			expect(thumbnail.getBounds().contains(maps[0].getBounds())).to.be.true;
+		});
+
+		it('follows animated zooming with fit bounds', async () => {
+			createMaps(1);
+			const thumbnail = createThumbnail('75px', '50px');
+			sync = new MapSync(maps, {oneWay: true, fit: 'bounds'});
+			const ends = maps.map(map => nextEvent(map, 'moveend'));
+			maps[0].setZoom(11);
+			await Promise.all(ends);
+			// let the last animations end
+			await new Promise((resolve) => {
+				setTimeout(resolve, 100);
+			});
+			expect(thumbnail.getZoom()).to.equal(9);
+			expect(thumbnail.getCenter()).to.be.nearLatLng(maps[0].getCenter());
+		});
+	});
 });

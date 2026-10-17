@@ -5,6 +5,9 @@
  * compare different layers side by side: whenever one of the maps moves (by the
  * user or by code, including animations), the other maps follow.
  *
+ * With the options `oneWay` and `fit: 'bounds'`, smaller maps can follow a main
+ * map showing its bounds, e.g. thumbnails next to it.
+ *
  * Inspired by the [Leaflet.Sync](https://github.com/jieter/Leaflet.Sync) plugin.
  *
  * @example
@@ -12,6 +15,9 @@
  * const sync = new MapSync([map1, map2]);
  * // later
  * sync.remove();
+ *
+ * // a thumbnail showing the bounds of the main map
+ * new MapSync([map, thumbnail], {oneWay: true, fit: 'bounds'});
  * ```
  */
 
@@ -26,6 +32,17 @@ export class MapSync {
 			// @option bearing: Boolean = true
 			// Whether to synchronize the bearing of rotated maps (with the map rotation, see `MaplairMap.setBearing()`).
 			bearing: true,
+
+			// @option oneWay: Boolean = false
+			// Whether only the first map leads and the other maps follow it, without
+			// moving the first map when they are moved.
+			oneWay: false,
+
+			// @option fit: String = 'center'
+			// How the maps follow: `'center'` with the same center and zoom, or
+			// `'bounds'` with the same center, zoomed so that the bounds of the leading
+			// map fit (like `fitBounds()`), for maps of different sizes.
+			fit: 'center',
 			...options
 		};
 		this._maps = [...maps];
@@ -68,10 +85,30 @@ export class MapSync {
 		return this._maps.filter(m => m !== map && m._loaded);
 	}
 
+	// Whether `map` may lead, see the `oneWay` option
+	_canLead(map) {
+		return !this.options.oneWay || map === this._maps[0];
+	}
+
+	// The zoom of `other` following `map` at `zoom`, see the `fit` option; snapped to
+	// the `zoomSnap` of `other` at the `end` of a movement
+	_zoomFor(other, map, zoom = map.getZoom(), end = true) {
+		const size = other.getSize(),
+		leaderSize = map.getSize();
+		if (this.options.fit !== 'bounds' || !size.x || !size.y || !leaderSize.x || !leaderSize.y) { return zoom; }
+		let z = zoom + Math.log2(Math.min(size.x / leaderSize.x, size.y / leaderSize.y));
+		const snap = other.options.zoomSnap;
+		if (end && snap) {
+			// down, so that the bounds fit
+			z = Math.floor(z / snap + 1e-6) * snap;
+		}
+		return Math.max(other.getMinZoom(), Math.min(other.getMaxZoom(), z));
+	}
+
 	// A map starting to move leads until it (and all following animations) ended,
 	// the events of the following maps are ignored meanwhile.
 	_onMoveStart(map) {
-		if (this._leader) { return; }
+		if (this._leader || !this._canLead(map)) { return; }
 		this._leader = map;
 		this._leaderEnded = false;
 		this._ended.clear();
@@ -94,7 +131,9 @@ export class MapSync {
 	_onMove(map) {
 		if (!this._leader) {
 			// e.g. invalidateSize(), which fires move without movestart
-			this._syncAll(map);
+			if (this._canLead(map)) {
+				this._syncAll(map);
+			}
 			return;
 		}
 		if (this._leader !== map) { return; }
@@ -111,7 +150,7 @@ export class MapSync {
 		for (const other of this._followers(map)) {
 			if (other._zoomAnimated) {
 				this._animating.add(other);
-				other._animateZoom(e.center, e.zoom, true, e.noUpdate);
+				other._animateZoom(e.center, this._zoomFor(other, map, e.zoom), true, e.noUpdate);
 			}
 		}
 	}
@@ -140,7 +179,7 @@ export class MapSync {
 	}
 
 	_onRotate(map) {
-		if (!this.options.bearing) { return; }
+		if (!this.options.bearing || !this._canLead(map)) { return; }
 		for (const other of this._followers(map)) {
 			if (other._rotate && other.getBearing() !== map.getBearing()) {
 				other._rotate(map.getBearing());
@@ -151,7 +190,7 @@ export class MapSync {
 	// Moves `other` to the view of `map`, during or at the end of a movement
 	_follow(other, map, during) {
 		const center = map.getCenter(),
-		zoom = map.getZoom();
+		zoom = this._zoomFor(other, map, map.getZoom(), !during);
 		if (zoom === other.getZoom()) {
 			// panning, by whole pixels like dragging
 			const offset = other.project(center, zoom).subtract(other.project(other.getCenter(), zoom)).round();
@@ -171,10 +210,11 @@ export class MapSync {
 			if (this.options.bearing && other._rotate && other.getBearing() !== map.getBearing()) {
 				other._rotate(map.getBearing());
 			}
-			if (!other._loaded || other.getZoom() !== map.getZoom() ||
+			const zoom = this._zoomFor(other, map);
+			if (!other._loaded || other.getZoom() !== zoom ||
 				other.latLngToContainerPoint(map.getCenter()).distanceTo(other.getSize()._divideBy(2)) >= 1) {
 				this._leader = map;
-				other.setView(map.getCenter(), map.getZoom(), {animate: false});
+				other.setView(map.getCenter(), zoom, {animate: false});
 				this._leader = null;
 			}
 		}

@@ -2606,6 +2606,8 @@ returns <code>undefined</code> without <code>lat</code> and <code>lng</code>.</t
 </section><h2 id='mapsync'>MapSync</h2><p>Synchronizes the views (center, zoom and bearing) of several maps, e.g. to
 compare different layers side by side: whenever one of the maps moves (by the
 user or by code, including animations), the other maps follow.</p>
+<p>With the options <code>oneWay</code> and <code>fit: 'bounds'</code>, smaller maps can follow a main
+map showing its bounds, e.g. thumbnails next to it.</p>
 <p>Inspired by the <a href="https://github.com/jieter/Leaflet.Sync">Leaflet.Sync</a> plugin.</p>
 
 <section>
@@ -2620,6 +2622,9 @@ user or by code, including animations), the other maps follow.</p>
 <pre><code class="language-js">const sync = new MapSync([map1, map2]);
 // later
 sync.remove();
+
+// a thumbnail showing the bounds of the main map
+new MapSync([map, thumbnail], {oneWay: true, fit: 'bounds'});
 </code></pre>
 
 
@@ -2672,6 +2677,21 @@ sync.remove();
 		<td><code>Boolean</code></td>
 		<td><code>true</code></td>
 		<td>Whether to synchronize the bearing of rotated maps (with the map rotation, see <code>MaplairMap.setBearing()</code>).</td>
+	</tr>
+	<tr id='mapsync-oneway'>
+		<td><code><b>oneWay</b></code></td>
+		<td><code>Boolean</code></td>
+		<td><code>false</code></td>
+		<td>Whether only the first map leads and the other maps follow it, without
+moving the first map when they are moved.</td>
+	</tr>
+	<tr id='mapsync-fit'>
+		<td><code><b>fit</b></code></td>
+		<td><code>String</code></td>
+		<td><code>&#x27;center&#x27;</code></td>
+		<td>How the maps follow: <code>'center'</code> with the same center and zoom, or
+<code>'bounds'</code> with the same center, zoomed so that the bounds of the leading
+map fit (like <code>fitBounds()</code>), for maps of different sizes.</td>
 	</tr>
 </tbody></table>
 
