@@ -10,7 +10,7 @@ and the large ones last (2, 9, 1).
 
 ## 1. Map rotation (bearing)
 
-**Status:** implemented in a0186215. Not yet rotation-aware: `maxBounds` viscosity, `worldCopyJump` and box zoom (zooms to the bounding box of the drawn box).
+**Status:** implemented in a0186215, an optional module `maplair/map-rotation` since d5c59a1c (see the comment there on possible size savings). Not yet rotation-aware: `maxBounds` viscosity, `worldCopyJump` and box zoom (zooms to the bounding box of the drawn box).
 
 [#9537](https://github.com/Leaflet/Leaflet/issues/9537) 8/2,
 [#268](https://github.com/Leaflet/Leaflet/issues/268) 2/66,
@@ -151,6 +151,8 @@ large ones last (14, 24).
 
 ## 13. Cooperative gestures
 
+**Status:** open.
+
 [#9448](https://github.com/Leaflet/Leaflet/issues/9448),
 [#2501](https://github.com/Leaflet/Leaflet/issues/2501) · effort: small–medium
 
@@ -163,6 +165,8 @@ pans with the midpoint). Touchpad pinching keeps working.
 
 ## 14. Vectors and markers across the antimeridian
 
+**Status:** open.
+
 [#5179](https://github.com/Leaflet/Leaflet/issues/5179),
 [#82](https://github.com/Leaflet/Leaflet/issues/82) 3/18 · effort: medium
 
@@ -174,6 +178,8 @@ copy report the latlng of that copy.
 
 ## 15. `setStyle({className})` and a `change` event for paths
 
+**Status:** open.
+
 [#2662](https://github.com/Leaflet/Leaflet/issues/2662) 8/21,
 [#2235](https://github.com/Leaflet/Leaflet/issues/2235) 5/1 · effort: small
 
@@ -182,6 +188,8 @@ canvas renderer ignores it). `setLatLngs()`, `addLatLng()`, `setRadius()` and
 `setLatLng()` fire `change`.
 
 ## 16. Accessible vectors and markers
+
+**Status:** open.
 
 [#7822](https://github.com/Leaflet/Leaflet/issues/7822),
 [#4179](https://github.com/Leaflet/Leaflet/issues/4179),
@@ -195,6 +203,8 @@ markers get no tab stop, and changing `keyboard` takes effect via a setter.
 
 ## 17. Updating markers in place
 
+**Status:** open.
+
 [#4259](https://github.com/Leaflet/Leaflet/issues/4259),
 [#3788](https://github.com/Leaflet/Leaflet/issues/3788),
 [#4484](https://github.com/Leaflet/Leaflet/issues/4484) 3/13 · effort: small–medium
@@ -206,6 +216,8 @@ which also keeps drag listeners alive during dragging (#4484).
 
 ## 18. Decluttering and culling of tooltips
 
+**Status:** open.
+
 [#5104](https://github.com/Leaflet/Leaflet/issues/5104) 0/8,
 [#6734](https://github.com/Leaflet/Leaflet/issues/6734) · effort: medium
 
@@ -216,6 +228,8 @@ to take tooltips far outside of the view off the page.
 
 ## 19. Control layout: center positions, no overlap
 
+**Status:** open.
+
 [#791](https://github.com/Leaflet/Leaflet/issues/791),
 [#4658](https://github.com/Leaflet/Leaflet/issues/4658),
 [#10075](https://github.com/Leaflet/Leaflet/issues/10075) · effort: small
@@ -225,6 +239,8 @@ the control corners with a CSS grid, so that controls of different corners do
 not overlap; the layers control limits its height to the space left.
 
 ## 20. Trusted Types and strict CSP
+
+**Status:** open.
 
 [#9773](https://github.com/Leaflet/Leaflet/issues/9773) 1/16,
 [#8423](https://github.com/Leaflet/Leaflet/issues/8423),
@@ -237,6 +253,8 @@ SVG with classes, so that pages don't need `'unsafe-inline'` styles.
 
 ## 21. Richer event data
 
+**Status:** open.
+
 [#1509](https://github.com/Leaflet/Leaflet/issues/1509),
 [#6953](https://github.com/Leaflet/Leaflet/issues/6953),
 [#8641](https://github.com/Leaflet/Leaflet/issues/8641) · effort: small
@@ -248,6 +266,8 @@ pointer events carry the clicked `layer` (from `propagatedFrom`).
 
 ## 22. Fallback for missing tiles
 
+**Status:** open.
+
 [#3127](https://github.com/Leaflet/Leaflet/issues/3127) 1/14,
 [#6802](https://github.com/Leaflet/Leaflet/issues/6802) · effort: small–medium
 
@@ -258,6 +278,8 @@ tried in turn.
 
 ## 23. Locate control
 
+**Status:** open.
+
 [#10097](https://github.com/Leaflet/Leaflet/issues/10097), leaflet-locatecontrol
 (875 ⭐) · effort: small
 
@@ -267,6 +289,8 @@ translated error messages; uses the new `<geolocation>` element where available
 for an explicit permission prompt.
 
 ## 24. Marker clustering
+
+**Status:** open.
 
 Leaflet.markercluster (4172 ⭐, the most used plugin; upstream it is left to
 plugins) · effort: large
@@ -292,7 +316,15 @@ tree-shakeable module (not registered as default feature in `Map.js`), so maps
 not using it pay nothing; sizes are minified estimates. Suggested order: the
 smallest first (33, 27, 28, 35, 26, 31), then 30, 34, 29, 32, 25, 36.
 
+All but 36 are implemented. Features extending existing classes (32, 33, 34,
+and the map rotation 1) are optional modules adding themselves with
+`Class.include()`, so that bundlers only include them when imported;
+`npm run test:tree-shaking` checks this. The other features are classes of
+their own.
+
 ## 25. Heatmap layer
+
+**Status:** implemented in 991ec651 (`HeatLayer`).
 
 [Leaflet.heat](https://github.com/Leaflet/Leaflet.heat) (1.7k ⭐) · ~2 kB
 
@@ -305,6 +337,8 @@ pinching or with `continuousZoom`.
 
 ## 26. Colored markers with glyphs
 
+**Status:** implemented in 21ab5408 as `SvgIcon` (the default icon has no `color` option).
+
 [Leaflet.awesome-markers](https://github.com/lennardv2/Leaflet.awesome-markers) (1.3k ⭐),
 [leaflet-color-markers](https://github.com/pointhi/leaflet-color-markers) (0.7k ⭐),
 [Leaflet.ExtraMarkers](https://github.com/coryasilva/Leaflet.ExtraMarkers) (0.35k ⭐) · ~1 kB
@@ -316,6 +350,8 @@ shadow stays `marker-shadow.svg`.
 
 ## 27. View in the URL hash
 
+**Status:** implemented in cf209a53 as `new Hash(map)`, with geo URIs (`format: 'geo'`) in 21ff83f0 and the base layer and overlays (`layers` option) in 2aedd723.
+
 [leaflet-hash](https://github.com/mlevans/leaflet-hash) (0.3k ⭐) · ~0.5 kB
 
 Map option `hash: true` (or a `Hash` helper): on `moveend` with `originalEvent`
@@ -324,6 +360,8 @@ Map option `hash: true` (or a `Hash` helper): on `moveend` with `originalEvent`
 zoom like in the plugin.
 
 ## 28. Generic button control
+
+**Status:** implemented in 70137c45 (`ButtonControl`, `ButtonBarControl`); `FullscreenControl` and `RotateControl` don't reuse it yet.
 
 [Leaflet.EasyButton](https://github.com/CliffCloud/Leaflet.EasyButton) (0.5k ⭐) · ~0.5 kB
 
@@ -334,6 +372,8 @@ buttons. `FullscreenControl` and `RotateControl` could reuse it.
 
 ## 29. Overview map
 
+**Status:** implemented in 2d1ac007 (`MiniMapControl`).
+
 [Leaflet-MiniMap](https://github.com/Norkart/Leaflet-MiniMap) (0.4k ⭐) · ~1.5 kB
 
 `MiniMapControl(layer, {zoomOffset: -5, toggleable})`: a second, non-interactive
@@ -343,6 +383,8 @@ the main map; a toggle button collapses it.
 
 ## 30. Side-by-side comparison
 
+**Status:** implemented in db7c2fb1 (`SideBySideControl`, divider position via `setRatio()`).
+
 [leaflet-side-by-side](https://github.com/digidem/leaflet-side-by-side) (0.4k ⭐) · ~1 kB
 
 `SideBySideControl(leftLayers, rightLayers)`: a draggable divider whose position
@@ -350,6 +392,8 @@ clips the layer containers with `clip-path: inset()`, updated on `move`,
 `resize` and dragging; the divider is a `role="slider"` moved with arrow keys.
 
 ## 31. Context menu
+
+**Status:** implemented in 362b7c85 as `new ContextMenu(items).addTo(mapOrLayer)` instead of an option.
 
 [Leaflet.contextmenu](https://github.com/aratcliffe/Leaflet.contextmenu) (0.4k ⭐) · ~1.5 kB
 
@@ -361,6 +405,8 @@ with `role="menu"`.
 
 ## 32. Arrowheads and text along paths
 
+**Status:** implemented in 133c2488 as optional module `maplair/path-decorations`.
+
 [Leaflet.PolylineDecorator](https://github.com/bbecquet/Leaflet.PolylineDecorator) (0.5k ⭐),
 [Leaflet.TextPath](https://github.com/makinacorpus/Leaflet.TextPath) (0.3k ⭐) · ~1.5 kB
 
@@ -371,6 +417,8 @@ the given distances and angles. Recomputed in `_update()`.
 
 ## 33. Rotated marker icons
 
+**Status:** implemented in 34e47b5c, an optional module `maplair/marker-rotation` since d5c59a1c.
+
 [Leaflet.RotatedMarker](https://github.com/bbecquet/Leaflet.RotatedMarker) (0.27k ⭐) · ~0.3 kB
 
 Marker option `rotationAngle` and `setRotationAngle()`, rotating around the icon
@@ -379,6 +427,8 @@ rotation of `_setPos()` (angle + bearing, or the angle only with
 `rotateWithView`).
 
 ## 34. Animated markers and paths
+
+**Status:** implemented in 857bf79d as optional modules `maplair/marker-movement` and `maplair/dash-animation` (the option is `dashSpeed`).
 
 [Leaflet.MovingMarker](https://github.com/ewoken/Leaflet.MovingMarker) (0.35k ⭐),
 [Leaflet.AnimatedMarker](https://github.com/openplans/Leaflet.AnimatedMarker) (0.38k ⭐),
@@ -392,6 +442,8 @@ cancellable, with an `end` event. Path option `animate: {dashArray, speed}` for
 
 ## 35. Synchronized maps
 
+**Status:** implemented in d9660db3 as `new MapSync([map1, map2])` instead of `map.sync()`.
+
 [Leaflet.Sync](https://github.com/jieter/Leaflet.Sync) (0.25k ⭐) · ~0.7 kB
 
 `map.sync(otherMap, {offset})`/`unsync()`: on user-caused `move`/`zoom` (see 4),
@@ -400,6 +452,8 @@ call `_move()` on the other maps without animation and mirror
 are no loops. Optionally sync the bearing.
 
 ## 36. Tile provider presets
+
+**Status:** open.
 
 [leaflet-providers](https://github.com/leaflet-extras/leaflet-providers) (2.4k ⭐) · ~0.5 kB per provider
 
@@ -421,3 +475,12 @@ package. Documents the required attributions.
 * Near misses: grouped layers control (leaflet-groupedlayercontrol,
   leaflet-panel-layers), measuring (leaflet-measure), geometry utilities
   (Leaflet.GeometryUtil), GPX/KML loading (leaflet-gpx, leaflet-omnivore)
+
+## Also implemented
+
+Features done in this fork besides the ideas above:
+
+* `TapDragZoomHandler`: zooming by double tapping and dragging up/down (9fc23279)
+* DivOverlay option `overflow` for popups and tooltips extending beyond the map (6dae829d)
+* Tooltip `direction: 'auto'` choosing the direction by the available space (5f53d46b)
+* `FullscreenControl` (f5e563cb)
