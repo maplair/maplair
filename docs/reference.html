@@ -7460,6 +7460,13 @@ one with the pointer or the keyboard. The selected result is shown on the map wi
 marker. It searches with <a href="https://nominatim.org/">Nominatim</a> of OpenStreetMap by
 default, or any other service with a custom <a href="#searchcontrol-geocoder"><code>geocoder</code></a>.
 Coordinates like <code>47.27, 11.4</code> or <code>geo:47.27,11.4</code> are found without a service.</p>
+<p>The public Nominatim service is free, but limited by its
+<a href="https://operations.osmfoundation.org/policies/nominatim/">usage policy</a>: it is for
+occasional searches of users, not for heavy use (an absolute maximum of one request
+per second for all users of an app), and forbids auto-complete. The
+<a href="#searchcontrol-nominatim">Nominatim geocoder</a> follows the technical requirements,
+but you are responsible for your use of the service: for more traffic, use your own
+Nominatim server or a commercial provider.</p>
 
 <h3 id="searchcontrol-example">Usage example</h3><pre><code class="language-js">new SearchControl().addTo(map);
 

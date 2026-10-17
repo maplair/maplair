@@ -88,6 +88,14 @@ function delay(ms, signal) {
  * default, or any other service with a custom [`geocoder`](#searchcontrol-geocoder).
  * Coordinates like `47.27, 11.4` or `geo:47.27,11.4` are found without a service.
  *
+ * The public Nominatim service is free, but limited by its
+ * [usage policy](https://operations.osmfoundation.org/policies/nominatim/): it is for
+ * occasional searches of users, not for heavy use (an absolute maximum of one request
+ * per second for all users of an app), and forbids auto-complete. The
+ * [Nominatim geocoder](#searchcontrol-nominatim) follows the technical requirements,
+ * but you are responsible for your use of the service: for more traffic, use your own
+ * Nominatim server or a commercial provider.
+ *
  * @example
  * ```js
  * new SearchControl().addTo(map);
