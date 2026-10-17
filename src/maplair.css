@@ -1,3 +1,58 @@
+:root {
+	/* colors */
+	--maplair-color-base: #333333;
+	--maplair-color-subtle: #757575;
+	--maplair-color-disabled: #aaaaaa;
+	--maplair-color-progressive: #0078a8;
+
+	--maplair-background-color-base: #ffffff;
+	--maplair-background-color-neutral: #dddddd;
+	--maplair-background-color-neutral-subtle: #f4f4f4;
+	--maplair-background-color-interactive-subtle--hover: #f4f4f4;
+	--maplair-background-color-interactive--active: rgba(51, 181, 229, 0.4);
+	--maplair-background-color-disabled-subtle: #f4f4f4;
+	--maplair-background-color-backdrop-light: rgba(255, 255, 255, 0.8);
+
+	--maplair-border-color-base: #777777;
+	--maplair-border-color-subtle: #cccccc;
+	--maplair-border-color-muted: rgba(0, 0, 0, 0.2);
+	--maplair-border-color-progressive: #3388ff;
+
+	/* borders */
+	--maplair-border-width-base: 1px;
+	--maplair-border-width-thick: 2px;
+
+	--maplair-border-radius-small: 2px;
+	--maplair-border-radius-base: 4px;
+	--maplair-border-radius-large: 12px;
+
+	/* box shadows */
+	--maplair-box-shadow-medium: 0 1px 5px rgba(0, 0, 0, 0.5);
+	--maplair-box-shadow-large: 0 3px 14px rgba(0, 0, 0, 0.4);
+
+	/* typography */
+	--maplair-font-family-base: "Helvetica Neue", Arial, Helvetica, sans-serif;
+	--maplair-font-family-monospace: "Lucida Console", Monaco, monospace;
+	--maplair-font-size-x-small: 0.75rem;
+	--maplair-font-size-small: 0.8125rem;
+	--maplair-font-size-medium: 1rem;
+	--maplair-font-size-large: 1.125rem;
+	--maplair-font-size-x-large: 1.375rem;
+	--maplair-line-height-content: 1.5;
+	--maplair-line-height-small: 1.3;
+	--maplair-line-height-x-small: 1.1;
+
+	/* spacing, the number is the size in percent of 16px */
+	--maplair-spacing-25: 4px;
+	--maplair-spacing-50: 8px;
+	--maplair-spacing-75: 12px;
+	--maplair-spacing-100: 16px;
+
+	/* sizes */
+	--maplair-size-control: 26px;
+	--maplair-size-control-touch: 30px;
+}
+
 /* required styles */
 
 .maplair-pane,
@@ -96,7 +151,7 @@
 	-webkit-tap-highlight-color: transparent;
 
 	a {
-		-webkit-tap-highlight-color: rgba(51, 181, 229, 0.4);
+		-webkit-tap-highlight-color: var(--maplair-background-color-interactive--active);
 	}
 }
 
@@ -173,7 +228,7 @@
 .maplair-top {
 	top: 0;
 	.maplair-control {
-		margin-top: 10px;
+		margin-top: var(--maplair-spacing-50);
 	}
 }
 
@@ -181,21 +236,21 @@
 	right: 0;
 	.maplair-control {
 		float: right;
-		margin-right: 10px;
+		margin-right: var(--maplair-spacing-50);
 	}
 }
 
 .maplair-bottom {
 	bottom: 0;
 	.maplair-control {
-		margin-bottom: 10px;
+		margin-bottom: var(--maplair-spacing-50);
 	}
 }
 
 .maplair-left {
 	left: 0;
 	.maplair-control {
-		margin-left: 10px;
+		margin-left: var(--maplair-spacing-50);
 	}
 }
 
@@ -321,11 +376,11 @@ svg.maplair-image-layer.maplair-interactive path {
 /* visual tweaks */
 
 .maplair-container {
-	background: #ddd;
+	background: var(--maplair-background-color-neutral);
 	outline-offset: 1px;
 
 	a {
-		color: #0078a8;
+		color: var(--maplair-color-progressive);
 	}
 }
 
@@ -335,16 +390,15 @@ path.maplair-interactive:focus:not(:focus-visible) {
 }
 
 .maplair-zoom-box {
-	border: 2px dotted #38f;
-	background: rgba(255, 255, 255, 0.5);
+	border: var(--maplair-border-width-thick) dotted var(--maplair-border-color-progressive);
+	background: color-mix(in srgb, var(--maplair-background-color-base) 50%, transparent);
 }
 
 /* general typography */
 .maplair-container {
-	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
-	font-size: 12px;
-	font-size: 0.75rem;
-	line-height: 1.5;
+	font-family: var(--maplair-font-family-base);
+	font-size: var(--maplair-font-size-x-small);
+	line-height: var(--maplair-line-height-content);
 }
 
 /* general toolbar styles */
@@ -353,49 +407,48 @@ path.maplair-interactive:focus:not(:focus-visible) {
 :where(.maplair-bar button) {
 	box-sizing: content-box;
 	padding: 0;
-	border-width: 0 0 1px;
+	border-width: 0 0 var(--maplair-border-width-base);
 	font: inherit;
 	cursor: pointer;
 }
 
 .maplair-bar {
-	box-shadow: 0 1px 5px rgba(0, 0, 0, 0.65);
-	border-radius: 4px;
+	box-shadow: var(--maplair-box-shadow-medium);
+	border-radius: var(--maplair-border-radius-base);
 
 	a,
 	button {
-		background-color: #fff;
-		border-bottom: 1px solid #ccc;
-		width: 26px;
-		height: 26px;
-		line-height: 26px;
+		background-color: var(--maplair-background-color-base);
+		border-bottom: var(--maplair-border-width-base) solid var(--maplair-border-color-subtle);
+		width: var(--maplair-size-control);
+		height: var(--maplair-size-control);
+		line-height: var(--maplair-size-control);
 		display: block;
 		text-align: center;
 		text-decoration: none;
-		color: black;
+		color: var(--maplair-color-base);
 		background-position: 50% 50%;
 		background-repeat: no-repeat;
-		display: block;
 		&:hover,
 		&:focus {
-			background-color: #f4f4f4;
+			background-color: var(--maplair-background-color-interactive-subtle--hover);
 		}
 
 		&:first-child {
-			border-top-left-radius: 4px;
-			border-top-right-radius: 4px;
+			border-top-left-radius: var(--maplair-border-radius-base);
+			border-top-right-radius: var(--maplair-border-radius-base);
 		}
 
 		&:last-child {
-			border-bottom-left-radius: 4px;
-			border-bottom-right-radius: 4px;
+			border-bottom-left-radius: var(--maplair-border-radius-base);
+			border-bottom-right-radius: var(--maplair-border-radius-base);
 			border-bottom: none;
 		}
 
 		&.maplair-disabled {
 			cursor: default;
-			background-color: #f4f4f4;
-			color: #bbb;
+			background-color: var(--maplair-background-color-disabled-subtle);
+			color: var(--maplair-color-disabled);
 		}
 	}
 }
@@ -421,18 +474,18 @@ path.maplair-interactive:focus:not(:focus-visible) {
 }
 
 .maplair-touch .maplair-bar :is(a, button) {
-	width: 30px;
-	height: 30px;
-	line-height: 30px;
+	width: var(--maplair-size-control-touch);
+	height: var(--maplair-size-control-touch);
+	line-height: var(--maplair-size-control-touch);
 
 	&:first-child {
-		border-top-left-radius: 2px;
-		border-top-right-radius: 2px;
+		border-top-left-radius: var(--maplair-border-radius-small);
+		border-top-right-radius: var(--maplair-border-radius-small);
 	}
 
 	&:last-child {
-		border-bottom-left-radius: 2px;
-		border-bottom-right-radius: 2px;
+		border-bottom-left-radius: var(--maplair-border-radius-small);
+		border-bottom-right-radius: var(--maplair-border-radius-small);
 	}
 }
 
@@ -440,10 +493,10 @@ path.maplair-interactive:focus:not(:focus-visible) {
 
 .maplair-control-zoom-in,
 .maplair-control-zoom-out {
-	font: bold 18px "Lucida Console", Monaco, monospace;
+	font: bold var(--maplair-font-size-large) var(--maplair-font-family-monospace);
 	text-indent: 1px;
 	.maplair-touch & {
-		font-size: 22px;
+		font-size: var(--maplair-font-size-x-large);
 	}
 }
 
@@ -451,9 +504,9 @@ path.maplair-interactive:focus:not(:focus-visible) {
 /* layers control */
 
 .maplair-control-layers {
-	box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
-	background: #fff;
-	border-radius: 5px;
+	box-shadow: var(--maplair-box-shadow-medium);
+	background: var(--maplair-background-color-base);
+	border-radius: var(--maplair-border-radius-base);
 
 	.maplair-control-layers-list {
 		display: none;
@@ -494,15 +547,15 @@ path.maplair-interactive:focus:not(:focus-visible) {
 }
 
 .maplair-control-layers-expanded {
-	padding: 6px 10px 6px 6px;
-	color: #333;
-	background: #fff;
+	padding: var(--maplair-spacing-50);
+	color: var(--maplair-color-base);
+	background: var(--maplair-background-color-base);
 }
 
 .maplair-control-layers-scrollbar {
 	overflow-y: scroll;
 	overflow-x: hidden;
-	padding-right: 5px;
+	padding-right: var(--maplair-spacing-25);
 }
 
 .maplair-control-layers-selector {
@@ -513,14 +566,13 @@ path.maplair-interactive:focus:not(:focus-visible) {
 
 .maplair-control-layers label {
 	display: block;
-	font-size: 13px;
-	font-size: 1.08333em;
+	font-size: var(--maplair-font-size-small);
 }
 
 .maplair-control-layers-separator {
 	height: 0;
-	border-top: 1px solid #ddd;
-	margin: 5px -10px 5px -6px;
+	border-top: var(--maplair-border-width-base) solid var(--maplair-border-color-subtle);
+	margin: var(--maplair-spacing-25) calc(-1 * var(--maplair-spacing-50));
 }
 
 /* Default icon URLs */
@@ -532,16 +584,15 @@ path.maplair-interactive:focus:not(:focus-visible) {
 /* attribution and scale controls */
 
 .maplair-container .maplair-control-attribution {
-	background: #fff;
-	background: rgba(255, 255, 255, 0.8);
+	background: var(--maplair-background-color-backdrop-light);
 	margin: 0;
 }
 
 .maplair-control-attribution,
 .maplair-control-scale-line {
-	padding: 0 5px;
-	color: #333;
-	line-height: 1.4;
+	padding: 0 var(--maplair-spacing-25);
+	color: var(--maplair-color-base);
+	line-height: var(--maplair-line-height-small);
 }
 
 .maplair-control-attribution a {
@@ -558,30 +609,30 @@ path.maplair-interactive:focus:not(:focus-visible) {
 }
 
 .maplair-left .maplair-control-scale {
-	margin-left: 5px;
+	margin-left: var(--maplair-spacing-25);
 }
 
 .maplair-bottom .maplair-control-scale {
-	margin-bottom: 5px;
+	margin-bottom: var(--maplair-spacing-25);
 }
 
 .maplair-control-scale-line {
-	border: 2px solid #777;
+	border: var(--maplair-border-width-thick) solid var(--maplair-border-color-base);
 	border-top: none;
-	line-height: 1.1;
-	padding: 2px 5px 1px;
+	line-height: var(--maplair-line-height-x-small);
+	padding: 2px var(--maplair-spacing-25) 1px;
 	white-space: nowrap;
 	box-sizing: border-box;
-	background: rgba(255, 255, 255, 0.8);
-	text-shadow: 1px 1px #fff;
+	background: var(--maplair-background-color-backdrop-light);
+	text-shadow: 1px 1px var(--maplair-background-color-base);
 
 	&:not(:first-child) {
-		border-top: 2px solid #777;
+		border-top: var(--maplair-border-width-thick) solid var(--maplair-border-color-base);
 		border-bottom: none;
-		margin-top: -2px;
+		margin-top: calc(-1 * var(--maplair-border-width-thick));
 
 		&:not(:last-child) {
-			border-bottom: 2px solid #777;
+			border-bottom: var(--maplair-border-width-thick) solid var(--maplair-border-color-base);
 		}
 	}
 }
@@ -595,7 +646,7 @@ path.maplair-interactive:focus:not(:focus-visible) {
 
 	.maplair-control-layers,
 	.maplair-bar {
-		border: 2px solid rgba(0, 0, 0, 0.2);
+		border: var(--maplair-border-width-thick) solid var(--maplair-border-color-muted);
 		background-clip: padding-box;
 	}
 }
@@ -604,14 +655,14 @@ path.maplair-interactive:focus:not(:focus-visible) {
 
 .maplair-control-minimap {
 	position: relative;
-	border: 2px solid rgba(0, 0, 0, 0.2);
-	border-radius: 4px;
+	border: var(--maplair-border-width-thick) solid var(--maplair-border-color-muted);
+	border-radius: var(--maplair-border-radius-base);
 	background-clip: padding-box;
-	box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
+	box-shadow: var(--maplair-box-shadow-medium);
 
 	&.maplair-control-minimap-collapsed {
-		width: 30px !important;
-		height: 30px !important;
+		width: var(--maplair-size-control-touch) !important;
+		height: var(--maplair-size-control-touch) !important;
 
 		.maplair-control-minimap-map {
 			display: none;
@@ -626,7 +677,7 @@ path.maplair-interactive:focus:not(:focus-visible) {
 .maplair-control-minimap-map {
 	width: 100%;
 	height: 100%;
-	border-radius: 2px;
+	border-radius: var(--maplair-border-radius-small);
 }
 
 .maplair-control-minimap-toggle {
@@ -634,14 +685,14 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	right: 0;
 	bottom: 0;
 	z-index: 1000;
-	width: 30px;
-	height: 30px;
+	width: var(--maplair-size-control-touch);
+	height: var(--maplair-size-control-touch);
 	padding: 0;
 	border: 0;
-	border-radius: 2px;
-	background: white;
-	color: #333;
-	font: bold 16px/30px sans-serif;
+	border-radius: var(--maplair-border-radius-small);
+	background: var(--maplair-background-color-base);
+	color: var(--maplair-color-base);
+	font: bold var(--maplair-font-size-medium)/var(--maplair-size-control-touch) var(--maplair-font-family-base);
 	cursor: pointer;
 	transform: rotate(180deg);
 
@@ -659,8 +710,8 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	z-index: 900;
 	width: 4px;
 	margin-left: -2px;
-	background: white;
-	box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+	background: var(--maplair-background-color-base);
+	box-shadow: var(--maplair-box-shadow-medium);
 	cursor: ew-resize;
 	touch-action: none;
 
@@ -678,11 +729,11 @@ path.maplair-interactive:focus:not(:focus-visible) {
 		height: 32px;
 		margin: -16px 0 0 -16px;
 		border-radius: 50%;
-		background: white;
-		box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
-		font: bold 18px/32px sans-serif;
+		background: var(--maplair-background-color-base);
+		box-shadow: var(--maplair-box-shadow-medium);
+		font: bold var(--maplair-font-size-large)/32px var(--maplair-font-family-base);
 		text-align: center;
-		color: #333;
+		color: var(--maplair-color-base);
 	}
 }
 
@@ -692,20 +743,20 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	position: fixed;
 	inset: auto;
 	margin: 0;
-	padding: 4px 0;
+	padding: var(--maplair-spacing-25) 0;
 	min-width: 150px;
 	border: 0;
-	border-radius: 4px;
-	background: white;
-	color: #222;
-	box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
-	font: 12px/1.5 "Helvetica Neue", Arial, Helvetica, sans-serif;
+	border-radius: var(--maplair-border-radius-base);
+	background: var(--maplair-background-color-base);
+	color: var(--maplair-color-base);
+	box-shadow: var(--maplair-box-shadow-medium);
+	font: var(--maplair-font-size-x-small)/var(--maplair-line-height-content) var(--maplair-font-family-base);
 }
 
 .maplair-contextmenu-item {
 	display: block;
 	width: 100%;
-	padding: 4px 12px;
+	padding: var(--maplair-spacing-25) var(--maplair-spacing-75);
 	border: 0;
 	background: none;
 	color: inherit;
@@ -715,40 +766,40 @@ path.maplair-interactive:focus:not(:focus-visible) {
 
 	&:hover,
 	&:focus {
-		background: #f4f4f4;
+		background: var(--maplair-background-color-interactive-subtle--hover);
 	}
 
 	&:disabled {
-		color: #999;
+		color: var(--maplair-color-disabled);
 		cursor: default;
 		background: none;
 	}
 }
 
 .maplair-contextmenu-separator {
-	margin: 4px 0;
-	border-top: 1px solid #ccc;
+	margin: var(--maplair-spacing-25) 0;
+	border-top: var(--maplair-border-width-base) solid var(--maplair-border-color-subtle);
 }
 
 /* keyboard shortcuts help */
 
 .maplair-keyboard-help {
-	padding: 4px 16px;
+	padding: var(--maplair-spacing-25) var(--maplair-spacing-100);
 	border: 0;
-	border-radius: 8px;
-	background: white;
-	color: #333;
-	box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4);
-	font: 13px/1.5 "Helvetica Neue", Arial, Helvetica, sans-serif;
+	border-radius: var(--maplair-border-radius-large);
+	background: var(--maplair-background-color-base);
+	color: var(--maplair-color-base);
+	box-shadow: var(--maplair-box-shadow-large);
+	font: var(--maplair-font-size-small)/var(--maplair-line-height-content) var(--maplair-font-family-base);
 
 	h2 {
-		font-size: 15px;
+		font-size: var(--maplair-font-size-medium);
 	}
 
 	dl {
 		display: grid;
 		grid-template-columns: auto 1fr;
-		gap: 6px 16px;
+		gap: var(--maplair-spacing-50) var(--maplair-spacing-100);
 	}
 
 	div {
@@ -762,11 +813,11 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	kbd {
 		display: inline-block;
 		min-width: 1.2em;
-		margin-right: 3px;
-		padding: 0 4px;
-		border: 1px solid #ccc;
-		border-radius: 3px;
-		background: #f4f4f4;
+		margin-right: var(--maplair-spacing-25);
+		padding: 0 var(--maplair-spacing-25);
+		border: var(--maplair-border-width-base) solid var(--maplair-border-color-subtle);
+		border-radius: var(--maplair-border-radius-small);
+		background: var(--maplair-background-color-neutral-subtle);
 		font: inherit;
 		text-align: center;
 	}
@@ -783,19 +834,17 @@ path.maplair-interactive:focus:not(:focus-visible) {
 .maplair-popup-content-wrapper {
 	padding: 1px;
 	text-align: left;
-	border-radius: 12px;
+	border-radius: var(--maplair-border-radius-large);
 }
 
 .maplair-popup-content {
-	margin: 13px 24px 13px 20px;
-	line-height: 1.3;
-	font-size: 13px;
-	font-size: 1.08333em;
+	margin: var(--maplair-spacing-75) calc(2 * var(--maplair-spacing-75)) var(--maplair-spacing-75) var(--maplair-spacing-100);
+	line-height: var(--maplair-line-height-small);
+	font-size: var(--maplair-font-size-small);
 	min-height: 1px;
 
 	p {
-		margin: 17px 0;
-		margin: 1.3em 0;
+		margin: var(--maplair-spacing-100) 0;
 	}
 }
 
@@ -821,9 +870,9 @@ path.maplair-interactive:focus:not(:focus-visible) {
 
 .maplair-popup-content-wrapper,
 .maplair-popup-tip {
-	background: white;
-	color: #333;
-	box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4);
+	background: var(--maplair-background-color-base);
+	color: var(--maplair-color-base);
+	box-shadow: var(--maplair-box-shadow-large);
 }
 
 .maplair-container .maplair-popup-close-button {
@@ -834,8 +883,8 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	text-align: center;
 	width: 24px;
 	height: 24px;
-	font: 16px/24px Tahoma, Verdana, sans-serif;
-	color: #757575;
+	font: var(--maplair-font-size-medium)/24px var(--maplair-font-family-base);
+	color: var(--maplair-color-subtle);
 	text-decoration: none;
 	background: transparent;
 	padding: 0;
@@ -843,7 +892,7 @@ path.maplair-interactive:focus:not(:focus-visible) {
 
 	&:hover,
 	&:focus {
-		color: #585858;
+		color: var(--maplair-color-base);
 	}
 }
 
@@ -854,23 +903,23 @@ path.maplair-interactive:focus:not(:focus-visible) {
 /* div icon */
 
 .maplair-div-icon {
-	background: #fff;
-	border: 1px solid #666;
+	background: var(--maplair-background-color-base);
+	border: var(--maplair-border-width-base) solid var(--maplair-border-color-base);
 }
 
 /* Tooltip */
 /* Base styles for the element that has a tooltip */
 .maplair-tooltip {
 	position: absolute;
-	padding: 6px;
-	background-color: #fff;
-	border: 1px solid #fff;
-	border-radius: 3px;
-	color: #222;
+	padding: var(--maplair-spacing-50);
+	background-color: var(--maplair-background-color-base);
+	border: var(--maplair-border-width-base) solid var(--maplair-background-color-base);
+	border-radius: var(--maplair-border-radius-base);
+	color: var(--maplair-color-base);
 	white-space: nowrap;
 	user-select: none;
 	pointer-events: none;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+	box-shadow: var(--maplair-box-shadow-medium);
 
 	&.maplair-interactive {
 		cursor: pointer;
@@ -899,8 +948,7 @@ path.maplair-interactive:focus:not(:focus-visible) {
 		margin-left: -6px;
 		top: 0;
 		margin-top: -12px;
-		margin-left: -6px;
-		border-bottom-color: #fff;
+		border-bottom-color: var(--maplair-background-color-base);
 	}
 }
 
@@ -912,7 +960,7 @@ path.maplair-interactive:focus:not(:focus-visible) {
 		margin-left: -6px;
 		bottom: 0;
 		margin-bottom: -12px;
-		border-top-color: #fff;
+		border-top-color: var(--maplair-background-color-base);
 	}
 }
 
@@ -925,7 +973,7 @@ path.maplair-interactive:focus:not(:focus-visible) {
 		margin-top: -6px;
 		right: 0;
 		margin-right: -12px;
-		border-left-color: #fff;
+		border-left-color: var(--maplair-background-color-base);
 	}
 }
 
@@ -937,7 +985,7 @@ path.maplair-interactive:focus:not(:focus-visible) {
 		margin-top: -6px;
 		left: 0;
 		margin-left: -12px;
-		border-right-color: #fff;
+		border-right-color: var(--maplair-background-color-base);
 	}
 }
 
