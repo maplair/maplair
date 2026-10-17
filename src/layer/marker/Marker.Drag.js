@@ -4,25 +4,26 @@ import {Draggable} from '../../dom/Draggable.js';
 import {Bounds} from '../../geometry/Bounds.js';
 import {Point} from '../../geometry/Point.js';
 
-/*
- * Handler.MarkerDrag is used internally by Marker to make the markers draggable.
+/** @import {Marker, MarkerMoveEvent} from './Marker.js' */
+/** @import {MaplairEvent, DragEndEvent} from '../../core/Events.js' */
+
+/**
+ * The handler of `Marker` which makes the markers draggable, see the
+ * [`dragging`](#marker-dragging) property of markers and its `draggable` option.
+ *
+ * @fires Marker#dragstart {MaplairEvent} Fired when the user starts dragging the marker.
+ * @fires Marker#movestart {MaplairEvent} Fired when the marker starts moving (because of
+ * dragging).
+ * @fires Marker#drag {MarkerMoveEvent} Fired repeatedly while the user drags the marker.
+ * @fires Marker#dragend {DragEndEvent} Fired when the user stops dragging the marker.
+ * @fires Marker#moveend {MaplairEvent} Fired when the marker stops moving (because of
+ * dragging).
  */
-
-
-/* @namespace Marker
- * @section Interaction handlers
- *
- * Interaction handlers are properties of a marker instance that allow you to control interaction behavior in runtime, enabling or disabling certain features such as dragging (see `Handler` methods). Example:
- *
- * ```js
- * marker.dragging.disable();
- * ```
- *
- * @property dragging: Handler
- * Marker dragging handler. Only valid when the marker is on the map (Otherwise set [`marker.options.draggable`](#marker-draggable)).
- */
-
 export class MarkerDrag extends Handler {
+	/**
+	 * Creates the dragging handler of the given marker.
+	 * @param {Marker} marker
+	 */
 	constructor(marker) {
 		super(marker._map);
 		this._marker = marker;
@@ -30,6 +31,9 @@ export class MarkerDrag extends Handler {
 		this.callInitHooks(MarkerDrag);
 	}
 
+	/**
+	 * Makes the icon of the marker draggable, called by `enable()`.
+	 */
 	addHooks() {
 		const icon = this._marker._icon;
 
@@ -47,6 +51,9 @@ export class MarkerDrag extends Handler {
 		icon.classList.add('maplair-marker-draggable');
 	}
 
+	/**
+	 * Makes the icon of the marker undraggable, called by `disable()`.
+	 */
 	removeHooks() {
 		this._draggable.off({
 			dragstart: this._onDragStart,
@@ -58,6 +65,10 @@ export class MarkerDrag extends Handler {
 		this._marker._icon?.classList.remove('maplair-marker-draggable');
 	}
 
+	/**
+	 * Returns `true` if the marker has been moved by the current or last drag.
+	 * @returns {boolean}
+	 */
 	moved() {
 		return this._draggable?._moved;
 	}
@@ -99,13 +110,6 @@ export class MarkerDrag extends Handler {
 	}
 
 	_onDragStart() {
-		// @section Dragging events
-		// @event dragstart: Event
-		// Fired when the user starts dragging the marker.
-
-		// @event movestart: Event
-		// Fired when the marker starts moving (because of dragging).
-
 		this._oldLatLng = this._marker.getLatLng();
 
 		// When using ES6 imports it could not be set when `Popup` was not imported as well
@@ -138,21 +142,14 @@ export class MarkerDrag extends Handler {
 		e.latlng = latlng;
 		e.oldLatLng = this._oldLatLng;
 
-		// @event drag: Event
-		// Fired repeatedly while the user drags the marker.
 		marker
 			.fire('move', e)
 			.fire('drag', e);
 	}
 
 	_onDragEnd(e) {
-		// @event dragend: DragEndEvent
-		// Fired when the user stops dragging the marker.
-
 		cancelAnimationFrame(this._panRequest);
 
-		// @event moveend: Event
-		// Fired when the marker stops moving (because of dragging).
 		delete this._oldLatLng;
 		this._marker
 			.fire('moveend')

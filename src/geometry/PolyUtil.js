@@ -2,16 +2,22 @@ import * as LineUtil from './LineUtil.js';
 import {LatLng} from '../geo/LatLng.js';
 import {Point} from './Point.js';
 import {LatLngBounds} from '../geo/LatLngBounds.js';
-/*
- * @namespace PolyUtil
- * Various utility functions for polygon geometries.
- */
+/** @import {LatLngExpression} from '../geo/LatLng.js' */
+/** @import {Bounds} from './Bounds.js' */
+/** @import {CRS} from '../geo/crs/CRS.js' */
 
-/* @function clipPolygon(points: Point[], bounds: Bounds, round?: Boolean): Point[]
- * Clips the polygon geometry defined by the given `points` by the given bounds (using the [Sutherland-Hodgman algorithm](https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm)).
+// PolyUtil: various utility functions for polygon geometries.
+
+/**
+ * Clips the polygon geometry defined by the given `points` by the given bounds (using
+ * the [Sutherland-Hodgman algorithm](https://en.wikipedia.org/wiki/Sutherland%E2%80%93Hodgman_algorithm)).
  * Used by Maplair to only show polygon points that are on the screen or near, increasing
  * performance. Note that polygon points needs different algorithm for clipping
  * than polyline, so there's a separate method for it.
+ * @param {Point[]} points
+ * @param {Bounds} bounds
+ * @param {boolean} [round]
+ * @returns {Point[]}
  */
 export function clipPolygon(points, bounds, round) {
 	let clippedPoints,
@@ -56,8 +62,12 @@ export function clipPolygon(points, bounds, round) {
 	return points;
 }
 
-/* @function polygonCenter(latlngs: LatLng[], crs: CRS): LatLng
- * Returns the center ([centroid](http://en.wikipedia.org/wiki/Centroid)) of the passed LatLngs (first ring) from a polygon.
+/**
+ * Returns the center ([centroid](http://en.wikipedia.org/wiki/Centroid)) of the passed
+ * LatLngs (first ring) from a polygon.
+ * @param {LatLngExpression[]|LatLngExpression[][]} latlngs
+ * @param {typeof CRS} crs
+ * @returns {LatLng}
  */
 export function polygonCenter(latlngs, crs) {
 	let i, j, p1, p2, f, area, x, y, center;
@@ -112,8 +122,10 @@ export function polygonCenter(latlngs, crs) {
 	return new LatLng([latlngCenter.lat + centroidLatLng.lat, latlngCenter.lng + centroidLatLng.lng]);
 }
 
-/* @function centroid(latlngs: LatLng[]): LatLng
+/**
  * Returns the 'center of mass' of the passed LatLngs.
+ * @param {LatLngExpression[]} coords
+ * @returns {LatLng}
  */
 export function centroid(coords) {
 	let latSum = 0;

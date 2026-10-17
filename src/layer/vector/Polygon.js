@@ -4,18 +4,23 @@ import * as LineUtil from '../../geometry/LineUtil.js';
 import {Point} from '../../geometry/Point.js';
 import {Bounds} from '../../geometry/Bounds.js';
 import * as PolyUtil from '../../geometry/PolyUtil.js';
+/** @import {LatLngExpression} from '../../geo/LatLng.js' */
+/** @import {PolylineOptions} from './Polyline.js' */
 
-/*
- * @class Polygon
- * @inherits Polyline
- *
+/**
+ * Options of `Polygon`.
+ * @typedef {object} PolygonOptions
+ * @property {boolean} [fill=true] Whether to fill the polygon with color.
+ * @extends PolylineOptions
+ */
+
+/**
  * A class for drawing polygon overlays on a map. Extends `Polyline`.
  *
- * Note that points you pass when creating a polygon shouldn't have an additional last point equal to the first one — it's better to filter out such points.
- *
+ * Note that points you pass when creating a polygon shouldn't have an additional last
+ * point equal to the first one — it's better to filter out such points.
  *
  * @example
- *
  * ```js
  * // create a red polygon from an array of LatLng points
  * const latlngs = [[37, -109.05],[41, -109.03],[41, -102.05],[37, -102.04]];
@@ -26,7 +31,8 @@ import * as PolyUtil from '../../geometry/PolyUtil.js';
  * map.fitBounds(polygon.getBounds());
  * ```
  *
- * You can also pass an array of arrays of latlngs, with the first array representing the outer shape and the other arrays representing holes in the outer shape:
+ * You can also pass an array of arrays of latlngs, with the first array representing
+ * the outer shape and the other arrays representing holes in the outer shape:
  *
  * ```js
  * const latlngs = [
@@ -49,8 +55,6 @@ import * as PolyUtil from '../../geometry/PolyUtil.js';
  * ];
  * ```
  */
-
-// @constructor Polygon(latlngs: LatLng[], options?: Polyline options)
 export class Polygon extends Polyline {
 
 	static {
@@ -59,17 +63,33 @@ export class Polygon extends Polyline {
 		});
 	}
 
+	/**
+	 * Instantiates a polygon object given an array of geographical points (or arrays
+	 * of them for holes and multi-polygons) and optionally an options object.
+	 * @overload
+	 * @param {LatLngExpression[]|LatLngExpression[][]|LatLngExpression[][][]} latlngs
+	 * @param {PolygonOptions} [options]
+	 */
+	/**
+	 * @param {...any} args
+	 */
 	constructor(...args) {
 		super(...args);
 		this.callInitHooks(Polygon);
 	}
 
+	/**
+	 * Returns `true` if the Polygon has no LatLngs.
+	 * @returns {boolean}
+	 */
 	isEmpty() {
 		return !this._latlngs.length || !this._latlngs[0].length;
 	}
 
-	// @method getCenter(): LatLng
-	// Returns the center ([centroid](http://en.wikipedia.org/wiki/Centroid)) of the Polygon.
+	/**
+	 * Returns the center ([centroid](http://en.wikipedia.org/wiki/Centroid)) of the Polygon.
+	 * @returns {LatLng}
+	 */
 	getCenter() {
 		// throws error when not yet added to map as this center calculation requires projected coordinates
 		if (!this._map) {

@@ -7,22 +7,25 @@ import {getScale} from './DomUtil.js';
 import * as PointerEvents from './DomEvent.PointerEvents.js';
 export {PointerEvents};
 
-/*
- * @namespace DomEvent
- * Utility functions to work with the [DOM events](https://developer.mozilla.org/docs/Web/API/Event), used by Maplair internally.
- */
+// DomEvent: utility functions to work with the
+// [DOM events](https://developer.mozilla.org/docs/Web/API/Event), used by Maplair
+// internally. The functions return the `DomEvent` namespace for chaining.
 
 // Inspired by John Resig, Dean Edwards and YUI addEvent implementations.
 
-// @function on(el: HTMLElement, types: String, fn: Function, context?: Object): this
-// Adds a listener function (`fn`) to a particular DOM event type of the
-// element `el`. You can optionally specify the context of the listener
-// (object the `this` keyword will point to). You can also pass several
-// space-separated types (e.g. `'click dblclick'`).
-
-// @alternative
-// @function on(el: HTMLElement, eventMap: Object, context?: Object): this
-// Adds a set of type/listener pairs, e.g. `{click: onClick, pointermove: onPointerMove}`
+/**
+ * Adds a listener function (`fn`) to a particular DOM event type of the
+ * element `obj`. You can optionally specify the context of the listener
+ * (object the `this` keyword will point to). You can also pass several
+ * space-separated types (e.g. `'click dblclick'`). Alternatively, adds a set of
+ * type/listener pairs, e.g. `{click: onClick, pointermove: onPointerMove}`, with the
+ * context as third argument.
+ * @param {EventTarget} obj
+ * @param {string|Record<string, (ev: any) => void>} types
+ * @param {((ev: any) => void)|object} [fn]
+ * @param {object} [context]
+ * @returns {typeof import('./DomEvent.js')}
+ */
 export function on(obj, types, fn, context) {
 
 	if (types && typeof types === 'object') {
@@ -40,22 +43,19 @@ export function on(obj, types, fn, context) {
 
 const eventsKey = '_maplair_events';
 
-// @function off(el: HTMLElement, types: String, fn: Function, context?: Object): this
-// Removes a previously added listener function.
-// Note that if you passed a custom context to on, you must pass the same
-// context to `off` in order to remove the listener.
-
-// @alternative
-// @function off(el: HTMLElement, eventMap: Object, context?: Object): this
-// Removes a set of type/listener pairs, e.g. `{click: onClick, pointermove: onPointerMove}`
-
-// @alternative
-// @function off(el: HTMLElement, types: String): this
-// Removes all previously added listeners of given types.
-
-// @alternative
-// @function off(el: HTMLElement): this
-// Removes all previously added listeners from given HTMLElement
+/**
+ * Removes a previously added listener function.
+ * Note that if you passed a custom context to on, you must pass the same
+ * context to `off` in order to remove the listener. Alternatively, removes a set of
+ * type/listener pairs, e.g. `{click: onClick, pointermove: onPointerMove}`; with
+ * `types` only, removes all previously added listeners of given types; with the
+ * element only, removes all previously added listeners from the given element.
+ * @param {EventTarget} obj
+ * @param {string|Record<string, (ev: any) => void>} [types]
+ * @param {((ev: any) => void)|object} [fn]
+ * @param {object} [context]
+ * @returns {typeof import('./DomEvent.js')}
+ */
 export function off(obj, types, fn, context) {
 
 	if (arguments.length === 1) {
@@ -157,11 +157,16 @@ function removeOne(obj, type, fn, context, id) {
 	obj[eventsKey][id] = null;
 }
 
-// @function stopPropagation(ev: DOMEvent): this
-// Stop the given event from propagation to parent elements. Used inside the listener functions:
-// ```js
-// DomEvent.on(div, 'click', DomEvent.stopPropagation);
-// ```
+/**
+ * Stop the given event from propagation to parent elements. Used inside the listener
+ * functions:
+ * ```js
+ * DomEvent.on(div, 'click', DomEvent.stopPropagation);
+ * ```
+ * Also accepts a Maplair event with an `originalEvent`.
+ * @param {Event|{originalEvent: Event}} e
+ * @returns {typeof import('./DomEvent.js')}
+ */
 export function stopPropagation(e) {
 
 	// feature detection rather than `instanceof Event`, which fails for events from other windows (e.g. iframes)
@@ -177,53 +182,72 @@ export function stopPropagation(e) {
 	return this;
 }
 
-// @function disableScrollPropagation(el: HTMLElement): this
-// Adds `stopPropagation` to the element's `'wheel'` events (plus browser variants).
+/**
+ * Adds `stopPropagation` to the element's `'wheel'` events (plus browser variants).
+ * @param {HTMLElement} el
+ * @returns {typeof import('./DomEvent.js')}
+ */
 export function disableScrollPropagation(el) {
 	addOne(el, 'wheel', stopPropagation);
 	return this;
 }
 
-// @function disableClickPropagation(el: HTMLElement): this
-// Adds `stopPropagation` to the element's `'dblclick'`, `'contextmenu'`
-// and `'pointerdown'` events (plus browser variants).
-// For `'click'` events, prevents the map from handling the click
-// while still allowing the native DOM click event to propagate normally.
+/**
+ * Adds `stopPropagation` to the element's `'dblclick'`, `'contextmenu'`
+ * and `'pointerdown'` events (plus browser variants).
+ * For `'click'` events, prevents the map from handling the click
+ * while still allowing the native DOM click event to propagate normally.
+ * @param {HTMLElement} el
+ * @returns {typeof import('./DomEvent.js')}
+ */
 export function disableClickPropagation(el) {
 	on(el, 'pointerdown dblclick contextmenu', stopPropagation);
 	el['_maplair_disable_click'] = true;
 	return this;
 }
 
-// @function preventDefault(ev: DOMEvent): this
-// Prevents the default action of the DOM Event `ev` from happening (such as
-// following a link in the href of the a element, or doing a POST request
-// with page reload when a `<form>` is submitted).
-// Use it inside listener functions.
+/**
+ * Prevents the default action of the DOM Event `e` from happening (such as
+ * following a link in the href of the a element, or doing a POST request
+ * with page reload when a `<form>` is submitted).
+ * Use it inside listener functions.
+ * @param {Event} e
+ * @returns {typeof import('./DomEvent.js')}
+ */
 export function preventDefault(e) {
 	e.preventDefault?.();
 	return this;
 }
 
-// @function stop(ev: DOMEvent): this
-// Does `stopPropagation` and `preventDefault` at the same time.
+/**
+ * Does `stopPropagation` and `preventDefault` at the same time.
+ * @param {Event} e
+ * @returns {typeof import('./DomEvent.js')}
+ */
 export function stop(e) {
 	preventDefault(e);
 	stopPropagation(e);
 	return this;
 }
 
-// @function getPropagationPath(ev: DOMEvent): Array
-// Returns an array containing the `HTMLElement`s that the given DOM event
-// should propagate to (if not stopped).
+/**
+ * Returns an array containing the `HTMLElement`s that the given DOM event
+ * should propagate to (if not stopped).
+ * @param {Event} ev
+ * @returns {EventTarget[]}
+ */
 export function getPropagationPath(ev) {
 	return ev.composedPath();
 }
 
 
-// @function getPointerPosition(ev: DOMEvent, container?: HTMLElement): Point
-// Gets normalized pointer position from a DOM event relative to the
-// `container` (border excluded) or to the whole page if not specified.
+/**
+ * Gets normalized pointer position from a DOM event relative to the
+ * `container` (border excluded) or to the whole page if not specified.
+ * @param {MouseEvent|Touch} e
+ * @param {HTMLElement} [container]
+ * @returns {Point}
+ */
 export function getPointerPosition(e, container) {
 	if (!container) {
 		return new Point(e.clientX, e.clientY);
@@ -240,8 +264,10 @@ export function getPointerPosition(e, container) {
 	);
 }
 
-// @function getWheelPxFactor(): Number
-// Gets the wheel pixel factor based on the devicePixelRatio
+/**
+ * Gets the wheel pixel factor based on the devicePixelRatio.
+ * @returns {number}
+ */
 export function getWheelPxFactor() {
 	// We need double the scroll pixels (see #7403 and #4538) for all Browsers
 	// except OSX (Mac) -> 3x, Chrome running on Linux 1x
@@ -251,11 +277,14 @@ export function getWheelPxFactor() {
 		ratio > 0 ? 2 * ratio : 1;
 }
 
-// @function getWheelDelta(ev: DOMEvent): Number
-// Gets normalized wheel delta from a wheel DOM event, in vertical
-// pixels scrolled (negative if scrolling down).
-// Events from pointing devices without precise scrolling are mapped to
-// a best guess of 60 pixels.
+/**
+ * Gets normalized wheel delta from a wheel DOM event, in vertical
+ * pixels scrolled (negative if scrolling down).
+ * Events from pointing devices without precise scrolling are mapped to
+ * a best guess of 60 pixels.
+ * @param {WheelEvent} e
+ * @returns {number}
+ */
 export function getWheelDelta(e) {
 	return (e.deltaY && e.deltaMode === 0) ? -e.deltaY / getWheelPxFactor() : // Pixels
 		(e.deltaY && e.deltaMode === 1) ? -e.deltaY * 20 : // Lines
@@ -264,7 +293,14 @@ export function getWheelDelta(e) {
 		0;
 }
 
-// check if element really left/entered the event target (for pointerenter/pointerleave)
+/**
+ * Checks if the pointer really left/entered the element `el` (for
+ * `pointerenter`/`pointerleave`).
+ * @internal
+ * @param {Node} el
+ * @param {MouseEvent} e
+ * @returns {boolean}
+ */
 export function isExternalTarget(el, e) {
 
 	let related = e.relatedTarget;

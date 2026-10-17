@@ -58,6 +58,15 @@ function makeDblclick(ev) {
 }
 
 const delay = 200;
+
+/**
+ * Adds a `dblclick` listener which also handles double taps (simulating `dblclick`
+ * on platforms which don't fire it for touch events).
+ * @param {EventTarget} obj
+ * @param {(ev: MouseEvent) => void} handler
+ * @returns {{dblclick: (ev: MouseEvent) => void, simDblclick: (ev: PointerEvent) => void}}
+ * The listeners to pass to `removeDoubleTapListener`.
+ */
 export function addDoubleTapListener(obj, handler) {
 	// Most browsers handle double tap natively
 	obj.addEventListener('dblclick', handler);
@@ -114,6 +123,12 @@ export function addDoubleTapListener(obj, handler) {
 	};
 }
 
+/**
+ * Removes the listeners added by `addDoubleTapListener`.
+ * @param {EventTarget} obj
+ * @param {{dblclick: (ev: MouseEvent) => void, simDblclick: (ev: PointerEvent) => void}} handlers
+ * @returns {void}
+ */
 export function removeDoubleTapListener(obj, handlers) {
 	obj.removeEventListener('dblclick', handlers.dblclick);
 	obj.removeEventListener('click', handlers.simDblclick);

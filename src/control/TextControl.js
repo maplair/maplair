@@ -1,11 +1,21 @@
 import {Control} from './Control.js';
 import * as DomUtil from '../dom/DomUtil.js';
 import * as DomEvent from '../dom/DomEvent.js';
+/** @import {ControlOptions} from './Control.js' */
 
-/*
- * @class TextControl
- * @inherits Control
- *
+/**
+ * Options of `TextControl`.
+ * @typedef {object} TextControlOptions
+ * @property {string} [position='topright'] The position of the control (one of the map
+ * corners). Possible values are `'topleft'`, `'topright'`, `'bottomleft'` or
+ * `'bottomright'`.
+ * @property {string|HTMLElement} [content=''] The content of the control: HTML or an
+ * element. String content is rendered as HTML; do not pass untrusted input.
+ * @property {string} [className=''] A custom CSS class name to assign to the control.
+ * @extends ControlOptions
+ */
+
+/**
  * A control showing a text or any content in a box, e.g. a title, a note on the
  * data or a status. It is hidden while its content is empty.
  *
@@ -15,37 +25,29 @@ import * as DomEvent from '../dom/DomEvent.js';
  * status.setContent(`Updated at ${new Date().toLocaleTimeString()}`);
  * ```
  */
-
-// @namespace TextControl
-// @constructor TextControl(options: TextControl options)
-// Creates a text control.
 export class TextControl extends Control {
 
 	static {
-		// @section
-		// @aka TextControl options
 		this.setDefaultOptions({
-			// @option position: String = 'topright'
-			// The position of the control (one of the map corners). Possible values are `'topleft'`,
-			// `'topright'`, `'bottomleft'` or `'bottomright'`
 			position: 'topright',
-
-			// @option content: String|HTMLElement = ''
-			// The content of the control: HTML or an element. String content is rendered as
-			// HTML; do not pass untrusted input.
 			content: '',
-
-			// @option className: String = ''
-			// A custom CSS class name to assign to the control.
 			className: ''
 		});
 	}
 
+	/**
+	 * Creates a text control.
+	 * @param {...TextControlOptions} args The options.
+	 */
 	constructor(...args) {
 		super(...args);
 		this.callInitHooks(TextControl);
 	}
 
+	/**
+	 * @internal
+	 * @returns {HTMLElement}
+	 */
 	onAdd() {
 		const container = DomUtil.create('div', `maplair-control-text ${this.options.className}`);
 		DomEvent.disableClickPropagation(container);
@@ -55,16 +57,21 @@ export class TextControl extends Control {
 		return container;
 	}
 
-	// @method setContent(content: String|HTMLElement): this
-	// Changes the [content](#textcontrol-content) of the control.
+	/**
+	 * Changes the [content](#textcontrol-content) of the control.
+	 * @param {string|HTMLElement} content
+	 * @returns {this}
+	 */
 	setContent(content) {
 		this.options.content = content;
 		this._update();
 		return this;
 	}
 
-	// @method getContent(): String|HTMLElement
-	// Returns the content of the control.
+	/**
+	 * Returns the content of the control.
+	 * @returns {string|HTMLElement}
+	 */
 	getContent() {
 		return this.options.content;
 	}

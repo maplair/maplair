@@ -3,38 +3,58 @@ import * as DomUtil from '../dom/DomUtil.js';
 import * as Util from '../core/Util.js';
 import * as DomEvent from '../dom/DomEvent.js';
 import {Bounds} from '../geometry/Bounds.js';
+/** @import {LayerOptions} from './Layer.js' */
+/** @import {MaplairMap} from '../map/Map.js' */
+/** @import {EventListener} from '../core/Events.js' */
 
-/*
- * @class BlanketOverlay
- * @inherits Layer
- *
+/**
+ * Options of `BlanketOverlay`.
+ * @typedef {object} BlanketOverlayOptions
+ * @property {number} [padding=0.1] How much to extend the clip area around the map
+ * view (relative to its size) e.g. 0.1 would be 10% of map view in each direction.
+ * @property {boolean} [continuous=false] When `false`, the blanket will update its
+ * position only when the map state settles (*after* a pan/zoom animation). When
+ * `true`, it will update when the map state changes (*during* pan/zoom animations).
+ * @extends LayerOptions
+ */
+
+/**
  * Represents an HTML element that covers ("blankets") the entire surface
  * of the map.
  *
  * Do not use this class directly. It's meant for `Renderer`, and for plugins
- * that rely on one single HTML element
+ * that rely on one single HTML element.
+ *
+ * Subclasses must define the following methods:
+ *
+ * * `_initContainer()` must initialize the HTML element to use as blanket, and store
+ *   it as `this._container`. The base implementation creates a blank `<div>`.
+ * * `_destroyContainer()` must destroy the HTML element in `this._container` and free
+ *   any other resources. The base implementation destroys the element and removes
+ *   any event handlers attached to it.
+ * * `_resizeContainer(): Point`: the base implementation resizes the container
+ *   (based on the map's size and taking into account the padding), returning the new
+ *   size in CSS pixels. Subclass implementations shall reset container parameters and
+ *   data structures as needed.
+ * * `_onZoomEnd(ev?: PointerEvent)` (optional) runs on the map's `zoomend` event.
+ * * `_onViewReset(ev?: PointerEvent)` (optional) runs on the map's `viewreset` event.
+ * * `_onSettled()` runs whenever the map state settles after changing (at the end of
+ *   pan/zoom animations, etc). This should trigger the bulk of any rendering logic.
+ *   If the `continuous` option is set to `true`, then this also runs on any map
+ *   state change (including *during* pan/zoom animations).
  */
-
 export class BlanketOverlay extends Layer {
 
 	static {
-		// @section
-		// @aka BlanketOverlay options
 		this.setDefaultOptions({
-			// @option padding: Number = 0.1
-			// How much to extend the clip area around the map view (relative to its size)
-			// e.g. 0.1 would be 10% of map view in each direction
 			padding: 0.1,
-
-			// @option continuous: Boolean = false
-			// When `false`, the blanket will update its position only when the
-			// map state settles (*after* a pan/zoom animation). When `true`,
-			// it will update when the map state changes (*during* pan/zoom
-			// animations)
 			continuous: false,
 		});
 	}
 
+	/**
+	 * @param {BlanketOverlayOptions} [options]
+	 */
 	constructor(options) {
 		super();
 		Util.setOptions(this, options);
@@ -42,6 +62,10 @@ export class BlanketOverlay extends Layer {
 		this.callInitHooks(BlanketOverlay);
 	}
 
+	/**
+	 * Adds the blanket to the map.
+	 * @type {(map: MaplairMap) => void}
+	 */
 	onAdd() {
 		if (!this._container) {
 			this._initContainer(); // defined by renderer implementations
@@ -55,10 +79,18 @@ export class BlanketOverlay extends Layer {
 		this._onMoveEnd();
 	}
 
+	/**
+	 * Removes the blanket from the map.
+	 * @type {(map: MaplairMap) => void}
+	 */
 	onRemove() {
 		this._destroyContainer();
 	}
 
+	/**
+	 * Returns the map events the blanket listens to.
+	 * @returns {Record<string, EventListener>}
+	 */
 	getEvents() {
 		const events = {
 			viewreset: this._reset,
@@ -116,40 +148,7 @@ export class BlanketOverlay extends Layer {
 		this._onViewReset();
 	}
 
-	/*
-	 * @section Subclass interface
-	 * @uninheritable
-	 * Subclasses must define the following methods:
-	 *
-	 * @method _initContainer(): undefined
-	 * Must initialize the HTML element to use as blanket, and store it as
-	 * `this._container`. The base implementation creates a blank `<div>`
-	 *
-	 * @method _destroyContainer(): undefined
-	 * Must destroy the HTML element in `this._container` and free any other
-	 * resources. The base implementation destroys the element and removes
-	 * any event handlers attached to it.
-	 *
-	 * @method _resizeContainer(): Point
-	 * The base implementation resizes the container (based on the map's size
-	 * and taking into account the padding), returning the new size in CSS pixels.
-	 *
-	 * Subclass implementations shall reset container parameters and data
-	 * structures as needed.
-	 *
-	 * @method _onZoomEnd(ev?: PointerEvent): undefined
-	 * (Optional) Runs on the map's `zoomend` event.
-	 *
-	 * @method _onViewReset(ev?: PointerEvent): undefined
-	 * (Optional) Runs on the map's `viewreset` event.
-	 *
-	 * @method _onSettled(): undefined
-	 * Runs whenever the map state settles after changing (at the end of pan/zoom
-	 * animations, etc). This should trigger the bulk of any rendering logic.
-	 *
-	 * If the `continuous` option is set to `true`, then this also runs on
-	 * any map state change (including *during* pan/zoom animations).
-	 */
+	// Subclass interface, see the class description.
 	_initContainer() {
 		this._container = DomUtil.create('div');
 	}

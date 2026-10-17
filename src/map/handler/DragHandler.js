@@ -3,17 +3,60 @@ import {Draggable} from '../../dom/Draggable.js';
 import {LatLngBounds} from '../../geo/LatLngBounds.js';
 import {Bounds} from '../../geometry/Bounds.js';
 import {Point} from '../../geometry/Point.js';
+/** @import {MaplairMap} from '../Map.js' */
+/** @import {MaplairEvent, DragEndEvent} from '../../core/Events.js' */
 
-/*
- * Handler.MapDrag is used to make the map draggable (with panning inertia), enabled by default.
+/**
+ * Map options of `DragHandler`, the interaction options for dragging.
+ * @typedef {object} DragHandlerMapOptions
+ * @lends MaplairMapOptions
+ * @property {boolean} [dragging=true] Whether the map is draggable with pointer or not.
+ * @property {boolean} [inertia=true] If enabled, panning of the map will have an
+ * inertia effect where the map builds momentum while dragging and continues moving in
+ * the same direction for some time. Feels especially nice on touch devices.
+ * @property {number} [inertiaDeceleration=3400] The rate with which the inertial
+ * movement slows down, in pixels/second².
+ * @property {number} [inertiaMaxSpeed=Infinity] Max speed of the inertial movement,
+ * in pixels/second.
+ * @property {number} [easeLinearity=0.2] The linearity of the easing of the inertial
+ * movement.
+ * @property {boolean} [worldCopyJump=false] With this option enabled, the map tracks
+ * when you pan to another "copy" of the world and seamlessly jumps to the original one
+ * so that all overlays like markers and vector layers are still visible.
+ * @property {number} [maxBoundsViscosity=0.0] If `maxBounds` is set, this option will
+ * control how solid the bounds are when dragging the map around. The default value of
+ * `0.0` allows the user to drag outside the bounds at normal speed, higher values will
+ * slow down map dragging outside bounds, and `1.0` makes the bounds fully solid,
+ * preventing the user from dragging outside the bounds.
  */
 
+/**
+ * Handler of `MaplairMap` for dragging.
+ * @typedef {object} DragHandlerMapProperties
+ * @lends MaplairMap
+ * @property {DragHandler} dragging Map dragging handler.
+ */
+
+/**
+ * Makes the map draggable (with panning inertia), enabled by default, see the map
+ * option `dragging`.
+ *
+ * @fires MaplairMap#dragstart {MaplairEvent} Fired when the user starts dragging the map.
+ * @fires MaplairMap#drag {MaplairEvent} Fired repeatedly while the user drags the map.
+ * @fires MaplairMap#dragend {DragEndEvent} Fired when the user stops dragging the map.
+ */
 export class DragHandler extends Handler {
+	/**
+	 * @param {...MaplairMap} args The map.
+	 */
 	constructor(...args) {
 		super(...args);
 		this.callInitHooks(DragHandler);
 	}
 
+	/**
+	 * Called when the handler is enabled, adds the event hooks.
+	 */
 	addHooks() {
 		if (!this._draggable) {
 			const map = this._map;
@@ -40,15 +83,26 @@ export class DragHandler extends Handler {
 		this._times = [];
 	}
 
+	/**
+	 * Called when the handler is disabled, removes the event hooks.
+	 */
 	removeHooks() {
 		this._map._container.classList.remove('maplair-grab', 'maplair-touch-drag');
 		this._draggable.disable();
 	}
 
+	/**
+	 * Returns `true` if the map has been moved by the current or last drag.
+	 * @returns {boolean}
+	 */
 	moved() {
 		return this._draggable?._moved;
 	}
 
+	/**
+	 * Returns `true` while the map is being dragged.
+	 * @returns {boolean}
+	 */
 	moving() {
 		return this._draggable?._moving;
 	}
@@ -189,53 +243,23 @@ export class DragHandler extends Handler {
 		}
 	}
 
-	// Registers this default feature on the map class, called by `MaplairMap` itself.
+	/**
+	 * Registers this default feature on the map class, called by `MaplairMap` itself.
+	 * @internal
+	 * @param {typeof MaplairMap} MaplairMap
+	 */
 	static register(MaplairMap) {
-		// @namespace MaplairMap
-		// @section Interaction Options
 		MaplairMap.mergeOptions({
-			// @option dragging: Boolean = true
-			// Whether the map is draggable with pointer or not.
 			dragging: true,
-
-			// @section Panning Inertia Options
-			// @option inertia: Boolean = *
-			// If enabled, panning of the map will have an inertia effect where
-			// the map builds momentum while dragging and continues moving in
-			// the same direction for some time. Feels especially nice on touch
-			// devices. Enabled by default.
 			inertia: true,
-
-			// @option inertiaDeceleration: Number = 3000
-			// The rate with which the inertial movement slows down, in pixels/second².
 			inertiaDeceleration: 3400, // px/s^2
-
-			// @option inertiaMaxSpeed: Number = Infinity
-			// Max speed of the inertial movement, in pixels/second.
 			inertiaMaxSpeed: Infinity, // px/s
-
-			// @option easeLinearity: Number = 0.2
 			easeLinearity: 0.2,
-
 			// TODO refactor, move to CRS
-			// @option worldCopyJump: Boolean = false
-			// With this option enabled, the map tracks when you pan to another "copy"
-			// of the world and seamlessly jumps to the original one so that all overlays
-			// like markers and vector layers are still visible.
 			worldCopyJump: false,
-
-			// @option maxBoundsViscosity: Number = 0.0
-			// If `maxBounds` is set, this option will control how solid the bounds
-			// are when dragging the map around. The default value of `0.0` allows the
-			// user to drag outside the bounds at normal speed, higher values will
-			// slow down map dragging outside bounds, and `1.0` makes the bounds fully
-			// solid, preventing the user from dragging outside the bounds.
 			maxBoundsViscosity: 0.0
 		});
 
-		// @section Handlers
-		// @property dragging: Handler
-		// Map dragging handler.
 		MaplairMap.addInitHook('addHandler', 'dragging', DragHandler);
 	}
 }

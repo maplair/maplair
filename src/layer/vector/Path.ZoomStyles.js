@@ -1,16 +1,16 @@
 import {Path} from './Path.js';
 import {CircleMarker} from './CircleMarker.js';
 
-/*
- * @namespace Path
- * @section Zoom-dependent styles
+/**
+ * A zoom-dependent style value, of the `weight` option of paths and the `radius` of
+ * circle markers: either a function of the zoom or an object of zoom stops
+ * `{zoom: value}`, using the value of the highest stop not above the zoom (or of the
+ * lowest stop); `Path.interpolate()` interpolates between stops instead. The styles are
+ * updated on `zoomend`.
  *
- * Zoom-dependent styles are an optional feature: import this module to let the
- * `weight` option of paths and the `radius` of circle markers depend on the zoom,
- * like the zoom expressions of MapLibre. The value is either a function of the
- * zoom or an object of zoom stops `{zoom: value}`, using the value of the highest
- * stop not above the zoom (or of the lowest stop); `Path.interpolate()`
- * interpolates between stops instead. The styles are updated on `zoomend`.
+ * Zoom-dependent styles are an optional feature, like the zoom expressions of
+ * MapLibre: import this module to let the `weight` and `radius` options depend on the
+ * zoom.
  *
  * ```js
  * import 'maplair/zoom-styles';
@@ -18,6 +18,7 @@ import {CircleMarker} from './CircleMarker.js';
  * new CircleMarker(latlng, {radius: {5: 3, 10: 6, 15: 10}}).addTo(map);
  * new Polyline(latlngs, {weight: Path.interpolate({5: 1, 15: 8})}).addTo(map);
  * ```
+ * @typedef {number|Record<number, number>|((zoom: number) => number)} ZoomStyle
  */
 
 const zoomStyleNames = ['weight', 'radius'];
@@ -102,9 +103,12 @@ Path.addInitHook(function () {
 	this._takeZoomStyles(this.options);
 });
 
-// @function interpolate(stops: Object): Function
-// Returns a function of the zoom interpolating linearly between the given zoom
-// stops `{zoom: value}`, e.g. for the [zoom-dependent styles](#path-zoom-dependent-styles).
+/**
+ * Returns a function of the zoom interpolating linearly between the given zoom
+ * stops `{zoom: value}`, e.g. for the [zoom-dependent styles](#zoomstyle).
+ * @param {Record<number, number>} stops
+ * @returns {(zoom: number) => number}
+ */
 Path.interpolate = function (stops) {
 	const zooms = Object.keys(stops).map(Number).sort((a, b) => a - b);
 	return function (zoom) {

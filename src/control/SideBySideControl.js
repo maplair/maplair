@@ -2,11 +2,28 @@ import {Control} from './Control.js';
 import * as DomUtil from '../dom/DomUtil.js';
 import * as DomEvent from '../dom/DomEvent.js';
 import {I18n} from '../core/I18n.js';
+/** @import {ControlOptions} from './Control.js' */
+/** @import {MaplairMap} from '../map/Map.js' */
+/** @import {Layer} from '../layer/Layer.js' */
+/** @import {MaplairEvent} from '../core/Events.js' */
 
-/*
- * @class SideBySideControl
- * @inherits Control
- *
+/**
+ * Options of `SideBySideControl`.
+ * @typedef {object} SideBySideControlOptions
+ * @property {number} [ratio=0.5] The initial position of the divider, from `0` (left) to
+ * `1` (right).
+ * @extends ControlOptions
+ */
+
+/**
+ * The event object of `dividermove`.
+ * @typedef {object} DividerMoveEvent
+ * @property {number} ratio The position of the divider, from `0` (left) to `1` (right).
+ * @property {number} x The position of the divider in container pixels.
+ * @extends MaplairEvent
+ */
+
+/**
  * Compares layers side by side: a vertical divider across the map shows the
  * "left" layers on its left and the "right" layers on its right side. The divider
  * can be dragged, or moved with the arrow keys. Works with layers having a
@@ -20,23 +37,25 @@ import {I18n} from '../core/I18n.js';
  * const after = new TileLayer('https://…/2025/{z}/{x}/{y}.png').addTo(map);
  * new SideBySideControl(before, after).addTo(map);
  * ```
+ *
+ * @fires MaplairMap#dividermove {DividerMoveEvent} Fired when the divider of a
+ * `SideBySideControl` moves.
  */
-
-// @namespace SideBySideControl
-// @constructor SideBySideControl(leftLayers: Layer|Layer[], rightLayers: Layer|Layer[], options?: SideBySideControl options)
-// Creates a side-by-side control for the given layers (which have to be added to the map separately).
 export class SideBySideControl extends Control {
 
 	static {
-		// @section
-		// @aka SideBySideControl options
 		this.setDefaultOptions({
-			// @option ratio: Number = 0.5
-			// The initial position of the divider, from `0` (left) to `1` (right).
 			ratio: 0.5
 		});
 	}
 
+	/**
+	 * Creates a side-by-side control for the given layers (which have to be added to the
+	 * map separately).
+	 * @param {Layer|Layer[]} [leftLayers]
+	 * @param {Layer|Layer[]} [rightLayers]
+	 * @param {SideBySideControlOptions} [options]
+	 */
 	constructor(leftLayers, rightLayers, options) {
 		super(options);
 		this._leftLayers = [leftLayers ?? []].flat();
@@ -45,7 +64,12 @@ export class SideBySideControl extends Control {
 		this.callInitHooks(SideBySideControl);
 	}
 
-	// The divider spans the map instead of being in a corner
+	/**
+	 * Adds the control to the given map. The divider spans the map instead of being in
+	 * a corner.
+	 * @param {MaplairMap} map
+	 * @returns {this}
+	 */
 	addTo(map) {
 		this.remove();
 		this._map = map;
@@ -55,6 +79,11 @@ export class SideBySideControl extends Control {
 		return this;
 	}
 
+	/**
+	 * @internal
+	 * @param {MaplairMap} map
+	 * @returns {HTMLElement}
+	 */
 	onAdd(map) {
 		const divider = DomUtil.create('div', 'maplair-sidebyside-divider'),
 		label = I18n.translate('Divider between the compared layers');
@@ -74,6 +103,10 @@ export class SideBySideControl extends Control {
 		return divider;
 	}
 
+	/**
+	 * @internal
+	 * @param {MaplairMap} map
+	 */
 	onRemove(map) {
 		this._onPointerUp();
 		map.off('move zoom viewreset resize rotate layeradd', this._update, this);
@@ -85,38 +118,44 @@ export class SideBySideControl extends Control {
 		}
 	}
 
-	// @method setLeftLayers(layers: Layer|Layer[]): this
-	// Sets the layers shown on the left side of the divider.
+	/**
+	 * Sets the layers shown on the left side of the divider.
+	 * @param {Layer|Layer[]} layers
+	 * @returns {this}
+	 */
 	setLeftLayers(layers) {
 		this._clear(this._leftLayers);
 		this._leftLayers = [layers].flat();
 		return this._update();
 	}
 
-	// @method setRightLayers(layers: Layer|Layer[]): this
-	// Sets the layers shown on the right side of the divider.
+	/**
+	 * Sets the layers shown on the right side of the divider.
+	 * @param {Layer|Layer[]} layers
+	 * @returns {this}
+	 */
 	setRightLayers(layers) {
 		this._clear(this._rightLayers);
 		this._rightLayers = [layers].flat();
 		return this._update();
 	}
 
-	// @method getRatio(): Number
-	// Returns the position of the divider, from `0` (left) to `1` (right).
+	/**
+	 * Returns the position of the divider, from `0` (left) to `1` (right).
+	 * @returns {number}
+	 */
 	getRatio() {
 		return this._ratio;
 	}
 
-	// @method setRatio(ratio: Number): this
-	// Moves the divider, from `0` (left) to `1` (right).
+	/**
+	 * Moves the divider, from `0` (left) to `1` (right).
+	 * @param {number} ratio
+	 * @returns {this}
+	 */
 	setRatio(ratio) {
 		this._ratio = Math.min(1, Math.max(0, ratio));
 		this._update();
-		// @namespace MaplairMap
-		// @section Other Events
-		// @event dividermove: Event
-		// Fired when the divider of a `SideBySideControl` moves. The event has the
-		// `ratio` of the divider and its `x` position in container pixels.
 		this._map?.fire('dividermove', {ratio: this._ratio, x: this._x});
 		return this;
 	}

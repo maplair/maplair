@@ -1,18 +1,12 @@
 import {Polygon} from './Polygon.js';
 import {LatLngBounds} from '../../geo/LatLngBounds.js';
+/** @import {LatLngBoundsExpression} from '../../geo/LatLngBounds.js' */
+/** @import {PolygonOptions} from './Polygon.js' */
 
-/*
- * Rectangle extends Polygon and creates a rectangle when passed a LatLngBounds object.
- */
-
-/*
- * @class Rectangle
- * @inherits Polygon
- *
+/**
  * A class for drawing rectangle overlays on a map. Extends `Polygon`.
  *
  * @example
- *
  * ```js
  * // define rectangle geographical bounds
  * const bounds = [[54.559322, -5.767822], [56.1210604, -3.021240]];
@@ -23,19 +17,25 @@ import {LatLngBounds} from '../../geo/LatLngBounds.js';
  * // zoom the map to the rectangle bounds
  * map.fitBounds(bounds);
  * ```
- *
  */
-
-// @constructor Rectangle(latLngBounds: LatLngBounds, options?: Polyline options)
 export class Rectangle extends Polygon {
+	/**
+	 * Instantiates a rectangle object given the geographical bounds, and an optional
+	 * options object.
+	 * @param {LatLngBoundsExpression} latLngBounds
+	 * @param {PolygonOptions} [options]
+	 */
 	constructor(latLngBounds, options) {
 		super(Rectangle._boundsToLatLngs(latLngBounds), options);
 
 		this.callInitHooks(Rectangle);
 	}
 
-	// @method setBounds(latLngBounds: LatLngBounds): this
-	// Redraws the rectangle with the passed bounds.
+	/**
+	 * Redraws the rectangle with the passed bounds.
+	 * @param {LatLngBoundsExpression} latLngBounds
+	 * @returns {this}
+	 */
 	setBounds(latLngBounds) {
 		return this.setLatLngs(Rectangle._boundsToLatLngs(latLngBounds));
 	}

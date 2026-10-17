@@ -1,10 +1,25 @@
 import {BlanketOverlay} from './BlanketOverlay.js';
 import * as Util from '../core/Util.js';
+/** @import {BlanketOverlayOptions} from './BlanketOverlay.js' */
+/** @import {LatLngExpression} from '../geo/LatLng.js' */
 
-/*
- * @class HeatLayer
- * @inherits BlanketOverlay
- *
+/**
+ * Options of `HeatLayer`.
+ * @typedef {object} HeatLayerOptions
+ * @property {number} [radius=25] The radius of each point in pixels.
+ * @property {number} [blur=15] The amount of blur in pixels.
+ * @property {number} [max=1] The intensity with the strongest color.
+ * @property {number} [maxZoom] The zoom level where the points reach the full
+ * intensity; below it, the intensity is halved per zoom level. By default the
+ * maximum zoom of the map.
+ * @property {number} [minOpacity=0.05] The minimum opacity of the heat.
+ * @property {Record<number, string>} [gradient={0.4: 'blue', 0.6: 'cyan', 0.7: 'lime', 0.8: 'yellow', 1: 'red'}]
+ * The colors for the intensities from `0` to `1`, any CSS colors.
+ * @property {string} [pane='overlayPane'] The map pane of the layer.
+ * @extends BlanketOverlayOptions
+ */
+
+/**
  * A heatmap of points, each with an optional intensity, drawn on a canvas: the
  * points are drawn as blurred circles adding up, and colored by a gradient.
  * Nearby points are merged into a grid for speed, so that tens of thousands of
@@ -22,84 +37,75 @@ import * as Util from '../core/Util.js';
  * ], {radius: 20}).addTo(map);
  * ```
  */
-
-// @namespace HeatLayer
-// @constructor HeatLayer(latlngs: Array, options?: HeatLayer options)
-// Creates a heatmap of the given points: `LatLng`s or arrays `[lat, lng, intensity]`
-// (the intensity defaults to `1`).
 export class HeatLayer extends BlanketOverlay {
 
 	static {
-		// @section
-		// @aka HeatLayer options
 		this.setDefaultOptions({
-			// @option radius: Number = 25
-			// The radius of each point in pixels.
 			radius: 25,
-
-			// @option blur: Number = 15
-			// The amount of blur in pixels.
 			blur: 15,
-
-			// @option max: Number = 1
-			// The intensity with the strongest color.
 			max: 1,
-
-			// @option maxZoom: Number = undefined
-			// The zoom level where the points reach the full intensity; below it, the
-			// intensity is halved per zoom level. By default the maximum zoom of the map.
 			maxZoom: undefined,
-
-			// @option minOpacity: Number = 0.05
-			// The minimum opacity of the heat.
 			minOpacity: 0.05,
-
-			// @option gradient: Object = {0.4: 'blue', 0.6: 'cyan', 0.7: 'lime', 0.8: 'yellow', 1: 'red'}
-			// The colors for the intensities from `0` to `1`, any CSS colors.
 			gradient: {0.4: 'blue', 0.6: 'cyan', 0.7: 'lime', 0.8: 'yellow', 1: 'red'},
-
-			// @option pane: String = 'overlayPane'
-			// The map pane of the layer.
 			pane: 'overlayPane'
 		});
 	}
 
+	/**
+	 * Creates a heatmap of the given points: `LatLng`s or arrays
+	 * `[lat, lng, intensity]` (the intensity defaults to `1`).
+	 * @param {LatLngExpression[]} [latlngs]
+	 * @param {HeatLayerOptions} [options]
+	 */
 	constructor(latlngs, options) {
 		super(options);
 		this._latlngs = latlngs ?? [];
 		this.callInitHooks(HeatLayer);
 	}
 
-	// @method setLatLngs(latlngs: Array): this
-	// Replaces the points of the heatmap.
+	/**
+	 * Replaces the points of the heatmap.
+	 * @param {LatLngExpression[]} latlngs
+	 * @returns {this}
+	 */
 	setLatLngs(latlngs) {
 		this._latlngs = latlngs;
 		return this.redraw();
 	}
 
-	// @method addLatLng(latlng: LatLng|Array): this
-	// Adds a point to the heatmap.
+	/**
+	 * Adds a point to the heatmap.
+	 * @param {LatLngExpression} latlng
+	 * @returns {this}
+	 */
 	addLatLng(latlng) {
 		this._latlngs.push(latlng);
 		return this.redraw();
 	}
 
-	// @method getLatLngs(): Array
-	// Returns the points of the heatmap.
+	/**
+	 * Returns the points of the heatmap.
+	 * @returns {LatLngExpression[]}
+	 */
 	getLatLngs() {
 		return this._latlngs;
 	}
 
-	// @method setOptions(options: HeatLayer options): this
-	// Changes the options, e.g. the `radius` or the `gradient`.
+	/**
+	 * Changes the options, e.g. the `radius` or the `gradient`.
+	 * @param {HeatLayerOptions} options
+	 * @returns {this}
+	 */
 	setOptions(options) {
 		Util.setOptions(this, options);
 		this._circle = this._gradient = null;
 		return this.redraw();
 	}
 
-	// @method redraw(): this
-	// Redraws the heatmap.
+	/**
+	 * Redraws the heatmap.
+	 * @returns {this}
+	 */
 	redraw() {
 		if (this._map && this._bounds) {
 			cancelAnimationFrame(this._frame);

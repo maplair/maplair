@@ -1,87 +1,307 @@
 import {Evented} from '../core/Events.js';
 import * as Util from '../core/Util.js';
+/** @import {MaplairMap} from '../map/Map.js' */
+/** @import {LayerGroup} from './LayerGroup.js' */
+/** @import {EventListener, MaplairEvent, MaplairPointerEvent, LayerEvent} from '../core/Events.js' */
 
-/*
- * @class Layer
- * @inherits Evented
- * @aka ILayer
+/**
+ * Options of `Layer`, inherited by all layers.
+ * @typedef {object} LayerOptions
+ * @property {string} [pane='overlayPane'] By default the layer will be added to the
+ * map's [overlay pane](#map-pane) (`overlayPane`). Overriding this option will cause the layer
+ * to be placed on another pane by default. Not effective if the `renderer` option is
+ * set (the `renderer` option will override the `pane` option).
+ * @property {string|null} [attribution=null] String to be shown in the attribution
+ * control, e.g. "© OpenStreetMap contributors". It describes the layer data and is
+ * often a legal obligation towards copyright holders and tile providers.
+ * @property {number} [attributionOrder=0] The position of the attribution in the
+ * attribution control: attributions are sorted by it, then by the order of adding,
+ * e.g. `1` keeps a legend last.
+ */
+
+/**
+ * Options of interactive layers. Some layers can be made interactive - when the user
+ * interacts with such a layer, pointer events like `click` and `pointerover` can be
+ * handled. Use the [event handling methods](#evented-method) to handle these events.
+ * @typedef {object} InteractiveLayerOptions
+ * @property {boolean} [interactive=true] If `false`, the layer will not emit pointer
+ * events and will act as a part of the underlying map.
+ * @property {boolean} [bubblingPointerEvents=true] When `true`, a pointer event on this
+ * layer will trigger the same event on the map (unless
+ * [`DomEvent.stopPropagation`](#domevent-stoppropagation) is used).
+ * @extends LayerOptions
+ * @fires Layer#click {MaplairPointerEvent} Fired when the user clicks (or taps) the
+ * layer, if it is interactive.
+ * @fires Layer#dblclick {MaplairPointerEvent} Fired when the user double-clicks (or
+ * double-taps) the layer, if it is interactive.
+ * @fires Layer#pointerdown {MaplairPointerEvent} Fired when the user pushes the pointer
+ * on the layer, if it is interactive.
+ * @fires Layer#pointerup {MaplairPointerEvent} Fired when the user releases the pointer
+ * pushed on the layer, if it is interactive.
+ * @fires Layer#pointerover {MaplairPointerEvent} Fired when the pointer enters the
+ * layer, if it is interactive.
+ * @fires Layer#pointerout {MaplairPointerEvent} Fired when the pointer leaves the layer,
+ * if it is interactive.
+ * @fires Layer#contextmenu {MaplairPointerEvent} Fired when the user right-clicks on
+ * the layer, if it is interactive; prevents default browser context menu from showing
+ * if there are listeners on this event. Also fired on mobile when the user holds a
+ * single touch for a second (also called long press).
+ */
+
+/**
+ * Methods of `MaplairMap` for layers.
+ * @lends MaplairMap.prototype
+ * @fires MaplairMap#layeradd {LayerEvent} Fired when a new layer is added to the map.
+ * @fires MaplairMap#layerremove {LayerEvent} Fired when some layer is removed from the map.
+ * @fires MaplairMap#zoomlevelschange {MaplairEvent} Fired when the number of zoomlevels
+ * on the map is changed due to adding or removing a layer.
+ */
+const mapLayerMethods = {
+	/**
+	 * Adds the given layer to the map.
+	 * @group Methods for layers and controls
+	 * @param {Layer} layer
+	 * @returns {this}
+	 */
+	addLayer(layer) {
+		if (!layer._layerAdd) {
+			throw new Error('The provided object is not a Layer.');
+		}
+
+		const id = Util.stamp(layer);
+		if (this._layers[id]) { return this; }
+		this._layers[id] = layer;
+
+		layer._mapToAdd = this;
+
+		if (layer.beforeAdd) {
+			layer.beforeAdd(this);
+		}
+
+		this.whenReady(layer._layerAdd, layer);
+
+		return this;
+	},
+
+	/**
+	 * Removes the given layer from the map.
+	 * @group Methods for layers and controls
+	 * @param {Layer} layer
+	 * @returns {this}
+	 */
+	removeLayer(layer) {
+		const id = Util.stamp(layer);
+
+		if (!this._layers[id]) { return this; }
+
+		if (this._loaded) {
+			layer.onRemove(this);
+		}
+
+		delete this._layers[id];
+
+		if (this._loaded) {
+			this.fire('layerremove', {layer});
+			layer.fire('remove');
+		}
+
+		layer._map = layer._mapToAdd = null;
+
+		return this;
+	},
+
+	/**
+	 * Returns `true` if the given layer is currently added to the map.
+	 * @group Methods for layers and controls
+	 * @param {Layer} layer
+	 * @returns {boolean}
+	 */
+	hasLayer(layer) {
+		return Util.stamp(layer) in this._layers;
+	},
+
+	/**
+	 * Iterates over the layers of the map, optionally specifying context of the iterator function.
+	 * ```js
+	 * map.eachLayer(function(layer){
+	 *     layer.bindPopup('Hello');
+	 * });
+	 * ```
+	 * @group Methods for layers and controls
+	 * @param {(layer: Layer) => void} method
+	 * @param {object} [context]
+	 * @returns {this}
+	 */
+	eachLayer(method, context) {
+		for (const layer of Object.values(this._layers)) {
+			method.call(context, layer);
+		}
+		return this;
+	},
+
+	_addLayers(layers) {
+		layers = layers ? (Array.isArray(layers) ? layers : [layers]) : [];
+
+		for (const layer of layers) {
+			this.addLayer(layer);
+		}
+	},
+
+	_addZoomLimit(layer) {
+		if (!isNaN(layer.options.maxZoom) || !isNaN(layer.options.minZoom)) {
+			this._zoomBoundLayers[Util.stamp(layer)] = layer;
+			this._updateZoomLevels();
+		}
+	},
+
+	_removeZoomLimit(layer) {
+		const id = Util.stamp(layer);
+
+		if (this._zoomBoundLayers[id]) {
+			delete this._zoomBoundLayers[id];
+			this._updateZoomLevels();
+		}
+	},
+
+	_updateZoomLevels() {
+		let minZoom = Infinity,
+		maxZoom = -Infinity;
+		const oldZoomSpan = this._getZoomSpan();
+
+		for (const l of Object.values(this._zoomBoundLayers)) {
+			const options = l.options;
+			minZoom = Math.min(minZoom, options.minZoom ?? Infinity);
+			maxZoom = Math.max(maxZoom, options.maxZoom ?? -Infinity);
+		}
+
+		this._layersMaxZoom = maxZoom === -Infinity ? undefined : maxZoom;
+		this._layersMinZoom = minZoom === Infinity ? undefined : minZoom;
+
+		if (oldZoomSpan !== this._getZoomSpan()) {
+			this.fire('zoomlevelschange');
+		}
+
+		if (this.options.maxZoom === undefined && this._layersMaxZoom && this.getZoom() > this._layersMaxZoom) {
+			this.setZoom(this._layersMaxZoom);
+		}
+		if (this.options.minZoom === undefined && this._layersMinZoom && this.getZoom() < this._layersMinZoom) {
+			this.setZoom(this._layersMinZoom);
+		}
+	}
+};
+/** @typedef {typeof mapLayerMethods} MapLayerMethods */
+
+/**
+ * The methods which layers implement, see `Layer`.
+ * @typedef {object} LayerExtensionMethods
+ * @property {(map: MaplairMap) => void} [onAdd] Should contain code that creates DOM
+ * elements for the layer, adds them to `map panes` where they should belong and puts
+ * listeners on relevant map events. Called on [`map.addLayer(layer)`](#map-addlayer).
+ * @property {(map: MaplairMap) => void} [onRemove] Should contain all clean up code that
+ * removes the layer's elements from the DOM and removes listeners previously added in
+ * `onAdd`. Called on [`map.removeLayer(layer)`](#map-removelayer).
+ * @property {() => Record<string, Function>} [getEvents] Should return an object
+ * like `{ viewreset: this._reset }` for [`on`](#evented-on). The event handlers in this
+ * object will be automatically added and removed from the map with your layer.
+ * @property {() => HTMLElement|string} [getLegend] Should return an element (or a string
+ * containing HTML) to be shown on the `LegendControl` whenever the layer is visible.
+ * Fire `legendchange` on the layer when the legend changes.
+ * @property {(map: MaplairMap) => void} [beforeAdd] Called on
+ * [`map.addLayer(layer)`](#map-addlayer), before the layer is added to the map, before
+ * events are initialized, without waiting until the map is in a usable state. Use for
+ * early initialization only.
+ * @lends Layer
+ */
+
+/**
+ * The base class of all Maplair layers, with the methods they share.
  *
- * A set of methods from the Layer base class that all Maplair layers use.
- * Inherits all methods, options and events from `Evented`.
+ * Every layer should extend from `Layer` and (re-)implement the following methods:
+ *
+ * * `onAdd(map: MaplairMap): this` should contain code that creates DOM elements for
+ *   the layer, adds them to `map panes` where they should belong and puts listeners on
+ *   relevant map events. Called on [`map.addLayer(layer)`](#map-addlayer).
+ * * `onRemove(map: MaplairMap): this` should contain all clean up code that removes the
+ *   layer's elements from the DOM and removes listeners previously added in `onAdd`.
+ *   Called on [`map.removeLayer(layer)`](#map-removelayer).
+ * * `getEvents(): Object` (optional) should return an object like
+ *   `{ viewreset: this._reset }` for [`on`](#evented-on). The event handlers in this
+ *   object will be automatically added and removed from the map with your layer.
+ * * `getAttribution(): String` (optional) should return a string containing HTML to be
+ *   shown on the `Attribution control` whenever the layer is visible.
+ * * `getLegend(): HTMLElement|String` (optional) should return an element (or a string
+ *   containing HTML) to be shown on the `LegendControl` whenever the layer is visible.
+ *   Fire `legendchange` on the layer when the legend changes.
+ * * `beforeAdd(map: MaplairMap): this` (optional) is called on
+ *   [`map.addLayer(layer)`](#map-addlayer), before the layer is added to the map,
+ *   before events are initialized, without waiting until the map is in a usable state.
+ *   Use for early initialization only.
  *
  * @example
- *
  * ```js
  * const layer = new Marker(latlng).addTo(map);
  * layer.addTo(map);
  * layer.remove();
  * ```
  *
- * @event add: Event
- * Fired after the layer is added to a map
- *
- * @event remove: Event
- * Fired after the layer is removed from a map
+ * @fires add {MaplairEvent} Fired after the layer is added to a map.
+ * @fires remove {MaplairEvent} Fired after the layer is removed from a map.
  */
-
 export class Layer extends Evented {
 
 	static {
-		// Classes extending `Layer` will inherit the following options:
 		this.setDefaultOptions({
-			// @option pane: String = 'overlayPane'
-			// By default the layer will be added to the map's [overlay pane](#map-overlaypane). Overriding this option will cause the layer to be placed on another pane by default.
-			// Not effective if the `renderer` option is set (the `renderer` option will override the `pane` option).
 			pane: 'overlayPane',
-
-			// @option attribution: String = null
-			// String to be shown in the attribution control, e.g. "&copy; OpenStreetMap contributors". It describes the layer data and is often a legal obligation towards copyright holders and tile providers.
 			attribution: null,
-
-			// @option attributionOrder: Number = 0
-			// The position of the attribution in the attribution control: attributions are
-			// sorted by it, then by the order of adding, e.g. `1` keeps a legend last.
 			attributionOrder: 0,
-
 			bubblingPointerEvents: true
 		});
 	}
 
-	/* @section
-	 * Classes extending `Layer` will inherit the following methods:
-	 *
-	 * @method addTo(map: MaplairMap|LayerGroup): this
+	/**
 	 * Adds the layer to the given map or layer group.
+	 * @param {MaplairMap|LayerGroup} map
+	 * @returns {this}
 	 */
 	addTo(map) {
 		map.addLayer(this);
 		return this;
 	}
 
-	// @method remove: this
-	// Removes the layer from the map it is currently active on.
+	/**
+	 * Removes the layer from the map it is currently active on.
+	 * @returns {this}
+	 */
 	remove() {
 		return this.removeFrom(this._map || this._mapToAdd);
 	}
 
-	// @method removeFrom(map: MaplairMap): this
-	// Removes the layer from the given map
-	//
-	// @alternative
-	// @method removeFrom(group: LayerGroup): this
-	// Removes the layer from the given `LayerGroup`
+	/**
+	 * Removes the layer from the given map or `LayerGroup`.
+	 * @param {MaplairMap|LayerGroup} obj
+	 * @returns {this}
+	 */
 	removeFrom(obj) {
 		obj?.removeLayer(this);
 		return this;
 	}
 
-	// @method getPane(name? : String): HTMLElement
-	// Returns the `HTMLElement` representing the named pane on the map. If `name` is omitted, returns the pane for this layer.
+	/**
+	 * Returns the `HTMLElement` representing the named pane on the map. If `name` is
+	 * omitted, returns the pane for this layer.
+	 * @param {string} [name]
+	 * @returns {HTMLElement}
+	 */
 	getPane(name) {
 		return this._map.getPane(name ? (this.options[name] || name) : this.options.pane);
 	}
 
-	// Documented in Layer.Interactive.leafdoc
+	/**
+	 * Changes the [`interactive`](#interactivelayeroptions-interactive) option of the
+	 * layer, e.g. to stop a layer from emitting pointer events while it is being edited.
+	 * @param {boolean} interactive
+	 * @returns {this}
+	 */
 	setInteractive(interactive) {
 		interactive = !!interactive;
 		if (this.options.interactive !== interactive) {
@@ -96,25 +316,42 @@ export class Layer extends Evented {
 	// Applies a changed `interactive` option to a layer on the map, see `setInteractive()`.
 	_updateInteractive() {}
 
+	/**
+	 * Makes `targetEl` a target of pointer events of this layer.
+	 * @internal
+	 * @param {HTMLElement} targetEl
+	 * @returns {this}
+	 */
 	addInteractiveTarget(targetEl) {
 		this._map._targets[Util.stamp(targetEl)] = this;
 		return this;
 	}
 
+	/**
+	 * Stops `targetEl` from being a target of pointer events of this layer.
+	 * @internal
+	 * @param {HTMLElement} targetEl
+	 * @returns {this}
+	 */
 	removeInteractiveTarget(targetEl) {
 		delete this._map._targets[Util.stamp(targetEl)];
 		return this;
 	}
 
-	// @method getAttribution: String
-	// Used by the `attribution control`, returns the [attribution option](#gridlayer-attribution).
+	/**
+	 * Used by the `attribution control`, returns the [attribution option](#layeroptions-attribution).
+	 * @returns {string|null}
+	 */
 	getAttribution() {
 		return this.options.attribution;
 	}
 
-	// @method setAttribution(attribution: String): this
-	// Changes the [attribution option](#layer-attribution), also in the attribution
-	// control while the layer is on the map.
+	/**
+	 * Changes the [attribution option](#layeroptions-attribution), also in the
+	 * attribution control while the layer is on the map.
+	 * @param {string|null} attribution
+	 * @returns {this}
+	 */
 	setAttribution(attribution) {
 		const control = this._map?.attributionControl;
 		control?.removeAttribution(this.getAttribution());
@@ -144,164 +381,12 @@ export class Layer extends Evented {
 		map.fire('layeradd', {layer: this});
 	}
 
-	// Registers this default feature on the map class, called by `MaplairMap` itself.
+	/**
+	 * Registers this default feature on the map class, called by `MaplairMap` itself.
+	 * @internal
+	 * @param {typeof MaplairMap} MaplairMap
+	 */
 	static register(MaplairMap) {
-		/* @namespace MaplairMap
-		 * @section Layer events
-		 *
-		 * @event layeradd: LayerEvent
-		 * Fired when a new layer is added to the map.
-		 *
-		 * @event layerremove: LayerEvent
-		 * Fired when some layer is removed from the map
-		 *
-		 * @section Methods for Layers and Controls
-		 */
-		MaplairMap.include({
-			// @method addLayer(layer: Layer): this
-			// Adds the given layer to the map
-			addLayer(layer) {
-				if (!layer._layerAdd) {
-					throw new Error('The provided object is not a Layer.');
-				}
-
-				const id = Util.stamp(layer);
-				if (this._layers[id]) { return this; }
-				this._layers[id] = layer;
-
-				layer._mapToAdd = this;
-
-				if (layer.beforeAdd) {
-					layer.beforeAdd(this);
-				}
-
-				this.whenReady(layer._layerAdd, layer);
-
-				return this;
-			},
-
-			// @method removeLayer(layer: Layer): this
-			// Removes the given layer from the map.
-			removeLayer(layer) {
-				const id = Util.stamp(layer);
-
-				if (!this._layers[id]) { return this; }
-
-				if (this._loaded) {
-					layer.onRemove(this);
-				}
-
-				delete this._layers[id];
-
-				if (this._loaded) {
-					this.fire('layerremove', {layer});
-					layer.fire('remove');
-				}
-
-				layer._map = layer._mapToAdd = null;
-
-				return this;
-			},
-
-			// @method hasLayer(layer: Layer): Boolean
-			// Returns `true` if the given layer is currently added to the map
-			hasLayer(layer) {
-				return Util.stamp(layer) in this._layers;
-			},
-
-			/* @method eachLayer(fn: Function, context?: Object): this
-			 * Iterates over the layers of the map, optionally specifying context of the iterator function.
-			 * ```
-			 * map.eachLayer(function(layer){
-			 *     layer.bindPopup('Hello');
-			 * });
-			 * ```
-			 */
-			eachLayer(method, context) {
-				for (const layer of Object.values(this._layers)) {
-					method.call(context, layer);
-				}
-				return this;
-			},
-
-			_addLayers(layers) {
-				layers = layers ? (Array.isArray(layers) ? layers : [layers]) : [];
-
-				for (const layer of layers) {
-					this.addLayer(layer);
-				}
-			},
-
-			_addZoomLimit(layer) {
-				if (!isNaN(layer.options.maxZoom) || !isNaN(layer.options.minZoom)) {
-					this._zoomBoundLayers[Util.stamp(layer)] = layer;
-					this._updateZoomLevels();
-				}
-			},
-
-			_removeZoomLimit(layer) {
-				const id = Util.stamp(layer);
-
-				if (this._zoomBoundLayers[id]) {
-					delete this._zoomBoundLayers[id];
-					this._updateZoomLevels();
-				}
-			},
-
-			_updateZoomLevels() {
-				let minZoom = Infinity,
-				maxZoom = -Infinity;
-				const oldZoomSpan = this._getZoomSpan();
-
-				for (const l of Object.values(this._zoomBoundLayers)) {
-					const options = l.options;
-					minZoom = Math.min(minZoom, options.minZoom ?? Infinity);
-					maxZoom = Math.max(maxZoom, options.maxZoom ?? -Infinity);
-				}
-
-				this._layersMaxZoom = maxZoom === -Infinity ? undefined : maxZoom;
-				this._layersMinZoom = minZoom === Infinity ? undefined : minZoom;
-
-				// @section Map state change events
-				// @event zoomlevelschange: Event
-				// Fired when the number of zoomlevels on the map is changed due
-				// to adding or removing a layer.
-				if (oldZoomSpan !== this._getZoomSpan()) {
-					this.fire('zoomlevelschange');
-				}
-
-				if (this.options.maxZoom === undefined && this._layersMaxZoom && this.getZoom() > this._layersMaxZoom) {
-					this.setZoom(this._layersMaxZoom);
-				}
-				if (this.options.minZoom === undefined && this._layersMinZoom && this.getZoom() < this._layersMinZoom) {
-					this.setZoom(this._layersMinZoom);
-				}
-			}
-		});
+		MaplairMap.include(mapLayerMethods);
 	}
 }
-
-/* @namespace Layer
- * @section Extension methods
- * @uninheritable
- *
- * Every layer should extend from `Layer` and (re-)implement the following methods.
- *
- * @method onAdd(map: MaplairMap): this
- * Should contain code that creates DOM elements for the layer, adds them to `map panes` where they should belong and puts listeners on relevant map events. Called on [`map.addLayer(layer)`](#map-addlayer).
- *
- * @method onRemove(map: MaplairMap): this
- * Should contain all clean up code that removes the layer's elements from the DOM and removes listeners previously added in [`onAdd`](#layer-onadd). Called on [`map.removeLayer(layer)`](#map-removelayer).
- *
- * @method getEvents(): Object
- * This optional method should return an object like `{ viewreset: this._reset }` for [`on`](#evented-on). The event handlers in this object will be automatically added and removed from the map with your layer.
- *
- * @method getAttribution(): String
- * This optional method should return a string containing HTML to be shown on the `Attribution control` whenever the layer is visible.
- *
- * @method getLegend(): HTMLElement|String
- * This optional method should return an element (or a string containing HTML) to be shown on the `LegendControl` whenever the layer is visible. Fire `legendchange` on the layer when the legend changes.
- *
- * @method beforeAdd(map: MaplairMap): this
- * Optional method. Called on [`map.addLayer(layer)`](#map-addlayer), before the layer is added to the map, before events are initialized, without waiting until the map is in a usable state. Use for early initialization only.
- */

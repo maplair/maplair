@@ -1,11 +1,42 @@
 import {Control} from './Control.js';
 import * as DomUtil from '../dom/DomUtil.js';
 import * as DomEvent from '../dom/DomEvent.js';
+/** @import {ControlOptions} from './Control.js' */
+/** @import {MaplairMap} from '../map/Map.js' */
 
-/*
- * @class ButtonControl
- * @inherits Control
- *
+/**
+ * A state of a `ButtonControl`, see its `states` option.
+ * @typedef {object} ButtonControlState
+ * @property {string} name The name of the state, see `setState()`.
+ * @property {string|HTMLElement} [content] The content of the button in this state.
+ * @property {string} [title] The title of the button in this state.
+ * @property {(this: ButtonControl, e: MouseEvent, button: ButtonControl, map: MaplairMap) => void} [onClick]
+ * Called when clicking the button in this state.
+ */
+
+/**
+ * Options of `ButtonControl`.
+ * @typedef {object} ButtonControlOptions
+ * @property {string} [position='topleft'] The position of the control (one of the map
+ * corners). Possible values are `'topleft'`, `'topright'`, `'bottomleft'` or
+ * `'bottomright'`.
+ * @property {string|HTMLElement} [content=''] The content of the button: HTML (e.g. an
+ * icon or a character) or an element. String content is rendered as HTML; do not pass
+ * untrusted input.
+ * @property {string} [title=''] The title (tooltip) and accessible name of the button.
+ * @property {(this: ButtonControl, e: MouseEvent, button: ButtonControl, map: MaplairMap) => void} [onClick]
+ * Called with the click event, the `ButtonControl` and the map when clicking the button.
+ * @property {ButtonControlState[]} [states] Alternative states of the button, each an
+ * object with `name` and with `content`, `title` and `onClick` like the options. The
+ * first state is the initial one, `setState()` switches them.
+ * @property {string} [className=''] A custom CSS class name to assign to the button.
+ * @property {string} [accessKey=''] A key to activate the button with the browser's
+ * [access key](https://developer.mozilla.org/docs/Web/HTML/Reference/Global_attributes/accesskey)
+ * modifiers (e.g. Alt+Shift+K), shown in the title.
+ * @extends ControlOptions
+ */
+
+/**
  * A control with a button, styled like the zoom control, calling a function when
  * clicked. It can have several states with their own content, title and function,
  * e.g. to toggle something. Several buttons can be grouped with `ButtonBarControl`.
@@ -35,58 +66,34 @@ import * as DomEvent from '../dom/DomEvent.js';
  * }).addTo(map);
  * ```
  */
-
-// @namespace ButtonControl
-// @constructor ButtonControl(options: ButtonControl options)
-// Creates a button control.
 export class ButtonControl extends Control {
 
 	static {
-		// @section
-		// @aka ButtonControl options
 		this.setDefaultOptions({
-			// @option position: String = 'topleft'
-			// The position of the control (one of the map corners). Possible values are `'topleft'`,
-			// `'topright'`, `'bottomleft'` or `'bottomright'`
 			position: 'topleft',
-
-			// @option content: String|HTMLElement = ''
-			// The content of the button: HTML (e.g. an icon or a character) or an element.
-			// String content is rendered as HTML; do not pass untrusted input.
 			content: '',
-
-			// @option title: String = ''
-			// The title (tooltip) and accessible name of the button.
 			title: '',
-
-			// @option onClick: Function = undefined
-			// Called with the click event, the `ButtonControl` and the map when clicking the button.
 			onClick: undefined,
-
-			// @option states: Object[] = undefined
-			// Alternative states of the button, each an object with `name` and with
-			// `content`, `title` and `onClick` like the options. The first state is the
-			// initial one, `setState()` switches them.
 			states: undefined,
-
-			// @option className: String = ''
-			// A custom CSS class name to assign to the button.
 			className: '',
-
-			// @option accessKey: String = ''
-			// A key to activate the button with the browser's
-			// [access key](https://developer.mozilla.org/docs/Web/HTML/Reference/Global_attributes/accesskey)
-			// modifiers (e.g. Alt+Shift+K), shown in the title.
 			accessKey: ''
 		});
 	}
 
+	/**
+	 * Creates a button control.
+	 * @param {...ButtonControlOptions} args The options.
+	 */
 	constructor(...args) {
 		super(...args);
 		this._state = this.options.states?.[0];
 		this.callInitHooks(ButtonControl);
 	}
 
+	/**
+	 * @internal
+	 * @returns {HTMLElement}
+	 */
 	onAdd() {
 		const container = DomUtil.create('div', 'maplair-bar maplair-control-button');
 		this._createButton(container);
@@ -133,8 +140,11 @@ export class ButtonControl extends Control {
 		button.setAttribute('aria-disabled', !!this._disabled);
 	}
 
-	// @method setState(name: String): this
-	// Switches to the state with the given `name`, see the `states` option.
+	/**
+	 * Switches to the state with the given `name`, see the `states` option.
+	 * @param {string} name
+	 * @returns {this}
+	 */
 	setState(name) {
 		const state = this.options.states?.find(s => s.name === name);
 		if (!state) {
@@ -145,39 +155,44 @@ export class ButtonControl extends Control {
 		return this;
 	}
 
-	// @method getState(): String
-	// Returns the name of the current state, see the `states` option.
+	/**
+	 * Returns the name of the current state, see the `states` option.
+	 * @returns {string|undefined}
+	 */
 	getState() {
 		return this._state?.name;
 	}
 
-	// @method disable(): this
-	// Disables the button, so that clicking it does nothing.
+	/**
+	 * Disables the button, so that clicking it does nothing.
+	 * @returns {this}
+	 */
 	disable() {
 		this._disabled = true;
 		this._update();
 		return this;
 	}
 
-	// @method enable(): this
-	// Enables the button again.
+	/**
+	 * Enables the button again.
+	 * @returns {this}
+	 */
 	enable() {
 		this._disabled = false;
 		this._update();
 		return this;
 	}
 
-	// @method getButton(): HTMLElement
-	// Returns the button element.
+	/**
+	 * Returns the button element.
+	 * @returns {HTMLElement}
+	 */
 	getButton() {
 		return this._button;
 	}
 }
 
-/*
- * @class ButtonBarControl
- * @inherits Control
- *
+/**
  * Groups several `ButtonControl`s in one bar, like the buttons of the zoom control.
  *
  * Inspired by the [Leaflet.EasyButton](https://github.com/CliffCloud/Leaflet.EasyButton) plugin.
@@ -190,17 +205,23 @@ export class ButtonControl extends Control {
  * ]).addTo(map);
  * ```
  */
-
-// @namespace ButtonBarControl
-// @constructor ButtonBarControl(buttons: ButtonControl[], options?: Control options)
-// Creates a bar with the given buttons.
 export class ButtonBarControl extends Control {
+	/**
+	 * Creates a bar with the given buttons.
+	 * @param {ButtonControl[]} buttons
+	 * @param {ControlOptions} [options]
+	 */
 	constructor(buttons, options) {
 		super(options);
 		this._buttons = buttons;
 		this.callInitHooks(ButtonBarControl);
 	}
 
+	/**
+	 * @internal
+	 * @param {MaplairMap} map
+	 * @returns {HTMLElement}
+	 */
 	onAdd(map) {
 		const container = DomUtil.create('div', 'maplair-bar maplair-control-button-bar');
 		for (const button of this._buttons) {
@@ -210,14 +231,17 @@ export class ButtonBarControl extends Control {
 		return container;
 	}
 
+	/** @internal */
 	onRemove() {
 		for (const button of this._buttons) {
 			button._map = null;
 		}
 	}
 
-	// @method getButtons(): ButtonControl[]
-	// Returns the buttons of the bar.
+	/**
+	 * Returns the buttons of the bar.
+	 * @returns {ButtonControl[]}
+	 */
 	getButtons() {
 		return this._buttons;
 	}

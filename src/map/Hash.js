@@ -1,4 +1,6 @@
 import {LatLng} from '../geo/LatLng.js';
+/** @import {MaplairMap} from './Map.js' */
+/** @import {Layer} from '../layer/Layer.js' */
 
 const leadingHashRe = /^#/,
 leadingQuestionMarkRe = /^\?/,
@@ -28,9 +30,37 @@ function viewOf(map, layers) {
 	};
 }
 
-/*
- * @class Hash
- *
+/**
+ * Options of `Hash`.
+ * @typedef {object} HashOptions
+ * @property {'zoom/lat/lng'|'geo'} [format='zoom/lat/lng'] The format of the hash:
+ * `'zoom/lat/lng'` for `#13/47.2692/11.4041`, or `'geo'` for a
+ * [geo URI](https://www.rfc-editor.org/rfc/rfc5870) with the zoom as parameter `z` like
+ * in Android, `#geo:47.2692,11.4041?z=13`. The bearing of a rotated map is added as
+ * fourth number or parameter `bearing`.
+ * @property {Record<string, Layer>} [layers] The layers to keep in the hash by name,
+ * e.g. the base layers and overlays of a `LayersControl`: the names of those on the map
+ * are added as parameter `layers`, and restoring the hash adds the named layers to the
+ * map and removes the others.
+ * @property {'hash'|'query'} [mode='hash'] Where to keep the view: `'hash'` for the hash
+ * of the URL, or `'query'` for the parameters `zoom`, `lat`, `lng`, `bearing` (of a
+ * rotated map) and `layers` of the query string (the `format` option is ignored),
+ * keeping the other parameters, e.g. `?q=cafe&zoom=13&lat=47.2692&lng=11.4041`. The
+ * view is restored on navigating in the history of the browser (`popstate`).
+ */
+
+/**
+ * A view of the map parsed from a hash or query string by `Hash.parse()` and
+ * `Hash.parseQuery()`.
+ * @typedef {object} HashView
+ * @property {LatLng} center The center of the map.
+ * @property {number} [zoom] The zoom level, if any.
+ * @property {number} [bearing] The bearing of a rotated map, if any.
+ * @property {string[]} [layers] The names of the layers, if any.
+ * @property {string} hash The parsed hash or query string.
+ */
+
+/**
  * Keeps the view of the map in the hash of the URL, e.g. `#13/47.2692/11.4041`
  * (zoom, latitude, longitude, and the bearing of a rotated map) or as
  * [geo URI](https://www.rfc-editor.org/rfc/rfc5870) `#geo:47.2692,11.4041?z=13`
@@ -60,35 +90,17 @@ function viewOf(map, layers) {
  * new Hash(map, {mode: 'query'});
  * ```
  */
-
-// @namespace Hash
-// @constructor Hash(map: MaplairMap, options?: Hash options)
-// Synchronizes the view of `map` with the hash of the URL.
 export class Hash {
+	/**
+	 * Synchronizes the view of `map` with the hash of the URL.
+	 * @param {MaplairMap} map
+	 * @param {HashOptions} [options]
+	 */
 	constructor(map, options) {
-		// @section
-		// @aka Hash options
+		/** @type {HashOptions} */
 		this.options = {
-			// @option format: String = 'zoom/lat/lng'
-			// The format of the hash: `'zoom/lat/lng'` for `#13/47.2692/11.4041`, or
-			// `'geo'` for a [geo URI](https://www.rfc-editor.org/rfc/rfc5870) with the
-			// zoom as parameter `z` like in Android, `#geo:47.2692,11.4041?z=13`. The
-			// bearing of a rotated map is added as fourth number or parameter `bearing`.
 			format: 'zoom/lat/lng',
-
-			// @option layers: Object = undefined
-			// The layers to keep in the hash by name, e.g. the base layers and overlays
-			// of a `LayersControl`: the names of those on the map are added as
-			// parameter `layers`, and restoring the hash adds the named layers to
-			// the map and removes the others.
 			layers: undefined,
-
-			// @option mode: String = 'hash'
-			// Where to keep the view: `'hash'` for the hash of the URL, or `'query'` for
-			// the parameters `zoom`, `lat`, `lng`, `bearing` (of a rotated map) and
-			// `layers` of the query string (the `format` option is ignored), keeping the
-			// other parameters, e.g. `?q=cafe&zoom=13&lat=47.2692&lng=11.4041`. The view is
-			// restored on navigating in the history of the browser (`popstate`).
 			mode: 'hash',
 			...options
 		};
@@ -104,8 +116,10 @@ export class Hash {
 		}
 	}
 
-	// @method remove(): this
-	// Stops synchronizing the view with the hash of the URL.
+	/**
+	 * Stops synchronizing the view with the hash of the URL.
+	 * @returns {this}
+	 */
 	remove() {
 		window.removeEventListener(this._event, this._onHashChange);
 		this._map.off('moveend layeradd layerremove', this._onMoveEnd, this);
@@ -153,11 +167,14 @@ export class Hash {
 		history.replaceState(history.state, '', query ? hash + location.hash : hash);
 	}
 
-	// @function parse(hash: String): Object
-	// Parses a hash like `#13/47.2692/11.4041[/30][?layers=A,B]` or
-	// `#geo:47.2692,11.4041[?z=13][&layers=A,B]` to an object with the `center`
-	// (`LatLng`), the `zoom` (if any), the optional `bearing` and the names of the
-	// `layers` (if any), or returns `undefined` for other hashes.
+	/**
+	 * Parses a hash like `#13/47.2692/11.4041[/30][?layers=A,B]` or
+	 * `#geo:47.2692,11.4041[?z=13][&layers=A,B]` to an object with the `center`
+	 * (`LatLng`), the `zoom` (if any), the optional `bearing` and the names of the
+	 * `layers` (if any), or returns `undefined` for other hashes.
+	 * @param {string} hash
+	 * @returns {HashView|undefined}
+	 */
 	static parse(hash) {
 		const [path, query] = hash.replace(leadingHashRe, '').split('?'),
 		params = new URLSearchParams(query),
@@ -178,10 +195,15 @@ export class Hash {
 		return {zoom, center: new LatLng(lat, lng), bearing, layers, hash: `#${hash.replace(leadingHashRe, '')}`};
 	}
 
-	// @function format(map: MaplairMap, format?: String, layers?: Object): String
-	// Returns the hash for the view of the map in the given `format` (see the
-	// options), with as many decimal places of the coordinates as needed for
-	// the precision of a pixel, and the names of the given `layers` on the map.
+	/**
+	 * Returns the hash for the view of the map in the given `format` (see the
+	 * options), with as many decimal places of the coordinates as needed for
+	 * the precision of a pixel, and the names of the given `layers` on the map.
+	 * @param {MaplairMap} map
+	 * @param {'zoom/lat/lng'|'geo'} [format='zoom/lat/lng']
+	 * @param {Record<string, Layer>} [layers]
+	 * @returns {string}
+	 */
 	static format(map, format = 'zoom/lat/lng', layers = undefined) {
 		const {zoom, lat, lng, bearing, layers: layerParam} = viewOf(map, layers);
 		if (format === 'geo') {
@@ -190,10 +212,13 @@ export class Hash {
 		return `#${zoom}/${lat}/${lng}${bearing ? `/${bearing}` : ''}${layerParam ? `?${layerParam}` : ''}`;
 	}
 
-	// @function parseQuery(search: String): Object
-	// Parses the parameters `zoom`, `lat`, `lng`, `bearing` and `layers` of a query
-	// string like `?q=cafe&zoom=13&lat=47.2692&lng=11.4041` like `parse()`, or
-	// returns `undefined` without `lat` and `lng`.
+	/**
+	 * Parses the parameters `zoom`, `lat`, `lng`, `bearing` and `layers` of a query
+	 * string like `?q=cafe&zoom=13&lat=47.2692&lng=11.4041` like `parse()`, or
+	 * returns `undefined` without `lat` and `lng`.
+	 * @param {string} search
+	 * @returns {HashView|undefined}
+	 */
 	static parseQuery(search) {
 		const query = search.replace(leadingQuestionMarkRe, ''),
 		params = new URLSearchParams(query);
@@ -205,9 +230,14 @@ export class Hash {
 		return {zoom, center: new LatLng(lat, lng), bearing, layers: parseLayers(query), hash: search};
 	}
 
-	// @function formatQuery(map: MaplairMap, layers?: Object, search?: String): String
-	// Returns the query string `search` with the parameters for the view of the map
-	// (see `format()`) instead of the previous ones, keeping the other parameters.
+	/**
+	 * Returns the query string `search` with the parameters for the view of the map
+	 * (see `format()`) instead of the previous ones, keeping the other parameters.
+	 * @param {MaplairMap} map
+	 * @param {Record<string, Layer>} [layers]
+	 * @param {string} [search='']
+	 * @returns {string}
+	 */
 	static formatQuery(map, layers = undefined, search = '') {
 		const view = viewOf(map, layers),
 		params = new URLSearchParams(search);

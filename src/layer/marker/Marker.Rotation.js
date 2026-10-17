@@ -1,13 +1,37 @@
 import {Marker} from './Marker.js';
 import {MarkerDrag} from './Marker.Drag.js';
 
-/*
- * @namespace Marker
- * @section Marker rotation
- *
- * The rotation of marker icons is an optional feature: import this module to add
- * the `rotationAngle`, `rotationOrigin` and `rotateWithView` options and
- * `setRotationAngle()`/`setRotationOrigin()` to `Marker` (it is also part of the
+// The methods extended below
+const {_setPos: setPos} = Marker.prototype,
+{_onDrag: onDrag} = MarkerDrag.prototype;
+
+/**
+ * Options of `Marker` for the rotation of marker icons, see the
+ * [marker rotation](#marker-setrotationangle).
+ * @typedef {object} MarkerRotationOptions
+ * @lends MarkerOptions
+ * @property {number} [rotationAngle=0] Rotation of the icon in degrees, clockwise, e.g.
+ * for the heading of a vehicle. On a rotated map, the angle is relative to the screen,
+ * or to north with `rotateWithView`. The shadow is not rotated.
+ * @property {string} [rotationOrigin] The CSS
+ * [`transform-origin`](https://developer.mozilla.org/docs/Web/CSS/transform-origin) to
+ * rotate the icon around, e.g. `'center'`. By default the anchor of the icon.
+ * @property {boolean} [rotateWithView=false] On a rotated map (see
+ * `MaplairMap.setBearing()`), whether the icon rotates with the map (e.g. for arrows
+ * pointing in a geographic direction) instead of staying upright.
+ */
+Marker.include({
+	options: {
+		rotationAngle: 0,
+		rotationOrigin: undefined,
+		rotateWithView: false
+	}
+});
+
+/**
+ * Methods of `Marker` for the rotation of marker icons, an optional feature: import
+ * this module to add the `rotationAngle`, `rotationOrigin` and `rotateWithView` options
+ * and `setRotationAngle()`/`setRotationOrigin()` to `Marker` (it is also part of the
  * map rotation, see `MaplairMap.setBearing()`).
  *
  * ```js
@@ -17,43 +41,26 @@ import {MarkerDrag} from './Marker.Drag.js';
  * ```
  *
  * Inspired by the [Leaflet.RotatedMarker](https://github.com/bbecquet/Leaflet.RotatedMarker) plugin.
+ * @lends Marker.prototype
  */
-
-// The methods extended below
-const {_setPos: setPos} = Marker.prototype,
-{_onDrag: onDrag} = MarkerDrag.prototype;
-
-Marker.include({
-	options: {
-		// @section
-		// @aka Marker options
-		// @option rotationAngle: Number = 0
-		// Rotation of the icon in degrees, clockwise, e.g. for the heading of a
-		// vehicle. On a rotated map, the angle is relative to the screen, or to
-		// north with `rotateWithView`. The shadow is not rotated.
-		rotationAngle: 0,
-
-		// @option rotationOrigin: String = undefined
-		// The CSS [`transform-origin`](https://developer.mozilla.org/docs/Web/CSS/transform-origin)
-		// to rotate the icon around, e.g. `'center'`. By default the anchor of the icon.
-		rotationOrigin: undefined,
-
-		// @option rotateWithView: Boolean = false
-		// On a rotated map (see `MaplairMap.setBearing()`), whether the icon rotates
-		// with the map (e.g. for arrows pointing in a geographic direction) instead
-		// of staying upright.
-		rotateWithView: false
-	},
-
-	// @method setRotationAngle(angle: Number): this
-	// Changes the [`rotationAngle`](#marker-rotationangle) of the icon.
+const markerRotationMethods = {
+	/**
+	 * Changes the [`rotationAngle`](#markeroptions-rotationangle) of the icon.
+	 * @group Marker rotation
+	 * @param {number} angle
+	 * @returns {this}
+	 */
 	setRotationAngle(angle) {
 		this.options.rotationAngle = angle;
 		return this.update();
 	},
 
-	// @method setRotationOrigin(origin: String): this
-	// Changes the [`rotationOrigin`](#marker-rotationorigin) of the icon.
+	/**
+	 * Changes the [`rotationOrigin`](#markeroptions-rotationorigin) of the icon.
+	 * @group Marker rotation
+	 * @param {string} origin
+	 * @returns {this}
+	 */
 	setRotationOrigin(origin) {
 		this.options.rotationOrigin = origin;
 		return this.update();
@@ -82,7 +89,10 @@ Marker.include({
 			el.style.transformOrigin = '';
 		}
 	}
-});
+};
+/** @typedef {typeof markerRotationMethods} MarkerRotationMethods */
+
+Marker.include(markerRotationMethods);
 
 MarkerDrag.include({
 	_onDrag(e) {

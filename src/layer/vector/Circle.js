@@ -1,47 +1,49 @@
 import {CircleMarker} from './CircleMarker.js';
 import {LatLngBounds} from '../../geo/LatLngBounds.js';
 import {EarthCRS} from '../../geo/crs/EarthCRS.js';
+/** @import {LatLngExpression} from '../../geo/LatLng.js' */
+/** @import {CircleMarkerOptions} from './CircleMarker.js' */
 
 
-/*
- * @class Circle
- * @inherits CircleMarker
+/**
+ * Options of `Circle`.
+ * @typedef {object} CircleOptions
+ * @property {number} [radius] Radius of the circle, in meters.
+ * @extends CircleMarkerOptions
+ */
+
+/**
+ * A class for drawing circle overlays on a map with radius specified in meters.
+ * Extends `CircleMarker`, its `setRadius()` and `getRadius()` use meters.
  *
- * A class for drawing circle overlays on a map with radius specified in meters. Extends `CircleMarker`.
- *
- * It's an approximation and starts to diverge from a real circle closer to poles (due to projection distortion).
+ * It's an approximation and starts to diverge from a real circle closer to poles
+ * (due to projection distortion).
  *
  * @example
- *
  * ```js
  * new Circle([50.5, 30.5], {radius: 200}).addTo(map);
  * ```
  */
-
-// @constructor Circle(latlng: LatLng, options?: Circle options)
-// Instantiates a circle object given a geographical point, and an options object
-// which contains the circle radius.
 export class Circle extends CircleMarker {
 
+	/**
+	 * Instantiates a circle object given a geographical point, and an options object
+	 * which contains the circle radius.
+	 * @param {LatLngExpression} latlng
+	 * @param {CircleOptions} [options]
+	 */
 	constructor(latlng, options) {
 		super(latlng, options);
 
 		if (isNaN(this.options.radius)) { throw new Error('Circle radius cannot be NaN'); }
 
-		// @section
-		// @aka Circle options
-		// @option radius: Number; Radius of the circle, in meters.
-
 		this.callInitHooks(Circle);
 	}
 
-	// @method setRadius(radius: Number): this
-	// Sets the radius of a circle. Units are in meters.
-	// @method getRadius(): Number
-	// Returns the current radius of a circle. Units are in meters.
-
-	// @method getBounds(): LatLngBounds
-	// Returns the `LatLngBounds` of the path.
+	/**
+	 * Returns the `LatLngBounds` of the path.
+	 * @returns {LatLngBounds}
+	 */
 	getBounds() {
 		const half = [this._pxRadius, this._pxRadiusY ?? this._pxRadius];
 

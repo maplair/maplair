@@ -3,36 +3,59 @@ import {Control} from './Control.js';
 import * as DomEvent from '../dom/DomEvent.js';
 import * as DomUtil from '../dom/DomUtil.js';
 import {I18n} from '../core/I18n.js';
+/** @import {ControlOptions} from './Control.js' */
+/** @import {MaplairMap} from '../map/Map.js' */
 
 const mapleLeaf = '<span aria-hidden="true" class="maplair-attribution-leaf">&#x1F341;</span>';
 
-/*
- * @class AttributionControl
- * @inherits Control
- *
- * The attribution control allows you to display attribution data in a small text box on a map. It is put on the map by default unless you set its [`attributionControl` option](#map-attributioncontrol) to `false`, and it fetches attribution texts from layers with the [`getAttribution` method](#layer-getattribution) automatically. Extends Control.
+/**
+ * Options of `AttributionControl`.
+ * @typedef {object} AttributionControlOptions
+ * @property {string} [position='bottomright'] The position of the control (one of the
+ * map corners). Possible values are `'topleft'`, `'topright'`, `'bottomleft'` or
+ * `'bottomright'`.
+ * @property {string|false|null} [prefix=null] The HTML text shown before the
+ * attributions. Pass `false` to disable. By default (`null`), a link to Maplair.
+ * @extends ControlOptions
  */
 
-// @namespace AttributionControl
-// @constructor AttributionControl(options: AttributionControl options)
-// Creates an attribution control.
+/**
+ * Map options of `AttributionControl`.
+ * @typedef {object} AttributionControlMapOptions
+ * @lends MaplairMapOptions
+ * @property {boolean} [attributionControl=true] Whether a
+ * [attribution control](#control-attribution) is added to the map by default.
+ */
+
+/**
+ * Properties of `MaplairMap` set by `AttributionControl`.
+ * @typedef {object} AttributionControlMapProperties
+ * @lends MaplairMap
+ * @property {AttributionControl} attributionControl The attribution control of the map,
+ * the default one (if the [`attributionControl` option](#map-attributioncontrol) was
+ * `true` when creating the map) or the one added last.
+ */
+
+/**
+ * The attribution control allows you to display attribution data in a small text box
+ * on a map. It is put on the map by default unless you set its
+ * [`attributionControl` option](#map-attributioncontrol) to `false`, and it fetches
+ * attribution texts from layers with the [`getAttribution` method](#layer-getattribution)
+ * automatically.
+ */
 export class AttributionControl extends Control {
 
 	static {
-		// @section
-		// @aka AttributionControl options
 		this.setDefaultOptions({
-			// @option position: String = 'bottomright'
-			// The position of the control (one of the map corners). Possible values are `'topleft'`,
-			// `'topright'`, `'bottomleft'` or `'bottomright'`
 			position: 'bottomright',
-
-			// @option prefix: String|false = 'Maplair'
-			// The HTML text shown before the attributions. Pass `false` to disable.
 			prefix: null
 		});
 	}
 
+	/**
+	 * Creates an attribution control.
+	 * @param {AttributionControlOptions} [options]
+	 */
 	constructor(options) {
 		super(options);
 		if (this.options.prefix === null) {
@@ -46,6 +69,11 @@ export class AttributionControl extends Control {
 		this.callInitHooks(AttributionControl);
 	}
 
+	/**
+	 * @internal
+	 * @param {MaplairMap} map
+	 * @returns {HTMLElement}
+	 */
 	onAdd(map) {
 		map.attributionControl = this;
 		this._container = DomUtil.create('div', 'maplair-control-attribution');
@@ -65,6 +93,10 @@ export class AttributionControl extends Control {
 		return this._container;
 	}
 
+	/**
+	 * @internal
+	 * @param {MaplairMap} map
+	 */
 	onRemove(map) {
 		map.off('layeradd', this._addAttribution, this);
 	}
@@ -76,18 +108,25 @@ export class AttributionControl extends Control {
 		}
 	}
 
-	// @method setPrefix(prefix: String|false): this
-	// The HTML text shown before the attributions. Pass `false` to disable.
+	/**
+	 * The HTML text shown before the attributions. Pass `false` to disable.
+	 * @param {string|false} prefix
+	 * @returns {this}
+	 */
 	setPrefix(prefix) {
 		this.options.prefix = prefix;
 		this._update();
 		return this;
 	}
 
-	// @method addAttribution(text: String, order?: Number): this
-	// Adds an attribution text (e.g. `'&copy; OpenStreetMap contributors'`). Attributions
-	// are sorted by `order` (default 0, see the layer option `attributionOrder`), then by
-	// the order of adding.
+	/**
+	 * Adds an attribution text (e.g. `'© OpenStreetMap contributors'`). Attributions
+	 * are sorted by `order` (see the layer option `attributionOrder`), then by the order
+	 * of adding.
+	 * @param {string} text
+	 * @param {number} [order=0]
+	 * @returns {this}
+	 */
 	addAttribution(text, order = 0) {
 		if (!text) { return this; }
 
@@ -102,8 +141,11 @@ export class AttributionControl extends Control {
 		return this;
 	}
 
-	// @method removeAttribution(text: String): this
-	// Removes an attribution text.
+	/**
+	 * Removes an attribution text.
+	 * @param {string} text
+	 * @returns {this}
+	 */
 	removeAttribution(text) {
 		if (!text) { return this; }
 
@@ -133,12 +175,12 @@ export class AttributionControl extends Control {
 		this._container.innerHTML = prefixAndAttribs.join(' <span aria-hidden="true">|</span> ');
 	}
 
-	// Registers this default feature on the map class, called by `MaplairMap` itself.
+	/**
+	 * Registers this default feature on the map class, called by `MaplairMap` itself.
+	 * @internal
+	 * @param {typeof MaplairMap} MaplairMap
+	 */
 	static register(MaplairMap) {
-		// @namespace MaplairMap
-		// @section Control options
-		// @option attributionControl: Boolean = true
-		// Whether a [attribution control](#control-attribution) is added to the map by default.
 		MaplairMap.mergeOptions({
 			attributionControl: true
 		});

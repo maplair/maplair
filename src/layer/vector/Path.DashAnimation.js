@@ -4,12 +4,15 @@ import {Canvas} from './Canvas.js';
 import * as Util from '../../core/Util.js';
 import Browser from '../../core/Browser.js';
 
-/*
- * @namespace Path
- * @section Dash animation
- *
- * The animation of dashes is an optional feature: import this module to add the
- * `dashSpeed` option to `Path`.
+const DASH_SEPARATOR_RE = /[ ,]+/;
+
+// The methods extended below
+const {_updateStyle: updateSvgStyle} = SVG.prototype,
+{_fillStroke: fillStroke, _destroyContainer: destroyCanvasContainer} = Canvas.prototype;
+
+/**
+ * Options of `Path` for the animation of dashes. The animation of dashes is an
+ * optional feature: import this module to add the `dashSpeed` option to `Path`.
  *
  * ```js
  * import 'maplair/dash-animation';
@@ -18,23 +21,16 @@ import Browser from '../../core/Browser.js';
  * ```
  *
  * Inspired by the [leaflet-ant-path](https://github.com/rubenspgcavalcante/leaflet-ant-path) plugin.
+ * @typedef {object} DashAnimationPathOptions
+ * @lends PathOptions
+ * @property {number} [dashSpeed=0] Animates the dashes of the `dashArray` along the
+ * path ("marching ants"), e.g. to show the direction of a flow: the speed in pixels per
+ * second, negative for the opposite direction. Not animated with
+ * [reduced motion](https://developer.mozilla.org/docs/Web/CSS/@media/prefers-reduced-motion).
  */
-
-const DASH_SEPARATOR_RE = /[ ,]+/;
-
-// The methods extended below
-const {_updateStyle: updateSvgStyle} = SVG.prototype,
-{_fillStroke: fillStroke, _destroyContainer: destroyCanvasContainer} = Canvas.prototype;
 
 Path.include({
 	options: {
-		// @section
-		// @aka Path options
-		// @option dashSpeed: Number = 0
-		// Animates the dashes of the `dashArray` along the path ("marching ants"),
-		// e.g. to show the direction of a flow: the speed in pixels per second,
-		// negative for the opposite direction. Not animated with
-		// [reduced motion](https://developer.mozilla.org/docs/Web/CSS/@media/prefers-reduced-motion).
 		dashSpeed: 0
 	},
 

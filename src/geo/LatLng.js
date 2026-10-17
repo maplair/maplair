@@ -2,19 +2,27 @@ import * as Util from '../core/Util.js';
 import {EarthCRS} from './crs/EarthCRS.js';
 import {LatLngBounds} from './LatLngBounds.js';
 
-/* @class LatLng
- *
+/**
+ * A geographical point: a `LatLng`, an array of the form `[lat, lng]` or
+ * `[lat, lng, alt]`, or a plain object of the form `{lat, lng}` or `{lat, lng, alt}`
+ * (`lon` can be used in place of `lng`). Accepted by all Maplair methods which accept
+ * `LatLng` objects (unless noted otherwise). Plain arrays (`number[]`) are accepted
+ * for JavaScript, where array literals in variables are no tuples.
+ * @typedef {LatLng|[number, number]|[number, number, number]|number[]|{lat: number, lng: number, alt?: number}|{lat: number, lon: number, alt?: number}} LatLngExpression
+ */
+
+/**
  * Represents a geographical point with a certain latitude and longitude.
  *
  * @example
- *
- * ```
+ * ```js
  * const latlng = new LatLng(50.5, 30.5);
  * ```
  *
- * All Maplair methods that accept LatLng objects also accept them in a simple Array form and simple object form (unless noted otherwise), so these lines are equivalent:
+ * All Maplair methods that accept LatLng objects also accept them in a simple Array
+ * form and simple object form (unless noted otherwise), so these lines are equivalent:
  *
- * ```
+ * ```js
  * map.panTo([50, 30]);
  * map.panTo({lat: 50, lng: 30});
  * map.panTo({lat: 50, lon: 30});
@@ -25,23 +33,16 @@ import {LatLngBounds} from './LatLngBounds.js';
  * which means new classes can't inherit from it, and new methods
  * can't be added to it with the `include` function.
  */
-
-// @constructor LatLng(latitude: Number, longitude: Number, altitude?: Number): LatLng
-// Creates an object representing a geographical point with the given latitude and longitude (and optionally altitude).
-
-// @alternative
-// @constructor LatLng(coords: LatLng)
-// Expects a LatLng object instead.
-
-// @alternative
-// @constructor LatLng(coords: Array): LatLng
-// Expects an array of the form `[Number, Number]` or `[Number, Number, Number]` instead.
-
-// @alternative
-// @constructor LatLng(coords: Object): LatLng
-// Expects an plain object of the form `{lat: Number, lng: Number}` or `{lat: Number, lng: Number, alt: Number}` instead.
-//  You can also use `lon` in place of `lng` in the object form.
 export class LatLng {
+	/**
+	 * Creates an object representing a geographical point with the given latitude and
+	 * longitude (and optionally altitude). Alternatively, expects a `LatLng` object, an
+	 * array of the form `[lat, lng]` or `[lat, lng, alt]`, or a plain object of the form
+	 * `{lat, lng}` or `{lat, lng, alt}` (`lon` can be used in place of `lng`) instead.
+	 * @param {number|LatLngExpression} lat Latitude in degrees, or the coordinates.
+	 * @param {number} [lng] Longitude in degrees.
+	 * @param {number} [alt] Altitude in meters.
+	 */
 	constructor(lat, lng, alt) {
 		const valid = LatLng.validate(lat, lng, alt);
 		if (!valid) {
@@ -72,36 +73,35 @@ export class LatLng {
 			_alt = alt;
 		}
 
-		// @property lat: Number
-		// Latitude in degrees
+		/**
+		 * Latitude in degrees.
+		 * @type {number}
+		 */
 		this.lat = +_lat;
 
-		// @property lng: Number
-		// Longitude in degrees
+		/**
+		 * Longitude in degrees.
+		 * @type {number}
+		 */
 		this.lng = +_lng;
 
-		// @property alt: Number
-		// Altitude in meters (optional)
 		if (_alt !== undefined) {
+			/**
+			 * Altitude in meters (optional).
+			 * @type {number|undefined}
+			 */
 			this.alt = +_alt;
 		}
 	}
 
-	// @section
-	// There are several static functions which can be called without instantiating LatLng:
-
-	// @function validate(latitude: Number, longitude: Number, altitude?: Number): Boolean
-	// Returns `true` if the LatLng object can be properly initialized.
-
-	// @alternative
-	// @function validate(coords: Array): Boolean
-	// Expects an array of the form `[Number, Number]` or `[Number, Number, Number]`.
-	// Returns `true` if the LatLng object can be properly initialized.
-
-	// @alternative
-	// @function validate(coords: Object): Boolean
-	// Returns `true` if the LatLng object can be properly initialized.
-
+	/**
+	 * Returns `true` if the LatLng object can be properly initialized with the given
+	 * arguments (the same as of the constructor).
+	 * @param {any} lat
+	 * @param {any} [lng]
+	 * @param {any} [alt]
+	 * @returns {boolean}
+	 */
 	// eslint-disable-next-line no-unused-vars
 	static validate(lat, lng, alt) {
 		if (lat instanceof LatLng || (typeof lat === 'object' && lat !== null && 'lat' in lat)) {
@@ -117,8 +117,14 @@ export class LatLng {
 		return false;
 	}
 
-	// @method equals(otherLatLng: LatLng, maxMargin?: Number): Boolean
-	// Returns `true` if the given `LatLng` point is at the same position (within a small margin of error). The margin of error can be overridden by setting `maxMargin` to a small number.
+	/**
+	 * Returns `true` if the given `LatLng` point is at the same position (within a small
+	 * margin of error). The margin of error can be overridden by setting `maxMargin` to
+	 * a small number.
+	 * @param {LatLngExpression} obj
+	 * @param {number} [maxMargin]
+	 * @returns {boolean}
+	 */
 	equals(obj, maxMargin) {
 		if (!obj) { return false; }
 
@@ -131,26 +137,40 @@ export class LatLng {
 		return margin <= (maxMargin ?? 1.0E-9);
 	}
 
-	// @method toString(precision?: Number): String
-	// Returns a string representation of the point (for debugging purposes).
+	/**
+	 * Returns a string representation of the point (for debugging purposes).
+	 * @param {number|false} [precision]
+	 * @returns {string}
+	 */
 	toString(precision) {
 		return `LatLng(${Util.formatNum(this.lat, precision)}, ${Util.formatNum(this.lng, precision)})`;
 	}
 
-	// @method distanceTo(otherLatLng: LatLng): Number
-	// Returns the distance (in meters) to the given `LatLng` calculated using the [Haversine formula](https://en.wikipedia.org/wiki/Haversine_formula).
+	/**
+	 * Returns the distance (in meters) to the given `LatLng` calculated using the
+	 * [Haversine formula](https://en.wikipedia.org/wiki/Haversine_formula).
+	 * @param {LatLngExpression} other
+	 * @returns {number}
+	 */
 	distanceTo(other) {
 		return EarthCRS.distance(this, new LatLng(other));
 	}
 
-	// @method wrap(): LatLng
-	// Returns a new `LatLng` object with the longitude wrapped so it's always between -180 and +180 degrees.
+	/**
+	 * Returns a new `LatLng` object with the longitude wrapped so it's always between
+	 * -180 and +180 degrees.
+	 * @returns {LatLng}
+	 */
 	wrap() {
 		return EarthCRS.wrapLatLng(this);
 	}
 
-	// @method toBounds(sizeInMeters: Number): LatLngBounds
-	// Returns a new `LatLngBounds` object in which each boundary is `sizeInMeters/2` meters apart from the `LatLng`.
+	/**
+	 * Returns a new `LatLngBounds` object in which each boundary is `sizeInMeters/2`
+	 * meters apart from the `LatLng`.
+	 * @param {number} sizeInMeters
+	 * @returns {LatLngBounds}
+	 */
 	toBounds(sizeInMeters) {
 		const latAccuracy = 180 * sizeInMeters / 40075017,
 		lngAccuracy = latAccuracy / Math.cos((Math.PI / 180) * this.lat);

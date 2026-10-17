@@ -1,17 +1,22 @@
 import {formatNum} from '../core/Util.js';
 
-/*
- * @class Point
- *
+/**
+ * A point in pixels: a `Point`, an array of the form `[x, y]`, or a plain object of
+ * the form `{x, y}`. Accepted by all Maplair methods and options which accept `Point`
+ * objects (unless noted otherwise).
+ * @typedef {Point|[number, number]|number[]|{x: number, y: number}} PointExpression
+ */
+
+/**
  * Represents a point with `x` and `y` coordinates in pixels.
  *
  * @example
- *
  * ```js
  * const point = new Point(200, 300);
  * ```
  *
- * All Maplair methods and options that accept `Point` objects also accept them in a simple Array form (unless noted otherwise), so these lines are equivalent:
+ * All Maplair methods and options that accept `Point` objects also accept them in a
+ * simple Array form (unless noted otherwise), so these lines are equivalent:
  *
  * ```js
  * map.panBy([200, 300]);
@@ -22,22 +27,16 @@ import {formatNum} from '../core/Util.js';
  * which means new classes can't inherit from it, and new methods
  * can't be added to it with the `include` function.
  */
-
-// @constructor Point(x: Number, y: Number, round?: Boolean)
-// Creates a Point object with the given `x` and `y` coordinates. If optional `round` is set to true, rounds the `x` and `y` values.
-
-// @alternative
-// @constructor Point(coords: Point)
-// Expects a Point object instead.
-
-// @alternative
-// @constructor Point(coords: Number[])
-// Expects an array of the form `[x, y]` instead.
-
-// @alternative
-// @constructor Point(coords: Object)
-// Expects a plain object of the form `{x: Number, y: Number}` instead.
 export class Point {
+	/**
+	 * Creates a Point object with the given `x` and `y` coordinates. If optional `round`
+	 * is set to true, rounds the `x` and `y` values. Alternatively, expects a Point
+	 * object, an array of the form `[x, y]` or a plain object of the form `{x, y}`
+	 * instead.
+	 * @param {number|PointExpression} x The `x` coordinate, or the coordinates.
+	 * @param {number} [y] The `y` coordinate.
+	 * @param {boolean} [round]
+	 */
 	constructor(x, y, round) {
 
 		const valid = Point.validate(x, y);
@@ -60,25 +59,25 @@ export class Point {
 			_y = y;
 		}
 
-		// @property x: Number; The `x` coordinate of the point
+		/**
+		 * The `x` coordinate of the point.
+		 * @type {number}
+		 */
 		this.x = (round ? Math.round(_x) : _x);
-		// @property y: Number; The `y` coordinate of the point
+		/**
+		 * The `y` coordinate of the point.
+		 * @type {number}
+		 */
 		this.y = (round ? Math.round(_y) : _y);
 	}
 
-	// @section
-	// There are several static functions which can be called without instantiating Point:
-
-	// @function validate(x: Number, y: Number): Boolean
-	// Returns `true` if the Point object can be properly initialized.
-
-	// @alternative
-	// @function validate(coords: Number[]): Boolean
-	// Expects an array of the form `[x, y]`. Returns `true` if the Point object can be properly initialized.
-
-	// @alternative
-	// @function validate(coords: Object): Boolean
-	// Returns `true` if the Point object can be properly initialized.
+	/**
+	 * Returns `true` if the Point object can be properly initialized with the given
+	 * arguments (the same as of the constructor).
+	 * @param {any} x
+	 * @param {any} [y]
+	 * @returns {boolean}
+	 */
 	static validate(x, y) {
 		if (x instanceof Point || Array.isArray(x)) {
 			return true;
@@ -90,8 +89,11 @@ export class Point {
 		return false;
 	}
 
-	// @method add(otherPoint: Point): Point
-	// Returns the result of addition of the current and the given points.
+	/**
+	 * Returns the result of addition of the current and the given points.
+	 * @param {PointExpression} point
+	 * @returns {Point}
+	 */
 	add(point) {
 		// non-destructive, returns a new point
 		return new Point(this)._add(new Point(point));
@@ -104,8 +106,11 @@ export class Point {
 		return this;
 	}
 
-	// @method subtract(otherPoint: Point): Point
-	// Returns the result of subtraction of the given point from the current.
+	/**
+	 * Returns the result of subtraction of the given point from the current.
+	 * @param {PointExpression} point
+	 * @returns {Point}
+	 */
 	subtract(point) {
 		return new Point(this)._subtract(new Point(point));
 	}
@@ -116,8 +121,11 @@ export class Point {
 		return this;
 	}
 
-	// @method divideBy(num: Number): Point
-	// Returns the result of division of the current point by the given number.
+	/**
+	 * Returns the result of division of the current point by the given number.
+	 * @param {number} num
+	 * @returns {Point}
+	 */
 	divideBy(num) {
 		return new Point(this)._divideBy(num);
 	}
@@ -128,8 +136,11 @@ export class Point {
 		return this;
 	}
 
-	// @method multiplyBy(num: Number): Point
-	// Returns the result of multiplication of the current point by the given number.
+	/**
+	 * Returns the result of multiplication of the current point by the given number.
+	 * @param {number} num
+	 * @returns {Point}
+	 */
 	multiplyBy(num) {
 		return new Point(this)._multiplyBy(num);
 	}
@@ -140,23 +151,32 @@ export class Point {
 		return this;
 	}
 
-	// @method scaleBy(scale: Point): Point
-	// Multiply each coordinate of the current point by each coordinate of
-	// `scale`. In linear algebra terms, multiply the point by the
-	// [scaling matrix](https://en.wikipedia.org/wiki/Scaling_%28geometry%29#Matrix_representation)
-	// defined by `scale`.
+	/**
+	 * Multiply each coordinate of the current point by each coordinate of
+	 * `scale`. In linear algebra terms, multiply the point by the
+	 * [scaling matrix](https://en.wikipedia.org/wiki/Scaling_%28geometry%29#Matrix_representation)
+	 * defined by `scale`.
+	 * @param {Point} point The scale.
+	 * @returns {Point}
+	 */
 	scaleBy(point) {
 		return new Point(this.x * point.x, this.y * point.y);
 	}
 
-	// @method unscaleBy(scale: Point): Point
-	// Inverse of `scaleBy`. Divide each coordinate of the current point by
-	// each coordinate of `scale`.
+	/**
+	 * Inverse of `scaleBy`. Divide each coordinate of the current point by
+	 * each coordinate of `scale`.
+	 * @param {Point} point The scale.
+	 * @returns {Point}
+	 */
 	unscaleBy(point) {
 		return new Point(this.x / point.x, this.y / point.y);
 	}
 
-	// Returns a copy of the current point with rounded coordinates.
+	/**
+	 * Returns a copy of the current point with rounded coordinates.
+	 * @returns {Point}
+	 */
 	round() {
 		return new Point(this)._round();
 	}
@@ -167,8 +187,10 @@ export class Point {
 		return this;
 	}
 
-	// @method floor(): Point
-	// Returns a copy of the current point with floored coordinates (rounded down).
+	/**
+	 * Returns a copy of the current point with floored coordinates (rounded down).
+	 * @returns {Point}
+	 */
 	floor() {
 		return new Point(this)._floor();
 	}
@@ -179,8 +201,10 @@ export class Point {
 		return this;
 	}
 
-	// @method ceil(): Point
-	// Returns a copy of the current point with ceiled coordinates (rounded up).
+	/**
+	 * Returns a copy of the current point with ceiled coordinates (rounded up).
+	 * @returns {Point}
+	 */
 	ceil() {
 		return new Point(this)._ceil();
 	}
@@ -191,7 +215,11 @@ export class Point {
 		return this;
 	}
 
-	// Returns a copy of the current point with truncated coordinates (rounded towards zero).
+	/**
+	 * Returns a copy of the current point with truncated coordinates (rounded towards
+	 * zero).
+	 * @returns {Point}
+	 */
 	trunc() {
 		return new Point(this)._trunc();
 	}
@@ -202,8 +230,11 @@ export class Point {
 		return this;
 	}
 
-	// @method distanceTo(otherPoint: Point): Number
-	// Returns the cartesian distance between the current and the given points.
+	/**
+	 * Returns the cartesian distance between the current and the given points.
+	 * @param {PointExpression} point
+	 * @returns {number}
+	 */
 	distanceTo(point) {
 		point = new Point(point);
 
@@ -213,8 +244,11 @@ export class Point {
 		return Math.sqrt(x * x + y * y);
 	}
 
-	// @method equals(otherPoint: Point): Boolean
-	// Returns `true` if the given point has the same coordinates.
+	/**
+	 * Returns `true` if the given point has the same coordinates.
+	 * @param {PointExpression} point
+	 * @returns {boolean}
+	 */
 	equals(point) {
 		point = new Point(point);
 
@@ -222,8 +256,12 @@ export class Point {
 		       point.y === this.y;
 	}
 
-	// @method contains(otherPoint: Point): Boolean
-	// Returns `true` if both coordinates of the given point are less than the corresponding current point coordinates (in absolute values).
+	/**
+	 * Returns `true` if both coordinates of the given point are less than the
+	 * corresponding current point coordinates (in absolute values).
+	 * @param {PointExpression} point
+	 * @returns {boolean}
+	 */
 	contains(point) {
 		point = new Point(point);
 
@@ -231,8 +269,10 @@ export class Point {
 		       Math.abs(point.y) <= Math.abs(this.y);
 	}
 
-	// @method toString(): String
-	// Returns a string representation of the point for debugging purposes.
+	/**
+	 * Returns a string representation of the point for debugging purposes.
+	 * @returns {string}
+	 */
 	toString() {
 		return `Point(${formatNum(this.x)}, ${formatNum(this.y)})`;
 	}

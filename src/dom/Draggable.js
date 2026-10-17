@@ -4,36 +4,57 @@ import * as DomUtil from './DomUtil.js';
 import * as Util from '../core/Util.js';
 import {Point} from '../geometry/Point.js';
 import * as PointerEvents from './DomEvent.PointerEvents.js';
+/** @import {MaplairEvent, DragEndEvent} from '../core/Events.js' */
 
-/*
- * @class Draggable
- * @inherits Evented
- *
+/**
+ * Options of `Draggable`.
+ * @typedef {object} DraggableOptions
+ * @property {number} [clickTolerance=3] The max number of pixels a user can shift the
+ * pointer during a click for it to be considered a valid click (as opposed to a
+ * pointer drag).
+ */
+
+/**
+ * The event object of `dragstart`, `predrag` and `drag` of `Draggable`.
+ * @typedef {object} DraggableEvent
+ * @property {PointerEvent} originalEvent The DOM event of the pointer which drags.
+ * @extends MaplairEvent
+ */
+
+/**
  * A class for making DOM elements draggable.
- * Used internally for map and marker dragging. Works on any DOM element
+ * Used internally for map and marker dragging. Works on any DOM element.
  *
  * @example
  * ```js
  * const draggable = new Draggable(elementToDrag);
  * draggable.enable();
  * ```
+ *
+ * @fires down {MaplairEvent} Fired when a drag is about to start.
+ * @fires dragstart {DraggableEvent} Fired when a drag starts.
+ * @fires predrag {DraggableEvent} Fired continuously during dragging *before* each
+ * corresponding update of the element's position.
+ * @fires drag {DraggableEvent} Fired continuously during dragging.
+ * @fires dragend {DragEndEvent} Fired when the drag ends (with `noInertia: true` if
+ * the drag was finished without inertia, e.g. by disabling the draggable).
  */
-
 export class Draggable extends Evented {
 
 	static {
 		this.setDefaultOptions({
-			// @section
-			// @aka Draggable options
-			// @option clickTolerance: Number = 3
-			// The max number of pixels a user can shift the pointer during a click
-			// for it to be considered a valid click (as opposed to a pointer drag).
 			clickTolerance: 3
 		});
 	}
 
-	// @constructor Draggable(el: HTMLElement, dragHandle?: HTMLElement, preventOutline?: Boolean, options?: Draggable options)
-	// Creates a `Draggable` object for moving `el` when you start dragging the `dragHandle` element (equals `el` itself by default).
+	/**
+	 * Creates a `Draggable` object for moving `element` when you start dragging the
+	 * `dragStartTarget` element (equals `element` itself by default).
+	 * @param {HTMLElement} element
+	 * @param {HTMLElement} [dragStartTarget]
+	 * @param {boolean} [preventOutline]
+	 * @param {DraggableOptions} [options]
+	 */
 	constructor(element, dragStartTarget, preventOutline, options) {
 		super();
 		Util.setOptions(this, options);
@@ -45,8 +66,10 @@ export class Draggable extends Evented {
 		this.callInitHooks(Draggable);
 	}
 
-	// @method enable()
-	// Enables the dragging ability
+	/**
+	 * Enables the dragging ability.
+	 * @returns {void}
+	 */
 	enable() {
 		if (this._enabled) { return; }
 
@@ -55,8 +78,10 @@ export class Draggable extends Evented {
 		this._enabled = true;
 	}
 
-	// @method disable()
-	// Disables the dragging ability
+	/**
+	 * Disables the dragging ability.
+	 * @returns {void}
+	 */
 	disable() {
 		if (!this._enabled) { return; }
 
@@ -97,8 +122,6 @@ export class Draggable extends Evented {
 
 		if (this._moving) { return; }
 
-		// @event down: Event
-		// Fired when a drag is about to start.
 		this.fire('down');
 
 		const sizedParent = DomUtil.getSizedParentNode(this._element);
@@ -135,8 +158,6 @@ export class Draggable extends Evented {
 		}
 
 		if (!this._moved) {
-			// @event dragstart: Event
-			// Fired when a drag starts
 			this.fire('dragstart', {originalEvent: e});
 
 			this._moved = true;
@@ -157,14 +178,9 @@ export class Draggable extends Evented {
 	_updatePosition() {
 		const e = {originalEvent: this._lastEvent};
 
-		// @event predrag: Event
-		// Fired continuously during dragging *before* each corresponding
-		// update of the element's position.
 		this.fire('predrag', e);
 		DomUtil.setPosition(this._element, this._newPos);
 
-		// @event drag: Event
-		// Fired continuously during dragging.
 		this.fire('drag', e);
 	}
 
@@ -172,6 +188,12 @@ export class Draggable extends Evented {
 		this.finishDrag();
 	}
 
+	/**
+	 * Ends the current drag.
+	 * @internal
+	 * @param {boolean} [noInertia]
+	 * @returns {void}
+	 */
 	finishDrag(noInertia) {
 		this._element.ownerDocument.body.classList.remove('maplair-dragging');
 
@@ -192,8 +214,6 @@ export class Draggable extends Evented {
 		Draggable._dragging = false;
 
 		if (fireDragend) {
-			// @event dragend: DragEndEvent
-			// Fired when the drag ends.
 			this.fire('dragend', {
 				noInertia,
 				distance: this._newPos.distanceTo(this._startPos)

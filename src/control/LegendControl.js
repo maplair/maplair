@@ -3,11 +3,27 @@ import * as DomUtil from '../dom/DomUtil.js';
 import * as DomEvent from '../dom/DomEvent.js';
 import {I18n} from '../core/I18n.js';
 import {CircleMarker} from '../layer/vector/CircleMarker.js';
+/** @import {ControlOptions} from './Control.js' */
+/** @import {MaplairMap} from '../map/Map.js' */
+/** @import {FeatureGroup} from '../layer/FeatureGroup.js' */
+/** @import {Classification} from '../layer/Classification.js' */
 
-/*
- * @class LegendControl
- * @inherits Control
- *
+/**
+ * Options of `LegendControl`.
+ * @typedef {object} LegendControlOptions
+ * @property {string} [position='bottomright'] The position of the control (one of the
+ * map corners). Possible values are `'topleft'`, `'topright'`, `'bottomleft'` or
+ * `'bottomright'`.
+ * @property {boolean} [collapsed=false] If `true`, the legend starts collapsed to its
+ * title, which toggles it.
+ * @property {boolean} [featureCount=false] If `true`, the number of features is shown
+ * per class and per classification.
+ * @property {boolean} [bar=false] If `true`, the feature count of each classification
+ * is shown as a bar of the class symbols, each as wide as its share.
+ * @extends ControlOptions
+ */
+
+/**
  * A control showing the legend of the map: the classes of the layers added with
  * [`addClassification()`](#legendcontrol-addclassification), each with a patch in the
  * shape and symbol of its features and optionally the feature count, and the
@@ -29,35 +45,21 @@ import {CircleMarker} from '../layer/vector/CircleMarker.js';
 
 const svgNS = 'http://www.w3.org/2000/svg';
 
-// @namespace LegendControl
-// @constructor LegendControl(options?: LegendControl options)
-// Creates a legend control.
 export class LegendControl extends Control {
 
 	static {
-		// @section
-		// @aka LegendControl options
 		this.setDefaultOptions({
-			// @option position: String = 'bottomright'
-			// The position of the control (one of the map corners). Possible values are `'topleft'`,
-			// `'topright'`, `'bottomleft'` or `'bottomright'`
 			position: 'bottomright',
-
-			// @option collapsed: Boolean = false
-			// If `true`, the legend starts collapsed to its title, which toggles it.
 			collapsed: false,
-
-			// @option featureCount: Boolean = false
-			// If `true`, the number of features is shown per class and per classification.
 			featureCount: false,
-
-			// @option bar: Boolean = false
-			// If `true`, the feature count of each classification is shown as a bar of the
-			// class symbols, each as wide as its share.
 			bar: false
 		});
 	}
 
+	/**
+	 * Creates a legend control.
+	 * @param {...LegendControlOptions} args The options.
+	 */
 	constructor(...args) {
 		super(...args);
 		this._classifications = [];
@@ -65,6 +67,11 @@ export class LegendControl extends Control {
 		this.callInitHooks(LegendControl);
 	}
 
+	/**
+	 * @internal
+	 * @param {MaplairMap} map
+	 * @returns {HTMLElement}
+	 */
 	onAdd(map) {
 		const container = DomUtil.create('div', 'maplair-control-legend'),
 		details = this._details = DomUtil.create('details', '', container),
@@ -82,6 +89,10 @@ export class LegendControl extends Control {
 		return container;
 	}
 
+	/**
+	 * @internal
+	 * @param {MaplairMap} map
+	 */
 	onRemove(map) {
 		map.off('layeradd layerremove', this._scheduleUpdate, this);
 		cancelAnimationFrame(this._frame);
@@ -92,11 +103,15 @@ export class LegendControl extends Control {
 		this._legendLayers.clear();
 	}
 
-	// @method addClassification(layer: FeatureGroup, classification: Classification): this
-	// Shows the classes of `classification` in the legend while `layer` is on the map,
-	// with the feature count of the layers of `layer` (e.g. a `GeoJSON` layer styled
-	// with [`classification.style`](#classification-style)), kept up to date when
-	// layers are added and removed.
+	/**
+	 * Shows the classes of `classification` in the legend while `layer` is on the map,
+	 * with the feature count of the layers of `layer` (e.g. a `GeoJSON` layer styled
+	 * with [`classification.style`](#classification-style)), kept up to date when
+	 * layers are added and removed.
+	 * @param {FeatureGroup} layer
+	 * @param {Classification} classification
+	 * @returns {this}
+	 */
 	addClassification(layer, classification) {
 		this._classifications.push({layer, classification});
 		layer.on('layeradd layerremove', this._scheduleUpdate, this);
@@ -104,8 +119,11 @@ export class LegendControl extends Control {
 		return this;
 	}
 
-	// @method removeClassification(layer: FeatureGroup): this
-	// Removes the classification of `layer` from the legend.
+	/**
+	 * Removes the classification of `layer` from the legend.
+	 * @param {FeatureGroup} layer
+	 * @returns {this}
+	 */
 	removeClassification(layer) {
 		this._classifications = this._classifications.filter(entry => entry.layer !== layer);
 		layer.off('layeradd layerremove', this._scheduleUpdate, this);

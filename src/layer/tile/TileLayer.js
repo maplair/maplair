@@ -3,20 +3,61 @@ import Browser from '../../core/Browser.js';
 import * as Util from '../../core/Util.js';
 import * as DomEvent from '../../dom/DomEvent.js';
 import {I18n} from '../../core/I18n.js';
+/** @import {Point} from '../../geometry/Point.js' */
+/** @import {GridLayerOptions, TileDoneCallback} from './GridLayer.js' */
+/** @import {TileEvent} from '../../core/Events.js' */
 
-/*
- * @class TileLayer
- * @inherits GridLayer
- * Used to load and display tile layers on the map. Note that most tile servers require attribution, which you can set under `Layer`. Extends `GridLayer`.
+/**
+ * Options of `TileLayer`.
+ * @typedef {object} TileLayerOptions
+ * @property {number} [minZoom=0] The minimum zoom level down to which this layer will be
+ * displayed (inclusive).
+ * @property {number} [maxZoom=18] The maximum zoom level up to which this layer will be
+ * displayed (inclusive).
+ * @property {string|string[]} [subdomains='abc'] Subdomains of the tile service. Can be
+ * passed in the form of one string (where each letter is a subdomain name) or an array
+ * of strings.
+ * @property {string} [errorTileUrl=''] URL to the tile image to show in place of the
+ * tile that failed to load.
+ * @property {number} [zoomOffset=0] The zoom number used in tile URLs will be offset
+ * with this value.
+ * @property {boolean} [tms=false] If `true`, inverses Y axis numbering for tiles (turn
+ * this on for [TMS](https://en.wikipedia.org/wiki/Tile_Map_Service) services).
+ * @property {boolean} [zoomReverse=false] If set to true, the zoom number used in tile
+ * URLs will be reversed (`maxZoom - zoom` instead of `zoom`).
+ * @property {boolean} [detectRetina=false] If `true` and user is on a retina display, it
+ * will request four tiles of half the specified size and a bigger zoom level in place
+ * of one to utilize the high resolution.
+ * @property {boolean|string} [crossOrigin=false] Whether the crossOrigin attribute will
+ * be added to the tiles. If a String is provided, all tiles will have their crossOrigin
+ * attribute set to the String provided. This is needed if you want to access tile pixel
+ * data. Refer to
+ * [CORS Settings](https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_settings_attributes)
+ * for valid String values.
+ * @property {ReferrerPolicy} [referrerPolicy='strict-origin-when-cross-origin'] Sets the
+ * tiles' `referrerPolicy` attribute set to the String provided. See
+ * [`HTMLImageElement.referrerPolicy`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/referrerPolicy)
+ * for possible values.
  *
- * @example
+ * Tile providers might require you to use a specific referrer policy (e.g. to verify
+ * API tokens or prevent abuse). Specifically, if you are using tiles from
+ * `tile.openstreetmap.org` or `tile.osm.org`, you
+ * [should not change this value](https://operations.osmfoundation.org/policies/tiles/).
+ * @property {RequestInit|null} [fetchOptions=null] If set, the tiles are loaded with
+ * [`fetch()`](https://developer.mozilla.org/docs/Web/API/Window/fetch) using these
+ * options (see [`RequestInit`](https://developer.mozilla.org/docs/Web/API/RequestInit)),
+ * e.g. `{headers: {Authorization: 'Bearer …'}}` for tile servers requiring custom HTTP
+ * headers. Requests of tiles that are no longer needed (e.g. after panning or zooming
+ * away) are aborted. Cross-origin tile servers have to allow such requests with
+ * [CORS](https://developer.mozilla.org/docs/Web/HTTP/CORS) headers.
+ * @extends GridLayerOptions
+ */
+
+/**
+ * Used to load and display tile layers on the map. Note that most tile servers require
+ * attribution, which you can set under `Layer`. Extends `GridLayer`.
  *
- * ```js
- * new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png?{foo}', {foo: 'bar', attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'}).addTo(map);
- * ```
- *
- * @section URL template
- * @example
+ * ### URL template
  *
  * A string of the following form:
  *
@@ -24,80 +65,54 @@ import {I18n} from '../../core/I18n.js';
  * 'https://{s}.somedomain.com/blabla/{z}/{x}/{y}{r}.png'
  * ```
  *
- * `{s}` means one of the available subdomains (used sequentially to help with browser parallel requests per domain limitation; subdomain values are specified in options; `a`, `b` or `c` by default, can be omitted), `{z}` — zoom level, `{x}` and `{y}` — tile coordinates. `{r}` can be used to add "&commat;2x" to the URL to load retina tiles.
+ * `{s}` means one of the available subdomains (used sequentially to help with browser
+ * parallel requests per domain limitation; subdomain values are specified in options;
+ * `a`, `b` or `c` by default, can be omitted), `{z}` — zoom level, `{x}` and `{y}` —
+ * tile coordinates. `{r}` can be used to add "@2x" to the URL to load retina tiles.
  *
- * You can use custom keys in the template, which will be [evaluated](#util-template) from TileLayer options, like this:
+ * You can use custom keys in the template, which will be [evaluated](#util-template)
+ * from TileLayer options, like this:
  *
  * ```
  * new TileLayer('https://{s}.somedomain.com/{foo}/{z}/{x}/{y}.png', {foo: 'bar'});
  * ```
+ *
+ * Layers extending `TileLayer` might reimplement the [`getTileUrl()`](#tilelayer-gettileurl)
+ * method.
+ *
+ * @example
+ * ```js
+ * new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png?{foo}', {foo: 'bar', attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'}).addTo(map);
+ * ```
+ *
+ * @fires tileabort {TileEvent} Fired when a tile was loading but is now not wanted.
  */
-
-// @constructor TileLayer(urlTemplate: String, options?: TileLayer options)
-// Instantiates a tile layer object given a `URL template` and optionally an options object.
 export class TileLayer extends GridLayer {
 
 	static {
-		// @section
-		// @aka TileLayer options
 		this.setDefaultOptions({
-			// @option minZoom: Number = 0
-			// The minimum zoom level down to which this layer will be displayed (inclusive).
 			minZoom: 0,
-
-			// @option maxZoom: Number = 18
-			// The maximum zoom level up to which this layer will be displayed (inclusive).
 			maxZoom: 18,
-
-			// @option subdomains: String|String[] = 'abc'
-			// Subdomains of the tile service. Can be passed in the form of one string (where each letter is a subdomain name) or an array of strings.
 			subdomains: 'abc',
-
-			// @option errorTileUrl: String = ''
-			// URL to the tile image to show in place of the tile that failed to load.
 			errorTileUrl: '',
-
-			// @option zoomOffset: Number = 0
-			// The zoom number used in tile URLs will be offset with this value.
 			zoomOffset: 0,
-
-			// @option tms: Boolean = false
-			// If `true`, inverses Y axis numbering for tiles (turn this on for [TMS](https://en.wikipedia.org/wiki/Tile_Map_Service) services).
 			tms: false,
-
-			// @option zoomReverse: Boolean = false
-			// If set to true, the zoom number used in tile URLs will be reversed (`maxZoom - zoom` instead of `zoom`)
 			zoomReverse: false,
-
-			// @option detectRetina: Boolean = false
-			// If `true` and user is on a retina display, it will request four tiles of half the specified size and a bigger zoom level in place of one to utilize the high resolution.
 			detectRetina: false,
-
-			// @option crossOrigin: Boolean|String = false
-			// Whether the crossOrigin attribute will be added to the tiles.
-			// If a String is provided, all tiles will have their crossOrigin attribute set to the String provided. This is needed if you want to access tile pixel data.
-			// Refer to [CORS Settings](https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_settings_attributes) for valid String values.
 			crossOrigin: false,
-
-			// @option referrerPolicy: String = 'strict-origin-when-cross-origin'
-			// Sets the tiles' `referrerPolicy` attribute set to the String provided. See
-			// [`HTMLImageElement.referrerPolicy`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/referrerPolicy) for possible values.
-			//
-			// Tile providers might require you to use a specific referrer policy (e.g. to verify API tokens or prevent abuse).
-			// Specifically, if you are using tiles from `tile.openstreetmap.org` or `tile.osm.org`, you [should not change this value](https://operations.osmfoundation.org/policies/tiles/).
 			referrerPolicy: 'strict-origin-when-cross-origin',
-
-			// @option fetchOptions: Object = null
-			// If set, the tiles are loaded with [`fetch()`](https://developer.mozilla.org/docs/Web/API/Window/fetch)
-			// using these options (see [`RequestInit`](https://developer.mozilla.org/docs/Web/API/RequestInit)),
-			// e.g. `{headers: {Authorization: 'Bearer …'}}` for tile servers requiring custom HTTP headers.
-			// Requests of tiles that are no longer needed (e.g. after panning or zooming away) are aborted.
-			// Cross-origin tile servers have to allow such requests with
-			// [CORS](https://developer.mozilla.org/docs/Web/HTTP/CORS) headers.
 			fetchOptions: null
+
 		});
 	}
 
+	/**
+	 * Instantiates a tile layer object given a [URL template](#tilelayer) and optionally an
+	 * options object.
+	 * @param {string} url The URL template.
+	 * @param {TileLayerOptions & Record<string, unknown>} [options] The options, and the values
+	 * of custom keys of the URL template.
+	 */
 	constructor(url, options) {
 		super(options);
 
@@ -166,6 +181,10 @@ export class TileLayer extends GridLayer {
 		}
 	}
 
+	/**
+	 * Returns the map events the layer listens to, see `Layer`.
+	 * @returns {Record<string, Function>}
+	 */
 	getEvents() {
 		const events = super.getEvents();
 		events.pixelratiochange = this._onPixelRatioChange;
@@ -187,11 +206,15 @@ export class TileLayer extends GridLayer {
 		}
 	}
 
-	// @method setUrl(url: String, noRedraw?: Boolean): this
-	// Updates the layer's URL template and redraws it (unless `noRedraw` is set to `true`).
-	// If the URL does not change, the layer will not be redrawn unless
-	// the noRedraw parameter is set to false.
-	// The current tiles stay visible until the new tiles have loaded, to avoid flickering.
+	/**
+	 * Updates the layer's URL template and redraws it (unless `noRedraw` is set to `true`).
+	 * If the URL does not change, the layer will not be redrawn unless
+	 * the noRedraw parameter is set to false.
+	 * The current tiles stay visible until the new tiles have loaded, to avoid flickering.
+	 * @param {string} url
+	 * @param {boolean} [noRedraw]
+	 * @returns {this}
+	 */
 	setUrl(url, noRedraw) {
 		if (this._url === url && noRedraw === undefined) {
 			noRedraw = true;
@@ -206,10 +229,14 @@ export class TileLayer extends GridLayer {
 		return this;
 	}
 
-	// @method createTile(coords: Object, done?: Function): HTMLElement
-	// Called only internally, overrides GridLayer's [`createTile()`](#gridlayer-createtile)
-	// to return an `<img>` HTML element with the appropriate image URL given `coords`. The `done`
-	// callback is called when the tile has been loaded.
+	/**
+	 * Called only internally, overrides GridLayer's [`createTile()`](#gridlayer-createtile)
+	 * to return an `<img>` HTML element with the appropriate image URL given `coords`. The
+	 * `done` callback is called when the tile has been loaded.
+	 * @param {Point} coords
+	 * @param {TileDoneCallback} [done]
+	 * @returns {HTMLImageElement}
+	 */
 	createTile(coords, done) {
 		const tile = document.createElement('img');
 
@@ -281,12 +308,14 @@ export class TileLayer extends GridLayer {
 		return true;
 	}
 
-	// @section Extension methods
-	// @uninheritable
-	// Layers extending `TileLayer` might reimplement the following method.
-	// @method getTileUrl(coords: Object): String
-	// Called only internally, returns the URL for a tile given its coordinates.
-	// Classes extending `TileLayer` can override this function to provide custom tile URL naming schemes.
+	/**
+	 * Called only internally, returns the URL for a tile given its coordinates.
+	 * Classes extending `TileLayer` can override this function to provide custom tile URL
+	 * naming schemes.
+	 * @group Extension methods
+	 * @param {Point} coords
+	 * @returns {string}
+	 */
 	getTileUrl(coords) {
 		const data = Object.create(this.options);
 		Object.assign(data, {
@@ -360,8 +389,6 @@ export class TileLayer extends GridLayer {
 					const coords = this._tiles[i].coords;
 					tile.remove();
 					delete this._tiles[i];
-					// @event tileabort: TileEvent
-					// Fired when a tile was loading but is now not wanted.
 					this.fire('tileabort', {
 						tile,
 						coords

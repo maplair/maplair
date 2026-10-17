@@ -1,16 +1,14 @@
 import {Renderer} from './Renderer.js';
 import * as DomUtil from '../../dom/DomUtil.js';
 import {splitWords, stamp} from '../../core/Util.js';
+/** @import {Point} from '../../geometry/Point.js' */
+/** @import {RendererOptions} from './Renderer.js' */
 
-/*
- * @class SVG
- * @inherits Renderer
- *
+/**
  * Allows vector layers to be displayed with [SVG](https://developer.mozilla.org/docs/Web/SVG).
  * Inherits `Renderer`.
  *
  * @example
- *
  * Use SVG by default for all paths in the map:
  *
  * ```js
@@ -28,11 +26,15 @@ import {splitWords, stamp} from '../../core/Util.js';
  * const circle = new Circle( center, { renderer: myRenderer, radius: 100 } );
  * ```
  */
-
-// @namespace SVG
-// @constructor SVG(options?: Renderer options)
-// Creates a SVG renderer with the given options.
 export class SVG extends Renderer {
+	/**
+	 * Creates a SVG renderer with the given options.
+	 * @overload
+	 * @param {RendererOptions} [options]
+	 */
+	/**
+	 * @param {...any} args
+	 */
 	constructor(...args) {
 		super(...args);
 		this.callInitHooks(SVG);
@@ -90,9 +92,6 @@ export class SVG extends Renderer {
 	_initPath(layer) {
 		const path = layer._path = SVG.create('path');
 
-		// @namespace Path
-		// @option className: String = null
-		// Custom class name set on an element. Only for SVG renderer.
 		if (layer.options.className) {
 			path.classList.add(...splitWords(layer.options.className));
 		}
@@ -195,17 +194,24 @@ export class SVG extends Renderer {
 		DomUtil.toBack(layer._path);
 	}
 
-	// @function create(name: String): SVGElement
-	// Returns a instance of [SVGElement](https://developer.mozilla.org/docs/Web/API/SVGElement),
-	// corresponding to the class name passed. For example, using 'line' will return
-	// an instance of [SVGLineElement](https://developer.mozilla.org/docs/Web/API/SVGLineElement).
+	/**
+	 * Returns a instance of [SVGElement](https://developer.mozilla.org/docs/Web/API/SVGElement),
+	 * corresponding to the class name passed. For example, using 'line' will return
+	 * an instance of [SVGLineElement](https://developer.mozilla.org/docs/Web/API/SVGLineElement).
+	 * @param {string} name
+	 * @returns {SVGElement}
+	 */
 	static create(name) {
 		return document.createElementNS('http://www.w3.org/2000/svg', name);
 	}
 
-	// @function pointsToPath(rings: Point[], closed: Boolean): String
-	// Generates a SVG path string for multiple rings, with each ring turning
-	// into "M..L..L.." instructions
+	/**
+	 * Generates a SVG path string for multiple rings, with each ring turning
+	 * into "M..L..L.." instructions.
+	 * @param {Point[][]} rings
+	 * @param {boolean} [closed]
+	 * @returns {string}
+	 */
 	static pointsToPath(rings, closed) {
 		const str = rings.flatMap(points => [
 			...points.map((p, j) => `${(j ? 'L' : 'M') + p.x} ${p.y}`),

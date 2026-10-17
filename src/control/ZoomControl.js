@@ -3,43 +3,66 @@ import {Control} from './Control.js';
 import * as DomUtil from '../dom/DomUtil.js';
 import * as DomEvent from '../dom/DomEvent.js';
 import {I18n} from '../core/I18n.js';
+/** @import {ControlOptions} from './Control.js' */
+/** @import {MaplairMap} from '../map/Map.js' */
 
-/*
- * @class ZoomControl
- * @inherits Control
- *
- * A basic zoom control with two buttons (zoom in and zoom out). It is put on the map by default unless you set its [`zoomControl` option](#map-zoomcontrol) to `false`. Extends `Control`.
+/**
+ * Options of `ZoomControl`.
+ * @typedef {object} ZoomControlOptions
+ * @property {string} [position='topleft'] The position of the control (one of the map
+ * corners). Possible values are `'topleft'`, `'topright'`, `'bottomleft'` or
+ * `'bottomright'`.
+ * @property {string} [zoomInText='<span aria-hidden="true">+</span>'] The text set on
+ * the 'zoom in' button.
+ * @property {string} [zoomOutText='<span aria-hidden="true">&#x2212;</span>'] The text
+ * set on the 'zoom out' button.
+ * @extends ControlOptions
  */
 
-// @namespace ZoomControl
-// @constructor ZoomControl(options: ZoomControl options)
-// Creates a zoom control
+/**
+ * Map options of `ZoomControl`.
+ * @typedef {object} ZoomControlMapOptions
+ * @lends MaplairMapOptions
+ * @property {boolean} [zoomControl=true] Whether a [zoom control](#control-zoom) is
+ * added to the map by default.
+ */
+
+/**
+ * Properties of `MaplairMap` set by `ZoomControl`.
+ * @typedef {object} ZoomControlMapProperties
+ * @lends MaplairMap
+ * @property {ZoomControl} zoomControl The default zoom control (only available if the
+ * [`zoomControl` option](#map-zoomcontrol) was `true` when creating the map).
+ */
+
+/**
+ * A basic zoom control with two buttons (zoom in and zoom out). It is put on the map by
+ * default unless you set its [`zoomControl` option](#map-zoomcontrol) to `false`.
+ */
 export class ZoomControl extends Control {
 
 	static {
-		// @section
-		// @aka ZoomControl options
 		this.setDefaultOptions({
-			// @option position: String = 'topleft'
-			// The position of the control (one of the map corners). Possible values are `'topleft'`,
-			// `'topright'`, `'bottomleft'` or `'bottomright'`
 			position: 'topleft',
-
-			// @option zoomInText: String = '<span aria-hidden="true">+</span>'
-			// The text set on the 'zoom in' button.
 			zoomInText: '<span aria-hidden="true">+</span>',
-
-			// @option zoomOutText: String = '<span aria-hidden="true">&#x2212;</span>'
-			// The text set on the 'zoom out' button.
 			zoomOutText: '<span aria-hidden="true">&#x2212;</span>',
 		});
 	}
 
+	/**
+	 * Creates a zoom control.
+	 * @param {...ZoomControlOptions} args The options.
+	 */
 	constructor(...args) {
 		super(...args);
 		this.callInitHooks(ZoomControl);
 	}
 
+	/**
+	 * @internal
+	 * @param {MaplairMap} map
+	 * @returns {HTMLElement}
+	 */
 	onAdd(map) {
 		const zoomName = 'maplair-control-zoom',
 		container = DomUtil.create('div', `${zoomName} maplair-bar`),
@@ -56,16 +79,28 @@ export class ZoomControl extends Control {
 		return container;
 	}
 
+	/**
+	 * @internal
+	 * @param {MaplairMap} map
+	 */
 	onRemove(map) {
 		map.off('zoomend zoomlevelschange', this._updateDisabled, this);
 	}
 
+	/**
+	 * Disables the zoom buttons.
+	 * @returns {this}
+	 */
 	disable() {
 		this._disabled = true;
 		this._updateDisabled();
 		return this;
 	}
 
+	/**
+	 * Enables the zoom buttons (if the zoom level allows).
+	 * @returns {this}
+	 */
 	enable() {
 		this._disabled = false;
 		this._updateDisabled();
@@ -120,22 +155,18 @@ export class ZoomControl extends Control {
 		}
 	}
 
-	// Registers this default feature on the map class, called by `MaplairMap` itself.
+	/**
+	 * Registers this default feature on the map class, called by `MaplairMap` itself.
+	 * @internal
+	 * @param {typeof MaplairMap} MaplairMap
+	 */
 	static register(MaplairMap) {
-		// @namespace MaplairMap
-		// @section Control options
-		// @option zoomControl: Boolean = true
-		// Whether a [zoom control](#control-zoom) is added to the map by default.
 		MaplairMap.mergeOptions({
 			zoomControl: true
 		});
 
 		MaplairMap.addInitHook(function () {
 			if (this.options.zoomControl) {
-				// @section Controls
-				// @property zoomControl: ZoomControl
-				// The default zoom control (only available if the
-				// [`zoomControl` option](#map-zoomcontrol) was `true` when creating the map).
 				this.zoomControl = new ZoomControl();
 				this.addControl(this.zoomControl);
 			}

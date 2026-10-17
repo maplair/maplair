@@ -1,14 +1,21 @@
 import {Class} from './Class.js';
+/** @import {MaplairMap} from '../map/Map.js' */
 
-/*
-	Handler is a base class for handler classes that are used internally to inject
-	interaction features like dragging to classes like Map and Marker.
-*/
-
-// @class Handler
-// Abstract class for map interaction handlers
-
+/**
+ * Abstract class for map interaction handlers, the base class of the handlers that
+ * are used internally to inject interaction features like dragging to classes like
+ * `MaplairMap` and `Marker`.
+ *
+ * Classes inheriting from `Handler` must implement the two following extension methods:
+ *
+ * * `addHooks()` is called when the handler is enabled, should add event hooks.
+ * * `removeHooks()` is called when the handler is disabled, should remove the event
+ *   hooks added previously.
+ */
 export class Handler extends Class {
+	/**
+	 * @param {MaplairMap} map The map the handler belongs to.
+	 */
 	constructor(map) {
 		super();
 		this._map = map;
@@ -16,8 +23,10 @@ export class Handler extends Class {
 		this.callInitHooks(Handler);
 	}
 
-	// @method enable(): this
-	// Enables the handler
+	/**
+	 * Enables the handler.
+	 * @returns {this}
+	 */
 	enable() {
 		if (this._enabled) { return this; }
 
@@ -26,8 +35,10 @@ export class Handler extends Class {
 		return this;
 	}
 
-	// @method disable(): this
-	// Disables the handler
+	/**
+	 * Disables the handler.
+	 * @returns {this}
+	 */
 	disable() {
 		if (!this._enabled) { return this; }
 
@@ -36,23 +47,22 @@ export class Handler extends Class {
 		return this;
 	}
 
-	// @method enabled(): Boolean
-	// Returns `true` if the handler is enabled
+	/**
+	 * Returns `true` if the handler is enabled.
+	 * @returns {boolean}
+	 */
 	enabled() {
 		return !!this._enabled;
 	}
-
-	// @section Extension methods
-	// Classes inheriting from `Handler` must implement the two following methods:
-	// @method addHooks()
-	// Called when the handler is enabled, should add event hooks.
-	// @method removeHooks()
-	// Called when the handler is disabled, should remove the event hooks added previously.
 }
 
-// @section There is static function which can be called without instantiating Handler:
-// @function addTo(map: MaplairMap, name: String): this
-// Adds a new Handler to the given map with the given name.
+/**
+ * Adds a new handler of this class to the given map with the given name, which is
+ * then available as the property of the map with this name.
+ * @param {MaplairMap} map
+ * @param {string} name
+ * @returns {typeof Handler}
+ */
 Handler.addTo = function (map, name) {
 	map.addHandler(name, this);
 	return this;

@@ -1,26 +1,5 @@
 import {DefaultIcon} from './DefaultIcon.js';
-
-/*
- * @class SvgIcon
- * @inherits Icon
- *
- * A marker icon in the shape of the default marker (with its shadow), drawn as
- * inline SVG in any color and with an optional glyph – a character, an emoji or an
- * SVG path (e.g. of an icon set) – instead of the white maple leaf. No image per
- * color is needed, and it stays sharp on any screen.
- *
- * Inspired by the [Leaflet.awesome-markers](https://github.com/lennardv2/Leaflet.awesome-markers),
- * [leaflet-color-markers](https://github.com/pointhi/leaflet-color-markers) and
- * [Leaflet.ExtraMarkers](https://github.com/coryasilva/Leaflet.ExtraMarkers) plugins.
- *
- * @example
- * ```js
- * new Marker([47.27, 11.40], {icon: new SvgIcon({color: '#2a81cb', glyph: 'P'})}).addTo(map);
- * new Marker([47.28, 11.41], {icon: new SvgIcon({color: 'green', glyph: '🚲'})}).addTo(map);
- * // a 24×24 SVG path, e.g. from Material Design Icons
- * new Marker([47.29, 11.42], {icon: new SvgIcon({color: 'purple', glyphPath: 'M12 2L2 22h20z'})}).addTo(map);
- * ```
- */
+/** @import {DefaultIconOptions} from './DefaultIcon.js' */
 
 const svgNS = 'http://www.w3.org/2000/svg';
 
@@ -43,38 +22,63 @@ function svgElement(name, attributes, parent) {
 	return el;
 }
 
-// @constructor SvgIcon(options: SvgIcon options)
-// Creates an `SvgIcon` with the given options.
+/**
+ * Options of `SvgIcon`.
+ * @typedef {object} SvgIconOptions
+ * @property {string} [color='#d4462c'] The fill color of the marker, any CSS color. The
+ * outline is a darker shade of it.
+ * @property {string} [glyph] A character or emoji (or short text) shown in the marker
+ * instead of the maple leaf.
+ * @property {string} [glyphPath] The path data of an SVG glyph in a 24×24 view box (like
+ * Material Design Icons), shown in the marker instead of the maple leaf.
+ * @property {string} [glyphColor='white'] The color of the glyph or the maple leaf.
+ * @extends DefaultIconOptions
+ */
+
+/**
+ * A marker icon in the shape of the default marker (with its shadow), drawn as
+ * inline SVG in any color and with an optional glyph – a character, an emoji or an
+ * SVG path (e.g. of an icon set) – instead of the white maple leaf. No image per
+ * color is needed, and it stays sharp on any screen.
+ *
+ * Inspired by the [Leaflet.awesome-markers](https://github.com/lennardv2/Leaflet.awesome-markers),
+ * [leaflet-color-markers](https://github.com/pointhi/leaflet-color-markers) and
+ * [Leaflet.ExtraMarkers](https://github.com/coryasilva/Leaflet.ExtraMarkers) plugins.
+ *
+ * @example
+ * ```js
+ * new Marker([47.27, 11.40], {icon: new SvgIcon({color: '#2a81cb', glyph: 'P'})}).addTo(map);
+ * new Marker([47.28, 11.41], {icon: new SvgIcon({color: 'green', glyph: '🚲'})}).addTo(map);
+ * // a 24×24 SVG path, e.g. from Material Design Icons
+ * new Marker([47.29, 11.42], {icon: new SvgIcon({color: 'purple', glyphPath: 'M12 2L2 22h20z'})}).addTo(map);
+ * ```
+ */
 export class SvgIcon extends DefaultIcon {
 
 	static {
 		this.setDefaultOptions({
-			// @section
-			// @aka SvgIcon options
-			// @option color: String = '#d4462c'
-			// The fill color of the marker, any CSS color. The outline is a darker shade of it.
 			color: '#d4462c',
-
-			// @option glyph: String = undefined
-			// A character or emoji (or short text) shown in the marker instead of the maple leaf.
 			glyph: undefined,
-
-			// @option glyphPath: String = undefined
-			// The path data of an SVG glyph in a 24×24 view box (like Material Design
-			// Icons), shown in the marker instead of the maple leaf.
 			glyphPath: undefined,
-
-			// @option glyphColor: String = 'white'
-			// The color of the glyph or the maple leaf.
 			glyphColor: 'white'
 		});
 	}
 
+	/**
+	 * Creates an `SvgIcon` with the given options.
+	 * @param {[options?: SvgIconOptions]} args The options.
+	 */
 	constructor(...args) {
 		super(...args);
 		this.callInitHooks(SvgIcon);
 	}
 
+	/**
+	 * Called internally when the icon has to be shown, returns a `<div>` element with
+	 * the SVG of the marker, styled according to the options.
+	 * @param {HTMLElement} [oldIcon] The current element of the icon, to be reused if possible.
+	 * @returns {HTMLElement}
+	 */
 	createIcon(oldIcon) {
 		const div = oldIcon?.tagName === 'DIV' ? oldIcon : document.createElement('div'),
 		options = this.options,

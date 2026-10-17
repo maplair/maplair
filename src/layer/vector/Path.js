@@ -1,98 +1,99 @@
 import {Layer} from '../Layer.js';
 import * as Util from '../../core/Util.js';
+/** @import {InteractiveLayerOptions} from '../Layer.js' */
+/** @import {MaplairMap} from '../../map/Map.js' */
+/** @import {Renderer} from './Renderer.js' */
 
-/*
- * @class Path
- * @inherits Interactive layer
- *
+/**
+ * Options of `Path`, shared by all vector layers.
+ * @typedef {object} PathOptions
+ * @property {boolean} [stroke=true] Whether to draw stroke along the path. Set it to
+ * `false` to disable borders on polygons or circles.
+ * @property {string} [color='#3388ff'] Stroke color.
+ * @property {number} [weight=3] Stroke width in pixels.
+ * @property {number} [opacity=1] Stroke opacity.
+ * @property {string} [lineCap='round'] A string that defines
+ * [shape to be used at the end](https://developer.mozilla.org/docs/Web/SVG/Attribute/stroke-linecap)
+ * of the stroke.
+ * @property {string} [lineJoin='round'] A string that defines
+ * [shape to be used at the corners](https://developer.mozilla.org/docs/Web/SVG/Attribute/stroke-linejoin)
+ * of the stroke.
+ * @property {string|null} [dashArray=null] A string that defines the stroke
+ * [dash pattern](https://developer.mozilla.org/docs/Web/SVG/Attribute/stroke-dasharray).
+ * @property {string|null} [dashOffset=null] A string that defines the
+ * [distance into the dash pattern to start the dash](https://developer.mozilla.org/docs/Web/SVG/Attribute/stroke-dashoffset).
+ * @property {boolean} [fill=false] Whether to fill the path with color. Set it to
+ * `false` to disable filling on polygons or circles. The default depends on the
+ * class: `true` for polygons and circles.
+ * @property {string|null} [fillColor=null] Fill color. Defaults to the value of the
+ * [`color`](#pathoptions-color) option.
+ * @property {number} [fillOpacity=0.2] Fill opacity.
+ * @property {string} [fillRule='evenodd'] A string that defines
+ * [how the inside of a shape](https://developer.mozilla.org/docs/Web/SVG/Attribute/fill-rule)
+ * is determined.
+ * @property {string} [className] Custom class name set on an element. Only for SVG renderer.
+ * @property {Renderer} [renderer] Use this specific instance of `Renderer` for this
+ * path. Takes precedence over the map's [default renderer](#maplairmapoptions-renderer).
+ * If set, it will override the `pane` option of the path.
+ * @extends InteractiveLayerOptions
+ */
+
+/**
  * An abstract class that contains options and constants shared between vector
  * overlays (Polygon, Polyline, Circle). Do not use it directly. Extends `Layer`.
  */
-
 export class Path extends Layer {
 
 	static {
-		// @section
-		// @aka Path options
 		this.setDefaultOptions({
-			// @option stroke: Boolean = true
-			// Whether to draw stroke along the path. Set it to `false` to disable borders on polygons or circles.
 			stroke: true,
-
-			// @option color: String = '#3388ff'
-			// Stroke color
 			color: '#3388ff',
-
-			// @option weight: Number = 3
-			// Stroke width in pixels
 			weight: 3,
-
-			// @option opacity: Number = 1.0
-			// Stroke opacity
 			opacity: 1,
-
-			// @option lineCap: String= 'round'
-			// A string that defines [shape to be used at the end](https://developer.mozilla.org/docs/Web/SVG/Attribute/stroke-linecap) of the stroke.
 			lineCap: 'round',
-
-			// @option lineJoin: String = 'round'
-			// A string that defines [shape to be used at the corners](https://developer.mozilla.org/docs/Web/SVG/Attribute/stroke-linejoin) of the stroke.
 			lineJoin: 'round',
-
-			// @option dashArray: String = null
-			// A string that defines the stroke [dash pattern](https://developer.mozilla.org/docs/Web/SVG/Attribute/stroke-dasharray).
 			dashArray: null,
-
-			// @option dashOffset: String = null
-			// A string that defines the [distance into the dash pattern to start the dash](https://developer.mozilla.org/docs/Web/SVG/Attribute/stroke-dashoffset).
 			dashOffset: null,
-
-			// @option fill: Boolean = depends
-			// Whether to fill the path with color. Set it to `false` to disable filling on polygons or circles.
 			fill: false,
-
-			// @option fillColor: String = *
-			// Fill color. Defaults to the value of the [`color`](#path-color) option
 			fillColor: null,
-
-			// @option fillOpacity: Number = 0.2
-			// Fill opacity.
 			fillOpacity: 0.2,
-
-			// @option fillRule: String = 'evenodd'
-			// A string that defines [how the inside of a shape](https://developer.mozilla.org/docs/Web/SVG/Attribute/fill-rule) is determined.
 			fillRule: 'evenodd',
-
 			// className: '',
-
-			// Option inherited from "Interactive layer" abstract class
 			interactive: true,
-
-			// @option bubblingPointerEvents: Boolean = true
-			// When `true`, a pointer event on this path will trigger the same event on the map
-			// (unless [`DomEvent.stopPropagation`](#domevent-stoppropagation) is used).
 			bubblingPointerEvents: true
 		});
 	}
 
+	/**
+	 * Gets the renderer of the path from the map, before it is added.
+	 * @param {MaplairMap} map
+	 */
 	beforeAdd(map) {
 		// Renderer is set here because we need to call renderer.getEvents
 		// before this.getEvents.
 		this._renderer = map.getRenderer(this);
 	}
 
+	/**
+	 * Adds the path to its renderer.
+	 */
 	onAdd() {
 		this._renderer._initPath(this);
 		this._reset();
 		this._renderer._addPath(this);
 	}
 
+	/**
+	 * Removes the path from its renderer.
+	 */
 	onRemove() {
 		this._renderer._removePath(this);
 	}
 
-	// @method redraw(): this
-	// Redraws the layer. Sometimes useful after you changed the coordinates that the path uses.
+	/**
+	 * Redraws the layer. Sometimes useful after you changed the coordinates that the path uses.
+	 * @returns {this}
+	 */
 	redraw() {
 		if (this._map) {
 			this._renderer._updatePath(this);
@@ -104,8 +105,11 @@ export class Path extends Layer {
 		this._renderer._updateInteractive(this);
 	}
 
-	// @method setStyle(style: Path options): this
-	// Changes the appearance of a Path based on the options in the `Path options` object.
+	/**
+	 * Changes the appearance of a Path based on the options in the `PathOptions` object.
+	 * @param {PathOptions} style
+	 * @returns {this}
+	 */
 	setStyle(style) {
 		Util.setOptions(this, style);
 		if (this._renderer) {
@@ -117,20 +121,28 @@ export class Path extends Layer {
 		return this;
 	}
 
-	// @method bringToFront(): this
-	// Brings the layer to the top of all path layers.
+	/**
+	 * Brings the layer to the top of all path layers.
+	 * @returns {this}
+	 */
 	bringToFront() {
 		this._renderer?._bringToFront(this);
 		return this;
 	}
 
-	// @method bringToBack(): this
-	// Brings the layer to the bottom of all path layers.
+	/**
+	 * Brings the layer to the bottom of all path layers.
+	 * @returns {this}
+	 */
 	bringToBack() {
 		this._renderer?._bringToBack(this);
 		return this;
 	}
 
+	/**
+	 * Returns the SVG `path` element of the layer, if it is rendered by the `SVG` renderer.
+	 * @returns {SVGPathElement|undefined}
+	 */
 	getElement() {
 		return this._path;
 	}

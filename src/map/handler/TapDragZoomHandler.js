@@ -3,12 +3,7 @@ import * as DomEvent from '../../dom/DomEvent.js';
 import * as PointerEvents from '../../dom/DomEvent.PointerEvents.js';
 import {Draggable} from '../../dom/Draggable.js';
 import {Point} from '../../geometry/Point.js';
-
-/*
- * Handler.TapDragZoom is used to zoom the map with one finger on touch devices:
- * tap once, then touch again and drag down to zoom in or up to zoom out
- * (as known from MapLibre GL JS and Google Maps).
- */
+/** @import {MaplairMap} from '../Map.js' */
 
 // The max time (ms) between the two taps and the max duration of the first tap.
 const maxTapInterval = 500;
@@ -19,18 +14,50 @@ const maxTapDistance = 30;
 // The number of pixels to drag vertically for zooming by one zoom level.
 const pixelsPerZoomLevel = 128;
 
+/**
+ * Map options of `TapDragZoomHandler`, touch interaction options.
+ * @typedef {object} TapDragZoomHandlerMapOptions
+ * @lends MaplairMapOptions
+ * @property {boolean|'center'} [tapDragZoom=true] Whether the map can be zoomed with
+ * one finger by tapping once, then touching again and dragging down (zoom in) or up
+ * (zoom out). If passed `'center'`, it will zoom to the center of the view regardless
+ * of where the finger was.
+ */
+
+/**
+ * Handler of `MaplairMap` for tap-drag zoom.
+ * @typedef {object} TapDragZoomHandlerMapProperties
+ * @lends MaplairMap
+ * @property {TapDragZoomHandler} tapDragZoom Tap-drag zoom handler (double tap and
+ * drag with one finger).
+ */
+
+/**
+ * Zooms the map with one finger on touch devices: tap once, then touch again and drag
+ * down to zoom in or up to zoom out (as known from MapLibre GL JS and Google Maps).
+ * Enabled by default, see the map option `tapDragZoom`.
+ */
 export class TapDragZoomHandler extends Handler {
+	/**
+	 * @param {...MaplairMap} args The map.
+	 */
 	constructor(...args) {
 		super(...args);
 		this.callInitHooks(TapDragZoomHandler);
 	}
 
+	/**
+	 * Called when the handler is enabled, adds the event hooks.
+	 */
 	addHooks() {
 		DomEvent.on(this._map._container, 'pointerdown', this._onDown, this);
 		DomEvent.on(this._map._container, 'pointerup', this._onTapUp, this);
 		DomEvent.on(this._map._container, 'pointercancel', this._reset, this);
 	}
 
+	/**
+	 * Called when the handler is disabled, removes the event hooks.
+	 */
 	removeHooks() {
 		DomEvent.off(this._map._container, 'pointerdown', this._onDown, this);
 		DomEvent.off(this._map._container, 'pointerup', this._onTapUp, this);
@@ -167,23 +194,16 @@ export class TapDragZoomHandler extends Handler {
 		}
 	}
 
-	// Registers this default feature on the map class, called by `MaplairMap` itself.
+	/**
+	 * Registers this default feature on the map class, called by `MaplairMap` itself.
+	 * @internal
+	 * @param {typeof MaplairMap} MaplairMap
+	 */
 	static register(MaplairMap) {
-		// @namespace MaplairMap
-		// @section Interaction Options
 		MaplairMap.mergeOptions({
-			// @section Touch interaction options
-			// @option tapDragZoom: Boolean|String = true
-			// Whether the map can be zoomed with one finger by tapping once, then
-			// touching again and dragging down (zoom in) or up (zoom out). If
-			// passed `'center'`, it will zoom to the center of the view regardless
-			// of where the finger was.
 			tapDragZoom: true
 		});
 
-		// @section Handlers
-		// @property tapDragZoom: Handler
-		// Tap-drag zoom handler (double tap and drag with one finger).
 		MaplairMap.addInitHook('addHandler', 'tapDragZoom', TapDragZoomHandler);
 	}
 }

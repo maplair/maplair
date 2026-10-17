@@ -3,13 +3,40 @@ import {on, off, stop, disableClickPropagation, disableScrollPropagation} from '
 import * as DomUtil from '../../dom/DomUtil.js';
 import {Point} from '../../geometry/Point.js';
 import {I18n} from '../../core/I18n.js';
+/** @import {MaplairMap} from '../Map.js' */
+/** @import {MaplairEvent} from '../../core/Events.js' */
 
-/*
- * KeyboardHandler is handling keyboard interaction with the map, enabled by default.
+/**
+ * Map options of `KeyboardHandler`, the keyboard navigation options.
+ * @typedef {object} KeyboardHandlerMapOptions
+ * @lends MaplairMapOptions
+ * @property {boolean} [keyboard=true] Makes the map focusable and allows users to
+ * navigate the map with keyboard arrows and `+`/`-` keys.
+ * @property {number} [keyboardPanDelta=80] Amount of pixels to pan when pressing an
+ * arrow key.
  */
 
+/**
+ * Handler of `MaplairMap` for keyboard navigation.
+ * @typedef {object} KeyboardHandlerMapProperties
+ * @lends MaplairMap
+ * @property {KeyboardHandler} keyboard Keyboard navigation handler.
+ */
+
+/**
+ * Handles keyboard interaction with the map, enabled by default, see the map option
+ * `keyboard`. The `?` key shows a list of the keyboard shortcuts.
+ *
+ * @fires MaplairMap#focus {MaplairEvent} Fired when the map gains focus.
+ * @fires MaplairMap#blur {MaplairEvent} Fired when the map loses focus.
+ */
 export class KeyboardHandler extends Handler {
 
+	/**
+	 * The [codes](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code)
+	 * of the keys for panning and zooming the map.
+	 * @type {Record<'left'|'right'|'down'|'up'|'zoomIn'|'zoomOut', string[]>}
+	 */
 	static keyCodes = {
 		left: ['ArrowLeft'],
 		right: ['ArrowRight'],
@@ -19,6 +46,9 @@ export class KeyboardHandler extends Handler {
 		zoomOut: ['Minus', 'NumpadSubtract', 'Digit6', 'Slash']
 	};
 
+	/**
+	 * @param {MaplairMap} map
+	 */
 	constructor(map) {
 		super(map);
 
@@ -28,6 +58,9 @@ export class KeyboardHandler extends Handler {
 		this.callInitHooks(KeyboardHandler);
 	}
 
+	/**
+	 * Called when the handler is enabled, adds the event hooks.
+	 */
 	addHooks() {
 		const container = this._map._container;
 
@@ -51,6 +84,9 @@ export class KeyboardHandler extends Handler {
 		}, this);
 	}
 
+	/**
+	 * Called when the handler is disabled, removes the event hooks.
+	 */
 	removeHooks() {
 		this._removeHooks();
 
@@ -214,25 +250,17 @@ export class KeyboardHandler extends Handler {
 		stop(e);
 	}
 
-	// Registers this default feature on the map class, called by `MaplairMap` itself.
+	/**
+	 * Registers this default feature on the map class, called by `MaplairMap` itself.
+	 * @internal
+	 * @param {typeof MaplairMap} MaplairMap
+	 */
 	static register(MaplairMap) {
-		// @namespace MaplairMap
-		// @section Keyboard Navigation Options
 		MaplairMap.mergeOptions({
-			// @option keyboard: Boolean = true
-			// Makes the map focusable and allows users to navigate the map with keyboard
-			// arrows and `+`/`-` keys.
 			keyboard: true,
-
-			// @option keyboardPanDelta: Number = 80
-			// Amount of pixels to pan when pressing an arrow key.
 			keyboardPanDelta: 80
 		});
 
-		// @section Handlers
-		// @section Handlers
-		// @property keyboard: Handler
-		// Keyboard navigation handler.
 		MaplairMap.addInitHook('addHandler', 'keyboard', KeyboardHandler);
 	}
 }

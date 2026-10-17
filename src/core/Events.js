@@ -1,10 +1,175 @@
 import {Class} from './Class.js';
 import * as Util from './Util.js';
+/** @import {LatLng} from '../geo/LatLng.js' */
+/** @import {LatLngBounds} from '../geo/LatLngBounds.js' */
+/** @import {Point} from '../geometry/Point.js' */
+/** @import {CRS} from '../geo/crs/CRS.js' */
+/** @import {Layer} from '../layer/Layer.js' */
+/** @import {Popup} from '../layer/Popup.js' */
+/** @import {Tooltip} from '../layer/Tooltip.js' */
 
-/*
- * @class Evented
- * @inherits Class
+/**
+ * The base event object, the argument of event listeners. All other event objects
+ * contain these properties too. Whenever a class inheriting from `Evented` fires an
+ * event, a listener function is called with an event object containing information
+ * about the event, which depends on the event type. For example:
  *
+ * ```js
+ * map.on('click', function(ev) {
+ *     alert(ev.latlng); // ev is an event object (MaplairPointerEvent in this case)
+ * });
+ * ```
+ *
+ * @typedef {object} MaplairEvent
+ * @property {string} type The event type (e.g. `'click'`).
+ * @property {any} target The object that fired the event. For propagated events, the
+ * last object in the propagation chain that fired the event.
+ * @property {any} sourceTarget The object that originally fired the event. For
+ * non-propagated events, this will be the same as the `target`.
+ * @property {any} [propagatedFrom] For propagated events, the last object that
+ * propagated the event to its event parent.
+ */
+
+/**
+ * A listener of events, called with the event object, which has more properties
+ * depending on the event type (see the event objects below).
+ * @typedef {(event: MaplairEvent & Record<string, any>) => void} EventListener
+ */
+
+/**
+ * The event object of keyboard events.
+ * @typedef {object} MaplairKeyboardEvent
+ * @property {KeyboardEvent} originalEvent The original
+ * [DOM `KeyboardEvent`](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent)
+ * that triggered this Maplair event.
+ * @extends MaplairEvent
+ */
+
+/**
+ * The event object of pointer events (`click`, `pointermove`, …).
+ * @typedef {object} MaplairPointerEvent
+ * @property {LatLng} latlng The geographical point where the pointer event occurred.
+ * @property {Point} layerPoint Pixel coordinates of the point where the pointer event
+ * occurred relative to the map layer.
+ * @property {Point} containerPoint Pixel coordinates of the point where the pointer
+ * event occurred relative to the map container.
+ * @property {MouseEvent|PointerEvent} originalEvent The original
+ * [DOM `MouseEvent`](https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent) or
+ * [DOM `PointerEvent`](https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent)
+ * that triggered this Maplair event.
+ * @extends MaplairEvent
+ */
+
+/**
+ * The event object of `locationfound`.
+ * @typedef {object} LocationEvent
+ * @property {LatLng} latlng Detected geographical location of the user.
+ * @property {LatLngBounds} bounds Geographical bounds of the area user is located in
+ * (with respect to the accuracy of location).
+ * @property {number} accuracy Accuracy of location in meters.
+ * @property {number} altitude Height of the position above the WGS84 ellipsoid in meters.
+ * @property {number} altitudeAccuracy Accuracy of altitude in meters.
+ * @property {number} heading The direction of travel in degrees counting clockwise from true North.
+ * @property {number} speed Current velocity in meters per second.
+ * @property {number} timestamp The time when the position was acquired.
+ * @extends MaplairEvent
+ */
+
+/**
+ * The event object of errors, e.g. `locationerror`.
+ * @typedef {object} MaplairErrorEvent
+ * @property {string} message Error message.
+ * @property {number} [code] Error code (if applicable).
+ * @extends MaplairEvent
+ */
+
+/**
+ * The event object of adding and removing layers.
+ * @typedef {object} LayerEvent
+ * @property {Layer} layer The layer that was added or removed.
+ * @extends MaplairEvent
+ */
+
+/**
+ * The event object of the layers control.
+ * @typedef {object} LayersControlEvent
+ * @property {Layer} layer The layer that was added or removed.
+ * @property {string} name The name of the layer that was added or removed.
+ * @extends MaplairEvent
+ */
+
+/**
+ * The event object of tile events.
+ * @typedef {object} TileEvent
+ * @property {HTMLElement} tile The tile element (image).
+ * @property {Point} coords Point object with the tile's `x`, `y`, and `z` (zoom level) coordinates.
+ * @extends MaplairEvent
+ */
+
+/**
+ * The event object of `tileerror`.
+ * @typedef {object} TileErrorEvent
+ * @property {any} error Error passed to the tile's `done()` callback.
+ * @extends TileEvent
+ */
+
+/**
+ * The event object of `resize`.
+ * @typedef {object} ResizeEvent
+ * @property {Point} oldSize The old size before resize event.
+ * @property {Point} newSize The new size after the resize event.
+ * @extends MaplairEvent
+ */
+
+/**
+ * The event object of `crschange`.
+ * @typedef {object} CrsChangeEvent
+ * @property {CRS} oldCrs The CRS of the map before the change.
+ * @property {CRS} crs The new CRS of the map.
+ * @extends MaplairEvent
+ */
+
+/**
+ * The event object of adding GeoJSON features.
+ * @typedef {object} GeoJSONEvent
+ * @property {Layer} layer The layer for the GeoJSON feature that is being added to the map.
+ * @property {object} properties GeoJSON properties of the feature.
+ * @property {string} geometryType GeoJSON geometry type of the feature.
+ * @property {string|number} [id] GeoJSON ID of the feature (if present).
+ * @extends MaplairEvent
+ */
+
+/**
+ * The event object of opening and closing popups.
+ * @typedef {object} PopupEvent
+ * @property {Popup} popup The popup that was opened or closed.
+ * @extends MaplairEvent
+ */
+
+/**
+ * The event object of opening and closing tooltips.
+ * @typedef {object} TooltipEvent
+ * @property {Tooltip} tooltip The tooltip that was opened or closed.
+ * @extends MaplairEvent
+ */
+
+/**
+ * The event object of `dragend`.
+ * @typedef {object} DragEndEvent
+ * @property {number} distance The distance in pixels the draggable element was moved by.
+ * @extends MaplairEvent
+ */
+
+/**
+ * The event object of `zoomanim`.
+ * @typedef {object} ZoomAnimEvent
+ * @property {LatLng} center The current center of the map.
+ * @property {number} zoom The current zoom level of the map.
+ * @property {boolean} [noUpdate] Whether layers should update their contents due to this event.
+ * @extends MaplairEvent
+ */
+
+/**
  * A set of methods shared between event-powered classes (like `Map` and `Marker`). Generally, events allow you to execute some function when something happens with an object (e.g. the user clicks on the map, causing the map to fire `'click'` event).
  *
  * @example
@@ -24,14 +189,17 @@ import * as Util from './Util.js';
  * map.off('click', onClick);
  * ```
  */
-
 export class Evented extends Class {
-	/* @method on(type: String, fn: Function, context?: Object): this
-	 * Adds a listener function (`fn`) to a particular event type of the object. You can optionally specify the context of the listener (object the this keyword will point to). You can also pass several space-separated types (e.g. `'click dblclick'`).
-	 *
-	 * @alternative
-	 * @method on(eventMap: Object): this
-	 * Adds a set of type/listener pairs, e.g. `{click: onClick, pointermove: onPointerMove}`
+	/**
+	 * Adds a listener function (`fn`) to a particular event type of the object. You can
+	 * optionally specify the context of the listener (object the this keyword will point
+	 * to). You can also pass several space-separated types (e.g. `'click dblclick'`).
+	 * Alternatively, adds a set of type/listener pairs, e.g.
+	 * `{click: onClick, pointermove: onPointerMove}`, with the context as second argument.
+	 * @param {string|Record<string, EventListener>} types
+	 * @param {EventListener|object} [fn]
+	 * @param {object} [context]
+	 * @returns {this}
 	 */
 	on(types, fn, context) {
 
@@ -53,16 +221,17 @@ export class Evented extends Class {
 		return this;
 	}
 
-	/* @method off(type: String, fn?: Function, context?: Object): this
-	 * Removes a previously added listener function. If no function is specified, it will remove all the listeners of that particular event from the object. Note that if you passed a custom context to `on`, you must pass the same context to `off` in order to remove the listener.
-	 *
-	 * @alternative
-	 * @method off(eventMap: Object): this
-	 * Removes a set of type/listener pairs.
-	 *
-	 * @alternative
-	 * @method off: this
-	 * Removes all listeners to all events on the object. This includes implicitly attached events.
+	/**
+	 * Removes a previously added listener function. If no function is specified, it will
+	 * remove all the listeners of that particular event from the object. Note that if you
+	 * passed a custom context to `on`, you must pass the same context to `off` in order to
+	 * remove the listener. Alternatively, removes a set of type/listener pairs. Without
+	 * arguments, removes all listeners to all events on the object, including implicitly
+	 * attached events.
+	 * @param {string|Record<string, EventListener>} [types]
+	 * @param {EventListener|object} [fn]
+	 * @param {object} [context]
+	 * @returns {this}
 	 */
 	off(types, fn, context) {
 
@@ -191,10 +360,15 @@ export class Evented extends Class {
 		}
 	}
 
-	// @method fire(type: String, data?: Object, propagate?: Boolean): this
-	// Fires an event of the specified type. You can optionally provide a data
-	// object — the first argument of the listener function will contain its
-	// properties. The event can optionally be propagated to event parents.
+	/**
+	 * Fires an event of the specified type. You can optionally provide a data
+	 * object — the first argument of the listener function will contain its
+	 * properties. The event can optionally be propagated to event parents.
+	 * @param {string} type
+	 * @param {object} [data]
+	 * @param {boolean} [propagate]
+	 * @returns {this}
+	 */
 	fire(type, data, propagate) {
 		if (!this.listens(type, propagate)) { return this; }
 
@@ -230,10 +404,17 @@ export class Evented extends Class {
 		return this;
 	}
 
-	// @method listens(type: String, propagate?: Boolean): Boolean
-	// @method listens(type: String, fn: Function, context?: Object, propagate?: Boolean): Boolean
-	// Returns `true` if a particular event type has any listeners attached to it.
-	// The verification can optionally be propagated, it will return `true` if parents have the listener attached to it.
+	/**
+	 * Returns `true` if a particular event type has any listeners attached to it (or the
+	 * given listener function, with the given context). The verification can optionally
+	 * be propagated, it will return `true` if parents have the listener attached to it.
+	 * Called as `listens(type, propagate?)` or `listens(type, fn, context?, propagate?)`.
+	 * @param {string} type
+	 * @param {EventListener|boolean} [fn]
+	 * @param {object} [context]
+	 * @param {boolean} [propagate]
+	 * @returns {boolean}
+	 */
 	listens(type, fn, context, propagate) {
 		if (typeof type !== 'string') {
 			console.warn('"string" type argument expected');
@@ -284,8 +465,13 @@ export class Evented extends Class {
 
 	}
 
-	// @method once(…): this
-	// Behaves as [`on(…)`](#evented-on), except the listener will only get fired once and then removed.
+	/**
+	 * Behaves as [`on(…)`](#evented-on), except the listener will only get fired once and then removed.
+	 * @param {string|Record<string, EventListener>} types
+	 * @param {EventListener|object} [fn]
+	 * @param {object} [context]
+	 * @returns {this}
+	 */
 	once(types, fn, context) {
 
 		// types can be a map of types/handlers
@@ -306,16 +492,22 @@ export class Evented extends Class {
 		return this;
 	}
 
-	// @method addEventParent(obj: Evented): this
-	// Adds an event parent - an `Evented` that will receive propagated events
+	/**
+	 * Adds an event parent - an `Evented` that will receive propagated events.
+	 * @param {Evented} obj
+	 * @returns {this}
+	 */
 	addEventParent(obj) {
 		this._eventParents ??= {};
 		this._eventParents[Util.stamp(obj)] = obj;
 		return this;
 	}
 
-	// @method removeEventParent(obj: Evented): this
-	// Removes an event parent, so it will stop receiving propagated events
+	/**
+	 * Removes an event parent, so it will stop receiving propagated events.
+	 * @param {Evented} obj
+	 * @returns {this}
+	 */
 	removeEventParent(obj) {
 		if (this._eventParents) {
 			delete this._eventParents[Util.stamp(obj)];

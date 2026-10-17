@@ -4,15 +4,44 @@ import * as Util from '../core/Util.js';
 import * as DomEvent from '../dom/DomEvent.js';
 import * as DomUtil from '../dom/DomUtil.js';
 import {I18n} from '../core/I18n.js';
+/** @import {ControlOptions} from './Control.js' */
+/** @import {MaplairMap} from '../map/Map.js' */
+/** @import {Layer} from '../layer/Layer.js' */
+/** @import {LayersControlEvent} from '../core/Events.js' */
 
-/*
- * @class LayersControl
- * @inherits Control
- *
- * The layers control gives users the ability to switch between different base layers and switch overlays on/off (check out the [detailed example](https://maplair.org/examples/layers-control/)). Extends `Control`.
+/**
+ * Options of `LayersControl`.
+ * @typedef {object} LayersControlOptions
+ * @property {boolean} [collapsed=true] If `true`, the control will be collapsed into an
+ * icon and expanded on pointer hover, touch, or keyboard activation.
+ * @property {number} [collapseDelay=0] Collapse delay in milliseconds. If greater than 0,
+ * the control will remain open longer, making it easier to scroll through long layer
+ * lists.
+ * @property {string} [position='topright'] The position of the control (one of the map
+ * corners). Possible values are `'topleft'`, `'topright'`, `'bottomleft'` or
+ * `'bottomright'`.
+ * @property {boolean} [autoZIndex=true] If `true`, the control will assign zIndexes in
+ * increasing order to all of its layers so that the order is preserved when switching
+ * them on/off.
+ * @property {boolean} [hideSingleBase=false] If `true`, the base layers in the control
+ * will be hidden when there is only one.
+ * @property {boolean} [sortLayers=false] Whether to sort the layers. When `false`, layers
+ * will keep the order in which they were added to the control.
+ * @property {(layerA: Layer, layerB: Layer, nameA: string, nameB: string) => number} [sortFunction]
+ * A [compare function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array/sort)
+ * that will be used for sorting the layers, when `sortLayers` is `true`. The function
+ * receives both the `Layer` instances and their names, as in
+ * `sortFunction(layerA, layerB, nameA, nameB)`. By default, it sorts layers
+ * alphabetically by their name.
+ * @extends ControlOptions
+ */
+
+/**
+ * The layers control gives users the ability to switch between different base layers
+ * and switch overlays on/off (check out the
+ * [detailed example](https://maplair.org/examples/layers-control/)).
  *
  * @example
- *
  * ```js
  * const baseLayers = {
  * 	"Mapbox": mapbox,
@@ -41,51 +70,39 @@ import {I18n} from '../core/I18n.js';
  * ```js
  * {"<img src='my-layer-icon' /> <span class='my-layer-item'>My Layer</span>": myLayer}
  * ```
+ *
+ * @fires MaplairMap#baselayerchange {LayersControlEvent} Fired when the base layer is
+ * changed through the [layers control](#control-layers).
+ * @fires MaplairMap#overlayadd {LayersControlEvent} Fired when an overlay is selected
+ * through the [layers control](#control-layers).
+ * @fires MaplairMap#overlayremove {LayersControlEvent} Fired when an overlay is
+ * deselected through the [layers control](#control-layers).
  */
-
-// @constructor LayersControl(baselayers?: Object, overlays?: Object, options?: LayersControl options)
-// Creates a layers control with the given layers. Base layers will be switched with radio buttons, while overlays will be switched with checkboxes. Note that all base layers should be passed in the base layers object, but only one should be added to the map during map instantiation.
 export class LayersControl extends Control {
 
 	static {
-		// @section
-		// @aka LayersControl options
 		this.setDefaultOptions({
-			// @option collapsed: Boolean = true
-			// If `true`, the control will be collapsed into an icon and expanded on pointer hover, touch, or keyboard activation.
 			collapsed: true,
-
-			// @option collapseDelay: Number = 0
-			// Collapse delay in milliseconds. If greater than 0, the control will remain open longer, making it easier to scroll through long layer lists.
 			collapseDelay: 0,
-
 			position: 'topright',
-
-			// @option autoZIndex: Boolean = true
-			// If `true`, the control will assign zIndexes in increasing order to all of its layers so that the order is preserved when switching them on/off.
 			autoZIndex: true,
-
-			// @option hideSingleBase: Boolean = false
-			// If `true`, the base layers in the control will be hidden when there is only one.
 			hideSingleBase: false,
-
-			// @option sortLayers: Boolean = false
-			// Whether to sort the layers. When `false`, layers will keep the order
-			// in which they were added to the control.
 			sortLayers: false,
-
-			// @option sortFunction: Function = *
-			// A [compare function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array/sort)
-			// that will be used for sorting the layers, when `sortLayers` is `true`.
-			// The function receives both the `Layer` instances and their names, as in
-			// `sortFunction(layerA, layerB, nameA, nameB)`.
-			// By default, it sorts layers alphabetically by their name.
 			sortFunction(layerA, layerB, nameA, nameB) {
 				return nameA < nameB ? -1 : (nameB < nameA ? 1 : 0);
 			}
 		});
 	}
 
+	/**
+	 * Creates a layers control with the given layers. Base layers will be switched with
+	 * radio buttons, while overlays will be switched with checkboxes. Note that all base
+	 * layers should be passed in the base layers object, but only one should be added to
+	 * the map during map instantiation.
+	 * @param {Record<string, Layer>} [baseLayers]
+	 * @param {Record<string, Layer>} [overlays]
+	 * @param {LayersControlOptions} [options]
+	 */
 	constructor(baseLayers, overlays, options) {
 		super(options);
 
@@ -106,6 +123,11 @@ export class LayersControl extends Control {
 		this.callInitHooks(LayersControl);
 	}
 
+	/**
+	 * @internal
+	 * @param {MaplairMap} map
+	 * @returns {HTMLElement}
+	 */
 	onAdd(map) {
 		this._initLayout();
 		this._update();
@@ -125,12 +147,18 @@ export class LayersControl extends Control {
 		return this._container;
 	}
 
+	/**
+	 * Adds the control to the given map.
+	 * @param {MaplairMap} map
+	 * @returns {this}
+	 */
 	addTo(map) {
 		super.addTo(map);
 		// Trigger expand after Layers Control has been inserted into DOM so that is now has an actual height.
 		return this._expandIfNotCollapsed();
 	}
 
+	/** @internal */
 	onRemove() {
 		this._map.off('zoomend', this._checkDisabledLayers, this);
 
@@ -141,22 +169,33 @@ export class LayersControl extends Control {
 		this._map.off('resize', this._expandIfNotCollapsed, this);
 	}
 
-	// @method addBaseLayer(layer: Layer, name: String): this
-	// Adds a base layer (radio button entry) with the given name to the control.
+	/**
+	 * Adds a base layer (radio button entry) with the given name to the control.
+	 * @param {Layer} layer
+	 * @param {string} name
+	 * @returns {this}
+	 */
 	addBaseLayer(layer, name) {
 		this._addLayer(layer, name);
 		return (this._map) ? this._update() : this;
 	}
 
-	// @method addOverlay(layer: Layer, name: String): this
-	// Adds an overlay (checkbox entry) with the given name to the control.
+	/**
+	 * Adds an overlay (checkbox entry) with the given name to the control.
+	 * @param {Layer} layer
+	 * @param {string} name
+	 * @returns {this}
+	 */
 	addOverlay(layer, name) {
 		this._addLayer(layer, name, true);
 		return (this._map) ? this._update() : this;
 	}
 
-	// @method removeLayer(layer: Layer): this
-	// Remove the given layer from the control.
+	/**
+	 * Remove the given layer from the control.
+	 * @param {Layer} layer
+	 * @returns {this}
+	 */
 	removeLayer(layer) {
 		layer.off('add remove', this._onLayerChange, this);
 
@@ -167,8 +206,10 @@ export class LayersControl extends Control {
 		return (this._map) ? this._update() : this;
 	}
 
-	// @method expand(): this
-	// Expand the control container if collapsed.
+	/**
+	 * Expand the control container if collapsed.
+	 * @returns {this}
+	 */
 	expand() {
 		clearTimeout(this._collapseDelayTimeout);
 
@@ -185,8 +226,12 @@ export class LayersControl extends Control {
 		return this;
 	}
 
-	// @method collapse(): this
-	// Collapse the control container if expanded.
+	/**
+	 * Collapse the control container if expanded.
+	 * @param {Event} [ev] The event causing the collapse, if any (collapsing is skipped
+	 * for `pointerleave` and `pointerout` of touch).
+	 * @returns {this}
+	 */
 	collapse(ev) {
 		// On touch devices `pointerleave` & `pointerout` is fired while clicking on a checkbox.
 		// The control was collapsed instead of adding the layer to the map.
@@ -319,15 +364,6 @@ export class LayersControl extends Control {
 
 		const obj = this._getLayer(Util.stamp(e.target));
 
-		// @namespace MaplairMap
-		// @section Layer events
-		// @event baselayerchange: LayersControlEvent
-		// Fired when the base layer is changed through the [layers control](#control-layers).
-		// @event overlayadd: LayersControlEvent
-		// Fired when an overlay is selected through the [layers control](#control-layers).
-		// @event overlayremove: LayersControlEvent
-		// Fired when an overlay is deselected through the [layers control](#control-layers).
-		// @namespace LayersControl
 		const type = obj.overlay ?
 			(e.type === 'add' ? 'overlayadd' : 'overlayremove') :
 			(e.type === 'add' ? 'baselayerchange' : null);

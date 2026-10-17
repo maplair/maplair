@@ -1,6 +1,18 @@
-/*
- * @class MapSync
- *
+/** @import {MaplairMap} from './Map.js' */
+
+/**
+ * Options of `MapSync`.
+ * @typedef {object} MapSyncOptions
+ * @property {boolean} [bearing=true] Whether to synchronize the bearing of rotated maps
+ * (with the map rotation, see `MaplairMap.setBearing()`).
+ * @property {boolean} [oneWay=false] Whether only the first map leads and the other
+ * maps follow it, without moving the first map when they are moved.
+ * @property {'center'|'bounds'} [fit='center'] How the maps follow: `'center'` with the
+ * same center and zoom, or `'bounds'` with the same center, zoomed so that the bounds
+ * of the leading map fit (like `fitBounds()`), for maps of different sizes.
+ */
+
+/**
  * Synchronizes the views (center, zoom and bearing) of several maps, e.g. to
  * compare different layers side by side: whenever one of the maps moves (by the
  * user or by code, including animations), the other maps follow.
@@ -20,28 +32,17 @@
  * new MapSync([map, thumbnail], {oneWay: true, fit: 'bounds'});
  * ```
  */
-
-// @namespace MapSync
-// @constructor MapSync(maps: MaplairMap[], options?: MapSync options)
-// Synchronizes the views of the given maps, starting with the view of the first map.
 export class MapSync {
+	/**
+	 * Synchronizes the views of the given maps, starting with the view of the first map.
+	 * @param {MaplairMap[]} maps
+	 * @param {MapSyncOptions} [options]
+	 */
 	constructor(maps, options) {
-		// @section
-		// @aka MapSync options
+		/** @type {MapSyncOptions} */
 		this.options = {
-			// @option bearing: Boolean = true
-			// Whether to synchronize the bearing of rotated maps (with the map rotation, see `MaplairMap.setBearing()`).
 			bearing: true,
-
-			// @option oneWay: Boolean = false
-			// Whether only the first map leads and the other maps follow it, without
-			// moving the first map when they are moved.
 			oneWay: false,
-
-			// @option fit: String = 'center'
-			// How the maps follow: `'center'` with the same center and zoom, or
-			// `'bounds'` with the same center, zoomed so that the bounds of the leading
-			// map fit (like `fitBounds()`), for maps of different sizes.
 			fit: 'center',
 			...options
 		};
@@ -69,8 +70,10 @@ export class MapSync {
 		}
 	}
 
-	// @method remove(): this
-	// Stops synchronizing the maps.
+	/**
+	 * Stops synchronizing the maps.
+	 * @returns {this}
+	 */
 	remove() {
 		for (const [map, listeners] of this._listeners) {
 			map.off(listeners);

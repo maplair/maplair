@@ -3,11 +3,38 @@ import * as Util from '../core/Util.js';
 import * as DomUtil from '../dom/DomUtil.js';
 import * as DomEvent from '../dom/DomEvent.js';
 import {Layer} from '../layer/Layer.js';
+/** @import {MaplairMap} from '../map/Map.js' */
+/** @import {LatLng} from '../geo/LatLng.js' */
+/** @import {Point} from '../geometry/Point.js' */
 
-/*
- * @class ContextMenu
- * @inherits Class
- *
+/**
+ * Options of `ContextMenu`.
+ * @typedef {object} ContextMenuOptions
+ * @property {string} [className=''] A custom CSS class name to assign to the menu.
+ */
+
+/**
+ * The argument of the `callback` of a `ContextMenu` item, with the location of the
+ * `contextmenu` event.
+ * @typedef {object} ContextMenuEvent
+ * @property {LatLng} latlng The geographical point of the event.
+ * @property {Point} containerPoint Pixel coordinates of the event relative to the map
+ * container.
+ * @property {Point} layerPoint Pixel coordinates of the event relative to the map layer.
+ * @property {MouseEvent|PointerEvent} originalEvent The original DOM event.
+ * @property {Layer} [relatedTarget] The layer, for menus of layers.
+ */
+
+/**
+ * An item of a `ContextMenu`.
+ * @typedef {object} ContextMenuItem
+ * @property {string} text The text of the item.
+ * @property {(this: ContextMenu, event: ContextMenuEvent) => void} [callback] Called
+ * when the item is chosen.
+ * @property {boolean} [disabled] Whether the item is disabled.
+ */
+
+/**
  * A menu opened with the `contextmenu` event (right click, or long tap on touch
  * screens) on the map or on a layer. Each item calls a function with the location
  * of the event. The menu is a [popover](https://developer.mozilla.org/docs/Web/API/Popover_API),
@@ -29,25 +56,22 @@ import {Layer} from '../layer/Layer.js';
  * ]).addTo(marker);
  * ```
  */
-
-// @namespace ContextMenu
-// @constructor ContextMenu(items: Object[], options?: ContextMenu options)
-// Creates a context menu. Each item is an object with `text`, `callback` and the
-// optional `disabled`, or `'-'` for a separator. The `callback` gets an event with
-// `latlng`, `containerPoint`, `layerPoint`, `originalEvent` and `relatedTarget`
-// (the layer, for menus of layers).
 export class ContextMenu extends Class {
 
 	static {
-		// @section
-		// @aka ContextMenu options
 		this.setDefaultOptions({
-			// @option className: String = ''
-			// A custom CSS class name to assign to the menu.
 			className: ''
 		});
 	}
 
+	/**
+	 * Creates a context menu. Each item is an object with `text`, `callback` and the
+	 * optional `disabled`, or `'-'` for a separator. The `callback` gets an event with
+	 * `latlng`, `containerPoint`, `layerPoint`, `originalEvent` and `relatedTarget`
+	 * (the layer, for menus of layers).
+	 * @param {(ContextMenuItem|'-')[]} items
+	 * @param {ContextMenuOptions} [options]
+	 */
 	constructor(items, options) {
 		super();
 		Util.setOptions(this, options);
@@ -55,8 +79,11 @@ export class ContextMenu extends Class {
 		this.callInitHooks(ContextMenu);
 	}
 
-	// @method addTo(target: MaplairMap|Layer): this
-	// Opens the menu on `contextmenu` events of the map or the layer.
+	/**
+	 * Opens the menu on `contextmenu` events of the map or the layer.
+	 * @param {MaplairMap|Layer} target
+	 * @returns {this}
+	 */
 	addTo(target) {
 		this.remove();
 		this._target = target;
@@ -64,8 +91,10 @@ export class ContextMenu extends Class {
 		return this;
 	}
 
-	// @method remove(): this
-	// Removes the menu from its map or layer.
+	/**
+	 * Removes the menu from its map or layer.
+	 * @returns {this}
+	 */
 	remove() {
 		this.close();
 		this._target?.off('contextmenu', this._open, this);
@@ -75,8 +104,10 @@ export class ContextMenu extends Class {
 		return this;
 	}
 
-	// @method close(): this
-	// Closes the menu.
+	/**
+	 * Closes the menu.
+	 * @returns {this}
+	 */
 	close() {
 		if (this._container?.matches(':popover-open')) {
 			this._container.hidePopover();
@@ -84,8 +115,10 @@ export class ContextMenu extends Class {
 		return this;
 	}
 
-	// @method isOpen(): Boolean
-	// Returns `true` if the menu is open.
+	/**
+	 * Returns `true` if the menu is open.
+	 * @returns {boolean}
+	 */
 	isOpen() {
 		return !!this._container?.matches(':popover-open');
 	}

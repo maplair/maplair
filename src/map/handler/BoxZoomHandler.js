@@ -3,13 +3,44 @@ import * as DomUtil from '../../dom/DomUtil.js';
 import * as DomEvent from '../../dom/DomEvent.js';
 import {LatLngBounds} from '../../geo/LatLngBounds.js';
 import {Bounds} from '../../geometry/Bounds.js';
+/** @import {MaplairMap} from '../Map.js' */
+/** @import {MaplairEvent} from '../../core/Events.js' */
 
-/*
- * Handler.BoxZoom is used to add shift-drag zoom interaction to the map
- * (zoom to a selected bounding box), enabled by default.
+/**
+ * The event object of `boxzoomend`.
+ * @typedef {object} BoxZoomEndEvent
+ * @property {LatLngBounds} boxZoomBounds The bounds of the box the map was zoomed to.
+ * @extends MaplairEvent
  */
 
+/**
+ * Map options of `BoxZoomHandler`.
+ * @typedef {object} BoxZoomHandlerMapOptions
+ * @lends MaplairMapOptions
+ * @property {boolean} [boxZoom=true] Whether the map can be zoomed to a rectangular
+ * area specified by dragging the pointer while pressing the shift key.
+ */
+
+/**
+ * Handler of `MaplairMap` for box zoom.
+ * @typedef {object} BoxZoomHandlerMapProperties
+ * @lends MaplairMap
+ * @property {BoxZoomHandler} boxZoom Box (shift-drag with pointer) zoom handler.
+ */
+
+/**
+ * Adds shift-drag zoom interaction to the map (zoom to a selected bounding box),
+ * enabled by default, see the map option `boxZoom`.
+ *
+ * @fires MaplairMap#boxzoomstart {MaplairEvent} Fired when the user starts drawing
+ * a box to zoom to.
+ * @fires MaplairMap#boxzoomend {BoxZoomEndEvent} Fired when the user has drawn a box
+ * and the map is zoomed to it.
+ */
 export class BoxZoomHandler extends Handler {
+	/**
+	 * @param {MaplairMap} map
+	 */
 	constructor(map) {
 		super(map);
 		this._container = map._container;
@@ -20,14 +51,24 @@ export class BoxZoomHandler extends Handler {
 		this.callInitHooks(BoxZoomHandler);
 	}
 
+	/**
+	 * Called when the handler is enabled, adds the event hooks.
+	 */
 	addHooks() {
 		DomEvent.on(this._container, 'pointerdown', this._onPointerDown, this);
 	}
 
+	/**
+	 * Called when the handler is disabled, removes the event hooks.
+	 */
 	removeHooks() {
 		DomEvent.off(this._container, 'pointerdown', this._onPointerDown, this);
 	}
 
+	/**
+	 * Returns `true` if a box has been drawn by the current or last interaction.
+	 * @returns {boolean}
+	 */
 	moved() {
 		return this._moved;
 	}
@@ -138,20 +179,16 @@ export class BoxZoomHandler extends Handler {
 		}
 	}
 
-	// Registers this default feature on the map class, called by `MaplairMap` itself.
+	/**
+	 * Registers this default feature on the map class, called by `MaplairMap` itself.
+	 * @internal
+	 * @param {typeof MaplairMap} MaplairMap
+	 */
 	static register(MaplairMap) {
-		// @namespace MaplairMap
-		// @section Interaction Options
 		MaplairMap.mergeOptions({
-			// @option boxZoom: Boolean = true
-			// Whether the map can be zoomed to a rectangular area specified by
-			// dragging the pointer while pressing the shift key.
 			boxZoom: true
 		});
 
-		// @section Handlers
-		// @property boxZoom: Handler
-		// Box (shift-drag with pointer) zoom handler.
 		MaplairMap.addInitHook('addHandler', 'boxZoom', BoxZoomHandler);
 	}
 }

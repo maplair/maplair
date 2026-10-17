@@ -1,24 +1,39 @@
 import {Icon} from './Icon.js';
 import * as DomUtil from '../../dom/DomUtil.js';
+/** @import {IconOptions} from './Icon.js' */
+/** @import {PointExpression} from '../../geometry/Point.js' */
 
 const URL_RE = /^url\((['"])?(.+)\1\)$/;
 const MARKER_ICON_RE = /^(.*)marker-icon\.svg$/;
 
-/*
- * @miniclass DefaultIcon (Icon)
- * @section
- *
+/**
+ * Options of `DefaultIcon`.
+ * @typedef {object} DefaultIconOptions
+ * @property {string} [iconUrl='marker-icon.svg']
+ * @property {string} [iconRetinaUrl='marker-icon.svg']
+ * @property {string} [shadowUrl='marker-shadow.svg']
+ * @property {PointExpression|number} [iconSize=[25, 41]]
+ * @property {PointExpression} [iconAnchor=[12, 41]]
+ * @property {PointExpression} [popupAnchor=[1, -34]]
+ * @property {PointExpression} [tooltipAnchor=[16, -28]]
+ * @property {PointExpression|number} [shadowSize=[41, 41]]
+ * @property {string} [imagePath] `DefaultIcon` will try to auto-detect the location of
+ * the blue icon images. If you are placing these images in a non-standard way, set this
+ * option to point to the right path.
+ * @extends IconOptions
+ */
+
+/**
  * A trivial subclass of `Icon`, represents the icon to use in `Marker`s when
  * no icon is specified. Points to the blue marker image distributed with Maplair
  * releases.
  *
- * In order to customize the default icon, just change the properties of `DefaultIcon.prototype.options`
- * (which is a set of `Icon options`).
+ * In order to customize the default icon, just change the properties of
+ * `DefaultIcon.prototype.options` (which is a set of `Icon options`).
  *
  * If you want to _completely_ replace the default icon, override the
  * `Marker.prototype.options.icon` with your own icon instead.
  */
-
 export class DefaultIcon extends Icon {
 
 	static {
@@ -34,6 +49,10 @@ export class DefaultIcon extends Icon {
 		});
 	}
 
+	/**
+	 * Creates the default icon, optionally with changed options.
+	 * @param {[options?: DefaultIconOptions]} args The options.
+	 */
 	constructor(...args) {
 		super(...args);
 		this.callInitHooks(DefaultIcon);
@@ -50,10 +69,7 @@ export class DefaultIcon extends Icon {
 			return null;
 		}
 
-		// @option imagePath: String
-		// `DefaultIcon` will try to auto-detect the location of the
-		// blue icon images. If you are placing these images in a non-standard
-		// way, set this option to point to the right path.
+		// see the `imagePath` option
 		return (this.options.imagePath ?? DefaultIcon.imagePath) + url;
 	}
 

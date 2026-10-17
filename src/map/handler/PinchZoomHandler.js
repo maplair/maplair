@@ -1,22 +1,53 @@
 import {Handler} from '../../core/Handler.js';
 import * as DomEvent from '../../dom/DomEvent.js';
 import * as PointerEvents from '../../dom/DomEvent.PointerEvents.js';
+/** @import {MaplairMap} from '../Map.js' */
 
-/*
- * Handler.PinchZoom is used by Map to add pinch zoom on supported mobile browsers.
+/**
+ * Map options of `PinchZoomHandler`, touch interaction options.
+ * @typedef {object} PinchZoomHandlerMapOptions
+ * @lends MaplairMapOptions
+ * @property {boolean|'center'} [pinchZoom=true] Whether the map can be zoomed by
+ * touch-dragging with two fingers. If passed `'center'`, it will zoom to the center of
+ * the view regardless of where the touch events (fingers) were. Enabled for
+ * touch-capable web browsers.
+ * @property {boolean} [bounceAtZoomLimits=true] Set it to false if you don't want the
+ * map to zoom beyond min/max zoom and then bounce back when pinch-zooming.
+ * @property {boolean|'center'} [touchZoom] Deprecated, use `pinchZoom` instead.
  */
 
+/**
+ * Handler of `MaplairMap` for pinch zoom.
+ * @typedef {object} PinchZoomHandlerMapProperties
+ * @lends MaplairMap
+ * @property {PinchZoomHandler} pinchZoom Pinch zoom handler.
+ * @property {PinchZoomHandler} touchZoom Deprecated, the same as `pinchZoom`.
+ */
+
+/**
+ * Adds pinch zoom to the map on supported mobile browsers, enabled by default, see the
+ * map option `pinchZoom`.
+ */
 export class PinchZoomHandler extends Handler {
+	/**
+	 * @param {...MaplairMap} args The map.
+	 */
 	constructor(...args) {
 		super(...args);
 		this.callInitHooks(PinchZoomHandler);
 	}
 
+	/**
+	 * Called when the handler is enabled, adds the event hooks.
+	 */
 	addHooks() {
 		this._map._container.classList.add('maplair-touch-zoom');
 		DomEvent.on(this._map._container, 'pointerdown', this._onPointerStart, this);
 	}
 
+	/**
+	 * Called when the handler is disabled, removes the event hooks.
+	 */
 	removeHooks() {
 		this._map._container.classList.remove('maplair-touch-zoom');
 		DomEvent.off(this._map._container, 'pointerdown', this._onPointerStart, this);
@@ -114,28 +145,17 @@ export class PinchZoomHandler extends Handler {
 		}
 	}
 
-	// Registers this default feature on the map class, called by `MaplairMap` itself.
+	/**
+	 * Registers this default feature on the map class, called by `MaplairMap` itself.
+	 * @internal
+	 * @param {typeof MaplairMap} MaplairMap
+	 */
 	static register(MaplairMap) {
-		// @namespace MaplairMap
-		// @section Interaction Options
 		MaplairMap.mergeOptions({
-			// @section Touch interaction options
-			// @option pinchZoom: Boolean|String = *
-			// Whether the map can be zoomed by touch-dragging with two fingers. If
-			// passed `'center'`, it will zoom to the center of the view regardless of
-			// where the touch events (fingers) were. Enabled for touch-capable web
-			// browsers.
 			pinchZoom: true,
-
-			// @option bounceAtZoomLimits: Boolean = true
-			// Set it to false if you don't want the map to zoom beyond min/max zoom
-			// and then bounce back when pinch-zooming.
 			bounceAtZoomLimits: true
 		});
 
-		// @section Handlers
-		// @property pinchZoom: Handler
-		// Pinch zoom handler.
 		MaplairMap.addInitHook('addHandler', 'pinchZoom', PinchZoomHandler);
 
 		// Deprecated - Backward compatibility touchZoom

@@ -3,24 +3,51 @@ import * as DomEvent from '../../dom/DomEvent.js';
 import {Point} from '../../geometry/Point.js';
 import Browser from '../../core/Browser.js';
 import * as PointerEvents from '../../dom/DomEvent.PointerEvents.js';
-
-/*
- * TapHoldHandler is used to simulate `contextmenu` event on long hold,
- * which otherwise is not fired by mobile Safari.
- */
+/** @import {MaplairMap} from '../Map.js' */
 
 const tapHoldDelay = 600;
 
+/**
+ * Map options of `TapHoldHandler`, touch interaction options.
+ * @typedef {object} TapHoldHandlerMapOptions
+ * @lends MaplairMapOptions
+ * @property {boolean} [tapHold] Enables simulation of `contextmenu` event, default is
+ * `true` for mobile Safari.
+ * @property {number} [tapTolerance=15] The max number of pixels a user can shift his
+ * finger during touch for it to be considered a valid tap.
+ */
+
+/**
+ * Handler of `MaplairMap` for long taps.
+ * @typedef {object} TapHoldHandlerMapProperties
+ * @lends MaplairMap
+ * @property {TapHoldHandler} tapHold Long tap handler to simulate `contextmenu` event
+ * (useful in mobile Safari).
+ */
+
+/**
+ * Simulates the `contextmenu` event on long hold, which otherwise is not fired by
+ * mobile Safari, see the map option `tapHold`.
+ */
 export class TapHoldHandler extends Handler {
+	/**
+	 * @param {...MaplairMap} args The map.
+	 */
 	constructor(...args) {
 		super(...args);
 		this.callInitHooks(TapHoldHandler);
 	}
 
+	/**
+	 * Called when the handler is enabled, adds the event hooks.
+	 */
 	addHooks() {
 		DomEvent.on(this._map._container, 'pointerdown', this._onDown, this);
 	}
 
+	/**
+	 * Called when the handler is disabled, removes the event hooks.
+	 */
 	removeHooks() {
 		DomEvent.off(this._map._container, 'pointerdown', this._onDown, this);
 		this._cancel();
@@ -87,25 +114,17 @@ export class TapHoldHandler extends Handler {
 		e.target.dispatchEvent(simulatedEvent);
 	}
 
-	// Registers this default feature on the map class, called by `MaplairMap` itself.
+	/**
+	 * Registers this default feature on the map class, called by `MaplairMap` itself.
+	 * @internal
+	 * @param {typeof MaplairMap} MaplairMap
+	 */
 	static register(MaplairMap) {
-		// @namespace MaplairMap
-		// @section Interaction Options
 		MaplairMap.mergeOptions({
-			// @section Touch interaction options
-			// @option tapHold: Boolean
-			// Enables simulation of `contextmenu` event, default is `true` for mobile Safari.
 			tapHold: Browser.safari && Browser.mobile,
-
-			// @option tapTolerance: Number = 15
-			// The max number of pixels a user can shift his finger during touch
-			// for it to be considered a valid tap.
 			tapTolerance: 15
 		});
 
-		// @section Handlers
-		// @property tapHold: Handler
-		// Long tap handler to simulate `contextmenu` event (useful in mobile Safari).
 		MaplairMap.addInitHook('addHandler', 'tapHold', TapHoldHandler);
 	}
 }

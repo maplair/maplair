@@ -170,23 +170,21 @@ After committing the changes, just send a pull request.
 
 ### API documentation
 
-Since Maplair 1.0.0-rc1, the API documentation in `reference-1.0.0.html` is handled
-via [Leafdoc](https://github.com/Leaflet/Leafdoc). This means that next to the
-code for every method, option or property there is a special code comment documenting
-that feature. In order to edit the API documentation, just edit these comments in the
-source code.
+The API documentation is generated from the JSDoc comments in `src/`, which document
+every class, method, option, event and property next to its code, with TypeScript
+types; see [build/JSDOC.md](build/JSDOC.md) for the conventions. In order to edit the
+API documentation, just edit these comments in the source code.
 
-In order to generate the documentation, make sure that the development dependencies
-are installed (run `pnpm install`), then just run
+The same comments are the source of the type declarations. Make sure that the
+development dependencies are installed (run `pnpm install`), then run
 
 ```
-pnpm run docs
+pnpm run types        # the type declarations in dist/types/
+pnpm run types:check  # type-check them, and the scripts of the debug pages
+pnpm run docs         # the API reference in docs/reference.html
 ```
 
-and you'll find a `.html` file in the `dist/` directory.
-
-On every release of a new Maplair version, this file will be generated and copied
-over to `docs/reference.html` - there is no need to send pull requests with changes to this file to update the API documentation.
+The order of the API reference is defined in `build/docs-index.json`.
 
 ## Translating
 

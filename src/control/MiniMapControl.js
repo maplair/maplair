@@ -4,11 +4,29 @@ import * as DomEvent from '../dom/DomEvent.js';
 import {I18n} from '../core/I18n.js';
 import {MaplairMap} from '../map/Map.js';
 import {Polygon} from '../layer/vector/Polygon.js';
+/** @import {ControlOptions} from './Control.js' */
+/** @import {MaplairMapOptions} from '../map/Map.js' */
+/** @import {Layer} from '../layer/Layer.js' */
+/** @import {PathOptions} from '../layer/vector/Path.js' */
 
-/*
- * @class MiniMapControl
- * @inherits Control
- *
+/**
+ * Options of `MiniMapControl`.
+ * @typedef {object} MiniMapControlOptions
+ * @property {string} [position='bottomright'] The position of the control (one of the map
+ * corners). Possible values are `'topleft'`, `'topright'`, `'bottomleft'` or
+ * `'bottomright'`.
+ * @property {number} [width=150] The width of the overview map in pixels.
+ * @property {number} [height=150] The height of the overview map in pixels.
+ * @property {number} [zoomOffset=-5] The zoom level of the overview map relative to the
+ * map.
+ * @property {boolean} [collapsed=false] Whether the overview map is collapsed initially.
+ * @property {PathOptions} [rectangleOptions={color: '#ff7800', weight: 1, fillOpacity: 0.2}]
+ * The style of the rectangle showing the view of the map.
+ * @property {MaplairMapOptions} [mapOptions={}] Further options of the overview map.
+ * @extends ControlOptions
+ */
+
+/**
  * An overview map in a corner of the map, showing the view of the map as a
  * rectangle (or rotated rectangle on a rotated map) at a smaller zoom level.
  * Dragging the overview map pans the map, clicking it centers the map there, and
@@ -23,52 +41,36 @@ import {Polygon} from '../layer/vector/Polygon.js';
  * new MiniMapControl(overviewLayer).addTo(map);
  * ```
  */
-
-// @namespace MiniMapControl
-// @constructor MiniMapControl(layer: Layer, options?: MiniMapControl options)
-// Creates an overview map control showing `layer` (which must not be on another map).
 export class MiniMapControl extends Control {
 
 	static {
-		// @section
-		// @aka MiniMapControl options
 		this.setDefaultOptions({
-			// @option position: String = 'bottomright'
-			// The position of the control (one of the map corners).
 			position: 'bottomright',
-
-			// @option width: Number = 150
-			// The width of the overview map in pixels.
 			width: 150,
-
-			// @option height: Number = 150
-			// The height of the overview map in pixels.
 			height: 150,
-
-			// @option zoomOffset: Number = -5
-			// The zoom level of the overview map relative to the map.
 			zoomOffset: -5,
-
-			// @option collapsed: Boolean = false
-			// Whether the overview map is collapsed initially.
 			collapsed: false,
-
-			// @option rectangleOptions: Path options = {color: '#ff7800', weight: 1, fillOpacity: 0.2}
-			// The style of the rectangle showing the view of the map.
 			rectangleOptions: {color: '#ff7800', weight: 1, fillOpacity: 0.2},
-
-			// @option mapOptions: MaplairMap options = {}
-			// Further options of the overview map.
 			mapOptions: {}
 		});
 	}
 
+	/**
+	 * Creates an overview map control showing `layer` (which must not be on another map).
+	 * @param {Layer} layer
+	 * @param {MiniMapControlOptions} [options]
+	 */
 	constructor(layer, options) {
 		super(options);
 		this._layer = layer;
 		this.callInitHooks(MiniMapControl);
 	}
 
+	/**
+	 * Adds the control to the given map.
+	 * @param {MaplairMap} map
+	 * @returns {this}
+	 */
 	addTo(map) {
 		super.addTo(map);
 		// the size of the overview map is known once it is on the page
@@ -77,6 +79,11 @@ export class MiniMapControl extends Control {
 		return this;
 	}
 
+	/**
+	 * @internal
+	 * @param {MaplairMap} map
+	 * @returns {HTMLElement}
+	 */
 	onAdd(map) {
 		const container = DomUtil.create('div', 'maplair-control-minimap'),
 		mapContainer = DomUtil.create('div', 'maplair-control-minimap-map', container);
@@ -120,20 +127,28 @@ export class MiniMapControl extends Control {
 		return container;
 	}
 
+	/**
+	 * @internal
+	 * @param {MaplairMap} map
+	 */
 	onRemove(map) {
 		map.off('move zoom rotate resize', this._update, this);
 		this._miniMap.remove();
 		this._miniMap = null;
 	}
 
-	// @method getMiniMap(): MaplairMap
-	// Returns the overview map.
+	/**
+	 * Returns the overview map.
+	 * @returns {MaplairMap}
+	 */
 	getMiniMap() {
 		return this._miniMap;
 	}
 
-	// @method toggle(): this
-	// Collapses or expands the overview map.
+	/**
+	 * Collapses or expands the overview map.
+	 * @returns {this}
+	 */
 	toggle() {
 		return this._setCollapsed(!this._collapsed);
 	}

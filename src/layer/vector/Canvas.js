@@ -2,18 +2,25 @@ import {Renderer} from './Renderer.js';
 import * as DomEvent from '../../dom/DomEvent.js';
 import * as Util from '../../core/Util.js';
 import {Bounds} from '../../geometry/Bounds.js';
+/** @import {MaplairMap} from '../../map/Map.js' */
+/** @import {EventListener} from '../../core/Events.js' */
+/** @import {RendererOptions} from './Renderer.js' */
 
 const DASH_SEPARATOR_RE = /[, ]+/;
 
-/*
- * @class Canvas
- * @inherits Renderer
- *
+/**
+ * Options of `Canvas`.
+ * @typedef {object} CanvasOptions
+ * @property {number} [tolerance=0] How much to extend the click tolerance around a
+ * path/object on the map.
+ * @extends RendererOptions
+ */
+
+/**
  * Allows vector layers to be displayed with [`<canvas>`](https://developer.mozilla.org/docs/Web/API/Canvas_API).
  * Inherits `Renderer`.
  *
  * @example
- *
  * Use Canvas by default for all paths in the map:
  *
  * ```js
@@ -31,26 +38,31 @@ const DASH_SEPARATOR_RE = /[, ]+/;
  * const circle =  new Circle( center, { renderer: myRenderer, radius: 100 } );
  * ```
  */
-
-// @constructor Canvas(options?: Renderer options)
-// Creates a Canvas renderer with the given options.
 export class Canvas extends Renderer {
 
 	static {
-		// @section
-		// @aka Canvas options
 		this.setDefaultOptions({
-			// @option tolerance: Number = 0
-			// How much to extend the click tolerance around a path/object on the map.
 			tolerance: 0
 		});
 	}
 
+	/**
+	 * Creates a Canvas renderer with the given options.
+	 * @overload
+	 * @param {CanvasOptions} [options]
+	 */
+	/**
+	 * @param {...any} args
+	 */
 	constructor(...args) {
 		super(...args);
 		this.callInitHooks(Canvas);
 	}
 
+	/**
+	 * Returns the map events the renderer listens to.
+	 * @returns {Record<string, EventListener>}
+	 */
 	getEvents() {
 		const events = super.getEvents();
 		events.viewprereset = this._onViewPreReset;
@@ -69,6 +81,10 @@ export class Canvas extends Renderer {
 		this._postponeUpdatePaths = true;
 	}
 
+	/**
+	 * Adds the canvas to the map and draws the paths.
+	 * @param {MaplairMap} map
+	 */
 	onAdd(map) {
 		super.onAdd(map);
 
@@ -77,6 +93,9 @@ export class Canvas extends Renderer {
 		this._draw();
 	}
 
+	/**
+	 * Removes the canvas from the map.
+	 */
 	onRemove() {
 		super.onRemove();
 

@@ -1,12 +1,28 @@
 import {Icon} from './Icon.js';
 import {Point} from '../../geometry/Point.js';
+/** @import {IconOptions} from './Icon.js' */
+/** @import {PointExpression} from '../../geometry/Point.js' */
 
-/*
- * @class DivIcon
- * @inherits Icon
- *
+/**
+ * Options of `DivIcon`.
+ * @typedef {object} DivIconOptions
+ * @property {PointExpression|number} [iconSize=[12, 12]] Size of the icon in pixels,
+ * also can be set through CSS.
+ * @property {string|HTMLElement|false} [html=false] Custom HTML code to put inside the
+ * div element, empty by default. Alternatively, an instance of `HTMLElement`.
+ * @property {PointExpression|null} [bgPos=null] Optional relative position of the
+ * background, in pixels.
+ * @property {string} [className='maplair-div-icon']
+ * @extends IconOptions
+ */
+
+/**
  * Represents a lightweight icon for markers that uses a simple `<div>`
- * element instead of an image. Inherits from `Icon` but ignores the `iconUrl` and shadow options.
+ * element instead of an image. Inherits from `Icon` but ignores the `iconUrl` and
+ * shadow options.
+ *
+ * By default, it has a 'maplair-div-icon' CSS class and is styled as a little white
+ * square with a shadow.
  *
  * @example
  * ```js
@@ -15,41 +31,37 @@ import {Point} from '../../geometry/Point.js';
  *
  * new Marker([50.505, 30.57], {icon: myIcon}).addTo(map);
  * ```
- *
- * By default, it has a 'maplair-div-icon' CSS class and is styled as a little white square with a shadow.
  */
-
-// @constructor DivIcon(options: DivIcon options)
-// Creates a `DivIcon` instance with the given options.
 export class DivIcon extends Icon {
 
 	static {
 		this.setDefaultOptions({
-			// @section
-			// @aka DivIcon options
 			iconSize: [12, 12], // also can be set through CSS
 
 			// iconAnchor: (Point),
 			// popupAnchor: (Point),
 
-			// @option html: String|HTMLElement = ''
-			// Custom HTML code to put inside the div element, empty by default. Alternatively,
-			// an instance of `HTMLElement`.
 			html: false,
-
-			// @option bgPos: Point = [0, 0]
-			// Optional relative position of the background, in pixels
 			bgPos: null,
-
 			className: 'maplair-div-icon'
 		});
 	}
 
+	/**
+	 * Creates a `DivIcon` instance with the given options.
+	 * @param {[options?: DivIconOptions]} args The options.
+	 */
 	constructor(...args) {
 		super(...args);
 		this.callInitHooks(DivIcon);
 	}
 
+	/**
+	 * Called internally when the icon has to be shown, returns a `<div>` element
+	 * styled according to the options.
+	 * @param {HTMLElement} [oldIcon] The current element of the icon, to be reused if possible.
+	 * @returns {HTMLElement}
+	 */
 	createIcon(oldIcon) {
 		const div = (oldIcon && oldIcon.tagName === 'DIV') ? oldIcon : document.createElement('div'),
 		options = this.options;
@@ -70,6 +82,10 @@ export class DivIcon extends Icon {
 		return div;
 	}
 
+	/**
+	 * Returns `null`, a `DivIcon` has no shadow.
+	 * @returns {null}
+	 */
 	createShadow() {
 		return null;
 	}

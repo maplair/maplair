@@ -1,4 +1,8 @@
 import pkg from '../package.json' with {type: 'json'};
+/**
+ * A constant that represents the Maplair version in use.
+ * @type {string}
+ */
 export const version = pkg.version;
 
 // control

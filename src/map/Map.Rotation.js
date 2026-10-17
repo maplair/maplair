@@ -19,30 +19,10 @@ import {PinchZoomHandler} from './handler/PinchZoomHandler.js';
 import {ScrollWheelZoomHandler} from './handler/ScrollWheelZoomHandler.js';
 import {TapDragZoomHandler} from './handler/TapDragZoomHandler.js';
 import {RotateControl} from '../control/RotateControl.js';
-
-/*
- * @namespace MaplairMap
- * @section Map rotation
- *
- * The rotation of the map is an optional feature: import this module to add the
- * `bearing`, `pinchRotate` and `rotateControl` options, `setBearing()`,
- * `getBearing()` and the `rotate` event to `MaplairMap`, and the `RotateControl`.
- * Maps not using it don't contain its code.
- *
- * ```js
- * import {MaplairMap} from 'maplair';
- * import {RotateControl} from 'maplair/map-rotation';
- *
- * const map = new MaplairMap('map', {bearing: 30, pinchRotate: true, rotateControl: true});
- * ```
- *
- * The map pane is wrapped in a pane rotated around the center of the container.
- * Container/layer point conversions, `getPixelBounds()` and `getBounds()` account
- * for the rotation; grid layers and vector renderers cover the bounding box of
- * the rotated view; markers, popups and tooltips stay upright (see the Marker
- * option `rotateWithView`); dragging, `panBy()`, the keyboard, pinch, tap-drag,
- * touchpad and continuous zoom work in container pixels.
- */
+/** @import {MaplairEvent} from '../core/Events.js' */
+/** @import {LatLng} from '../geo/LatLng.js' */
+/** @import {PointExpression} from '../geometry/Point.js' */
+/** @import {PanOptions, InvalidateSizeOptions} from './Map.js' */
 
 export {RotateControl};
 
@@ -92,16 +72,19 @@ const {panBy} = MaplairMap.prototype,
 {_onDown: onTapDragDown} = TapDragZoomHandler.prototype,
 {_pinchTo: pinchTo} = ScrollWheelZoomHandler.prototype;
 
-MaplairMap.mergeOptions({
-	// @section Map State Options
-	// @option bearing: Number = 0
-	// Initial rotation of the map in degrees: the compass direction pointing up,
-	// clockwise from north (e.g. `90` for east up), see `setBearing()`.
-	bearing: 0,
+/**
+ * Map options of the map rotation (`maplair/map-rotation`).
+ * @typedef {object} RotationMapOptions
+ * @lends MaplairMapOptions
+ * @property {number} [bearing=0] Initial rotation of the map in degrees: the compass
+ * direction pointing up, clockwise from north (e.g. `90` for east up), see
+ * `setBearing()`.
+ * @property {boolean} [pinchRotate=false] Whether the map can be rotated by turning two
+ * fingers, see `setBearing()`.
+ */
 
-	// @section Touch interaction options
-	// @option pinchRotate: Boolean = false
-	// Whether the map can be rotated by turning two fingers, see `setBearing()`.
+MaplairMap.mergeOptions({
+	bearing: 0,
 	pinchRotate: false
 });
 
@@ -116,12 +99,43 @@ MaplairMap.addInitHook(function () {
 
 RotateControl.register(MaplairMap);
 
-MaplairMap.include({
-	// @method setBearing(bearing: Number, options?: {animate: Boolean}): this
-	// Rotates the map around the center of the view, so that the compass direction
-	// `bearing` (in degrees, clockwise from north) points up. Markers, popups and
-	// tooltips stay upright. With `{animate: true}`, the map rotates smoothly (the
-	// shorter way round).
+/**
+ * Methods of `MaplairMap` for the map rotation. The rotation of the map is an optional
+ * feature: import this module (`maplair/map-rotation`) to add the `bearing`,
+ * `pinchRotate` and `rotateControl` options, `setBearing()`, `getBearing()` and the
+ * `rotate` event to `MaplairMap`, and the `RotateControl`. Maps not using it don't
+ * contain its code.
+ *
+ * The map pane is wrapped in a pane rotated around the center of the container.
+ * Container/layer point conversions, `getPixelBounds()` and `getBounds()` account
+ * for the rotation; grid layers and vector renderers cover the bounding box of
+ * the rotated view; markers, popups and tooltips stay upright (see the Marker
+ * option `rotateWithView`); dragging, `panBy()`, the keyboard, pinch, tap-drag,
+ * touchpad and continuous zoom work in container pixels.
+ *
+ * @example
+ * ```js
+ * import {MaplairMap} from 'maplair';
+ * import {RotateControl} from 'maplair/map-rotation';
+ *
+ * const map = new MaplairMap('map', {bearing: 30, pinchRotate: true, rotateControl: true});
+ * ```
+ *
+ * @lends MaplairMap.prototype
+ * @fires MaplairMap#rotate {MaplairEvent} Fired when the bearing of the map changes,
+ * see `setBearing()`.
+ */
+const mapRotationMethods = {
+	/**
+	 * Rotates the map around the center of the view, so that the compass direction
+	 * `bearing` (in degrees, clockwise from north) points up. Markers, popups and
+	 * tooltips stay upright. With `{animate: true}`, the map rotates smoothly (the
+	 * shorter way round).
+	 * @group Map rotation
+	 * @param {number} bearing
+	 * @param {{animate?: boolean}} [options]
+	 * @returns {this}
+	 */
 	setBearing(bearing, options) {
 		bearing = normalizeBearing(bearing);
 		const from = this.getBearing();
@@ -170,15 +184,15 @@ MaplairMap.include({
 		this._rotatePane.style.transform = bearing ? `rotate(${-bearing}deg)` : '';
 
 		if (this._loaded) {
-			// @section Map state change events
-			// @event rotate: Event
-			// Fired when the bearing of the map changes, see `setBearing()`.
 			this.fire('rotate');
 		}
 	},
 
-	// @method getBearing(): Number
-	// Returns the rotation of the map, see `setBearing()`.
+	/**
+	 * Returns the rotation of the map, see `setBearing()`.
+	 * @group Map rotation
+	 * @returns {number}
+	 */
 	getBearing() {
 		return this._bearing ?? 0;
 	},
@@ -214,9 +228,13 @@ MaplairMap.include({
 		}
 	},
 
-	// @method containerPointToLayerPoint(point: Point): Point
-	// Given a pixel coordinate relative to the map container, returns the corresponding
-	// pixel coordinate relative to the [origin pixel](#map-getpixelorigin).
+	/**
+	 * Overrides `containerPointToLayerPoint()` of `MaplairMap` (documented there) to
+	 * account for the rotation.
+	 * @internal
+	 * @param {PointExpression} point
+	 * @returns {Point}
+	 */
 	containerPointToLayerPoint(point) { // (Point)
 		point = new Point(point);
 		if (this._bearing) {
@@ -227,9 +245,13 @@ MaplairMap.include({
 		return point.subtract(this._getMapPanePos());
 	},
 
-	// @method layerPointToContainerPoint(point: Point): Point
-	// Given a pixel coordinate relative to the [origin pixel](#map-getpixelorigin),
-	// returns the corresponding pixel coordinate relative to the map container.
+	/**
+	 * Overrides `layerPointToContainerPoint()` of `MaplairMap` (documented there) to
+	 * account for the rotation.
+	 * @internal
+	 * @param {PointExpression} point
+	 * @returns {Point}
+	 */
 	layerPointToContainerPoint(point) { // (Point)
 		point = new Point(point).add(this._getMapPanePos());
 		if (this._bearing) {
@@ -239,10 +261,14 @@ MaplairMap.include({
 		return point;
 	},
 
-	// @method getPixelBounds(center?: LatLng, zoom?: Number): Bounds
-	// Returns the bounds of the current map view in projected pixel
-	// coordinates (sometimes useful in layer and overlay implementations).
-	// If `center` and `zoom` is omitted, the map's current zoom level and center is used.
+	/**
+	 * Overrides `getPixelBounds()` of `MaplairMap` (documented there): the bounding box
+	 * of the rotated view.
+	 * @internal
+	 * @param {LatLng} [center]
+	 * @param {number} [zoom]
+	 * @returns {Bounds}
+	 */
 	getPixelBounds(center, zoom) {
 		const topLeftPoint = this._getTopLeftPoint(center, zoom);
 		if (!this._bearing) {
@@ -254,7 +280,14 @@ MaplairMap.include({
 		return new Bounds(pixelCenter.subtract(half), pixelCenter.add(half));
 	},
 
-	// `panBy()` takes offsets in container pixels, the map pane moves in its rotated frame
+	/**
+	 * Overrides `panBy()` of `MaplairMap` (documented there): `panBy()` takes offsets in
+	 * container pixels, the map pane moves in its rotated frame.
+	 * @internal
+	 * @param {PointExpression} offset
+	 * @param {PanOptions} [options]
+	 * @returns {this}
+	 */
 	panBy(offset, options) {
 		return panBy.call(this, this._rotateToPane(new Point(offset)), options);
 	},
@@ -271,11 +304,13 @@ MaplairMap.include({
 		return true;
 	},
 
-	// @alternative
-	// @method invalidateSize(animate: Boolean): this
-	// Checks if the map container size changed and updates the map if so —
-	// call it after you've changed the map size dynamically, also animating
-	// pan by default.
+	/**
+	 * Overrides `invalidateSize()` of `MaplairMap` (documented there) to pan in container
+	 * pixels.
+	 * @internal
+	 * @param {boolean|InvalidateSizeOptions} [options]
+	 * @returns {this}
+	 */
 	invalidateSize(options) {
 		if (!this._loaded) { return this; }
 
@@ -314,9 +349,6 @@ MaplairMap.include({
 			}
 		}
 
-		// @section Map state change events
-		// @event resize: ResizeEvent
-		// Fired when the map is resized.
 		return this.fire('resize', {
 			oldSize,
 			newSize
@@ -348,9 +380,17 @@ MaplairMap.include({
 		};
 		this._flyToFrame = requestAnimationFrame(frame);
 	}
-});
+};
+/** @typedef {typeof mapRotationMethods} MapRotationMethods */
 
-GridLayer.include({
+MaplairMap.include(mapRotationMethods);
+
+/**
+ * Methods of `GridLayer` for the map rotation: the tiles cover the bounding box of the
+ * rotated view.
+ * @lends GridLayer.prototype
+ */
+const gridLayerRotationMethods = {
 	_getTiledPixelBounds(center) {
 		const map = this._map,
 		mapZoom = map._animatingZoom ? Math.max(map._animateToZoom, map.getZoom()) : map.getZoom(),
@@ -360,9 +400,17 @@ GridLayer.include({
 
 		return new Bounds(pixelCenter.subtract(halfSize), pixelCenter.add(halfSize));
 	}
-});
+};
+/** @typedef {typeof gridLayerRotationMethods} GridLayerMapRotationMethods */
 
-BlanketOverlay.include({
+GridLayer.include(gridLayerRotationMethods);
+
+/**
+ * Methods of `BlanketOverlay` for the map rotation: the overlay covers the bounding
+ * box of the rotated view.
+ * @lends BlanketOverlay.prototype
+ */
+const blanketOverlayRotationMethods = {
 	_updateTransform(center, zoom) {
 		const scale = this._map.getZoomScale(zoom, this._zoom),
 		viewHalf = this._map._getViewSize().multiplyBy(0.5 + this.options.padding),
@@ -401,9 +449,21 @@ BlanketOverlay.include({
 		this._container.style.height = `${size.y}px`;
 		return size;
 	}
-});
+};
+/** @typedef {typeof blanketOverlayRotationMethods} BlanketOverlayMapRotationMethods */
 
-DivOverlay.include({
+BlanketOverlay.include(blanketOverlayRotationMethods);
+
+/**
+ * Methods of `DivOverlay` for the map rotation: the overlays stay upright.
+ * @lends DivOverlay.prototype
+ */
+const divOverlayRotationMethods = {
+	/**
+	 * Overrides `getEvents()` of `DivOverlay` to update the position on rotation.
+	 * @internal
+	 * @returns {Record<string, Function>}
+	 */
 	getEvents() {
 		return {...getDivOverlayEvents.call(this), rotate: this._updatePosition};
 	},
@@ -457,9 +517,17 @@ DivOverlay.include({
 			this._map._rotateUpright(this._container, transformOrigin);
 		}
 	}
-});
+};
+/** @typedef {typeof divOverlayRotationMethods} DivOverlayMapRotationMethods */
 
-Popup.include({
+DivOverlay.include(divOverlayRotationMethods);
+
+/**
+ * Methods of `Popup` for the map rotation: the popup stays upright, autopanning in
+ * container pixels.
+ * @lends Popup.prototype
+ */
+const popupRotationMethods = {
 	_animateZoom(e) {
 		const pos = this._map._latLngToNewLayerPoint(this._latlng, e.zoom, e.center),
 		anchor = this._map._rotateToPane(new Point(this._getAnchor()));
@@ -505,10 +573,7 @@ Popup.include({
 			dy = containerPos.y - paddingTL.y;
 		}
 
-		// @namespace MaplairMap
-		// @section Popup events
-		// @event autopanstart: Event
-		// Fired when the map starts autopanning when opening a popup.
+		// see the `autopanstart` event of `Popup`
 		if (dx || dy) {
 			// Track that we're autopanning, as this function will be re-ran on moveend
 			if (this.options.keepInView) {
@@ -520,7 +585,10 @@ Popup.include({
 				.panBy([dx, dy]);
 		}
 	}
-});
+};
+/** @typedef {typeof popupRotationMethods} PopupMapRotationMethods */
+
+Popup.include(popupRotationMethods);
 
 // The margins of the directions, see `.maplair-tooltip-top` etc. in maplair.css
 const tooltipMargins = {
@@ -530,7 +598,11 @@ const tooltipMargins = {
 	right: [6, 0]
 };
 
-Tooltip.include({
+/**
+ * Methods of `Tooltip` for the map rotation: the tooltip stays upright.
+ * @lends Tooltip.prototype
+ */
+const tooltipRotationMethods = {
 	// On a rotated map, the tooltip is positioned at its source and kept upright
 	// around it (taking the margin of the direction into account)
 	_setPosition(pos) {
@@ -548,15 +620,34 @@ Tooltip.include({
 		container.style.top = `${delta.y}px`;
 		this._setContainerPosition(pos, `${-delta.x - margin[0]}px ${-delta.y - margin[1]}px`);
 	}
-});
+};
+/** @typedef {typeof tooltipRotationMethods} TooltipMapRotationMethods */
 
-Marker.include({
+Tooltip.include(tooltipRotationMethods);
+
+/**
+ * Methods of `Marker` for the map rotation: the marker is updated on rotation.
+ * @lends Marker.prototype
+ */
+const markerRotationMethods = {
+	/**
+	 * Overrides `getEvents()` of `Marker` to update the marker on rotation.
+	 * @internal
+	 * @returns {Record<string, Function>}
+	 */
 	getEvents() {
 		return {...getMarkerEvents.call(this), rotate: this.update};
 	}
-});
+};
+/** @typedef {typeof markerRotationMethods} MarkerMapRotationMethods */
 
-MarkerDrag.include({
+Marker.include(markerRotationMethods);
+
+/**
+ * Methods of `MarkerDrag` for the map rotation: autopanning in container pixels.
+ * @lends MarkerDrag.prototype
+ */
+const markerDragRotationMethods = {
 	_adjustPan(e) {
 		const marker = this._marker,
 		map = marker._map,
@@ -592,9 +683,17 @@ MarkerDrag.include({
 			this._panRequest = requestAnimationFrame(this._adjustPan.bind(this, e));
 		}
 	}
-});
+};
+/** @typedef {typeof markerDragRotationMethods} MarkerDragMapRotationMethods */
 
-Draggable.include({
+MarkerDrag.include(markerDragRotationMethods);
+
+/**
+ * Methods of `Draggable` for the map rotation: dragging in the rotated frame of the
+ * map pane.
+ * @lends Draggable.prototype
+ */
+const draggableRotationMethods = {
 	_onDown(e) {
 		onDraggableDown.call(this, e);
 		// on a rotated map, the element moves in the rotated frame of the map pane,
@@ -613,9 +712,16 @@ Draggable.include({
 		}
 		updateDraggablePosition.call(this);
 	}
-});
+};
+/** @typedef {typeof draggableRotationMethods} DraggableMapRotationMethods */
 
-DragHandler.include({
+Draggable.include(draggableRotationMethods);
+
+/**
+ * Methods of `DragHandler` for the map rotation: the inertia in container pixels.
+ * @lends DragHandler.prototype
+ */
+const dragHandlerRotationMethods = {
 	_onDragEnd(e) {
 		const map = this._map,
 		options = map.options,
@@ -661,7 +767,10 @@ DragHandler.include({
 			}
 		}
 	}
-});
+};
+/** @typedef {typeof dragHandlerRotationMethods} DragHandlerMapRotationMethods */
+
+DragHandler.include(dragHandlerRotationMethods);
 
 // The time (ms) without further wheel events after which a touchpad pan ends, see `ScrollWheelZoomHandler`
 const gestureEndDelay = 150;
@@ -673,7 +782,12 @@ function angleOf(p1, p2) {
 	return Math.atan2(p2.y - p1.y, p2.x - p1.x) * 180 / Math.PI;
 }
 
-PinchZoomHandler.include({
+/**
+ * Methods of `PinchZoomHandler` for the map rotation: rotating by turning two fingers
+ * (see the map option `pinchRotate`), pinching in the rotated frame.
+ * @lends PinchZoomHandler.prototype
+ */
+const pinchZoomHandlerRotationMethods = {
 	_onPointerStart(e) {
 		onPinchStart.call(this, e);
 		const pointers = PointerEvents.getPointers();
@@ -739,9 +853,17 @@ PinchZoomHandler.include({
 
 		e.preventDefault();
 	}
-});
+};
+/** @typedef {typeof pinchZoomHandlerRotationMethods} PinchZoomHandlerMapRotationMethods */
 
-TapDragZoomHandler.include({
+PinchZoomHandler.include(pinchZoomHandlerRotationMethods);
+
+/**
+ * Methods of `TapDragZoomHandler` for the map rotation: the zoom origin in the rotated
+ * frame.
+ * @lends TapDragZoomHandler.prototype
+ */
+const tapDragZoomHandlerRotationMethods = {
 	_onDown(e) {
 		onTapDragDown.call(this, e);
 		// the offset of the zoom origin in the rotated frame of the map pane
@@ -749,9 +871,17 @@ TapDragZoomHandler.include({
 			this._aroundOffset = this._map._rotateToPane(this._aroundOffset);
 		}
 	}
-});
+};
+/** @typedef {typeof tapDragZoomHandlerRotationMethods} TapDragZoomHandlerMapRotationMethods */
 
-ScrollWheelZoomHandler.include({
+TapDragZoomHandler.include(tapDragZoomHandlerRotationMethods);
+
+/**
+ * Methods of `ScrollWheelZoomHandler` for the map rotation: zooming and panning in the
+ * rotated frame.
+ * @lends ScrollWheelZoomHandler.prototype
+ */
+const scrollWheelZoomHandlerRotationMethods = {
 	_pinchTo(e, zoom, eased) {
 		pinchTo.call(this, e, zoom, eased);
 		// the offset of the zoom origin in the rotated frame of the map pane
@@ -791,4 +921,7 @@ ScrollWheelZoomHandler.include({
 		clearTimeout(this._panTimer);
 		this._panTimer = setTimeout(this._endPan.bind(this), gestureEndDelay);
 	}
-});
+};
+/** @typedef {typeof scrollWheelZoomHandlerRotationMethods} ScrollWheelZoomHandlerMapRotationMethods */
+
+ScrollWheelZoomHandler.include(scrollWheelZoomHandlerRotationMethods);

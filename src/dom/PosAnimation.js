@@ -1,11 +1,11 @@
 import {Evented} from '../core/Events.js';
 import * as DomUtil from '../dom/DomUtil.js';
+/** @import {Point} from '../geometry/Point.js' */
+/** @import {MaplairEvent} from '../core/Events.js' */
 
-
-/*
- * @class PosAnimation
- * @inherits Evented
- * Used internally for panning animations and utilizing CSS Transitions for modern browsers.
+/**
+ * Used internally for panning animations and utilizing CSS Transitions for modern
+ * browsers.
  *
  * @example
  * ```js
@@ -26,22 +26,31 @@ import * as DomUtil from '../dom/DomUtil.js';
  *
  * ```
  *
- * @constructor PosAnimation()
- * Creates a `PosAnimation` object.
- *
+ * @fires start {MaplairEvent} Fired when the animation starts.
+ * @fires step {MaplairEvent} Fired continuously during the animation.
+ * @fires end {MaplairEvent} Fired when the animation ends.
  */
-
 export class PosAnimation extends Evented {
+	/**
+	 * Creates a `PosAnimation` object.
+	 * @param {...any} args
+	 */
 	constructor(...args) {
 		super(...args);
 		this.callInitHooks(PosAnimation);
 	}
 
-	// @method run(el: HTMLElement, newPos: Point, duration?: Number, easeLinearity?: Number)
-	// Run an animation of a given element to a new position, optionally setting
-	// duration in seconds (`0.25` by default) and easing linearity factor (3rd
-	// argument of the [cubic bezier curve](https://cubic-bezier.com/#0,0,.5,1),
-	// `0.5` by default).
+	/**
+	 * Run an animation of a given element to a new position, optionally setting
+	 * duration in seconds (`0.25` by default) and easing linearity factor (3rd
+	 * argument of the [cubic bezier curve](https://cubic-bezier.com/#0,0,.5,1),
+	 * `0.5` by default).
+	 * @param {HTMLElement} el
+	 * @param {Point} newPos
+	 * @param {number} [duration=0.25]
+	 * @param {number} [easeLinearity=0.5]
+	 * @returns {void}
+	 */
 	run(el, newPos, duration, easeLinearity) {
 		this.stop();
 
@@ -54,15 +63,15 @@ export class PosAnimation extends Evented {
 		this._offset = newPos.subtract(this._startPos);
 		this._startTime = Date.now();
 
-		// @event start: Event
-		// Fired when the animation starts
 		this.fire('start');
 
 		this._animate();
 	}
 
-	// @method stop()
-	// Stops the animation (if currently running).
+	/**
+	 * Stops the animation (if currently running).
+	 * @returns {void}
+	 */
 	stop() {
 		if (!this._inProgress) { return; }
 
@@ -95,8 +104,6 @@ export class PosAnimation extends Evented {
 		}
 		DomUtil.setPosition(this._el, pos);
 
-		// @event step: Event
-		// Fired continuously during the animation.
 		this.fire('step');
 	}
 
@@ -104,8 +111,6 @@ export class PosAnimation extends Evented {
 		cancelAnimationFrame(this._animId);
 
 		this._inProgress = false;
-		// @event end: Event
-		// Fired when the animation ends.
 		this.fire('end');
 	}
 

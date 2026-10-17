@@ -2,13 +2,28 @@ import {Marker} from './Marker.js';
 import {LatLng} from '../../geo/LatLng.js';
 import {Point} from '../../geometry/Point.js';
 import Browser from '../../core/Browser.js';
+/** @import {LatLngExpression} from '../../geo/LatLng.js' */
+/** @import {MaplairMap} from '../../map/Map.js' */
+/** @import {MaplairEvent} from '../../core/Events.js' */
 
-/*
- * @namespace Marker
- * @section Marker movement
- *
- * The animated movement of markers is an optional feature: import this module to
- * add `moveTo()`, `moveAlong()`, `stopMoving()` and `isMoving()` to `Marker`.
+/**
+ * Options of the movement of markers, see `moveAlong()`.
+ * @typedef {object} MarkerMovementOptions
+ * @property {number} [duration=1000] The duration of the movement in milliseconds.
+ * @property {number} [speed] The speed in meters (or units of the CRS) per second
+ * instead of the `duration`.
+ * @property {boolean} [rotate=false] Whether to set the `rotationAngle` of the icon to
+ * the heading of the movement (for icons pointing up; needs the marker rotation, see
+ * `rotationAngle`).
+ */
+
+// The methods extended below
+const {onRemove} = Marker.prototype;
+
+/**
+ * Methods of `Marker` for the animated movement of markers, an optional feature: import
+ * this module to add `moveTo()`, `moveAlong()`, `stopMoving()` and `isMoving()` to
+ * `Marker`.
  *
  * ```js
  * import 'maplair/marker-movement';
@@ -18,38 +33,38 @@ import Browser from '../../core/Browser.js';
  *
  * Inspired by the [Leaflet.MovingMarker](https://github.com/ewoken/Leaflet.MovingMarker)
  * and [Leaflet.AnimatedMarker](https://github.com/openplans/Leaflet.AnimatedMarker) plugins.
+ * @lends Marker.prototype
+ * @fires Marker#moveend {MaplairEvent} Fired when the marker stops moving (after dragging
+ * or `moveAlong()`).
  */
-
-// The methods extended below
-const {onRemove} = Marker.prototype;
-
-Marker.include({
-	// @method moveTo(latlng: LatLng, options?: Marker movement options): this
-	// Moves the marker smoothly to `latlng`, see `moveAlong()`.
+const markerMoveMethods = {
+	/**
+	 * Moves the marker smoothly to `latlng`, see `moveAlong()`.
+	 * @group Marker movement
+	 * @param {LatLngExpression} latlng
+	 * @param {MarkerMovementOptions} [options]
+	 * @returns {this}
+	 */
 	moveTo(latlng, options) {
 		return this.moveAlong([latlng], options);
 	},
 
-	// @method moveAlong(latlngs: LatLng[], options?: Marker movement options): this
-	// Moves the marker smoothly along the given points, frame by frame at a constant
-	// speed, e.g. to follow a vehicle or to replay a track. Fires `move` with each
-	// frame and `moveend` at the end. A new movement or `stopMoving()` stops it; with
-	// [reduced motion](https://developer.mozilla.org/docs/Web/CSS/@media/prefers-reduced-motion),
-	// the marker jumps to the end.
-	// Inspired by the [Leaflet.MovingMarker](https://github.com/ewoken/Leaflet.MovingMarker)
-	// and [Leaflet.AnimatedMarker](https://github.com/openplans/Leaflet.AnimatedMarker) plugins.
+	/**
+	 * Moves the marker smoothly along the given points, frame by frame at a constant
+	 * speed, e.g. to follow a vehicle or to replay a track. Fires `move` with each
+	 * frame and `moveend` at the end. A new movement or `stopMoving()` stops it; with
+	 * [reduced motion](https://developer.mozilla.org/docs/Web/CSS/@media/prefers-reduced-motion),
+	 * the marker jumps to the end.
+	 * Inspired by the [Leaflet.MovingMarker](https://github.com/ewoken/Leaflet.MovingMarker)
+	 * and [Leaflet.AnimatedMarker](https://github.com/openplans/Leaflet.AnimatedMarker) plugins.
+	 * @group Marker movement
+	 * @param {LatLngExpression[]} latlngs
+	 * @param {MarkerMovementOptions} [options]
+	 * @returns {this}
+	 */
 	moveAlong(latlngs, options = {}) {
 		this.stopMoving();
 
-		// @section
-		// @aka Marker movement options
-		// @option duration: Number = 1000
-		// The duration of the movement in milliseconds.
-		// @option speed: Number = undefined
-		// The speed in meters (or units of the CRS) per second instead of the `duration`.
-		// @option rotate: Boolean = false
-		// Whether to set the `rotationAngle` of the icon to the heading of the movement
-		// (for icons pointing up; needs the marker rotation, see `rotationAngle`).
 		const points = [this._latlng, ...latlngs.map(latlng => new LatLng(latlng))],
 		lengths = points.slice(1).map((point, i) => this._map?.distance(points[i], point) ?? points[i].distanceTo(point)),
 		total = lengths.reduce((sum, length) => sum + length, 0),
@@ -75,10 +90,6 @@ Marker.include({
 				this._moveFrame = requestAnimationFrame(frame);
 			} else {
 				this._moveFrame = null;
-				// @namespace Marker
-				// @section Movement events
-				// @event moveend: Event
-				// Fired when the marker stops moving (after dragging or `moveAlong()`).
 				this.fire('moveend');
 			}
 		};
@@ -86,16 +97,22 @@ Marker.include({
 		return this;
 	},
 
-	// @method stopMoving(): this
-	// Stops the movement of `moveTo()` or `moveAlong()`.
+	/**
+	 * Stops the movement of `moveTo()` or `moveAlong()`.
+	 * @group Marker movement
+	 * @returns {this}
+	 */
 	stopMoving() {
 		cancelAnimationFrame(this._moveFrame);
 		this._moveFrame = null;
 		return this;
 	},
 
-	// @method isMoving(): Boolean
-	// Returns `true` while the marker moves with `moveTo()` or `moveAlong()`.
+	/**
+	 * Returns `true` while the marker moves with `moveTo()` or `moveAlong()`.
+	 * @group Marker movement
+	 * @returns {boolean}
+	 */
 	isMoving() {
 		return !!this._moveFrame;
 	},
@@ -121,8 +138,16 @@ Marker.include({
 		return heading - (this.options.rotateWithView ? 0 : (this._map?.getBearing?.() ?? 0));
 	},
 
+	/**
+	 * Stops the movement when the marker is removed from the map.
+	 * @internal
+	 * @param {MaplairMap} map
+	 */
 	onRemove(map) {
 		this.stopMoving();
 		return onRemove.call(this, map);
 	}
-});
+};
+/** @typedef {typeof markerMoveMethods} MarkerMoveMethods */
+
+Marker.include(markerMoveMethods);

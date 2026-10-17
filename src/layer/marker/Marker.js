@@ -6,118 +6,116 @@ import {Point} from '../../geometry/Point.js';
 import * as DomUtil from '../../dom/DomUtil.js';
 import * as DomEvent from '../../dom/DomEvent.js';
 import {MarkerDrag} from './Marker.Drag.js';
+/** @import {Icon} from './Icon.js' */
+/** @import {LatLngExpression} from '../../geo/LatLng.js' */
+/** @import {PointExpression} from '../../geometry/Point.js' */
+/** @import {MaplairMap} from '../../map/Map.js' */
+/** @import {MaplairEvent} from '../../core/Events.js' */
+/** @import {InteractiveLayerOptions} from '../Layer.js' */
 
-/*
- * @class Marker
- * @inherits Interactive layer
+/**
+ * Options of `Marker`.
+ * @typedef {object} MarkerOptions
+ * @property {Icon} [icon=new DefaultIcon()] Icon instance to use for rendering the
+ * marker. See [Icon documentation](#Icon) for details on how to customize the marker
+ * icon. If not specified, a common instance of `DefaultIcon` is used.
+ * @property {boolean} [keyboard=true] Whether the marker can be tabbed to with a keyboard
+ * and clicked by pressing enter.
+ * @property {string} [title=''] Text for the browser tooltip that appear on marker hover
+ * (no tooltip by default).
+ * [Useful for accessibility](https://maplair.org/examples/accessibility/#markers-must-be-labelled).
+ * @property {string} [alt='Marker'] Text for the `alt` attribute of the icon image.
+ * [Useful for accessibility](https://maplair.org/examples/accessibility/#markers-must-be-labelled).
+ * @property {number} [zIndexOffset=0] By default, marker images zIndex is set
+ * automatically based on its latitude. Use this option if you want to put the marker on
+ * top of all others (or below), specifying a high value like `1000` (or high negative
+ * value, respectively).
+ * @property {number} [opacity=1] The opacity of the marker.
+ * @property {boolean} [riseOnHover=false] If `true`, the marker will get on top of
+ * others when you hover the pointer over it.
+ * @property {number} [riseOffset=250] The z-index offset used for the `riseOnHover`
+ * feature.
+ * @property {string} [pane='markerPane'] `Map pane` where the markers icon will be added.
+ * @property {string} [shadowPane='shadowPane'] `Map pane` where the markers shadow will
+ * be added.
+ * @property {boolean} [shadow=true] Whether to show the shadow of the marker's icon. Each
+ * shadow is an additional element on the page, so disabling shadows noticeably reduces
+ * the browser's rendering work when showing many markers (e.g. several thousands),
+ * especially while panning and zooming. To disable shadows for all markers, use
+ * `Marker.mergeOptions({shadow: false})`.
+ * @property {boolean} [bubblingPointerEvents=false] When `true`, a pointer event on this
+ * marker will trigger the same event on the map (unless
+ * [`DomEvent.stopPropagation`](#domevent-stoppropagation) is used).
+ * @property {boolean} [autoPanOnFocus=true] When `true`, the map will pan whenever the
+ * marker is focused (via e.g. pressing `tab` on the keyboard) to ensure the marker is
+ * visible within the map's bounds.
+ * @property {boolean} [draggable=false] Whether the marker is draggable with pointer or
+ * not.
+ * @property {boolean} [autoPan=false] Whether to pan the map when dragging this marker
+ * near its edge or not.
+ * @property {PointExpression} [autoPanPadding=[50, 50]] Distance (in pixels to the
+ * left/right and to the top/bottom) of the map edge to start panning the map.
+ * @property {number} [autoPanSpeed=10] Number of pixels the map should pan by.
+ * @extends InteractiveLayerOptions
+ */
+
+/**
+ * The event object of `move` and `drag` of markers.
+ * @typedef {object} MarkerMoveEvent
+ * @property {LatLng} latlng The new position of the marker.
+ * @property {LatLng} [oldLatLng] The previous position of the marker.
+ * @extends MaplairEvent
+ */
+
+/**
  * Marker is used to display clickable/draggable icons on the map. Extends `Layer`.
  *
- * @example
+ * In addition to [shared layer methods](#Layer) like `addTo()` and `remove()` and
+ * [popup methods](#Popup) like `bindPopup()` you can also use the methods below.
  *
+ * @example
  * ```js
  * new Marker([50.5, 30.5]).addTo(map);
  * ```
+ *
+ * @fires move {MarkerMoveEvent} Fired when the marker is moved via
+ * [`setLatLng`](#marker-setlatlng) or by [dragging](#marker-dragging). Old and new
+ * coordinates are included in event arguments as `oldLatLng`, `latlng`.
  */
-
-// @constructor Marker(latlng: LatLng, options? : Marker options)
-// Instantiates a Marker object given a geographical point and optionally an options object.
 export class Marker extends Layer {
 
 	static {
-		// @section
-		// @aka Marker options
 		this.setDefaultOptions({
-			// @option icon: Icon = *
-			// Icon instance to use for rendering the marker.
-			// See [Icon documentation](#Icon) for details on how to customize the marker icon.
-			// If not specified, a common instance of `DefaultIcon` is used.
 			icon: new DefaultIcon(),
 
 			// Option inherited from "Interactive layer" abstract class
 			interactive: true,
 
-			// @option keyboard: Boolean = true
-			// Whether the marker can be tabbed to with a keyboard and clicked by pressing enter.
 			keyboard: true,
-
-			// @option title: String = ''
-			// Text for the browser tooltip that appear on marker hover (no tooltip by default).
-			// [Useful for accessibility](https://maplair.org/examples/accessibility/#markers-must-be-labelled).
 			title: '',
-
-			// @option alt: String = 'Marker'
-			// Text for the `alt` attribute of the icon image.
-			// [Useful for accessibility](https://maplair.org/examples/accessibility/#markers-must-be-labelled).
 			alt: 'Marker',
-
-			// @option zIndexOffset: Number = 0
-			// By default, marker images zIndex is set automatically based on its latitude. Use this option if you want to put the marker on top of all others (or below), specifying a high value like `1000` (or high negative value, respectively).
 			zIndexOffset: 0,
-
-			// @option opacity: Number = 1.0
-			// The opacity of the marker.
 			opacity: 1,
-
-			// @option riseOnHover: Boolean = false
-			// If `true`, the marker will get on top of others when you hover the pointer over it.
 			riseOnHover: false,
-
-			// @option riseOffset: Number = 250
-			// The z-index offset used for the `riseOnHover` feature.
 			riseOffset: 250,
-
-			// @option pane: String = 'markerPane'
-			// `Map pane` where the markers icon will be added.
 			pane: 'markerPane',
-
-			// @option shadowPane: String = 'shadowPane'
-			// `Map pane` where the markers shadow will be added.
 			shadowPane: 'shadowPane',
-
-			// @option shadow: Boolean = true
-			// Whether to show the shadow of the marker's icon. Each shadow is an
-			// additional element on the page, so disabling shadows noticeably reduces
-			// the browser's rendering work when showing many markers (e.g. several
-			// thousands), especially while panning and zooming. To disable shadows
-			// for all markers, use `Marker.mergeOptions({shadow: false})`.
 			shadow: true,
-
-			// @option bubblingPointerEvents: Boolean = false
-			// When `true`, a pointer event on this marker will trigger the same event on the map
-			// (unless [`DomEvent.stopPropagation`](#domevent-stoppropagation) is used).
 			bubblingPointerEvents: false,
-
-			// @option autoPanOnFocus: Boolean = true
-			// When `true`, the map will pan whenever the marker is focused (via
-			// e.g. pressing `tab` on the keyboard) to ensure the marker is
-			// visible within the map's bounds
 			autoPanOnFocus: true,
-
-			// @section Draggable marker options
-			// @option draggable: Boolean = false
-			// Whether the marker is draggable with pointer or not.
 			draggable: false,
-
-			// @option autoPan: Boolean = false
-			// Whether to pan the map when dragging this marker near its edge or not.
 			autoPan: false,
-
-			// @option autoPanPadding: Point = Point(50, 50)
-			// Distance (in pixels to the left/right and to the top/bottom) of the
-			// map edge to start panning the map.
 			autoPanPadding: [50, 50],
-
-			// @option autoPanSpeed: Number = 10
-			// Number of pixels the map should pan by.
 			autoPanSpeed: 10
 		});
 	}
 
-	/* @section
-	 *
-	 * In addition to [shared layer methods](#Layer) like `addTo()` and `remove()` and [popup methods](#Popup) like bindPopup() you can also use the following methods:
+	/**
+	 * Instantiates a Marker object given a geographical point and optionally an options
+	 * object.
+	 * @param {LatLngExpression} latlng
+	 * @param {MarkerOptions} [options]
 	 */
-
 	constructor(latlng, options) {
 		super();
 		Util.setOptions(this, options);
@@ -126,6 +124,10 @@ export class Marker extends Layer {
 		this.callInitHooks(Marker);
 	}
 
+	/**
+	 * Adds the icon (and shadow) of the marker to the map.
+	 * @param {MaplairMap} map
+	 */
 	onAdd(map) {
 		this._zoomAnimated = this._zoomAnimated && map.options.markerZoomAnimation;
 
@@ -141,6 +143,10 @@ export class Marker extends Layer {
 		}
 	}
 
+	/**
+	 * Removes the icon (and shadow) of the marker from the map.
+	 * @param {MaplairMap} map
+	 */
 	onRemove(map) {
 		if (this.dragging?.enabled()) {
 			this.options.draggable = true;
@@ -157,6 +163,10 @@ export class Marker extends Layer {
 		this._culled = false;
 	}
 
+	/**
+	 * Returns the map events the marker listens to, see `Layer`.
+	 * @returns {Record<string, Function>}
+	 */
 	getEvents() {
 		const events = {
 			zoom: this.update,
@@ -168,14 +178,19 @@ export class Marker extends Layer {
 		return events;
 	}
 
-	// @method getLatLng: LatLng
-	// Returns the current geographical position of the marker.
+	/**
+	 * Returns the current geographical position of the marker.
+	 * @returns {LatLng}
+	 */
 	getLatLng() {
 		return this._latlng;
 	}
 
-	// @method setLatLng(latlng: LatLng): this
-	// Changes the marker position to the given point.
+	/**
+	 * Changes the marker position to the given point.
+	 * @param {LatLngExpression} latlng
+	 * @returns {this}
+	 */
 	setLatLng(latlng) {
 		const oldLatLng = this._latlng;
 		this._latlng = new LatLng(latlng);
@@ -184,26 +199,32 @@ export class Marker extends Layer {
 		}
 		this.update();
 
-		// @event move: Event
-		// Fired when the marker is moved via [`setLatLng`](#marker-setlatlng) or by [dragging](#marker-dragging). Old and new coordinates are included in event arguments as `oldLatLng`, `latlng`.
 		return this.fire('move', {oldLatLng, latlng: this._latlng});
 	}
 
-	// @method setZIndexOffset(offset: Number): this
-	// Changes the [zIndex offset](#marker-zindexoffset) of the marker.
+	/**
+	 * Changes the [zIndex offset](#markeroptions-zindexoffset) of the marker.
+	 * @param {number} offset
+	 * @returns {this}
+	 */
 	setZIndexOffset(offset) {
 		this.options.zIndexOffset = offset;
 		return this.update();
 	}
 
-	// @method getIcon: Icon
-	// Returns the current icon used by the marker
+	/**
+	 * Returns the current icon used by the marker.
+	 * @returns {Icon}
+	 */
 	getIcon() {
 		return this.options.icon;
 	}
 
-	// @method setIcon(icon: Icon): this
-	// Changes the marker icon.
+	/**
+	 * Changes the marker icon.
+	 * @param {Icon} icon
+	 * @returns {this}
+	 */
 	setIcon(icon) {
 
 		this.options.icon = icon;
@@ -220,13 +241,19 @@ export class Marker extends Layer {
 		return this;
 	}
 
-	// @method getElement(): HTMLElement
-	// Returns the instance of [`HTMLElement`](https://developer.mozilla.org/docs/Web/API/HTMLElement)
-	// used by Marker layer.
+	/**
+	 * Returns the instance of [`HTMLElement`](https://developer.mozilla.org/docs/Web/API/HTMLElement)
+	 * used by Marker layer.
+	 * @returns {HTMLElement}
+	 */
 	getElement() {
 		return this._icon;
 	}
 
+	/**
+	 * Updates the position of the marker on the map, e.g. after a change of its options.
+	 * @returns {this}
+	 */
 	update() {
 
 		if (this._icon && this._map && !this._culled) {
@@ -417,6 +444,20 @@ export class Marker extends Layer {
 				this.dragging.disable();
 			}
 
+			/**
+			 * Marker dragging handler, see `Handler`. Only valid when the marker is on the
+			 * map (otherwise set [`marker.options.draggable`](#markeroptions-draggable)).
+			 *
+			 * Interaction handlers are properties of a marker instance that allow you to
+			 * control interaction behavior in runtime, enabling or disabling certain
+			 * features such as dragging (see `Handler` methods). Example:
+			 *
+			 * ```js
+			 * marker.dragging.disable();
+			 * ```
+			 * @group Interaction handlers
+			 * @type {MarkerDrag}
+			 */
 			this.dragging = new MarkerDrag(this);
 
 			if (draggable) {
@@ -425,8 +466,11 @@ export class Marker extends Layer {
 		}
 	}
 
-	// @method setOpacity(opacity: Number): this
-	// Changes the opacity of the marker.
+	/**
+	 * Changes the opacity of the marker.
+	 * @param {number} opacity
+	 * @returns {this}
+	 */
 	setOpacity(opacity) {
 		this.options.opacity = opacity;
 		if (this._map) {

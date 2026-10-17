@@ -1,30 +1,38 @@
 import {BlanketOverlay} from '../BlanketOverlay.js';
 import * as Util from '../../core/Util.js';
+/** @import {BlanketOverlayOptions} from '../BlanketOverlay.js' */
+/** @import {MaplairEvent} from '../../core/Events.js' */
+/** @import {MaplairMap} from '../../map/Map.js' */
 
-/*
- * @class Renderer
- * @inherits BlanketOverlay
- *
+/**
+ * Options of `Renderer`, `SVG` and `Canvas`. The `continuous` option inherited from
+ * `BlanketOverlay` cannot be set to `true`.
+ * @typedef {object} RendererOptions
+ * @extends BlanketOverlayOptions
+ */
+
+/**
  * Base class for vector renderer implementations (`SVG`, `Canvas`). Handles the
  * DOM container of the renderer, its bounds, and its zoom animation.
  *
  * A `Renderer` works as an implicit layer group for all `Path`s - the renderer
  * itself can be added or removed to the map. All paths use a renderer, which can
  * be implicit (the map will decide the type of renderer and use it automatically)
- * or explicit (using the [`renderer`](#path-renderer) option of the path).
+ * or explicit (using the [`renderer`](#pathoptions-renderer) option of the path).
  *
  * Do not use this class directly, use `SVG` and `Canvas` instead.
  *
  * The `continuous` option inherited from `BlanketOverlay` cannot be set to `true`
  * (otherwise, renderers get out of place during a pinch-zoom operation).
  *
- * @event update: Event
- * Fired when the renderer updates its bounds, center and zoom, for example when
- * its map has moved
+ * @fires update {MaplairEvent} Fired when the renderer updates its bounds, center and
+ * zoom, for example when its map has moved.
  */
-
 export class Renderer extends BlanketOverlay {
 
+	/**
+	 * @param {RendererOptions} [options]
+	 */
 	constructor(options) {
 		super({...options, continuous: false});
 		Util.stamp(this);
@@ -33,11 +41,18 @@ export class Renderer extends BlanketOverlay {
 		this.callInitHooks(Renderer);
 	}
 
+	/**
+	 * Adds the container of the renderer to the map and starts updating the paths.
+	 * @param {MaplairMap} map
+	 */
 	onAdd(map) {
 		super.onAdd(map);
 		this.on('update', this._updatePaths, this);
 	}
 
+	/**
+	 * Removes the container of the renderer from the map.
+	 */
 	onRemove() {
 		super.onRemove();
 		this.off('update', this._updatePaths, this);

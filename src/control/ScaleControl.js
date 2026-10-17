@@ -2,12 +2,28 @@
 import {Control} from './Control.js';
 import * as DomUtil from '../dom/DomUtil.js';
 import {I18n} from '../core/I18n.js';
+/** @import {ControlOptions} from './Control.js' */
+/** @import {MaplairMap} from '../map/Map.js' */
 
-/*
- * @class ScaleControl
- * @inherits Control
- *
- * A simple scale control that shows the scale of the current center of screen in metric (m/km) and imperial (mi/ft) systems. Extends `Control`.
+/**
+ * Options of `ScaleControl`.
+ * @typedef {object} ScaleControlOptions
+ * @property {string} [position='bottomleft'] The position of the control (one of the map
+ * corners). Possible values are `'topleft'`, `'topright'`, `'bottomleft'` or
+ * `'bottomright'`.
+ * @property {number} [maxWidth=100] Maximum width of the control in pixels. The width is
+ * set dynamically to show round values (e.g. 100, 200, 500).
+ * @property {boolean} [metric=true] Whether to show the metric scale line (m/km).
+ * @property {boolean} [imperial=true] Whether to show the imperial scale line (mi/ft).
+ * @property {boolean} [updateWhenIdle=false] If `true`, the control is updated on
+ * [`moveend`](#map-moveend), otherwise it's always up-to-date (updated on
+ * [`move`](#map-move)).
+ * @extends ControlOptions
+ */
+
+/**
+ * A simple scale control that shows the scale of the current center of screen in metric
+ * (m/km) and imperial (mi/ft) systems.
  *
  * @example
  *
@@ -15,43 +31,32 @@ import {I18n} from '../core/I18n.js';
  * new ScaleControl().addTo(map);
  * ```
  */
-
-// @constructor ScaleControl(options?: ScaleControl options)
-// Creates an scale control with the given options.
 export class ScaleControl extends Control {
 
 	static {
-		// @section
-		// @aka ScaleControl options
 		this.setDefaultOptions({
-			// @option position: String = 'bottomleft'
-			// The position of the control (one of the map corners). Possible values are `'topleft'`,
-			// `'topright'`, `'bottomleft'` or `'bottomright'`
 			position: 'bottomleft',
-
-			// @option maxWidth: Number = 100
-			// Maximum width of the control in pixels. The width is set dynamically to show round values (e.g. 100, 200, 500).
 			maxWidth: 100,
-
-			// @option metric: Boolean = True
-			// Whether to show the metric scale line (m/km).
 			metric: true,
-
-			// @option imperial: Boolean = True
-			// Whether to show the imperial scale line (mi/ft).
 			imperial: true,
-
-			// @option updateWhenIdle: Boolean = false
-			// If `true`, the control is updated on [`moveend`](#map-moveend), otherwise it's always up-to-date (updated on [`move`](#map-move)).
 			updateWhenIdle: false
 		});
 	}
 
+	/**
+	 * Creates a scale control with the given options.
+	 * @param {...ScaleControlOptions} args The options.
+	 */
 	constructor(...args) {
 		super(...args);
 		this.callInitHooks(ScaleControl);
 	}
 
+	/**
+	 * @internal
+	 * @param {MaplairMap} map
+	 * @returns {HTMLElement}
+	 */
 	onAdd(map) {
 		const className = 'maplair-control-scale',
 		container = DomUtil.create('div', className),
@@ -65,6 +70,10 @@ export class ScaleControl extends Control {
 		return container;
 	}
 
+	/**
+	 * @internal
+	 * @param {MaplairMap} map
+	 */
 	onRemove(map) {
 		map.off(this.options.updateWhenIdle ? 'moveend' : 'move', this._update, this);
 	}

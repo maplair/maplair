@@ -2,11 +2,64 @@ import {Handler} from '../../core/Handler.js';
 import * as Util from '../../core/Util.js';
 import {Point} from '../../geometry/Point.js';
 import {CircleMarker} from '../../layer/vector/CircleMarker.js';
+/** @import {MaplairMap} from '../Map.js' */
+/** @import {Layer} from '../../layer/Layer.js' */
+/** @import {LayerEvent} from '../../core/Events.js' */
+/** @import {LatLng} from '../../geo/LatLng.js' */
 
-/*
- * @class DisplaceHandler
- * @inherits Handler
- *
+/**
+ * Options of `DisplaceHandler`.
+ * @typedef {object} DisplaceHandlerOptions
+ * @property {number} [gap=2] Additional pixel distance between the outlines of two
+ * markers.
+ * @property {number} [iterations=80] Maximum number of relaxation passes per relayout.
+ * @property {number} [maxDistance=Infinity] Maximum distance in meters a marker may be
+ * moved away from its true position. Markers which would have to move further stay
+ * overlapping. Meters rather than pixels, since the point of the limit is to bound the
+ * geographic error. A limit in meters also scales itself: it only bites at the zoom
+ * levels where a pixel is worth a lot of ground.
+ */
+
+/**
+ * Map options of `DisplaceHandler`, the interaction options for displacement.
+ * @typedef {object} DisplaceHandlerMapOptions
+ * @lends MaplairMapOptions
+ * @property {boolean|DisplaceHandlerOptions} [displace] Whether to displace
+ * overlapping `CircleMarker`s, either `true` or an object overriding the options of
+ * `DisplaceHandler`. Needs the `DisplaceHandler` to be added to the map, see there.
+ */
+
+/**
+ * Handler of `MaplairMap` for displacement, if added to the map (see `DisplaceHandler`).
+ * @typedef {object} DisplaceHandlerMapProperties
+ * @lends MaplairMap
+ * @property {DisplaceHandler} [displace] The displacement handler, if added with the
+ * name `displace`.
+ */
+
+/**
+ * Options of `CircleMarker` for the displacement by `DisplaceHandler`.
+ * @typedef {object} DisplaceCircleMarkerOptions
+ * @lends CircleMarkerOptions
+ * @property {boolean} [displace] Whether to include this marker in the displacement of
+ * the map, see `DisplaceHandler`.
+ * @property {string} [displaceId] Stable identifier shared across marker instances that
+ * represent the same thing on different layers, so that `DisplaceHandler` puts them at
+ * the same displaced position.
+ */
+
+/**
+ * Whether a layer takes part in the displacement. Only these change the layout, so layers
+ * that merely come and go on top of the markers — the highlight circle around a tapped or
+ * searched bobble, for one — must not trigger a relayout of all of them.
+ * @param {Layer} layer
+ * @returns {boolean}
+ */
+function displaceable(layer) {
+	return layer instanceof CircleMarker && !!layer.options.displace;
+}
+
+/**
  * Cartographic displacement of overlapping `CircleMarker`s: keeps all circle
  * markers created with `displace: true` free of overlap.
  *
@@ -39,39 +92,18 @@ import {CircleMarker} from '../../layer/vector/CircleMarker.js';
  * new CircleMarker(latlng, { displace: true, radius: 6 }).addTo(map);
  * ```
  */
-
-/**
- * Whether a layer takes part in the displacement. Only these change the layout, so layers
- * that merely come and go on top of the markers — the highlight circle around a tapped or
- * searched bobble, for one — must not trigger a relayout of all of them.
- * @param {Layer} layer
- * @returns {boolean}
- */
-function displaceable(layer) {
-	return layer instanceof CircleMarker && !!layer.options.displace;
-}
-
 export class DisplaceHandler extends Handler {
 	static {
 		this.setDefaultOptions({
-			// @option gap: Number = 2
-			// Additional pixel distance between the outlines of two markers.
 			gap: 2,
-
-			// @option iterations: Number = 80
-			// Maximum number of relaxation passes per relayout.
 			iterations: 80,
-
-			// @option maxDistance: Number = Infinity
-			// Maximum distance in meters a marker may be moved away from its true
-			// position. Markers which would have to move further stay overlapping.
-			// Meters rather than pixels, since the point of the limit is to bound the
-			// geographic error. A limit in meters also scales itself: it only bites at
-			// the zoom levels where a pixel is worth a lot of ground.
 			maxDistance: Infinity
 		});
 	}
 
+	/**
+	 * @param {...MaplairMap} args The map.
+	 */
 	constructor(...args) {
 		super(...args);
 		// the map option `displace` is either `true` or an object overriding the defaults
@@ -97,6 +129,9 @@ export class DisplaceHandler extends Handler {
 		this.callInitHooks(DisplaceHandler);
 	}
 
+	/**
+	 * Called when the handler is enabled, adds the event hooks.
+	 */
 	addHooks() {
 		this._map.on('zoomend', this.schedule, this);
 		this._map.on('layeradd', this._onLayerAdd, this);
@@ -105,6 +140,10 @@ export class DisplaceHandler extends Handler {
 		this.schedule();
 	}
 
+	/**
+	 * Called when the handler is disabled, removes the event hooks and restores the
+	 * true positions of the markers.
+	 */
 	removeHooks() {
 		this._map.off('zoomend', this.schedule, this);
 		this._map.off('layeradd', this._onLayerAdd, this);
@@ -374,19 +413,4 @@ export function displace(
 
 	return points;
 }
-
-// @namespace MaplairMap
-// @section Interaction Options
-// @option displace: Boolean|Object = undefined
-// Whether to displace overlapping `CircleMarker`s, either `true` or an object
-// overriding the options of `DisplaceHandler`. Needs the `DisplaceHandler`
-// to be added to the map, see there.
-
-// @namespace CircleMarker
-// @option displace: Boolean = undefined
-// Whether to include this marker in the displacement of the map, see `DisplaceHandler`.
-// @option displaceId: String = undefined
-// Stable identifier shared across marker instances that represent the same
-// thing on different layers, so that `DisplaceHandler` puts them at the same
-// displaced position.
 
