@@ -23,7 +23,7 @@ jobs:
       - working-directory: ./docs
         run: bundle exec jekyll build --strict_front_matter
 
-  lint:
+  check:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -35,19 +35,8 @@ jobs:
           cache: true
 
       - run: vp lint
-
-  test-ssr:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: voidzero-dev/setup-vp@v1.21.2
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: true
-
       - run: vp pack
+
       - run: node ./spec/ssr/ssr_node.js
 
       - uses: denoland/setup-deno@v2
@@ -66,8 +55,8 @@ jobs:
       matrix:
         include:
           - project: chromium
+            extra: --project=chromium-retina
           - project: firefox
-          - project: chromium-retina
           - project: chromium
             os: windows-latest
           - project: webkit
@@ -87,13 +76,13 @@ jobs:
           key: pw-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
 
       - name: Install Playwright browser
-        run: vp exec playwright install ${{ matrix.project == 'chromium-retina' && 'chromium' || matrix.project }}
+        run: vp exec playwright install ${{ matrix.project }}
 
       - name: Run tests on ${{ matrix.project }}
-        run: vp test run --project=${{ matrix.project }}
+        run: vp test run --project=${{ matrix.project }} ${{ matrix.extra }}
 
       - name: Run tests on ${{ matrix.project }} with touch
-        run: vp test run --project=${{ matrix.project }}
+        run: vp test run --project=${{ matrix.project }} ${{ matrix.extra }}
         env:
           VITE_TOUCH: '1'
 
@@ -132,7 +121,7 @@ jobs:
   # maintainer approves it with 2FA: `pnpm stage approve`
   publish-npm:
     if: github.repository_owner == 'maplair' && startsWith(github.ref, 'refs/tags/v')
-    needs: [build-docs, lint, test, test-ssr]
+    needs: [build-docs, check, test]
     permissions:
       contents: read
       id-token: write # for npm trusted publishing
