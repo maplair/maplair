@@ -9,7 +9,7 @@ With everything included, about 63 kB of gzipped JS, it has all the mapping [fea
 Maplair is designed with *simplicity*, *performance* and *usability* in mind.
 It works efficiently across all major desktop and mobile platforms out of the box,
 using only web features that are [Baseline Widely available](https://web.dev/baseline).
-It can be extended with a huge amount of [plugins][],
+It is easy to [extend][],
 has a beautiful, easy to use and [well-documented][] API
 and a simple, readable [source code][] that is a joy to [contribute][] to.
 
@@ -32,7 +32,7 @@ along with [hundreds of other contributors][contributors].
 
  [contributors]: https://github.com/maplair/maplair/graphs/contributors
  [features]: https://maplair.org/#features
- [plugins]: https://maplair.org/plugins.html
+ [extend]: https://maplair.org/examples/extending-1-classes/
  [well-documented]: https://maplair.org/reference.html "Maplair API reference"
  [source code]: https://github.com/maplair/maplair "Maplair GitHub repository"
  [hosted on GitHub]: https://github.com/maplair/maplair
