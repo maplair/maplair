@@ -23,9 +23,10 @@ and push the limits of what's possible with online maps!
 
 ## Authors
 
-Maplair is a fork of [Leaflet](https://leafletjs.com), created in 2010 by [Volodymyr Agafonkin](https://agafonkin.com).
+Maplair is developed by [Simon Legner](https://github.com/simon04)
+as a fork of [Leaflet](https://leafletjs.com), created in 2010 by [Volodymyr Agafonkin](https://agafonkin.com).
 Major contributors include Iván Sánchez Ortega, Dave Leaver, Yohan Boniface, Jon Koops,
-Florian Bischof, Per Liedman, John Firebaugh and Simon Legner,
+Florian Bischof, Per Liedman and John Firebaugh,
 along with [hundreds of other contributors][contributors].
 
 [![CI](https://github.com/maplair/maplair/actions/workflows/main.yml/badge.svg)](https://github.com/maplair/maplair/actions/workflows/main.yml)

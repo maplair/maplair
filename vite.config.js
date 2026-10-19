@@ -17,7 +17,7 @@ const maplairYears = year > 2026 ? `2026-${year}` : '2026';
 
 const banner = `/* @preserve
  * Maplair ${pkg.version}, a JS library for interactive maps. https://maplair.org
- * (c) ${maplairYears} Maplair contributors, (c) 2010-2026 Volodymyr Agafonkin, (c) 2010-2011 CloudMade
+ * (c) ${maplairYears} Simon Legner and Maplair contributors, (c) 2010-2026 Volodymyr Agafonkin, (c) 2010-2011 CloudMade
  */
 `;
 

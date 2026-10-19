@@ -3,16 +3,16 @@
   "version": "4.0.0-alpha.2",
   "homepage": "https://maplair.org/",
   "description": "JavaScript library for mobile-friendly interactive maps",
-  "author": "Volodymyr Agafonkin",
+  "author": "Simon Legner",
   "contributors": [
+    "Volodymyr Agafonkin",
     "Iván Sánchez Ortega",
     "Dave Leaver",
     "Yohan Boniface",
     "Jon Koops",
     "Florian Bischof",
     "Per Liedman",
-    "John Firebaugh",
-    "Simon Legner"
+    "John Firebaugh"
   ],
   "devDependencies": {
     "@e18e/eslint-plugin": "^0.8.1",
