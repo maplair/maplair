@@ -44,23 +44,24 @@ import {Bounds} from '../../geometry/Bounds.js';
  */
 export class WMSTileLayer extends TileLayer {
 
-	static {
-		// the WMS parameters among the options, see `WMSTileLayerOptions`
-		this.prototype.defaultWmsParams = {
-			service: 'WMS',
-			request: 'GetMap',
-			layers: '',
-			styles: '',
-			format: 'image/jpeg',
-			transparent: false,
-			version: '1.1.1'
-		};
+	/**
+	 * The default WMS parameters, which the options override, see `WMSTileLayerOptions`.
+	 * @type {Record<string, any>}
+	 */
+	static defaultWmsParams = {
+		service: 'WMS',
+		request: 'GetMap',
+		layers: '',
+		styles: '',
+		format: 'image/jpeg',
+		transparent: false,
+		version: '1.1.1'
+	};
 
-		this.setDefaultOptions({
-			crs: null,
-			uppercase: false
-		});
-	}
+	static defaultOptions = {
+		crs: null,
+		uppercase: false
+	};
 
 	/**
 	 * Instantiates a WMS tile layer object given a base URL of the WMS service and a WMS
@@ -72,11 +73,11 @@ export class WMSTileLayer extends TileLayer {
 	constructor(url, options) {
 		super(url, options);
 
-		const wmsParams = {...this.defaultWmsParams};
+		const wmsParams = {...WMSTileLayer.defaultWmsParams};
 
 		// Options that are unknown in the prototype chain are considered WMS params.
 		for (const [key, value] of Object.entries(options)) {
-			if (!(key in WMSTileLayer.prototype.options)) {
+			if (!(key in WMSTileLayer.defaultOptions)) {
 				wmsParams[key] = value;
 			}
 		}

@@ -55,16 +55,14 @@ When creating Maplair classes, adhere to these conventions:
 
 ### Setting default options
 
-All classes that extend from `Class` can be provided with default options by calling `setDefaultOptions()` in a [static initialization block](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Static_initialization_blocks):
+All classes that extend from `Class` can be provided with default options in a static `defaultOptions` property:
 
 ```js
 class MyBox extends Class {
-	static {
-		this.setDefaultOptions({
-			width: 1,
-			height: 1
-		});
-	}
+	static defaultOptions = {
+		width: 1,
+		height: 1
+	};
 
 	constructor(name, options) {
 		super();
@@ -84,11 +82,9 @@ These options are inherited from parent classes, and merged automatically:
 
 ```js
 class MyCube extends MyBox {
-	static {
-		this.setDefaultOptions({
-			depth: 1
-		});
-	}
+	static defaultOptions = {
+		depth: 1
+	};
 }
 
 const cube = new MyCube('Blue');
@@ -140,12 +136,10 @@ The hooks of a class run when its constructor calls `this.callInitHooks()`, whic
 
 ```js
 class MyBox extends Class {
-	static {
-		this.setDefaultOptions({
-			width: 1,
-			height: 1
-		});
-	}
+	static defaultOptions = {
+		width: 1,
+		height: 1
+	};
 
 	constructor(options) {
 		super();
@@ -172,11 +166,9 @@ console.log(box.getArea()); // Outputs "50"
 
 ```js
 class MyCube extends MyBox {
-	static {
-		this.setDefaultOptions({
-			depth: 1
-		});
-	}
+	static defaultOptions = {
+		depth: 1
+	};
 
 	_calculateVolume(multiplier/*, arg2, arg3. etc. */) {
 		this._volume = this.options.width * this.options.height * this.options.depth * multiplier;

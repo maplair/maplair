@@ -27,13 +27,11 @@ import * as DomEvent from '../dom/DomEvent.js';
  */
 export class TextControl extends Control {
 
-	static {
-		this.setDefaultOptions({
-			position: 'topright',
-			content: '',
-			className: ''
-		});
-	}
+	static defaultOptions = {
+		position: 'topright',
+		content: '',
+		className: ''
+	};
 
 	/**
 	 * Creates a text control.

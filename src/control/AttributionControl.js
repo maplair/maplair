@@ -45,12 +45,10 @@ const mapleLeaf = '<span aria-hidden="true" class="maplair-attribution-leaf">&#x
  */
 export class AttributionControl extends Control {
 
-	static {
-		this.setDefaultOptions({
-			position: 'bottomright',
-			prefix: null
-		});
-	}
+	static defaultOptions = {
+		position: 'bottomright',
+		prefix: null
+	};
 
 	/**
 	 * Creates an attribution control.

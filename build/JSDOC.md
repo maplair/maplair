@@ -109,7 +109,7 @@ this._latlng = …            // private: no JSDoc
 ## Options
 
 Options are documented by a typedef next to the class, mirroring the defaults
-passed to `setDefaultOptions()` (which stays as it is, without option comments).
+of the static `defaultOptions` (which stays as it is, without option comments).
 It extends the options of the superclass with `@extends`, which comes after the
 `@property` tags (TypeScript ignores the properties after it):
 

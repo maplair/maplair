@@ -34,18 +34,16 @@ import {Point} from '../../geometry/Point.js';
  */
 export class DivIcon extends Icon {
 
-	static {
-		this.setDefaultOptions({
-			iconSize: [12, 12], // also can be set through CSS
+	static defaultOptions = {
+		iconSize: [12, 12], // also can be set through CSS
 
-			// iconAnchor: (Point),
-			// popupAnchor: (Point),
+		// iconAnchor: (Point),
+		// popupAnchor: (Point),
 
-			html: false,
-			bgPos: null,
-			className: 'maplair-div-icon'
-		});
-	}
+		html: false,
+		bgPos: null,
+		className: 'maplair-div-icon'
+	};
 
 	/**
 	 * Creates a `DivIcon` instance with the given options.

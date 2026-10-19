@@ -135,13 +135,11 @@ const mapFullscreenMethods = {
  */
 export class FullscreenControl extends Control {
 
-	static {
-		this.setDefaultOptions({
-			position: 'topleft',
-			enterText: enterIcon,
-			exitText: exitIcon
-		});
-	}
+	static defaultOptions = {
+		position: 'topleft',
+		enterText: enterIcon,
+		exitText: exitIcon
+	};
 
 	/**
 	 * Creates a fullscreen control.

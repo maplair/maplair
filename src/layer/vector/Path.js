@@ -44,25 +44,23 @@ import * as Util from '../../core/Util.js';
  */
 export class Path extends Layer {
 
-	static {
-		this.setDefaultOptions({
-			stroke: true,
-			color: '#3388ff',
-			weight: 3,
-			opacity: 1,
-			lineCap: 'round',
-			lineJoin: 'round',
-			dashArray: null,
-			dashOffset: null,
-			fill: false,
-			fillColor: null,
-			fillOpacity: 0.2,
-			fillRule: 'evenodd',
-			// className: '',
-			interactive: true,
-			bubblingPointerEvents: true
-		});
-	}
+	static defaultOptions = {
+		stroke: true,
+		color: '#3388ff',
+		weight: 3,
+		opacity: 1,
+		lineCap: 'round',
+		lineJoin: 'round',
+		dashArray: null,
+		dashOffset: null,
+		fill: false,
+		fillColor: null,
+		fillOpacity: 0.2,
+		fillRule: 'evenodd',
+		// className: '',
+		interactive: true,
+		bubblingPointerEvents: true
+	};
 
 	/**
 	 * Gets the renderer of the path from the map, before it is added.

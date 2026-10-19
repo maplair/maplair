@@ -521,7 +521,7 @@ function renderClass(item) {
 	}
 
 	// static members
-	const statics = members.filter(m => m.isStatic);
+	const statics = members.filter(m => m.isStatic && m.name !== 'defaultOptions');
 	if (statics.length) {
 		parts.push(`<h3 id="${uniqueId(`${id}-function`)}">Static members</h3>`);
 		const fns = statics.filter(m => m.kind === 'method'), props = statics.filter(m => m.kind === 'property');

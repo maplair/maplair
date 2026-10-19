@@ -275,31 +275,29 @@ import {TapDragZoomHandler} from './handler/TapDragZoomHandler.js';
  */
 export class MaplairMap extends Evented {
 
-	static {
-		this.setDefaultOptions({
-			crs: EPSG3857,
-			center: undefined,
-			zoom: undefined,
-			minZoom: undefined,
-			maxZoom: undefined,
-			layers: [],
-			ariaLabel: undefined,
-			maxBounds: undefined,
-			renderer: undefined,
+	static defaultOptions = {
+		crs: EPSG3857,
+		center: undefined,
+		zoom: undefined,
+		minZoom: undefined,
+		maxZoom: undefined,
+		layers: [],
+		ariaLabel: undefined,
+		maxBounds: undefined,
+		renderer: undefined,
 
-			zoomAnimation: !Browser.reducedMotion,
-			zoomAnimationThreshold: 4,
-			continuousZoom: false,
-			fadeAnimation: !Browser.reducedMotion,
-			markerZoomAnimation: true,
-			markerCulling: false,
-			transform3DLimit: 8388608, // Precision limit of a 32-bit float
+		zoomAnimation: !Browser.reducedMotion,
+		zoomAnimationThreshold: 4,
+		continuousZoom: false,
+		fadeAnimation: !Browser.reducedMotion,
+		markerZoomAnimation: true,
+		markerCulling: false,
+		transform3DLimit: 8388608, // Precision limit of a 32-bit float
 
-			zoomSnap: 1,
-			zoomDelta: 1,
-			trackResize: true
-		});
-	}
+		zoomSnap: 1,
+		zoomDelta: 1,
+		trackResize: true
+	};
 
 	/**
 	 * Instantiates a map object given the DOM ID of a `<div>` element or the element

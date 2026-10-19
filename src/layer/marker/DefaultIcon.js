@@ -29,25 +29,23 @@ const MARKER_ICON_RE = /^(.*)marker-icon\.svg$/;
  * releases.
  *
  * In order to customize the default icon, just change the properties of
- * `DefaultIcon.prototype.options` (which is a set of `Icon options`).
+ * `DefaultIcon.defaultOptions` (which is a set of `Icon options`).
  *
  * If you want to _completely_ replace the default icon, override the
- * `Marker.prototype.options.icon` with your own icon instead.
+ * `Marker.defaultOptions.icon` with your own icon instead.
  */
 export class DefaultIcon extends Icon {
 
-	static {
-		this.setDefaultOptions({
-			iconUrl: 'marker-icon.svg',
-			iconRetinaUrl: 'marker-icon.svg',
-			shadowUrl: 'marker-shadow.svg',
-			iconSize: [25, 41],
-			iconAnchor: [12, 41],
-			popupAnchor: [1, -34],
-			tooltipAnchor: [16, -28],
-			shadowSize: [41, 41]
-		});
-	}
+	static defaultOptions = {
+		iconUrl: 'marker-icon.svg',
+		iconRetinaUrl: 'marker-icon.svg',
+		shadowUrl: 'marker-shadow.svg',
+		iconSize: [25, 41],
+		iconAnchor: [12, 41],
+		popupAnchor: [1, -34],
+		tooltipAnchor: [16, -28],
+		shadowSize: [41, 41]
+	};
 
 	/**
 	 * Creates the default icon, optionally with changed options.

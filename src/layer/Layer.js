@@ -249,14 +249,12 @@ const mapLayerMethods = {
  */
 export class Layer extends Evented {
 
-	static {
-		this.setDefaultOptions({
-			pane: 'overlayPane',
-			attribution: null,
-			attributionOrder: 0,
-			bubblingPointerEvents: true
-		});
-	}
+	static defaultOptions = {
+		pane: 'overlayPane',
+		attribution: null,
+		attributionOrder: 0,
+		bubblingPointerEvents: true
+	};
 
 	/**
 	 * Adds the layer to the given map or layer group.

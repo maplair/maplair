@@ -125,22 +125,20 @@ import {I18n} from '../core/I18n.js';
  */
 export class LayersControl extends Control {
 
-	static {
-		this.setDefaultOptions({
-			collapsed: true,
-			inline: false,
-			groupBy: undefined,
-			toggleContent: undefined,
-			collapseDelay: 0,
-			position: 'topright',
-			autoZIndex: true,
-			hideSingleBase: false,
-			sortLayers: false,
-			sortFunction(layerA, layerB, nameA, nameB) {
-				return nameA < nameB ? -1 : (nameB < nameA ? 1 : 0);
-			}
-		});
-	}
+	static defaultOptions = {
+		collapsed: true,
+		inline: false,
+		groupBy: undefined,
+		toggleContent: undefined,
+		collapseDelay: 0,
+		position: 'topright',
+		autoZIndex: true,
+		hideSingleBase: false,
+		sortLayers: false,
+		sortFunction(layerA, layerB, nameA, nameB) {
+			return nameA < nameB ? -1 : (nameB < nameA ? 1 : 0);
+		}
+	};
 
 	/**
 	 * Creates a layers control with the given layers. Base layers will be switched with

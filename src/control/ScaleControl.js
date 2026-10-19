@@ -33,15 +33,13 @@ import {I18n} from '../core/I18n.js';
  */
 export class ScaleControl extends Control {
 
-	static {
-		this.setDefaultOptions({
-			position: 'bottomleft',
-			maxWidth: 100,
-			metric: true,
-			imperial: true,
-			updateWhenIdle: false
-		});
-	}
+	static defaultOptions = {
+		position: 'bottomleft',
+		maxWidth: 100,
+		metric: true,
+		imperial: true,
+		updateWhenIdle: false
+	};
 
 	/**
 	 * Creates a scale control with the given options.

@@ -160,19 +160,17 @@ function intervalTimes(interval, period) {
  */
 export class TimeControl extends Control {
 
-	static {
-		this.setDefaultOptions({
-			position: 'bottomleft',
-			times: undefined,
-			interval: undefined,
-			period: 'P1D',
-			time: undefined,
-			layers: [],
-			transitionTime: 1000,
-			loop: false,
-			formatTime: undefined
-		});
-	}
+	static defaultOptions = {
+		position: 'bottomleft',
+		times: undefined,
+		interval: undefined,
+		period: 'P1D',
+		time: undefined,
+		layers: [],
+		transitionTime: 1000,
+		loop: false,
+		formatTime: undefined
+	};
 
 	/**
 	 * Creates a time control.

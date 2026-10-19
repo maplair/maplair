@@ -63,13 +63,11 @@ import Browser from '../../core/Browser.js';
  */
 export class Icon extends Class {
 
-	static {
-		this.setDefaultOptions({
-			popupAnchor: [0, 0],
-			tooltipAnchor: [0, 0],
-			crossOrigin: false
-		});
-	}
+	static defaultOptions = {
+		popupAnchor: [0, 0],
+		tooltipAnchor: [0, 0],
+		crossOrigin: false
+	};
 
 	/**
 	 * Creates an icon instance with the given options.

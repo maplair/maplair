@@ -138,21 +138,19 @@ function delay(ms, signal) {
  */
 export class SearchControl extends Control {
 
-	static {
-		this.setDefaultOptions({
-			position: 'topleft',
-			geocoder: undefined,
-			collapsed: true,
-			autoComplete: false,
-			autoCompleteDelay: 250,
-			minLength: 3,
-			zoom: 16,
-			marker: true,
-			clearOnMapClick: false,
-			placeholder: undefined,
-			noResultsText: undefined
-		});
-	}
+	static defaultOptions = {
+		position: 'topleft',
+		geocoder: undefined,
+		collapsed: true,
+		autoComplete: false,
+		autoCompleteDelay: 250,
+		minLength: 3,
+		zoom: 16,
+		marker: true,
+		clearOnMapClick: false,
+		placeholder: undefined,
+		noResultsText: undefined
+	};
 
 	/**
 	 * Returns a [geocoder](#searchcontrol-geocoder) searching with

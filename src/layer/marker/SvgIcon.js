@@ -55,14 +55,12 @@ function svgElement(name, attributes, parent) {
  */
 export class SvgIcon extends DefaultIcon {
 
-	static {
-		this.setDefaultOptions({
-			color: '#d4462c',
-			glyph: undefined,
-			glyphPath: undefined,
-			glyphColor: 'white'
-		});
-	}
+	static defaultOptions = {
+		color: '#d4462c',
+		glyph: undefined,
+		glyphPath: undefined,
+		glyphColor: 'white'
+	};
 
 	/**
 	 * Creates an `SvgIcon` with the given options.

@@ -45,12 +45,10 @@ import {Bounds} from '../geometry/Bounds.js';
  */
 export class BlanketOverlay extends Layer {
 
-	static {
-		this.setDefaultOptions({
-			padding: 0.1,
-			continuous: false,
-		});
-	}
+	static defaultOptions = {
+		padding: 0.1,
+		continuous: false,
+	};
 
 	/**
 	 * @param {BlanketOverlayOptions} [options]

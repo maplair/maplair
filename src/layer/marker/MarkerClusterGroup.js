@@ -75,15 +75,13 @@ import {I18n} from '../../core/I18n.js';
  */
 export class MarkerClusterGroup extends FeatureGroup {
 
-	static {
-		this.setDefaultOptions({
-			maxClusterRadius: 80,
-			disableClusteringAtZoom: undefined,
-			zoomToBoundsOnClick: true,
-			spiderfyOnMaxZoom: true,
-			iconCreateFunction: undefined
-		});
-	}
+	static defaultOptions = {
+		maxClusterRadius: 80,
+		disableClusteringAtZoom: undefined,
+		zoomToBoundsOnClick: true,
+		spiderfyOnMaxZoom: true,
+		iconCreateFunction: undefined
+	};
 
 	/**
 	 * Creates a cluster group with the given layers.

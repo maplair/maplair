@@ -93,13 +93,11 @@ function displaceable(layer) {
  * ```
  */
 export class DisplaceHandler extends Handler {
-	static {
-		this.setDefaultOptions({
-			gap: 2,
-			iterations: 80,
-			maxDistance: Infinity
-		});
-	}
+	static defaultOptions = {
+		gap: 2,
+		iterations: 80,
+		maxDistance: Infinity
+	};
 
 	/**
 	 * @param {...MaplairMap} args The map.
@@ -317,7 +315,7 @@ export class DisplaceHandler extends Handler {
 export function displace(
 	points,
 	minSeparation,
-	{iterations = DisplaceHandler.prototype.options.iterations, maxDisplacement = Infinity} = {},
+	{iterations = DisplaceHandler.defaultOptions.iterations, maxDisplacement = Infinity} = {},
 ) {
 	const n = points.length;
 	if (n < 2) { return points; }

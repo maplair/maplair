@@ -84,31 +84,29 @@ import {MarkerDrag} from './Marker.Drag.js';
  */
 export class Marker extends Layer {
 
-	static {
-		this.setDefaultOptions({
-			icon: new DefaultIcon(),
+	static defaultOptions = {
+		icon: new DefaultIcon(),
 
-			// Option inherited from "Interactive layer" abstract class
-			interactive: true,
+		// Option inherited from "Interactive layer" abstract class
+		interactive: true,
 
-			keyboard: true,
-			title: '',
-			alt: 'Marker',
-			zIndexOffset: 0,
-			opacity: 1,
-			riseOnHover: false,
-			riseOffset: 250,
-			pane: 'markerPane',
-			shadowPane: 'shadowPane',
-			shadow: true,
-			bubblingPointerEvents: false,
-			autoPanOnFocus: true,
-			draggable: false,
-			autoPan: false,
-			autoPanPadding: [50, 50],
-			autoPanSpeed: 10
-		});
-	}
+		keyboard: true,
+		title: '',
+		alt: 'Marker',
+		zIndexOffset: 0,
+		opacity: 1,
+		riseOnHover: false,
+		riseOffset: 250,
+		pane: 'markerPane',
+		shadowPane: 'shadowPane',
+		shadow: true,
+		bubblingPointerEvents: false,
+		autoPanOnFocus: true,
+		draggable: false,
+		autoPan: false,
+		autoPanPadding: [50, 50],
+		autoPanSpeed: 10
+	};
 
 	/**
 	 * Instantiates a Marker object given a geographical point and optionally an options

@@ -57,11 +57,9 @@ import * as PolyUtil from '../../geometry/PolyUtil.js';
  */
 export class Polygon extends Polyline {
 
-	static {
-		this.setDefaultOptions({
-			fill: true
-		});
-	}
+	static defaultOptions = {
+		fill: true
+	};
 
 	/**
 	 * Instantiates a polygon object given an array of geographical points (or arrays

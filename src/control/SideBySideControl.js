@@ -43,11 +43,9 @@ import {I18n} from '../core/I18n.js';
  */
 export class SideBySideControl extends Control {
 
-	static {
-		this.setDefaultOptions({
-			ratio: 0.5
-		});
-	}
+	static defaultOptions = {
+		ratio: 0.5
+	};
 
 	/**
 	 * Creates a side-by-side control for the given layers (which have to be added to the

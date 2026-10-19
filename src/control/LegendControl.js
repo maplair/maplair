@@ -47,14 +47,12 @@ const svgNS = 'http://www.w3.org/2000/svg';
 
 export class LegendControl extends Control {
 
-	static {
-		this.setDefaultOptions({
-			position: 'bottomright',
-			collapsed: false,
-			featureCount: false,
-			bar: false
-		});
-	}
+	static defaultOptions = {
+		position: 'bottomright',
+		collapsed: false,
+		featureCount: false,
+		bar: false
+	};
 
 	/**
 	 * Creates a legend control.
@@ -236,7 +234,7 @@ function formatCount({count, share}) {
 function createPatch(layer, symbol, styled) {
 	while (layer?.getLayers) { layer = layer.getLayers()[0]; }
 	if (!layer?.setStyle) { layer = undefined; }
-	const base = layer?.options ?? CircleMarker.prototype.options,
+	const base = layer?.options ?? new CircleMarker([0, 0]).options,
 	options = Object.assign(Object.create(base), layer && styled ? {} : symbol),
 	svg = document.createElementNS(svgNS, 'svg');
 	svg.setAttribute('class', 'maplair-control-legend-patch');

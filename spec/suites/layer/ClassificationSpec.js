@@ -73,7 +73,7 @@ describe('Classification', () => {
 		const [first, second] = layer.getLayers();
 		expect(first.options.fillColor).to.equal('#33ee33');
 		expect(first.options.color).to.equal('#ffffff');
-		expect(second.options.fillColor).to.equal(CircleMarker.prototype.options.fillColor);
+		expect(second.options.fillColor).to.equal(CircleMarker.defaultOptions.fillColor);
 	});
 
 	it('merges classes with the same legend label and symbol into one legend item', () => {

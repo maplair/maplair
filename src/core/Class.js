@@ -12,28 +12,24 @@ import * as Util from './Util.js';
  *
  * <h3 id="class-options">Options</h3>
  *
- * `options` is a special property that will be merged with the parent class options
- * instead of overriding them completely, which makes managing configuration of objects
- * and default values convenient. Use `setDefaultOptions()` in a static block to
- * configure options:
+ * `options` is a special property whose defaults, the static `defaultOptions` of the
+ * class, are merged with those of the parent class instead of overriding them
+ * completely, which makes managing configuration of objects and default values
+ * convenient:
  *
  * ```js
  * class MyClass extends Class {
- *     static {
- *         this.setDefaultOptions({
- *             myOption1: 'foo',
- *             myOption2: 'bar'
- *         });
- *     }
+ *     static defaultOptions = {
+ *         myOption1: 'foo',
+ *         myOption2: 'bar'
+ *     };
  * }
  *
  * class MyChildClass extends MyClass {
- *     static {
- *         this.setDefaultOptions({
- *             myOption1: 'baz',
- *             myOption3: 5
- *         });
- *     }
+ *     static defaultOptions = {
+ *         myOption1: 'baz',
+ *         myOption3: 5
+ *     };
  * }
  *
  * const a = new MyChildClass();
@@ -48,12 +44,10 @@ import * as Util from './Util.js';
  *
  * ```js
  * class MyClass extends Class {
- *     static {
- *         this.setDefaultOptions({
- *             foo: 'bar',
- *             bla: 5
- *         });
- *     }
+ *     static defaultOptions = {
+ *         foo: 'bar',
+ *         bla: 5
+ *     };
  *
  *     constructor(options) {
  *         super();
@@ -165,12 +159,12 @@ export class Class {
 	 * @returns {T}
 	 */
 	static include(props) {
-		const parentOptions = this.prototype.options;
 		for (const k of getAllMethodNames(props)) {
-			this.prototype[k] = props[k];
+			if (k !== 'constructor' && k !== 'options') {
+				this.prototype[k] = props[k];
+			}
 		}
 		if (props.options) {
-			this.prototype.options = parentOptions;
 			this.mergeOptions(props.options);
 		}
 		return this;
@@ -183,33 +177,35 @@ export class Class {
 				for (const k of Object.getOwnPropertyNames(obj)) {
 					yield k;
 				}
-			} while ((obj = Object.getPrototypeOf(obj)) !== undefined);
+			} while ((obj = Object.getPrototypeOf(obj)) !== null);
 		}
 	}
 
 	/**
-	 * Configures the [default `options`](#class-options) on the prototype of this class.
-	 * @template {typeof Class} T
-	 * @this {T}
-	 * @param {object} options
-	 * @returns {T}
-	 */
-	static setDefaultOptions(options) {
-		Util.setOptions(this.prototype, options);
-		return this;
-	}
-
-	/**
-	 * [Merges `options`](#class-options) into the defaults of the class.
+	 * [Merges `options`](#class-options) into the `defaultOptions` of the class.
 	 * @template {typeof Class} T
 	 * @this {T}
 	 * @param {object} options
 	 * @returns {T}
 	 */
 	static mergeOptions(options) {
-		this.prototype.options ??= {};
-		Object.assign(this.prototype.options, options);
+		if (!Object.hasOwn(this, 'defaultOptions')) {
+			this.defaultOptions = Object.create(this.defaultOptions ?? Object.prototype);
+		}
+		Object.assign(this.defaultOptions, options);
 		return this;
+	}
+
+	/**
+	 * Deprecated alias of `mergeOptions()`, kept for code written for Maplair 4.0.
+	 * @deprecated Use `static defaultOptions = {…}` or `mergeOptions()`.
+	 * @template {typeof Class} T
+	 * @this {T}
+	 * @param {object} options
+	 * @returns {T}
+	 */
+	static setDefaultOptions(options) {
+		return this.mergeOptions(options);
 	}
 
 	/**

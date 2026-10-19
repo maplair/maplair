@@ -41,13 +41,11 @@ import {I18n} from '../core/I18n.js';
  */
 export class ZoomControl extends Control {
 
-	static {
-		this.setDefaultOptions({
-			position: 'topleft',
-			zoomInText: '<span aria-hidden="true">+</span>',
-			zoomOutText: '<span aria-hidden="true">&#x2212;</span>',
-		});
-	}
+	static defaultOptions = {
+		position: 'topleft',
+		zoomInText: '<span aria-hidden="true">+</span>',
+		zoomOutText: '<span aria-hidden="true">&#x2212;</span>',
+	};
 
 	/**
 	 * Creates a zoom control.

@@ -374,16 +374,14 @@ const layerTooltipMethods = {
  */
 export class Tooltip extends DivOverlay {
 
-	static {
-		this.setDefaultOptions({
-			pane: 'tooltipPane',
-			offset: [0, 0],
-			direction: 'auto',
-			permanent: false,
-			sticky: false,
-			opacity: 0.9
-		});
-	}
+	static defaultOptions = {
+		pane: 'tooltipPane',
+		offset: [0, 0],
+		direction: 'auto',
+		permanent: false,
+		sticky: false,
+		opacity: 0.9
+	};
 
 	/**
 	 * Instantiates a `Tooltip` object given an optional `options` object that describes

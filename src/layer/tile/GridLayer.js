@@ -144,27 +144,25 @@ import {LatLngBounds} from '../../geo/LatLngBounds.js';
  */
 export class GridLayer extends Layer {
 
-	static {
-		this.setDefaultOptions({
-			tileSize: 256,
-			opacity: 1,
-			placeholder: null,
-			updateWhenIdle: Browser.reducedMotion,
-			updateWhenZooming: true,
-			updateInterval: Browser.reducedMotion ? 5000 : 200,
-			zIndex: 1,
-			bounds: null,
-			minZoom: 0,
-			maxZoom: undefined,
-			maxNativeZoom: undefined,
-			minNativeZoom: undefined,
-			noWrap: false,
-			pane: 'tilePane',
-			className: '',
-			pixelated: false,
-			keepBuffer: 2
-		});
-	}
+	static defaultOptions = {
+		tileSize: 256,
+		opacity: 1,
+		placeholder: null,
+		updateWhenIdle: Browser.reducedMotion,
+		updateWhenZooming: true,
+		updateInterval: Browser.reducedMotion ? 5000 : 200,
+		zIndex: 1,
+		bounds: null,
+		minZoom: 0,
+		maxZoom: undefined,
+		maxNativeZoom: undefined,
+		minNativeZoom: undefined,
+		noWrap: false,
+		pane: 'tilePane',
+		className: '',
+		pixelated: false,
+		keepBuffer: 2
+	};
 
 	/**
 	 * Creates a new instance of GridLayer with the supplied options.

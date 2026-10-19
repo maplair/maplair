@@ -32,12 +32,10 @@ import {Bounds} from '../../geometry/Bounds.js';
  */
 export class CircleMarker extends Path {
 
-	static {
-		this.setDefaultOptions({
-			fill: true,
-			radius: 10
-		});
-	}
+	static defaultOptions = {
+		fill: true,
+		radius: 10
+	};
 
 	/**
 	 * Instantiates a circle marker object given a geographical point, and an optional

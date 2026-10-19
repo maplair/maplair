@@ -39,17 +39,15 @@ import * as Util from '../core/Util.js';
  */
 export class HeatLayer extends BlanketOverlay {
 
-	static {
-		this.setDefaultOptions({
-			radius: 25,
-			blur: 15,
-			max: 1,
-			maxZoom: undefined,
-			minOpacity: 0.05,
-			gradient: {0.4: 'blue', 0.6: 'cyan', 0.7: 'lime', 0.8: 'yellow', 1: 'red'},
-			pane: 'overlayPane'
-		});
-	}
+	static defaultOptions = {
+		radius: 25,
+		blur: 15,
+		max: 1,
+		maxZoom: undefined,
+		minOpacity: 0.05,
+		gradient: {0.4: 'blue', 0.6: 'cyan', 0.7: 'lime', 0.8: 'yellow', 1: 'red'},
+		pane: 'overlayPane'
+	};
 
 	/**
 	 * Creates a heatmap of the given points: `LatLng`s or arrays

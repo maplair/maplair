@@ -89,22 +89,20 @@ import {I18n} from '../../core/I18n.js';
  */
 export class TileLayer extends GridLayer {
 
-	static {
-		this.setDefaultOptions({
-			minZoom: 0,
-			maxZoom: 18,
-			subdomains: 'abc',
-			errorTileUrl: '',
-			zoomOffset: 0,
-			tms: false,
-			zoomReverse: false,
-			detectRetina: false,
-			crossOrigin: false,
-			referrerPolicy: 'strict-origin-when-cross-origin',
-			fetchOptions: null
+	static defaultOptions = {
+		minZoom: 0,
+		maxZoom: 18,
+		subdomains: 'abc',
+		errorTileUrl: '',
+		zoomOffset: 0,
+		tms: false,
+		zoomReverse: false,
+		detectRetina: false,
+		crossOrigin: false,
+		referrerPolicy: 'strict-origin-when-cross-origin',
+		fetchOptions: null
 
-		});
-	}
+	};
 
 	/**
 	 * Instantiates a tile layer object given a [URL template](#tilelayer) and optionally an

@@ -40,11 +40,9 @@ const DASH_SEPARATOR_RE = /[, ]+/;
  */
 export class Canvas extends Renderer {
 
-	static {
-		this.setDefaultOptions({
-			tolerance: 0
-		});
-	}
+	static defaultOptions = {
+		tolerance: 0
+	};
 
 	/**
 	 * Creates a Canvas renderer with the given options.

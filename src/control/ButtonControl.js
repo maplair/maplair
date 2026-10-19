@@ -68,17 +68,15 @@ import * as DomEvent from '../dom/DomEvent.js';
  */
 export class ButtonControl extends Control {
 
-	static {
-		this.setDefaultOptions({
-			position: 'topleft',
-			content: '',
-			title: '',
-			onClick: undefined,
-			states: undefined,
-			className: '',
-			accessKey: ''
-		});
-	}
+	static defaultOptions = {
+		position: 'topleft',
+		content: '',
+		title: '',
+		onClick: undefined,
+		states: undefined,
+		className: '',
+		accessKey: ''
+	};
 
 	/**
 	 * Creates a button control.

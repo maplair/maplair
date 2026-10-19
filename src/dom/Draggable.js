@@ -41,11 +41,9 @@ import * as PointerEvents from './DomEvent.PointerEvents.js';
  */
 export class Draggable extends Evented {
 
-	static {
-		this.setDefaultOptions({
-			clickTolerance: 3
-		});
-	}
+	static defaultOptions = {
+		clickTolerance: 3
+	};
 
 	/**
 	 * Creates a `Draggable` object for moving `element` when you start dragging the

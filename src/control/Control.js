@@ -99,12 +99,10 @@ const controlOrders = new WeakMap();
  */
 export class Control extends Class {
 
-	static {
-		this.setDefaultOptions({
-			position: 'topright',
-			order: 0
-		});
-	}
+	static defaultOptions = {
+		position: 'topright',
+		order: 0
+	};
 
 	/**
 	 * @param {ControlOptions} [options]

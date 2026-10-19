@@ -317,25 +317,23 @@ const layerPopupMethods = {
  */
 export class Popup extends DivOverlay {
 
-	static {
-		this.setDefaultOptions({
-			pane: 'popupPane',
-			offset: [0, 7],
-			maxWidth: 300,
-			minWidth: 50,
-			maxHeight: null,
-			autoPan: !Browser.reducedMotion,
-			autoPanPaddingTopLeft: null,
-			autoPanPaddingBottomRight: null,
-			autoPanPadding: [5, 5],
-			keepInView: false,
-			closeButton: true,
-			autoClose: true,
-			closeOnEscapeKey: true,
-			className: '',
-			trackResize: true,
-		});
-	}
+	static defaultOptions = {
+		pane: 'popupPane',
+		offset: [0, 7],
+		maxWidth: 300,
+		minWidth: 50,
+		maxHeight: null,
+		autoPan: !Browser.reducedMotion,
+		autoPanPaddingTopLeft: null,
+		autoPanPaddingBottomRight: null,
+		autoPanPadding: [5, 5],
+		keepInView: false,
+		closeButton: true,
+		autoClose: true,
+		closeOnEscapeKey: true,
+		className: '',
+		trackResize: true,
+	};
 
 	/**
 	 * Instantiates a `Popup` object given an optional `options` object that describes

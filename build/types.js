@@ -406,6 +406,12 @@ function completeDeclarations(source) {
 					text: `    /** The options of the ${statement.name.text}, see [the options](#${optionsName.toLowerCase()}). */\n    options: ${optionsName};\n`
 				});
 			}
+			// the defaults of the options, typed by them, as subclasses override some of them
+			const defaults = statement.members.find(m => ts.isPropertyDeclaration(m) && m.name.getText() === 'defaultOptions');
+			if (defaults?.type) {
+				const type = interfaces.has(optionsName) || localNames.has(optionsName) ? `Partial<${optionsName}>` : 'Record<string, any>';
+				edits.push({start: defaults.type.getStart(), end: defaults.type.getEnd(), text: type});
+			}
 		}
 	}
 

@@ -44,11 +44,9 @@ const compass = '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 
  */
 export class RotateControl extends Control {
 
-	static {
-		this.setDefaultOptions({
-			position: 'topleft'
-		});
-	}
+	static defaultOptions = {
+		position: 'topleft'
+	};
 
 	/**
 	 * Creates a rotate control.

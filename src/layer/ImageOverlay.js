@@ -58,19 +58,17 @@ import * as DomUtil from '../dom/DomUtil.js';
  */
 export class ImageOverlay extends Layer {
 
-	static {
-		this.setDefaultOptions({
-			opacity: 1,
-			alt: '',
-			interactive: false,
-			crossOrigin: false,
-			errorOverlayUrl: '',
-			zIndex: 1,
-			className: '',
-			pixelated: false,
-			decoding: 'auto'
-		});
-	}
+	static defaultOptions = {
+		opacity: 1,
+		alt: '',
+		interactive: false,
+		crossOrigin: false,
+		errorOverlayUrl: '',
+		zIndex: 1,
+		className: '',
+		pixelated: false,
+		decoding: 'auto'
+	};
 
 	/**
 	 * Instantiates an image overlay object given the URL of the image (or an image

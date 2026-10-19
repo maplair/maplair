@@ -81,16 +81,14 @@ const layerDivOverlayMethods = {
  */
 export class DivOverlay extends Layer {
 
-	static {
-		this.setDefaultOptions({
-			interactive: false,
-			offset: [0, 0],
-			className: '',
-			pane: undefined,
-			overflow: false,
-			content: ''
-		});
-	}
+	static defaultOptions = {
+		interactive: false,
+		offset: [0, 0],
+		className: '',
+		pane: undefined,
+		overflow: false,
+		content: ''
+	};
 
 	/**
 	 * Instantiates an overlay given an optional `options` object that describes its

@@ -53,12 +53,10 @@ import {Point} from '../../geometry/Point.js';
  */
 export class Polyline extends Path {
 
-	static {
-		this.setDefaultOptions({
-			smoothFactor: 0.5,
-			noClip: false
-		});
-	}
+	static defaultOptions = {
+		smoothFactor: 0.5,
+		noClip: false
+	};
 
 	/**
 	 * Instantiates a polyline object given an array of geographical points and

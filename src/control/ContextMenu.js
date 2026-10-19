@@ -58,11 +58,9 @@ import {Layer} from '../layer/Layer.js';
  */
 export class ContextMenu extends Class {
 
-	static {
-		this.setDefaultOptions({
-			className: ''
-		});
-	}
+	static defaultOptions = {
+		className: ''
+	};
 
 	/**
 	 * Creates a context menu. Each item is an object with `text`, `callback` and the

@@ -45,16 +45,14 @@ import * as Util from '../core/Util.js';
  */
 export class VideoOverlay extends ImageOverlay {
 
-	static {
-		this.setDefaultOptions({
-			autoplay: true,
-			controls: false,
-			loop: true,
-			keepAspectRatio: true,
-			muted: false,
-			playsInline: true
-		});
-	}
+	static defaultOptions = {
+		autoplay: true,
+		controls: false,
+		loop: true,
+		keepAspectRatio: true,
+		muted: false,
+		playsInline: true
+	};
 
 	/**
 	 * Instantiates a video overlay object given the URL of the video (or array of

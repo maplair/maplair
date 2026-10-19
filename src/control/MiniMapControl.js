@@ -43,17 +43,15 @@ import {Polygon} from '../layer/vector/Polygon.js';
  */
 export class MiniMapControl extends Control {
 
-	static {
-		this.setDefaultOptions({
-			position: 'bottomright',
-			width: 150,
-			height: 150,
-			zoomOffset: -5,
-			collapsed: false,
-			rectangleOptions: {color: '#ff7800', weight: 1, fillOpacity: 0.2},
-			mapOptions: {}
-		});
-	}
+	static defaultOptions = {
+		position: 'bottomright',
+		width: 150,
+		height: 150,
+		zoomOffset: -5,
+		collapsed: false,
+		rectangleOptions: {color: '#ff7800', weight: 1, fillOpacity: 0.2},
+		mapOptions: {}
+	};
 
 	/**
 	 * Creates an overview map control showing `layer` (which must not be on another map).
