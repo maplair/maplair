@@ -164,7 +164,7 @@ export class Draggable extends Evented {
 
 			this._element.ownerDocument.body.classList.add('maplair-dragging');
 
-			this._lastTarget = e.target ?? e.srcElement;
+			this._lastTarget = e.target;
 			this._lastTarget.classList.add('maplair-drag-target');
 		}
 

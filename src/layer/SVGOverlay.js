@@ -47,8 +47,5 @@ export class SVGOverlay extends ImageOverlay {
 		el.classList.add('maplair-image-layer');
 		if (this._zoomAnimated) { el.classList.add('maplair-zoom-animated'); }
 		if (this.options.className) { el.classList.add(...Util.splitWords(this.options.className)); }
-
-		el.onselectstart = Util.falseFn;
-		el.onpointermove = Util.falseFn;
 	}
 }

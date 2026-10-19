@@ -1530,6 +1530,7 @@ export class MaplairMap extends Evented {
 
 		this._fadeAnimated = this.options.fadeAnimation;
 
+		// maplair-touch and maplair-retina have no rules in maplair.css, but custom stylesheets may still target them
 		const classes = ['maplair-container', 'maplair-touch'];
 
 		if (Browser.retina) { classes.push('maplair-retina'); }
@@ -1809,7 +1810,7 @@ export class MaplairMap extends Evented {
 	_findEventTargets(e, type) {
 		let targets = [],
 		target,
-		src = e.target || e.srcElement,
+		src = e.target,
 		dragging = false;
 		const isHover = type === 'pointerout' || type === 'pointerover';
 
@@ -1842,7 +1843,7 @@ export class MaplairMap extends Evented {
 	}
 
 	_handleDOMEvent(e) {
-		const el = e.target ?? e.srcElement;
+		const el = e.target;
 		if (!this._loaded || el['_maplair_disable_events'] || e.type === 'click' && this._isClickDisabled(el)) {
 			return;
 		}

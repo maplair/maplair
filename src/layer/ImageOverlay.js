@@ -264,9 +264,6 @@ export class ImageOverlay extends Layer {
 		if (this._zoomAnimated) { img.classList.add('maplair-zoom-animated'); }
 		if (this.options.className) { img.classList.add(...Util.splitWords(this.options.className)); }
 
-		img.onselectstart = Util.falseFn;
-		img.onpointermove = Util.falseFn;
-
 		img.onload = this.fire.bind(this, 'load');
 		img.onerror = this._overlayOnError.bind(this);
 

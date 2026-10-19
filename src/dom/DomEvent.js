@@ -93,12 +93,6 @@ function batchRemove(obj, filterFn) {
 	}
 }
 
-const pointerSubst = {
-	pointerenter: 'pointerover',
-	pointerleave: 'pointerout',
-	wheel: typeof window === 'undefined' ? false : !('onwheel' in window) && 'mousewheel'
-};
-
 function addOne(obj, type, fn, context) {
 	const id = type + Util.stamp(fn) + (context ? `_${Util.stamp(context)}` : '');
 
@@ -108,29 +102,10 @@ function addOne(obj, type, fn, context) {
 		return fn.call(context || obj, e);
 	};
 
-	const originalHandler = handler;
-
 	if (Browser.touch && (type === 'dblclick')) {
 		handler = addDoubleTapListener(obj, handler);
-
-	} else if ('addEventListener' in obj) {
-
-		if (type === 'wheel' ||  type === 'mousewheel') {
-			obj.addEventListener(pointerSubst[type] || type, handler, {passive: false});
-		} else if (type === 'pointerenter' || type === 'pointerleave') {
-			handler = function (e) {
-				if (isExternalTarget(obj, e)) {
-					originalHandler(e);
-				}
-			};
-			obj.addEventListener(pointerSubst[type], handler, false);
-
-		} else {
-			obj.addEventListener(type, originalHandler, false);
-		}
-
 	} else {
-		obj.attachEvent(`on${type}`, handler);
+		obj.addEventListener(type, handler, type === 'wheel' ? {passive: false} : false);
 	}
 
 	obj[eventsKey] ??= {};
@@ -145,13 +120,8 @@ function removeOne(obj, type, fn, context, id) {
 
 	if (Browser.touch && (type === 'dblclick')) {
 		removeDoubleTapListener(obj, handler);
-
-	} else if ('removeEventListener' in obj) {
-
-		obj.removeEventListener(pointerSubst[type] || type, handler, false);
-
 	} else {
-		obj.detachEvent(`on${type}`, handler);
+		obj.removeEventListener(type, handler, false);
 	}
 
 	obj[eventsKey][id] = null;
@@ -231,17 +201,6 @@ export function stop(e) {
 }
 
 /**
- * Returns an array containing the `HTMLElement`s that the given DOM event
- * should propagate to (if not stopped).
- * @param {Event} ev
- * @returns {EventTarget[]}
- */
-export function getPropagationPath(ev) {
-	return ev.composedPath();
-}
-
-
-/**
  * Gets normalized pointer position from a DOM event relative to the
  * `container` (border excluded) or to the whole page if not specified.
  * @param {MouseEvent|Touch} e
@@ -295,24 +254,12 @@ export function getWheelDelta(e) {
 
 /**
  * Checks if the pointer really left/entered the element `el` (for
- * `pointerenter`/`pointerleave`).
+ * `pointerover`/`pointerout`).
  * @internal
  * @param {Node} el
  * @param {MouseEvent} e
  * @returns {boolean}
  */
 export function isExternalTarget(el, e) {
-
-	let related = e.relatedTarget;
-
-	if (!related) { return true; }
-
-	try {
-		while (related && (related !== el)) {
-			related = related.parentNode;
-		}
-	} catch (err) {
-		return false;
-	}
-	return (related !== el);
+	return !el.contains(e.relatedTarget);
 }
