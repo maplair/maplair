@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Maplair debug page - Marker clusters</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
+		<link rel="stylesheet" href="../../dist/maplair.css" />
+		<link rel="stylesheet" href="../css/screen.css" />
+		<script type="importmap">
+			{
+				"imports": {
+					"maplair": "../../dist/maplair-src.js"
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<div id="map"></div>
+		<script type="module">
+			import {CircleMarker, MaplairMap, Marker, MarkerClusterGroup, TextControl, TileLayer} from 'maplair';
+
+			const map = new MaplairMap('map').setView([47.27, 11.4], 8);
+			new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				maxZoom: 19
+			}).addTo(map);
+
+			// 20000 random markers around Innsbruck, and 8 at the same position
+			const markers = [
+				...Array.from({length: 20000}, (_, i) => new Marker([47.27 + (Math.random() - 0.5) * 4, 11.4 + (Math.random() - 0.5) * 6], {title: `Marker ${i}`})
+					.bindPopup(`Marker ${i}`)),
+				...Array.from({length: 8}, (_, i) => new CircleMarker([47.2692, 11.4041], {radius: 8}).bindPopup(`Circle marker ${i} at the same position`))
+			];
+
+			const start = performance.now();
+			const clusters = new MarkerClusterGroup(markers).addTo(map);
+			const status = new TextControl({position: 'bottomleft'}).addTo(map);
+			status.setContent(`${markers.length} markers clustered in ${Math.round(performance.now() - start)} ms`);
+			map.on('moveend', () => status.setContent(`${map.getContainer().querySelectorAll('.maplair-cluster').length} clusters on the map at zoom ${map.getZoom()}`));
+			clusters.on('clusterclick', ({cluster}) => console.log('clusterclick', cluster.count));
+		</script>
+	</body>
+</html>

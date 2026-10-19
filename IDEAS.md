@@ -290,7 +290,7 @@ for an explicit permission prompt.
 
 ## 24. Marker clustering
 
-**Status:** open.
+**Status:** implemented as `MarkerClusterGroup` with greedy clustering on a grid per zoom, only the clusters near the view on the map, zooming to the bounds of a clicked cluster or spiderfying it in a circle, and the option names of Leaflet.markercluster. Not yet: animations, coverage polygons, `zoomToShowLayer()`.
 
 Leaflet.markercluster (4172 ⭐, the most used plugin; upstream it is left to
 plugins) · effort: large

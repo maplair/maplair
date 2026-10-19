@@ -1199,6 +1199,30 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	border: var(--maplair-border-width-base) solid var(--maplair-border-color-base);
 }
 
+/* MarkerClusterGroup */
+
+.maplair-cluster {
+	--maplair-cluster-color: #6ecc39;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	background: var(--maplair-cluster-color);
+	box-shadow: 0 0 0 5px color-mix(in srgb, var(--maplair-cluster-color) 40%, transparent);
+	color: #000;
+	font: bold var(--maplair-font-size-x-small) / 1 var(--maplair-font-family-base);
+}
+.maplair-cluster-medium {
+	--maplair-cluster-color: #f0c20c;
+}
+.maplair-cluster-large {
+	--maplair-cluster-color: #f18017;
+}
+.maplair-cluster-leg {
+	stroke: var(--maplair-color-base);
+	stroke-opacity: 0.5;
+}
+
 /* Tooltip */
 /* Base styles for the element that has a tooltip */
 .maplair-tooltip {

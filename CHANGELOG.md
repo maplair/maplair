@@ -11,6 +11,7 @@ Maplair Changelog
 
 * LayersControl: add the options `inline`, `groupBy` and `toggleContent`, the methods `getLayers()` and `selectLayer()`, and `originalEvent` to `baselayerchange`, `overlayadd` and `overlayremove` for changes by the user
 * SearchControl: new static method `SearchControl.layers()` to search the layers of a layer group (e.g. GeoJSON features) by a property or a label function, the results contain the found `layer`
+* Add `MarkerClusterGroup` clustering nearby markers, with zooming to and spiderfying clusters on click
 * Add `TimeControl` to step through or play the times of time-dependent layers, e.g. a WMS with a `TIME` dimension, with ISO 8601 intervals and periods
 * WMSTileLayer: swap the tiles without flickering on `setParams()`
 * SearchControl: the option `marker` accepts a function returning the layer to show at the selected result, new options `clearOnMapClick` and `noResultsText`

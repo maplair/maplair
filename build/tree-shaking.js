@@ -18,10 +18,11 @@ const features = {
 	'zoom-styles': '_zoomStyles'
 };
 
-// code which only the respective control contains
+// code which only the respective control or layer contains
 const controls = {
 	'search-control': 'nominatim.openstreetmap.org',
-	'time-control': 'maplair-control-time'
+	'time-control': 'maplair-control-time',
+	'marker-cluster': 'maplair-cluster'
 };
 const markers = {...features, ...controls};
 
@@ -48,6 +49,10 @@ const apps = {
 	'time-control': {
 		code: `import {TimeControl} from 'maplair';\n${base}new TimeControl({interval: '2026-10-17T00:00Z/P1D', period: 'PT1H'}).addTo(map);\n`,
 		expected: ['time-control']
+	},
+	'marker-cluster': {
+		code: `import {MarkerClusterGroup} from 'maplair';\n${base}new MarkerClusterGroup([new Marker([0, 0]), new Marker([0, 0])]).addTo(map);\n`,
+		expected: ['marker-cluster']
 	}
 };
 
