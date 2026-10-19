@@ -12,11 +12,11 @@ pnpm stage approve         # after CI: approve with 2FA (or on npmjs.com)
 
 Then make the GitHub release with the npm tarball, and update the docs in a PR (see below).
 
-Pre-release (e.g. `4.0.0-alpha.1` → `4.0.0-alpha.2`), with the changelog and the docs of the new version already committed to `main`:
+Pre-release (e.g. `4.1.0-beta.0` → `4.1.0-beta.1`), with the changelog and the docs of the new version already committed to `main`:
 
 ```sh
 pnpm version prerelease                        # bumps package.json, commits and tags
-git push origin v4.0.0-alpha.2                 # only the tag: CI tests and stages the release with the dist-tag alpha
+git push origin v4.1.0-beta.1                  # only the tag: CI tests and stages the release with the dist-tag beta
 pnpm stage approve                             # after CI: approve with 2FA (or on npmjs.com)
 git push                                       # deploys the website, whose CDN links now work
 ```
@@ -28,7 +28,7 @@ Then make the GitHub release (as pre-release) with the npm tarball.
 - [ ] Ensure all https://github.com/maplair/maplair/labels/blocker issues and pull requests are resolved.
 - [ ] Update [the changelog](https://github.com/maplair/maplair/blob/main/CHANGELOG.md) since last release and commit.
 - [ ] Make sure all tests pass on CI before proceeding.
-- [ ] Run `pnpm version <patch | minor | major | prerelease>` (this will bump the version in `package.json` and create a new tag); `prerelease` bumps e.g. `4.0.0-alpha.1` to `4.0.0-alpha.2`.
+- [ ] Run `pnpm version <patch | minor | major | prerelease>` (this will bump the version in `package.json` and create a new tag); `prerelease` bumps e.g. `4.1.0-beta.0` to `4.1.0-beta.1`.
 - [ ] Run `git push --follow-tags` to push the commit created by pnpm to Github (together with the tag).
   If `main` already contains the docs of the new version (see below), push only the tag first, e.g. `git push origin vX.X.X`, and push `main` once the release is on npm: the website is deployed on every push to `main`, and its CDN links point to the new version.
 - [ ] Wait for the CI to complete and follow the logs to make sure it runs successfully.
