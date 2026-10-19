@@ -83,6 +83,10 @@ Please do not commit to the `main` branch of your fork — otherwise your unrela
 You should also follow the code style and whitespace conventions of the original codebase.
 In particular, use tabs for indentation and spaces for alignment.
 
+Maplair targets browsers which support the web features that are [Baseline Widely available](https://web.dev/baseline)
+(supported by all major browsers for at least 30 months).
+Only use JavaScript features and web APIs that are Baseline Widely available: `pnpm run lint` checks this with [`eslint-plugin-baseline-js`](https://github.com/3ru/eslint-plugin-baseline-js).
+
 Before committing your changes, run `pnpm run lint` to catch any JS errors in the code and fix them. 
 The same command is automatically executed while committing. 
 You can prevent it from execution with the git flag `--no-verify`: `git commit -m "WIP" --no-verify`.  
