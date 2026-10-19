@@ -18,7 +18,6 @@ Pre-release (e.g. `4.0.0-alpha.1` → `4.0.0-alpha.2`), with the changelog and t
 pnpm version prerelease                        # bumps package.json, commits and tags
 git push origin v4.0.0-alpha.2                 # only the tag: CI tests and stages the release with the dist-tag alpha
 pnpm stage approve                             # after CI: approve with 2FA (or on npmjs.com)
-pnpm dist-tag add maplair@4.0.0-alpha.2 latest # while there's no stable version yet
 git push                                       # deploys the website, whose CDN links now work
 ```
 
@@ -34,7 +33,6 @@ Then make the GitHub release (as pre-release) with the npm tarball.
   If `main` already contains the docs of the new version (see below), push only the tag first, e.g. `git push origin vX.X.X`, and push `main` once the release is on npm: the website is deployed on every push to `main`, and its CDN links point to the new version.
 - [ ] Wait for the CI to complete and follow the logs to make sure it runs successfully.
 - [ ] Approve the release staged on npm by the CI, with 2FA: `pnpm stage approve` (picks from the staged versions), or on npmjs.com.
-  For a pre-release, which is published with its pre-release tag (e.g. `alpha`), also run `pnpm dist-tag add maplair@X.X.X latest` while there's no stable version yet.
 - [ ] Verify that the release was correctly published to NPM by checking:
   - [ ] [Maplair NPM package page](https://www.npmjs.com/package/maplair)
   - [ ] files on [Maplair jsDelivr page](https://cdn.jsdelivr.net/npm/maplair@latest/)
