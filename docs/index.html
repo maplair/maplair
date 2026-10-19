@@ -43,7 +43,7 @@ If you have any questions, take a look at the <a href="https://github.com/maplai
 
 <h2 id="features">Features</h2>
 
-<p>Maplair doesn't try to do everything for everyone. Instead it focuses on making <em>the basic things work perfectly</em>.</p>
+<p>Maplair makes <em>the basic things work perfectly</em>, and brings many features which Leaflet apps used plugins for — all of them dropped by your bundler unless you use them.</p>
 
 <div class="features clearfix">
     <div class="no-break">
@@ -53,8 +53,10 @@ If you have any questions, take a look at the <a href="https://github.com/maplai
             <li>Tile layers, WMS</li>
             <li>Markers, Popups</li>
             <li>Vector layers<span class="quiet">: polylines, polygons, circles, rectangles</span></li>
-            <li>Image overlays</li>
-            <li>GeoJSON</li>
+            <li>Image and video overlays</li>
+            <li>GeoJSON <span class="quiet">with classification and legends</span></li>
+            <li>Heatmaps</li>
+            <li>SVG markers <span class="quiet">in any color, with a glyph</span></li>
         </ul>
     </div>
 
@@ -65,12 +67,15 @@ If you have any questions, take a look at the <a href="https://github.com/maplai
         <ul>
             <li>Drag panning with inertia</li>
             <li>Scroll wheel zoom</li>
-            <li>Pinch-zoom on mobile</li>
-            <li>Double click zoom</li>
+            <li>Pinch-zoom on mobile and touchpads</li>
+            <li>Double click zoom, tap and drag zoom</li>
+            <li>Map rotation <span class="quiet">with two fingers or a compass</span></li>
             <li>Zoom to area <span class="quiet">(shift-drag)</span></li>
             <li>Keyboard navigation</li>
             <li>Events<span class="quiet">: click, pointerover, etc.</span></li>
-            <li>Marker dragging</li>
+            <li>Marker dragging and animated movement along routes</li>
+            <li>Context menus</li>
+            <li>The view in the URL <span class="quiet">and synchronized maps</span></li>
         </ul>
     </div>
 
@@ -78,10 +83,11 @@ If you have any questions, take a look at the <a href="https://github.com/maplai
         <h3>Visual Features</h3>
 
         <ul>
-            <li>Zoom and pan animation</li>
+            <li>Zoom and pan animation <span class="quiet">and continuous zoom</span></li>
             <li>Tile and popup fade animation</li>
             <li>Very nice default design <span class="quiet">for markers, popups and map controls</span></li>
             <li>Retina resolution support</li>
+            <li>Arrowheads, text and animated dashes along lines</li>
         </ul>
     </div>
 
@@ -90,7 +96,8 @@ If you have any questions, take a look at the <a href="https://github.com/maplai
         <h3>Customization Features</h3>
 
         <ul>
-            <li>Pure CSS popups and controls <span class="quiet">for easy restyling</span></li>
+            <li>Pure CSS popups and controls <span class="quiet">themed with CSS variables</span></li>
+            <li>Translations <span class="quiet">of the built-in texts</span></li>
             <li>Image- and HTML-based markers</li>
             <li><span class="quiet">A simple interface for</span> custom map layers and controls</li>
             <li>Custom map projections <span class="quiet">(with <code>EPSG:3857/4326/3395</code> out of the box)</span></li>
@@ -105,8 +112,8 @@ If you have any questions, take a look at the <a href="https://github.com/maplai
             <li>Hardware acceleration on mobile <span class="quiet"> makes it feel as smooth as native apps</span></li>
             <li>Utilizing CSS features <span class="quiet">to make panning and zooming really smooth</span></li>
             <li>Smart polyline/polygon rendering <span class="quiet">with dynamic clipping and simplification makes it very fast</span></li>
-            <li>Modular build system<span class="quiet"> for leaving out features you don't need</span></li>
-            <li>Tap delay elimination on mobile</li>
+            <li>Tree-shaking<span class="quiet"> for leaving out features you don't need</span></li>
+            <li>Marker culling <span class="quiet">for many markers</span></li>
         </ul>
     </div>
 
@@ -118,6 +125,13 @@ If you have any questions, take a look at the <a href="https://github.com/maplai
             <li>Attribution</li>
             <li>Layer switcher</li>
             <li>Scale</li>
+            <li>Fullscreen</li>
+            <li>Search <span class="quiet">with Nominatim or your own geocoder</span></li>
+            <li>Minimap</li>
+            <li>Side-by-side comparison</li>
+            <li>Legend</li>
+            <li>Compass</li>
+            <li>Buttons and text</li>
         </ul>
     </div>
 
@@ -130,6 +144,7 @@ If you have any questions, take a look at the <a href="https://github.com/maplai
             <li>Firefox</li>
             <li>Safari</li>
             <li>Edge</li>
+            <li class="quiet">All with the web features that are <a href="https://web.dev/baseline">Baseline Widely available</a></li>
         </ul>
     </div>
 
@@ -139,6 +154,8 @@ If you have any questions, take a look at the <a href="https://github.com/maplai
         <ul>
             <li>Extremely lightweight</li>
             <li>No external dependencies</li>
+            <li>Accessible <span class="quiet">with the keyboard and screen readers</span></li>
+            <li>TypeScript type declarations</li>
         </ul>
     </div>
 </div>
