@@ -30,7 +30,7 @@ or
 
 <pre><code class="javascript">const marker = new Marker([50.4501, 30.5234],
   {alt: 'Kyiv'}).addTo(map) // "Kyiv" is the <a href="https://www.w3.org/TR/accname-1.1/#dfn-accessible-name"><em>accessible name</em></a> of this marker
-  .bindPopup('Kyiv, Ukraine is the birthplace of Maplair!');</code></pre>
+  .bindPopup('Kyiv, Ukraine is the birthplace of Leaflet!');</code></pre>
 
 Resulting in markers that are discernible to
 [screen reader](https://en.wikipedia.org/wiki/Screen_reader)
@@ -94,9 +94,8 @@ whenever a new plugin is added.
 If you find an accessibility issue in a plugin,
 please report it to the plugin's author.
 
-An example of a plugin that can enhance the experience for your users is the
-[Leaflet.fullscreen](https://github.com/Leaflet/Leaflet.fullscreen)
-plugin.
+An example of a feature that can enhance the experience for your users is the
+[`FullscreenControl`](../../reference.html#fullscreencontrol).
 By allowing users to enter into fullscreen mode,
 they can explore the map in isolation,
 focusing their attention,

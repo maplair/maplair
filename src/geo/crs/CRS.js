@@ -17,8 +17,9 @@ import * as Util from '../../core/Util.js';
  * [spatial reference system](https://en.wikipedia.org/wiki/Spatial_reference_system).
  *
  * Maplair defines the most usual CRSs by default. If you want to use a
- * CRS not defined by default, take a look at the
- * [Proj4Maplair](https://github.com/kartena/Proj4Leaflet) plugin.
+ * CRS not defined by default, extend `CRS` with a projection of your own, e.g.
+ * based on [Proj4js](https://github.com/proj4js/proj4js) (the Leaflet plugin
+ * [Proj4Leaflet](https://github.com/kartena/Proj4Leaflet) doesn't work with Maplair).
  *
  * The CRSs are classes with static properties and methods only; they are not
  * instantiated, the class itself is passed as the CRS, e.g. to the `crs` option of the

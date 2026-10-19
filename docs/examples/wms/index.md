@@ -102,11 +102,11 @@ Change to the "Topography, then places" option, so you can see the places "on to
 
 ### Notes to GIS Users of WMS Services
 
-From a GIS point of view, WMS handling in Maplair is quite basic. There's no `GetCapabilities` support, no legend support, and no `GetFeatureInfo` support.
+From a GIS point of view, WMS handling in Maplair is quite basic. There's no `GetCapabilities` and no `GetFeatureInfo` support, but `getLegendUrl()` returns the URL of a legend.
 
-`WMSTileLayer` has extra options, which can be found in [Maplair's API documentation](/reference.html#tilelayer-wms). Any option not described there will be passed to the WMS server in the `getImage` URLs.
+`WMSTileLayer` has extra options, which can be found in [Maplair's API documentation](/reference.html#wmstilelayer). Any option not described there will be passed to the WMS server in the `getImage` URLs.
 
-Also note that Maplair supports very few [coordinate systems](https://en.wikipedia.org/wiki/Spatial_reference_system): `CRS:3857`, `CRS:3395` and `CRS:4326` (See the documentation for `CRS`). If your WMS service doesn't serve images in those coordinate systems, you might need to use [Proj4Maplair](https://github.com/kartena/Proj4Leaflet) to use a different coordinate system in Maplair. Other than that, just use the right CRS when initializing your map, and any WMS layers added will use it:
+Also note that Maplair supports very few [coordinate systems](https://en.wikipedia.org/wiki/Spatial_reference_system): `CRS:3857`, `CRS:3395` and `CRS:4326` (See the documentation for `CRS`). If your WMS service doesn't serve images in those coordinate systems, extend `CRS` with a projection of your own, e.g. based on [Proj4js](https://github.com/proj4js/proj4js) (the Leaflet plugin [Proj4Leaflet](https://github.com/kartena/Proj4Leaflet) doesn't work with Maplair). Other than that, just use the right CRS when initializing your map, and any WMS layers added will use it:
 
 	const map = new MaplairMap('map', {
 		crs: EPSG4326

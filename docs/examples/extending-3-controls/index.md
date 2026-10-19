@@ -11,7 +11,7 @@ In Maplair, a "layer" is anything that moves with the map. In contraposition to 
 
 ## Handlers
 
-Map handlers are a new concept in Maplair 1.0, and their function is to process DOM events from the browser (like `click`, `dblclick` or `mousewheel`) and change the state of the map.
+Map handlers were introduced in Leaflet 1.0, and their function is to process DOM events from the browser (like `click`, `dblclick` or `mousewheel`) and change the state of the map.
 
 Handlers are relatively simple: they just need an `addHooks()` method (which runs when the handler is enabled in a map) and a `removeHooks()`, which runs when the handler is disabled. A skeleton for handlers is:
 

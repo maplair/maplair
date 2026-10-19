@@ -14,5 +14,5 @@ title: Accessible Markers Example
 	}).addTo(map);
 
 	const marker = new Marker([50.4501, 30.5234], {alt: 'Kyiv'}).addTo(map)
-		.bindPopup('Kyiv, Ukraine is the birthplace of Maplair!');
+		.bindPopup('Kyiv, Ukraine is the birthplace of Leaflet!');
 </script>

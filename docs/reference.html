@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<title>API reference – Maplair 4.0.0-alpha.1</title>
+<title>API reference – Maplair 4.0.0</title>
 <link rel="icon" type="image/svg+xml" href="docs/images/favicon.svg">
 <style>
 :root {
@@ -259,7 +259,7 @@ details.inherited {
 <header class="page-header">
 	<a class="home" href="./">Maplair</a>
 	<h1>API reference</h1>
-	<p>Version 4.0.0-alpha.1. Generated from the JSDoc of the sources.</p>
+	<p>Version 4.0.0. Generated from the JSDoc of the sources.</p>
 </header>
 <div class="layout">
 <nav class="toc" aria-label="Contents">
@@ -9569,8 +9569,9 @@ coordinates in other units for <a href="https://en.wikipedia.org/wiki/Web_Map_Se
 services). See
 <a href="https://en.wikipedia.org/wiki/Spatial_reference_system">spatial reference system</a>.</p>
 <p>Maplair defines the most usual CRSs by default. If you want to use a
-CRS not defined by default, take a look at the
-<a href="https://github.com/kartena/Proj4Leaflet">Proj4Maplair</a> plugin.</p>
+CRS not defined by default, extend <a href="#crs"><code>CRS</code></a> with a projection of your own, e.g.
+based on <a href="https://github.com/proj4js/proj4js">Proj4js</a> (the Leaflet plugin
+<a href="https://github.com/kartena/Proj4Leaflet">Proj4Leaflet</a> doesn't work with Maplair).</p>
 <p>The CRSs are classes with static properties and methods only; they are not
 instantiated, the class itself is passed as the CRS, e.g. to the <code>crs</code> option of the
 map. Maplair's CRSs extend <a href="#crs"><code>CRS</code></a> (<a href="#earthcrs"><code>EarthCRS</code></a> for the global ones).</p>

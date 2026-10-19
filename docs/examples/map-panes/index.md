@@ -67,7 +67,7 @@ Custom map panes are created on a per-map basis, so first create a map instance 
     map.createPane('labels');
 
 
-The next step is setting the z-index of the pane. Looking at the [defaults](https://github.com/Leaflet/Leaflet/blob/v1.0.0/dist/leaflet.css#L87), a value of 650 will make the `TileLayer` with the labels show on top of markers but below pop-ups. By using `getPane()`, we have a reference to the [`HTMLElement`](https://developer.mozilla.org/docs/Web/API/HTMLElement) representing the pane, and change its z-index:
+The next step is setting the z-index of the pane. Looking at the [defaults](https://github.com/maplair/maplair/blob/main/src/maplair.css#L173), a value of 650 will make the `TileLayer` with the labels show on top of markers but below pop-ups (and at the same level as tooltips). By using `getPane()`, we have a reference to the [`HTMLElement`](https://developer.mozilla.org/docs/Web/API/HTMLElement) representing the pane, and change its z-index:
 
 
     map.getPane('labels').style.zIndex = 650;

@@ -198,7 +198,7 @@ Other ways of setting the zoom are:
 
 ## Fractional Zoom
 
-A feature introduced in Maplair 1.0.0 was the concept of <em>fractional zoom</em>.
+A feature introduced in Leaflet 1.0.0 was the concept of <em>fractional zoom</em>.
 Before this, the zoom level of the map could be only an integer number (`0`, `1`, `2`, and so on);
 but now you can use fractional numbers like `1.5` or `1.25`.
 

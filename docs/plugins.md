@@ -30,9 +30,9 @@ table.plugins th:hover {
 }
 </style>
 
-## Maplair Plugins database
+## Leaflet Plugins database
 
-While Maplair is meant to be as lightweight as possible, and focuses on a core set of features, an easy way to extend its functionality is to use third-party plugins. Thanks to the awesome community behind Maplair, there are literally hundreds of nice plugins to choose from.
+These are plugins for [Leaflet](https://leafletjs.com), which Maplair is a fork of. **None of them is compatible with Maplair:** they import from `leaflet` and expect `leaflet-*` CSS classes and the `L` global. Many of their features are part of Maplair, and the list may help to port a plugin.
 
 ---
 
