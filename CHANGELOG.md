@@ -3,20 +3,25 @@ Maplair Changelog
 
 (all changes of Leaflet without author notice are by [@mourner](https://github.com/mourner))
 
-## 4.0.0 (2026-10-19) 🍁
+## 4.0.0 (2026-10-19) 🍁 Maplair, a fork of Leaflet
 
-The first stable release of Maplair, with no changes since 4.0.0-alpha.2.
-
-For an overview and a migration guide from Leaflet 1.9.4, see the blog post: https://maplair.org/2026/10/19/maplair-4.0.0.html
-
-## 4.0.0-alpha.2 (2026-10-17)
+The first release of Maplair, a fork of Leaflet. It contains all changes since Leaflet 1.9.4: those of Leaflet 2.0.0-alpha and 2.0.0-alpha.1 (see below), the unreleased changes of Leaflet until the fork, and Maplair's own changes.
 
 For an overview and a migration guide from Leaflet 1.9.4, see the blog post: https://maplair.org/2026/10/19/maplair-4.0.0.html
+
+### Maplair
 
 (changes without author notice are by [@simon04](https://github.com/simon04))
 
 #### ❇️ New Features
 
+* Translations of the built-in strings with `I18n` (cherry-picked from https://github.com/Leaflet/Leaflet/pull/9845), translated on Transifex: https://app.transifex.com/simon04/maplair/
+* Translations to German, Spanish, French, Czech, Slovak, Hungarian, Slovenian, Italian and Romansh
+* Map: new option `markerCulling` to take markers far outside of the view off the page
+* Marker: new option `shadow` to disable icon shadows for performance
+* Publish one ES module per source file (`dist/esm`) and declare `sideEffects`, so that bundlers can drop unused features
+* Bring back `L.noConflict()` in the global build `maplair-global.js`
+* New logo, maple leaf marker icon with zigzag outline, and favicon
 * Add `FullscreenControl` with `toggleFullscreen()`, `isFullscreen()` and the events `enterfullscreen`, `exitfullscreen` and `fullscreenchange`
 * Add `SearchControl` with custom geocoders and `SearchControl.nominatim()`, complying with the Nominatim usage policy (`acceptUsagePolicy`)
 * Add `ButtonControl`, `ButtonBarControl` and `TextControl`, and the Control option `order`
@@ -53,42 +58,6 @@ For an overview and a migration guide from Leaflet 1.9.4, see the blog post: htt
 * Use CSS variables for the colors, borders, shadows, fonts and spacing
 * Ship TypeScript type declarations (`dist/types/`)
 
-#### 🐞 Bugfixes
-
-* TileLayer: with `detectRetina`, no longer request tiles beyond `maxNativeZoom`
-* Release the pointer capture only if it is still active
-
-#### 📝 Docs
-
-* Replace Leafdoc with JSDoc, and generate the API reference from the type declarations
-* Explain the name Maplair, mention tree-shaking and update the bundle sizes on the homepage
-
-#### 🔧 Workflow
-
-* Migrate from npm to pnpm 12, upgrade Vite+ to 1.3.0 and Vitest to 5.0.5
-* Check that optional features are dropped by tree-shaking unless imported (`pnpm run test:tree-shaking`)
-* Type-check the type declarations and the debug pages (`pnpm run types:check`)
-
-## 4.0.0-alpha.1 (2026-10-15) 🍁 Maplair, a fork of Leaflet
-
-The first pre-release of Maplair, a fork of Leaflet. It contains all changes since Leaflet 1.9.4: those of Leaflet 2.0.0-alpha and 2.0.0-alpha.1 (see below), the unreleased changes of Leaflet until the fork, and Maplair's own changes.
-
-For an overview and a migration guide from Leaflet 1.9.4, see the blog post: https://maplair.org/2026/10/19/maplair-4.0.0.html
-
-### Maplair
-
-(changes without author notice are by [@simon04](https://github.com/simon04))
-
-#### ❇️ New Features
-
-* Translations of the built-in strings with `I18n` (cherry-picked from https://github.com/Leaflet/Leaflet/pull/9845), translated on Transifex: https://app.transifex.com/simon04/maplair/
-* Translations to German, Spanish, French, Czech, Slovak, Hungarian, Slovenian, Italian and Romansh
-* Map: new option `markerCulling` to take markers far outside of the view off the page
-* Marker: new option `shadow` to disable icon shadows for performance
-* Publish one ES module per source file (`dist/esm`) and declare `sideEffects`, so that bundlers can drop unused features
-* Bring back `L.noConflict()` in the global build `maplair-global.js`
-* New logo, maple leaf marker icon with zigzag outline, and favicon
-
 #### ✨ Refactorings (⚠️ Breaking Changes)
 
 * Rename Leaflet to Maplair: npm package `maplair`, files `maplair*.js`/`maplair.css`, CSS classes `maplair-*`, `LeafletMap` to `MaplairMap`
@@ -113,6 +82,8 @@ For an overview and a migration guide from Leaflet 1.9.4, see the blog post: htt
 
 * DomEvent.stopPropagation: keep feature detection for DOM events of other windows (e.g. iframes)
 * Fix the `Map.addInitHook` example in the controls tutorial
+* TileLayer: with `detectRetina`, no longer request tiles beyond `maxNativeZoom`
+* Release the pointer capture only if it is still active
 
 #### 📝 Docs
 
@@ -121,12 +92,17 @@ For an overview and a migration guide from Leaflet 1.9.4, see the blog post: htt
 * Credit major contributors in `CITATION.cff`, `package.json`, `README.md`, `LICENSE` and the website footer
 * Document standard constructors, init hooks and translations
 * Remove the Ukraine appeal, Leaflet's social media links and the "Trusted by the best" logos
+* Replace Leafdoc with JSDoc, and generate the API reference from the type declarations
+* Explain the name Maplair, mention tree-shaking and update the bundle sizes on the homepage
 
 #### 🔧 Workflow
 
 * Test, build, lint and run commit hooks with Vite+ (`vp test`, `vp pack`, `vp lint`, `vp staged`), replacing Vitest, Rollup, ESLint, husky and lint-staged
 * Serve the debug pages with `vp dev`; remove bundlemon, `http-server` and `ssri`
 * Upgrade `eslint-plugin-baseline-js` to 0.7.5, `@e18e/eslint-plugin` to 0.8.1 and Playwright to 1.64
+* Migrate from npm to pnpm 12, upgrade Vite+ to 1.3.0 and Vitest to 5.0.5
+* Check that optional features are dropped by tree-shaking unless imported (`pnpm run test:tree-shaking`)
+* Type-check the type declarations and the debug pages (`pnpm run types:check`)
 
 #### 🧪 Tests
 
