@@ -231,6 +231,11 @@ export class Class {
 	}
 
 	constructor() {
+		if (this.initialize) {
+			throw new Error(`${this.constructor.name}: initialize() is not called in Maplair. ` +
+				'Rename it to constructor() and call super() at its start.');
+		}
+
 		Util.setOptions(this);
 	}
 

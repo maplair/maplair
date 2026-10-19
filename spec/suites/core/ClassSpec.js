@@ -2,6 +2,26 @@ import {expect, vi} from 'vite-plus/test';
 import {Class, Evented, Layer, Marker} from 'maplair';
 
 describe('Class', () => {
+	describe('constructor', () => {
+		it('throws on a class that defines initialize()', () => {
+			class OldStyle extends Class {
+				initialize() {}
+			}
+			expect(() => new OldStyle()).to.throw('OldStyle: initialize() is not called');
+		});
+
+		it('throws when initialize() is called from a constructor', () => {
+			class HalfPorted extends Class {
+				constructor() {
+					super();
+					this.initialize();
+				}
+				initialize() {}
+			}
+			expect(() => new HalfPorted()).to.throw('Rename it to constructor()');
+		});
+	});
+
 	describe('defaultOptions', () => {
 		it('inherits and overrides parent defaults', () => {
 			class Klass1 extends Class {
