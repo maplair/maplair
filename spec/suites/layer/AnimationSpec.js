@@ -30,6 +30,9 @@ describe('Animated markers and paths', () => {
 			const marker = new Marker([0, 0]).addTo(map),
 			positions = [];
 			marker.on('move', e => positions.push(e.latlng));
+			// advance the clock in fixed steps, independent of slow CI runners
+			let now = performance.now();
+			vi.spyOn(performance, 'now').mockImplementation(() => (now += 25));
 			const moveend = nextEvent(marker, 'moveend');
 			marker.moveTo([0, 10], {duration: 200});
 			expect(marker.isMoving()).to.be.true;
@@ -47,8 +50,11 @@ describe('Animated markers and paths', () => {
 			const marker = new Marker([0, 0]).addTo(map),
 			// 1 + 2 degrees at the equator
 			route = [[0, 1], [0, 3]],
-			speed = new LatLng(0, 0).distanceTo([0, 3]) / 0.3,
-			start = performance.now();
+			speed = new LatLng(0, 0).distanceTo([0, 3]) / 0.3;
+			// advance the clock in fixed steps, independent of slow CI runners
+			let now = performance.now();
+			vi.spyOn(performance, 'now').mockImplementation(() => (now += 25));
+			const start = performance.now();
 			const moveend = nextEvent(marker, 'moveend');
 			marker.moveAlong(route, {speed});
 			await moveend;
@@ -151,11 +157,11 @@ describe('Animated markers and paths', () => {
 				original.call(this, ctx, layer);
 				offsets.push(ctx.lineDashOffset);
 			};
-			await new Promise((resolve) => {
-				setTimeout(resolve, 200);
-			});
-			expect(offsets.length).to.be.greaterThan(3);
-			expect(new Set(offsets).size).to.be.greaterThan(2);
+			// wait for frames rather than for a fixed time, which slow CI runners may draw too few frames in
+			await vi.waitFor(() => {
+				expect(offsets.length).to.be.greaterThan(3);
+				expect(new Set(offsets).size).to.be.greaterThan(2);
+			}, {timeout: 2000});
 			for (const offset of offsets) {
 				expect(offset).to.be.within(-15, 0);
 			}
