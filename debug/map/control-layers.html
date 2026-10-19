@@ -56,6 +56,33 @@
 			}, {
 				collapsed: false
 			}).addTo(map);
+
+			new LayersControl({
+				'Tiles (OSM)': regularTiles,
+				'Tiles (OSM <i>grayscale</i>)': blackAndWhiteTiles
+			}, {
+				'Shapes (Circle)': new Circle([46, 10], {radius: 111111}),
+				'Shapes (Polygon)': new Polygon([[44, -3], [46, -4], [47, 4]]),
+				'Other': new Circle([42, 0], {radius: 111111})
+			}, {
+				position: 'bottomleft',
+				inline: true,
+				groupBy(name) {
+					const [, group, label] = /^([^<>()]+) \((.+)\)$/.exec(name) ?? [];
+					return group ? {group: `${group}:`, label} : undefined;
+				}
+			}).addTo(map);
+
+			new LayersControl({}, {
+				'Small circle': new Circle([50, -8], {radius: 55555})
+			}, {
+				position: 'topleft',
+				toggleContent: '&#x2630;'
+			}).addTo(map);
+
+			map.on('baselayerchange overlayadd overlayremove', (e) => {
+				console.log(e.type, e.name, e.originalEvent ? 'by the user' : 'by code');
+			});
 		</script>
 	</body>
 </html>

@@ -10,10 +10,42 @@ import {I18n} from '../core/I18n.js';
 /** @import {LayersControlEvent} from '../core/Events.js' */
 
 /**
+ * An entry of `LayersControl`, as returned by `getLayers()`.
+ * @typedef {object} LayersControlEntry
+ * @property {Layer} layer The layer.
+ * @property {string} name The name of the layer, as given to the control.
+ * @property {boolean} overlay Whether the layer is an overlay (checkbox) or a base layer
+ * (radio button).
+ */
+
+/**
+ * The group of an entry of `LayersControl`, as returned by the option `groupBy`.
+ * @typedef {object} LayersControlGroup
+ * @property {string} group The name of the group, rendered as text.
+ * @property {string} label The label of the entry within the group, may contain HTML
+ * (like layer names).
+ */
+
+/**
  * Options of `LayersControl`.
  * @typedef {object} LayersControlOptions
  * @property {boolean} [collapsed=true] If `true`, the control will be collapsed into an
- * icon and expanded on pointer hover, touch, or keyboard activation.
+ * icon and expanded on pointer hover, touch, or keyboard activation. Ignored if `inline`
+ * is `true`.
+ * @property {boolean} [inline=false] If `true`, the control is laid out like the
+ * attribution control: it is always expanded (without toggle button) and all entries are
+ * placed next to each other, wrapping onto multiple lines if necessary.
+ * @property {(name: string, layer: Layer, overlay: boolean) => LayersControlGroup | undefined} [groupBy]
+ * A function to group the entries. For each entry, it returns the name of its group and
+ * its label within the group, or `undefined` for an ungrouped entry. Consecutive entries
+ * of the same group (base layers and overlays separately) are rendered within one
+ * `maplair-control-layers-group` container, starting with the group name in a
+ * `maplair-control-layers-group-name` element, and each entry shows only its label.
+ * Events like `baselayerchange` still carry the full `name`. When combined with
+ * `sortLayers`, the entries are sorted first and grouped afterwards.
+ * @property {string|HTMLElement} [toggleContent] The content of the toggle button of a
+ * collapsed control instead of the layers icon: HTML (e.g. an icon or a character) or an
+ * element. String content is rendered as HTML; do not pass untrusted input.
  * @property {number} [collapseDelay=0] Collapse delay in milliseconds. If greater than 0,
  * the control will remain open longer, making it easier to scroll through long layer
  * lists.
@@ -71,6 +103,19 @@ import {I18n} from '../core/I18n.js';
  * {"<img src='my-layer-icon' /> <span class='my-layer-item'>My Layer</span>": myLayer}
  * ```
  *
+ * Layers can be grouped using the option `groupBy`, for example layer names of the form
+ * `"Group (label)"`:
+ *
+ * ```js
+ * new LayersControl(baseLayers, overlays, {
+ * 	inline: true,
+ * 	groupBy(name) {
+ * 		const [, group, label] = /^([^<>()]+) \((.+)\)$/.exec(name) ?? [];
+ * 		return group ? {group: `${group}:`, label} : undefined;
+ * 	}
+ * }).addTo(map);
+ * ```
+ *
  * @fires MaplairMap#baselayerchange {LayersControlEvent} Fired when the base layer is
  * changed through the [layers control](#control-layers).
  * @fires MaplairMap#overlayadd {LayersControlEvent} Fired when an overlay is selected
@@ -83,6 +128,9 @@ export class LayersControl extends Control {
 	static {
 		this.setDefaultOptions({
 			collapsed: true,
+			inline: false,
+			groupBy: undefined,
+			toggleContent: undefined,
 			collapseDelay: 0,
 			position: 'topright',
 			autoZIndex: true,
@@ -139,7 +187,7 @@ export class LayersControl extends Control {
 			layer.layer.on('add remove', this._onLayerChange, this);
 		}
 
-		if (!this.options.collapsed) {
+		if (!this._isCollapsible()) {
 			// update the height of the container after resizing the window
 			map.on('resize', this._expandIfNotCollapsed, this);
 		}
@@ -207,6 +255,32 @@ export class LayersControl extends Control {
 	}
 
 	/**
+	 * Returns the entries of the control in the order they are displayed.
+	 * @returns {LayersControlEntry[]}
+	 */
+	getLayers() {
+		return this._layers.map(({layer, name, overlay}) => ({layer, name, overlay}));
+	}
+
+	/**
+	 * Selects the given layer of the control like a click on its entry: a base layer
+	 * replaces the current base layer, an overlay is added to the map. The events
+	 * `baselayerchange` and `overlayadd` are fired as for a click, but without
+	 * `originalEvent`. Has no effect if the control is not on a map or does not contain
+	 * the layer.
+	 * @param {Layer} layer
+	 * @returns {this}
+	 */
+	selectLayer(layer) {
+		const input = this._layerControlInputs.find(input => input.layerId === Util.stamp(layer));
+		if (input && !input.checked) {
+			input.checked = true;
+			this._onInputClick();
+		}
+		return this;
+	}
+
+	/**
 	 * Expand the control container if collapsed.
 	 * @returns {this}
 	 */
@@ -233,6 +307,9 @@ export class LayersControl extends Control {
 	 * @returns {this}
 	 */
 	collapse(ev) {
+		if (this.options.inline) {
+			return this;
+		}
 		// On touch devices `pointerleave` & `pointerout` is fired while clicking on a checkbox.
 		// The control was collapsed instead of adding the layer to the map.
 		// So we allow collapse only if it is not touch.
@@ -254,12 +331,17 @@ export class LayersControl extends Control {
 	_initLayout() {
 		const className = 'maplair-control-layers',
 		container = this._container = DomUtil.create('div', className),
-		collapsed = this.options.collapsed;
+		collapsed = this._isCollapsible();
+
+		if (this.options.inline) {
+			container.classList.add(`${className}-inline`);
+		}
 
 		DomEvent.disableClickPropagation(container);
 		DomEvent.disableScrollPropagation(container);
 
 		const section = this._section = DomUtil.create('fieldset', `${className}-list`);
+		section.setAttribute('aria-label', I18n.translate('Layers'));
 
 		if (collapsed) {
 			this._map.on('click', this.collapse, this);
@@ -270,23 +352,32 @@ export class LayersControl extends Control {
 			}, this);
 		}
 
-		const link = this._layersLink = DomUtil.create('button', `${className}-toggle`, container);
-		link.type = 'button';
-		link.title = I18n.translate('Layers');
-		link.setAttribute('aria-label', I18n.translate('Layers'));
+		if (!this.options.inline) {
+			const link = this._layersLink = DomUtil.create('button', `${className}-toggle`, container);
+			link.type = 'button';
+			link.title = I18n.translate('Layers');
+			link.setAttribute('aria-label', I18n.translate('Layers'));
 
-		DomEvent.on(link, {
-			keydown(e) {
-				if (e.code === 'Enter') {
+			const {toggleContent} = this.options;
+			if (typeof toggleContent === 'string') {
+				link.innerHTML = toggleContent;
+			} else if (toggleContent) {
+				link.replaceChildren(toggleContent);
+			}
+
+			DomEvent.on(link, {
+				keydown(e) {
+					if (e.code === 'Enter') {
+						this._expandSafely();
+					}
+				},
+				// Certain screen readers intercept the key event and instead send a click event
+				click(e) {
+					e.preventDefault();
 					this._expandSafely();
 				}
-			},
-			// Certain screen readers intercept the key event and instead send a click event
-			click(e) {
-				e.preventDefault();
-				this._expandSafely();
-			}
-		}, this);
+			}, this);
+		}
 
 		if (!collapsed) {
 			this.expand();
@@ -315,7 +406,7 @@ export class LayersControl extends Control {
 		this._layers.push({
 			layer,
 			name,
-			overlay
+			overlay: !!overlay
 		});
 
 		if (this.options.sortLayers) {
@@ -337,6 +428,7 @@ export class LayersControl extends Control {
 		this._overlaysList.replaceChildren();
 
 		this._layerControlInputs = [];
+		this._groupCount = 0;
 		let baseLayersPresent, overlaysPresent, baseLayersCount = 0;
 
 		for (const obj of this._layers) {
@@ -369,7 +461,7 @@ export class LayersControl extends Control {
 			(e.type === 'add' ? 'baselayerchange' : null);
 
 		if (type) {
-			this._map.fire(type, obj);
+			this._map.fire(type, this._clickEvent ? {...obj, originalEvent: this._clickEvent} : obj);
 		}
 	}
 
@@ -390,8 +482,10 @@ export class LayersControl extends Control {
 
 		DomEvent.on(input, 'click', this._onInputClick, this);
 
+		const group = this.options.groupBy?.(obj.name, obj.layer, obj.overlay);
+
 		const name = document.createElement('span');
-		name.innerHTML = ` ${obj.name}`;
+		name.innerHTML = ` ${group ? group.label : obj.name}`;
 
 		// Helps from preventing layer control flicker when checkboxes are disabled
 		// https://github.com/Leaflet/Leaflet/issues/2771
@@ -401,11 +495,36 @@ export class LayersControl extends Control {
 		holder.appendChild(input);
 		holder.appendChild(name);
 
-		const container = obj.overlay ? this._overlaysList : this._baseLayersList;
+		const list = obj.overlay ? this._overlaysList : this._baseLayersList;
+		const container = group ? this._getGroupContainer(list, group.group) : list;
 		container.appendChild(label);
 
 		this._checkDisabledLayers();
 		return label;
+	}
+
+	/**
+	 * Returns the container of the given group if it is the last element in `list`
+	 * (continuing the group), otherwise appends a new group container to `list`.
+	 * @param {HTMLElement} list
+	 * @param {string} group
+	 * @returns {HTMLElement}
+	 */
+	_getGroupContainer(list, group) {
+		const last = list.lastElementChild;
+		if (last?._maplairGroup === group) {
+			return last;
+		}
+
+		const className = 'maplair-control-layers-group',
+		container = DomUtil.create('div', className, list),
+		name = DomUtil.create('span', `${className}-name`, container);
+		name.id = `${className}_${Util.stamp(this)}_${++this._groupCount}`;
+		name.textContent = group;
+		container.setAttribute('role', 'group');
+		container.setAttribute('aria-labelledby', name.id);
+		container._maplairGroup = group;
+		return container;
 	}
 
 	_onInputClick(e) {
@@ -419,6 +538,7 @@ export class LayersControl extends Control {
 		removedLayers = [];
 
 		this._handlingClick = true;
+		this._clickEvent = e;
 
 		for (const input of inputs) {
 			const layer = this._getLayer(input.layerId).layer;
@@ -443,6 +563,7 @@ export class LayersControl extends Control {
 		}
 
 		this._handlingClick = false;
+		this._clickEvent = undefined;
 
 		this._refocusOnMap(e);
 	}
@@ -459,8 +580,12 @@ export class LayersControl extends Control {
 		}
 	}
 
+	_isCollapsible() {
+		return this.options.collapsed && !this.options.inline;
+	}
+
 	_expandIfNotCollapsed() {
-		if (this._map && !this.options.collapsed) {
+		if (this._map && !this._isCollapsible()) {
 			this.expand();
 		}
 		return this;

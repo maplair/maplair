@@ -95,6 +95,8 @@ import * as Util from './Util.js';
  * @typedef {object} LayersControlEvent
  * @property {Layer} layer The layer that was added or removed.
  * @property {string} name The name of the layer that was added or removed.
+ * @property {Event} [originalEvent] The DOM event of the click on the entry in the
+ * layers control, `undefined` if the layer was added or removed by code.
  * @extends MaplairEvent
  */
 

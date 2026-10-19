@@ -3,6 +3,14 @@ Maplair Changelog
 
 (all changes of Leaflet without author notice are by [@mourner](https://github.com/mourner))
 
+## Unreleased
+
+(changes without author notice are by [@simon04](https://github.com/simon04))
+
+#### ❇️ New Features
+
+* LayersControl: add the options `inline`, `groupBy` and `toggleContent`, the methods `getLayers()` and `selectLayer()`, and `originalEvent` to `baselayerchange`, `overlayadd` and `overlayremove` for changes by the user
+
 ## 4.0.0 (2026-10-19) 🍁 Maplair, a fork of Leaflet
 
 The first release of Maplair, a fork of Leaflet. It contains all changes since Leaflet 1.9.4: those of Leaflet 2.0.0-alpha and 2.0.0-alpha.1 (see below), the unreleased changes of Leaflet until the fork, and Maplair's own changes.

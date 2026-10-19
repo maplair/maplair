@@ -541,6 +541,8 @@ time.
 
 ## 41. Layers control: inline layout, groups and public API
 
+**Status:** implemented with the `LayersControl` options `inline` (instead of `layout: 'inline'`), `groupBy` (a function returning the group of an entry, instead of a `group` argument), `toggleContent`, `getLayers()`, `selectLayer()` and `originalEvent` for changes by the user.
+
 Effort: small–medium
 
 Option `layout: 'inline'`: never collapsed, entries next to each other, styled

@@ -540,6 +540,14 @@ path.maplair-interactive:focus:not(:focus-visible) {
 		width: 44px;
 		height: 44px;
 	}
+
+	/* custom content (option toggleContent) instead of the icon */
+	&:not(:empty) {
+		background-image: none;
+		color: var(--maplair-color-base);
+		font: inherit;
+		font-size: var(--maplair-font-size-large);
+	}
 }
 
 .maplair-control-layers-expanded {
@@ -579,6 +587,47 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	height: 0;
 	border-top: var(--maplair-border-width-base) solid var(--maplair-border-color-subtle);
 	margin: var(--maplair-spacing-25) calc(-1 * var(--maplair-spacing-50));
+}
+
+.maplair-control-layers-group-name {
+	font-size: var(--maplair-font-size-small);
+	font-weight: bold;
+}
+
+/* inline layers control, laid out like the attribution control */
+
+.maplair-control-layers-inline {
+	&.maplair-control-layers-expanded {
+		padding: 0 var(--maplair-spacing-25);
+	}
+
+	.maplair-control-layers-list {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		column-gap: var(--maplair-spacing-50);
+	}
+
+	.maplair-control-layers-base,
+	.maplair-control-layers-overlays {
+		display: contents;
+	}
+
+	.maplair-control-layers-separator {
+		display: none;
+	}
+
+	.maplair-control-layers-group {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		column-gap: var(--maplair-spacing-50);
+	}
+
+	label {
+		/* keep an entry together with its radio button or checkbox */
+		white-space: nowrap;
+	}
 }
 
 /* Default icon URLs */
