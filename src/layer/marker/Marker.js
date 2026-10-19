@@ -505,8 +505,8 @@ export class Marker extends Layer {
 		if (!map) { return; }
 
 		const iconOpts = this.options.icon.options;
-		const size = iconOpts.iconSize ? new Point(iconOpts.iconSize) : new Point(0, 0);
-		const anchor = iconOpts.iconAnchor ? new Point(iconOpts.iconAnchor) : new Point(0, 0);
+		const size = iconOpts.iconSize ? Point.from(iconOpts.iconSize) : new Point(0, 0);
+		const anchor = iconOpts.iconAnchor ? Point.from(iconOpts.iconAnchor) : new Point(0, 0);
 
 		map.panInside(this._latlng, {
 			paddingTopLeft: anchor,

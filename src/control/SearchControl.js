@@ -372,8 +372,8 @@ export class SearchControl extends Control {
 	 */
 	select(result) {
 		const map = this._map,
-		latlng = new LatLng(result.latlng),
-		bounds = result.bounds ? new LatLngBounds(result.bounds) : undefined;
+		latlng = LatLng.from(result.latlng),
+		bounds = result.bounds ? LatLngBounds.from(result.bounds) : undefined;
 
 		this._input.value = result.label;
 		this._showResults([]);

@@ -835,7 +835,7 @@ export class GridLayer extends Layer {
 
 		// don't load tile if it doesn't intersect the bounds in options
 		const tileBounds = this._tileCoordsToBounds(coords);
-		return new LatLngBounds(this.options.bounds).overlaps(tileBounds);
+		return LatLngBounds.from(this.options.bounds).overlaps(tileBounds);
 	}
 
 	_keyToBounds(key) {

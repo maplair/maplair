@@ -129,10 +129,10 @@ export class Icon extends Class {
 			sizeOption = [sizeOption, sizeOption];
 		}
 
-		const size = Point.validate(sizeOption) && new Point(sizeOption);
+		const size = Point.validate(sizeOption) && Point.from(sizeOption);
 
 		const anchorPosition = name === 'shadow' && options.shadowAnchor || options.iconAnchor || size && size.divideBy(2, true);
-		const anchor = Point.validate(anchorPosition) && new Point(anchorPosition);
+		const anchor = Point.validate(anchorPosition) && Point.from(anchorPosition);
 
 		img.className = `maplair-marker-${name} ${options.className || ''}`;
 

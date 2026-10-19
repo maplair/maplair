@@ -65,7 +65,7 @@ const markerMoveMethods = {
 	moveAlong(latlngs, options = {}) {
 		this.stopMoving();
 
-		const points = [this._latlng, ...latlngs.map(latlng => new LatLng(latlng))],
+		const points = [this._latlng, ...latlngs.map(latlng => LatLng.from(latlng))],
 		lengths = points.slice(1).map((point, i) => this._map?.distance(points[i], point) ?? points[i].distanceTo(point)),
 		total = lengths.reduce((sum, length) => sum + length, 0),
 		duration = options.speed ? total / options.speed * 1000 : (options.duration ?? 1000),

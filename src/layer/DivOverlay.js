@@ -451,7 +451,7 @@ export class DivOverlay extends Layer {
 
 		const pos = this._map.latLngToLayerPoint(this._latlng),
 		anchor = this._getAnchor();
-		let offset = new Point(this.options.offset);
+		let offset = Point.from(this.options.offset);
 
 		if (this._zoomAnimated || this.options.overflow) {
 			this._setContainerPosition(pos.add(anchor));

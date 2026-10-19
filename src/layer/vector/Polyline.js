@@ -110,7 +110,7 @@ export class Polyline extends Path {
 	 * @returns {(Point & {distance: number})|null}
 	 */
 	closestLayerPoint(p) {
-		p = new Point(p);
+		p = Point.from(p);
 		let minDistance = Infinity,
 		minPoint = null,
 		p1, p2;

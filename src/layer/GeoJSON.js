@@ -292,7 +292,7 @@ export class GeoJSON extends FeatureGroup {
 	 * @returns {number[]}
 	 */
 	static latLngToCoords(latlng, precision) {
-		latlng = new LatLng(latlng);
+		latlng = LatLng.from(latlng);
 		return latlng.alt !== undefined ?
 			[Util.formatNum(latlng.lng, precision), Util.formatNum(latlng.lat, precision), Util.formatNum(latlng.alt, precision)] :
 			[Util.formatNum(latlng.lng, precision), Util.formatNum(latlng.lat, precision)];

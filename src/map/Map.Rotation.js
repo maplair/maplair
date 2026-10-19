@@ -289,7 +289,7 @@ const mapRotationMethods = {
 	 * @returns {this}
 	 */
 	panBy(offset, options) {
-		return panBy.call(this, this._rotateToPane(new Point(offset)), options);
+		return panBy.call(this, this._rotateToPane(Point.from(offset)), options);
 	},
 
 	_tryAnimatedPan(center, options) {
@@ -475,7 +475,7 @@ const divOverlayRotationMethods = {
 		pos = map.latLngToLayerPoint(this._latlng),
 		// on a rotated map, the anchor is relative to the upright overlay
 		anchor = map._rotateToPane(new Point(this._getAnchor()));
-		let offset = new Point(this.options.offset);
+		let offset = Point.from(this.options.offset);
 
 		const transformed = this._zoomAnimated || this.options.overflow || map._bearing;
 		if (!transformed) {
@@ -553,9 +553,9 @@ const popupRotationMethods = {
 		topLeft = new Point(this._containerLeft, -containerHeight - this._containerBottom);
 
 		const containerPos = map.layerPointToContainerPoint(this._getContainerPosition())._add(topLeft),
-		padding = new Point(this.options.autoPanPadding),
-		paddingTL = new Point(this.options.autoPanPaddingTopLeft ?? padding),
-		paddingBR = new Point(this.options.autoPanPaddingBottomRight ?? padding),
+		padding = Point.from(this.options.autoPanPadding),
+		paddingTL = Point.from(this.options.autoPanPaddingTopLeft ?? padding),
+		paddingBR = Point.from(this.options.autoPanPaddingBottomRight ?? padding),
 		size = map.getSize();
 		let dx = 0,
 		dy = 0;

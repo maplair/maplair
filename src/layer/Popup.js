@@ -547,9 +547,9 @@ export class Popup extends DivOverlay {
 		layerPos._add(this._getContainerPosition());
 
 		const containerPos = map.layerPointToContainerPoint(layerPos),
-		padding = new Point(this.options.autoPanPadding),
-		paddingTL = new Point(this.options.autoPanPaddingTopLeft ?? padding),
-		paddingBR = new Point(this.options.autoPanPaddingBottomRight ?? padding),
+		padding = Point.from(this.options.autoPanPadding),
+		paddingTL = Point.from(this.options.autoPanPaddingTopLeft ?? padding),
+		paddingBR = Point.from(this.options.autoPanPaddingBottomRight ?? padding),
 		size = map.getSize();
 		let dx = 0,
 		dy = 0;

@@ -341,7 +341,7 @@ export class MaplairMap extends Evented {
 		}
 
 		if (options.center && options.zoom !== undefined) {
-			this.setView(new LatLng(options.center), options.zoom, {reset: true});
+			this.setView(LatLng.from(options.center), options.zoom, {reset: true});
 		}
 
 		this.callInitHooks(MaplairMap);
@@ -463,10 +463,10 @@ export class MaplairMap extends Evented {
 	_getBoundsCenterZoom(bounds, options) {
 
 		options ??= {};
-		bounds = bounds.getBounds ? bounds.getBounds() : new LatLngBounds(bounds);
+		bounds = bounds.getBounds ? bounds.getBounds() : LatLngBounds.from(bounds);
 
-		const paddingTL = new Point(options.paddingTopLeft || options.padding || [0, 0]),
-		paddingBR = new Point(options.paddingBottomRight || options.padding || [0, 0]);
+		const paddingTL = Point.from(options.paddingTopLeft || options.padding || [0, 0]),
+		paddingBR = Point.from(options.paddingBottomRight || options.padding || [0, 0]);
 
 		let zoom = this.getBoundsZoom(bounds, false, paddingTL.add(paddingBR));
 
@@ -501,7 +501,7 @@ export class MaplairMap extends Evented {
 	 */
 	fitBounds(bounds, options) {
 
-		bounds = new LatLngBounds(bounds);
+		bounds = LatLngBounds.from(bounds);
 
 		if (!bounds.isValid()) {
 			throw new Error('Bounds are not valid.');
@@ -803,7 +803,7 @@ export class MaplairMap extends Evented {
 	panInsideBounds(bounds, options) {
 		this._enforcingBounds = true;
 		const center = this.getCenter(),
-		newCenter = this._limitCenter(center, this._zoom, new LatLngBounds(bounds));
+		newCenter = this._limitCenter(center, this._zoom, LatLngBounds.from(bounds));
 
 		if (!center.equals(newCenter)) {
 			this.panTo(newCenter, options);
@@ -826,8 +826,8 @@ export class MaplairMap extends Evented {
 	panInside(latlng, options) {
 		options ??= {};
 
-		const paddingTL = new Point(options.paddingTopLeft || options.padding || [0, 0]),
-		paddingBR = new Point(options.paddingBottomRight || options.padding || [0, 0]),
+		const paddingTL = Point.from(options.paddingTopLeft || options.padding || [0, 0]),
+		paddingBR = Point.from(options.paddingBottomRight || options.padding || [0, 0]),
 		pixelCenter = this.project(this.getCenter()),
 		pixelPoint = this.project(latlng),
 		pixelBounds = this.getPixelBounds(),
@@ -1197,8 +1197,8 @@ export class MaplairMap extends Evented {
 	 * @returns {number}
 	 */
 	getBoundsZoom(bounds, inside, padding) {
-		bounds = new LatLngBounds(bounds);
-		padding = new Point(padding ?? [0, 0]);
+		bounds = LatLngBounds.from(bounds);
+		padding = Point.from(padding ?? [0, 0]);
 
 		let zoom = this.getZoom() ?? 0;
 		const min = this.getMinZoom(),

@@ -113,7 +113,7 @@ export class DragHandler extends Handler {
 		map._stop();
 		map._setUserEvent(e.originalEvent);
 		if (this._map.options.maxBounds && this._map.options.maxBoundsViscosity) {
-			const bounds = new LatLngBounds(this._map.options.maxBounds);
+			const bounds = LatLngBounds.from(this._map.options.maxBounds);
 
 			this._offsetLimit = new Bounds(
 				this._map.latLngToContainerPoint(bounds.getNorthWest()).multiplyBy(-1),

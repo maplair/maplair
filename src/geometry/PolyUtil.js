@@ -132,7 +132,7 @@ export function centroid(coords) {
 	let lngSum = 0;
 	let len = 0;
 	for (const coord of coords) {
-		const latlng = new LatLng(coord);
+		const latlng = LatLng.from(coord);
 		latSum += latlng.lat;
 		lngSum += latlng.lng;
 		len++;

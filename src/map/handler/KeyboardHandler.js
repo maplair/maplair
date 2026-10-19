@@ -221,11 +221,11 @@ export class KeyboardHandler extends Handler {
 			if (!map._panAnim || !map._panAnim._inProgress) {
 				offset = this._panKeys[key];
 				if (e.shiftKey) {
-					offset = new Point(offset).multiplyBy(3);
+					offset = Point.from(offset).multiplyBy(3);
 				}
 
 				if (map.options.maxBounds) {
-					offset = map._limitOffset(new Point(offset), map.options.maxBounds);
+					offset = map._limitOffset(Point.from(offset), map.options.maxBounds);
 				}
 
 				map._setUserEvent(e);
