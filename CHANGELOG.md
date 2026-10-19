@@ -3,9 +3,15 @@ Maplair Changelog
 
 (all changes of Leaflet without author notice are by [@mourner](https://github.com/mourner))
 
+## 4.0.0 (2026-10-19) 🍁
+
+The first stable release of Maplair, with no changes since 4.0.0-alpha.2.
+
+For an overview and a migration guide from Leaflet 1.9.4, see the blog post: https://maplair.org/2026/10/19/maplair-4.0.0.html
+
 ## 4.0.0-alpha.2 (2026-10-17)
 
-For an overview and a migration guide from Leaflet 1.9.4, see the blog post: https://maplair.org/2026/10/17/maplair-4.0.0-alpha.2.html
+For an overview and a migration guide from Leaflet 1.9.4, see the blog post: https://maplair.org/2026/10/19/maplair-4.0.0.html
 
 (changes without author notice are by [@simon04](https://github.com/simon04))
 
@@ -67,7 +73,7 @@ For an overview and a migration guide from Leaflet 1.9.4, see the blog post: htt
 
 The first pre-release of Maplair, a fork of Leaflet. It contains all changes since Leaflet 1.9.4: those of Leaflet 2.0.0-alpha and 2.0.0-alpha.1 (see below), the unreleased changes of Leaflet until the fork, and Maplair's own changes.
 
-For an overview and a migration guide from Leaflet 1.9.4, see the blog post: https://maplair.org/2026/10/17/maplair-4.0.0-alpha.2.html
+For an overview and a migration guide from Leaflet 1.9.4, see the blog post: https://maplair.org/2026/10/19/maplair-4.0.0.html
 
 ### Maplair
 

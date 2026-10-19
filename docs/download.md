@@ -12,8 +12,8 @@ bodyclass: download-page
 		<th>Description</th>
 	</tr>
 	<tr>
-		<td><a href="https://github.com/maplair/maplair/releases/tag/v4.0.0-alpha.2">Maplair 4.0.0-alpha.2</a></td>
-		<td>Prerelease version, released on October 17, 2026 (<a href="2026/10/17/maplair-4.0.0-alpha.2.html">what's new</a>).</td>
+		<td><a href="https://github.com/maplair/maplair/releases/tag/v4.0.0">Maplair 4.0.0</a></td>
+		<td>Stable version, released on October 19, 2026 (<a href="2026/10/19/maplair-4.0.0.html">what's new</a>).</td>
 	</tr>
 	<tr>
 		<td><a href="https://github.com/Leaflet/Leaflet/releases/download/v1.9.4/leaflet.zip">Leaflet 1.9.4</a></td>
