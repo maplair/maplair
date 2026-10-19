@@ -1,6 +1,6 @@
 <img width="600" src="src/images/logo.svg" alt="Maplair" />
 
-Maplair is the leading open-source JavaScript library for **building powerful interactive maps**.
+Maplair is an open-source JavaScript library for **building powerful interactive maps**, a fork of [Leaflet](https://leafletjs.com), the leading library for this.
 
 Weighing just about 39 kB of gzipped JS plus 3.1 kB of gzipped CSS code, it has all the mapping [features][] most developers ever need.
 And since Maplair supports tree-shaking, your bundler shakes off the leaves you don't use 🍁
