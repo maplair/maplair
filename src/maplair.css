@@ -766,6 +766,45 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	}
 }
 
+/* time control */
+
+.maplair-bar.maplair-control-time {
+	display: flex;
+	align-items: center;
+	background-color: var(--maplair-background-color-base);
+	font-size: var(--maplair-font-size-small);
+
+	/* the buttons in a row */
+	button,
+	.maplair-touch & button {
+		flex: none;
+		border-bottom: none;
+		border-right: var(--maplair-border-width-base) solid var(--maplair-border-color-subtle);
+		border-radius: 0;
+
+		&:first-child {
+			border-radius: var(--maplair-border-radius-base) 0 0 var(--maplair-border-radius-base);
+		}
+	}
+
+	svg {
+		vertical-align: middle;
+	}
+}
+
+.maplair-control-time-slider {
+	width: 160px;
+	max-width: calc(100vw - 260px);
+	margin: 0 var(--maplair-spacing-50);
+	accent-color: var(--maplair-color-progressive);
+}
+
+.maplair-control-time-label {
+	padding-right: var(--maplair-spacing-50);
+	white-space: nowrap;
+	font-variant-numeric: tabular-nums;
+}
+
 /* legend control */
 
 .maplair-control-legend {

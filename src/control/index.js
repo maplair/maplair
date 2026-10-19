@@ -10,4 +10,5 @@ export {ScaleControl} from './ScaleControl.js';
 export {SearchControl} from './SearchControl.js';
 export {SideBySideControl} from './SideBySideControl.js';
 export {TextControl} from './TextControl.js';
+export {TimeControl} from './TimeControl.js';
 export {ZoomControl} from './ZoomControl.js';

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Maplair debug page - Time control</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
+		<link rel="stylesheet" href="../../dist/maplair.css" />
+		<link rel="stylesheet" href="../css/screen.css" />
+		<script type="importmap">
+			{
+				"imports": {
+					"maplair": "../../dist/maplair-src.js"
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<div id="map"></div>
+		<script type="module">
+			import {MaplairMap, TextControl, TileLayer, TimeControl, WMSTileLayer} from 'maplair';
+
+			const map = new MaplairMap('map').setView([35.3, -97.5], 7);
+			new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+				maxZoom: 19
+			}).addTo(map);
+
+			// the weather radar of the Moore tornado, every 5 minutes
+			const radar = new WMSTileLayer('https://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r-t.cgi', {
+				layers: 'nexrad-n0r-wmst',
+				format: 'image/png',
+				transparent: true,
+				opacity: 0.7,
+				attribution: 'Radar: <a href="https://mesonet.agron.iastate.edu/">Iowa Environmental Mesonet</a>'
+			}).addTo(map);
+
+			new TimeControl({
+				interval: '2013-05-20T18:00Z/2013-05-20T22:00Z',
+				period: 'PT5M',
+				time: '2013-05-20T18:00Z',
+				layers: [radar],
+				transitionTime: 500,
+				loop: true
+			}).addTo(map);
+
+			const status = new TextControl({position: 'topright'}).addTo(map);
+			map.on('timechange', ({time, index}) => {
+				status.setContent(`#${index}: ${time.toISOString()}`);
+			});
+		</script>
+	</body>
+</html>

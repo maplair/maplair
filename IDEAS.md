@@ -526,6 +526,8 @@ used for tapped markers.
 
 ## 40. Time dimension: animated WMS time series
 
+**Status:** implemented as `TimeControl` (times, or an ISO 8601 interval with a period; play, pause, steps and a slider; waits for the `load` of the layers; `timechange`; `formatTime`), driving layers by `setTime(date)`, the WMS parameter `time` or the `{time}` of a URL template, with the flicker-free `setParams()` of `WMSTileLayer`. A regular export, dropped by tree-shaking, instead of an opt-in module. Not yet: prefetching the tiles of the next time, and `ImageOverlay` via a URL function of the time.
+
 [Leaflet.TimeDimension](https://github.com/socib/Leaflet.TimeDimension) (with
 iso8601-js-period), e.g. an hourly animation of a day · effort: medium–large
 

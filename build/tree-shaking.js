@@ -20,7 +20,8 @@ const features = {
 
 // code which only the respective control contains
 const controls = {
-	'search-control': 'nominatim.openstreetmap.org'
+	'search-control': 'nominatim.openstreetmap.org',
+	'time-control': 'maplair-control-time'
 };
 const markers = {...features, ...controls};
 
@@ -43,6 +44,10 @@ const apps = {
 	'search-control': {
 		code: `import {SearchControl} from 'maplair';\n${base}new SearchControl({geocoder: SearchControl.nominatim({acceptUsagePolicy: true})}).addTo(map);\n`,
 		expected: ['search-control']
+	},
+	'time-control': {
+		code: `import {TimeControl} from 'maplair';\n${base}new TimeControl({interval: '2026-10-17T00:00Z/P1D', period: 'PT1H'}).addTo(map);\n`,
+		expected: ['time-control']
 	}
 };
 

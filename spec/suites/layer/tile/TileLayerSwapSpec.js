@@ -1,5 +1,5 @@
 import {expect, vi} from 'vite-plus/test';
-import {GridLayer, MaplairMap, TileLayer} from 'maplair';
+import {GridLayer, MaplairMap, TileLayer, WMSTileLayer} from 'maplair';
 import {createContainer, removeMapContainer} from '../../SpecHelper.js';
 
 describe('TileLayer: flicker-free setUrl and placeholder', () => {
@@ -140,6 +140,34 @@ describe('TileLayer: flicker-free setUrl and placeholder', () => {
 				setTimeout(resolve, 300);
 			});
 			expect(oldTiles[0].isConnected).to.be.false;
+		});
+	});
+
+	describe('WMSTileLayer.setParams', () => {
+		it('keeps the current tiles until the new tiles have loaded', async () => {
+			createMap();
+			const layer = new WMSTileLayer('https://wms.example.com/', {layers: 'radar', fetchOptions: {}});
+			let load = nextEvent(layer, 'load');
+			layer.addTo(map);
+			respondAll();
+			await load;
+			const oldTiles = tileImages(layer);
+			expect(oldTiles.length).to.be.greaterThan(0);
+
+			layer.setParams({time: '2026-01-01T00:00:00.000Z'});
+			expect(pending.length).to.equal(oldTiles.length);
+			expect(pending.every(r => new URL(r.url).searchParams.get('time') === '2026-01-01T00:00:00.000Z')).to.be.true;
+			for (const tile of oldTiles) {
+				expect(tile.isConnected).to.be.true;
+			}
+
+			load = nextEvent(layer, 'load');
+			respondAll();
+			await load;
+			for (const tile of oldTiles) {
+				expect(tile.isConnected).to.be.false;
+			}
+			expect(tileImages(layer).length).to.equal(oldTiles.length);
 		});
 	});
 

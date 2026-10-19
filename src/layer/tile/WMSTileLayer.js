@@ -189,7 +189,8 @@ export class WMSTileLayer extends TileLayer {
 
 	/**
 	 * Merges an object with the new parameters and re-requests tiles on the current screen
-	 * (unless `noRedraw` was set to true).
+	 * (unless `noRedraw` was set to true). The current tiles stay visible until the new
+	 * tiles have loaded, to avoid flickering.
 	 * @param {Record<string, any>} params
 	 * @param {boolean} [noRedraw]
 	 * @returns {this}
@@ -199,6 +200,7 @@ export class WMSTileLayer extends TileLayer {
 		Object.assign(this.wmsParams, params);
 
 		if (!noRedraw) {
+			this._keepCurrentTiles();
 			this.redraw();
 		}
 
