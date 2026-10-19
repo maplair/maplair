@@ -25,6 +25,7 @@
 	<meta http-equiv="refresh" content="0;url={{ page.redirect_to }}" />
 	{% endif %}
 
+	<meta name="color-scheme" content="light dark">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 	{% capture root %}{% if page.root %}{{ page.root }}{% else %}{{ layout.root }}{% endif %}{% endcapture %}
@@ -68,7 +69,7 @@
 <body{% if page.bodyclass %} class="{{ page.bodyclass }}"{% endif %}>
 
 <header>
-	<h1><a href="https://maplair.org/"><img src="{{ root }}docs/images/logo.png" alt="Maplair" width="300" /></a></h1>
+	<h1><a href="https://maplair.org/"><picture><source srcset="{{ root }}docs/images/logo-dark.png" media="(prefers-color-scheme: dark)" /><img src="{{ root }}docs/images/logo.png" alt="Maplair" width="300" /></picture></a></h1>
 	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
 </header>
 

@@ -26,7 +26,7 @@ table.plugins th {
 	cursor: pointer;
 }
 table.plugins th:hover {
-	background: #dbdbdb;
+	background: var(--border);
 }
 </style>
 

@@ -34,8 +34,8 @@ section > h4 {
     padding: 0.25em 0;
     position: sticky;
     top: 2.8em;
-    background-color: white;
-    border-bottom: 1px solid #eee;
+    background-color: var(--background);
+    border-bottom: 1px solid var(--border-subtle);
 }
 
 label {
