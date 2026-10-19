@@ -30,6 +30,7 @@ html, body, input, select, button, textarea, table {
 	--code-argument: #00A707;
 	--code-type: #9a9;
 	--shadow: rgba(14, 15, 15, 0.3);
+	--border-radius: 8px;
 	--highlight: yellow;
 	/* highlight.js */
 	--hljs-background: #f8f8f8;
@@ -162,6 +163,7 @@ table td code b {
 
 iframe {
 	border: none;
+	border-radius: var(--border-radius);
 }
 
 img {
@@ -345,16 +347,17 @@ p.tagline {
 .container pre code {
 	font-size: 14px;
 	padding: .75em 1em;
-	border-radius: 5px;
+	border-radius: var(--border-radius);
 	white-space: pre;
 	overflow: auto;
 }
 .container pre {
-	border-radius: 5px;
+	border-radius: var(--border-radius);
 }
 
 .container .map {
 	border: 1px solid var(--border);
+	border-radius: var(--border-radius);
 }
 .container .map:focus {
 	border-color: var(--text-faint);
@@ -395,7 +398,7 @@ p.tagline {
 	float: left;
 	width: 14em;
 	max-width: 100%;
-	border-radius: 5px;
+	border-radius: var(--border-radius);
 	margin: 0 1.5em 1.5em 0;
 	border: thin solid var(--border);
 }
@@ -1051,6 +1054,6 @@ iframe[src*='youtube.com'] {
 .announcement {
 	background: var(--background-subtle);
 	padding: 5px 10px;
-	border-radius: 10px;
+	border-radius: var(--border-radius);
 }
 
