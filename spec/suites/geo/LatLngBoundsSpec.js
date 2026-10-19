@@ -26,6 +26,24 @@ describe('LatLngBounds', () => {
 			expect(new LatLngBounds(new LatLngBounds()).isValid()).to.be.false;
 		});
 
+		it('does not keep a reference to the given LatLng', () => {
+			const latlng = new LatLng(10, 20),
+			bounds = new LatLngBounds([latlng]);
+			bounds.extend([30, 40]);
+			expect(latlng).to.eql(new LatLng(10, 20));
+		});
+	});
+
+	describe('.from', () => {
+		it('returns LatLngBounds instances as they are', () => {
+			expect(LatLngBounds.from(a)).to.equal(a);
+		});
+
+		it('creates LatLngBounds from the other formats of the constructor', () => {
+			expect(LatLngBounds.from([14, 12], [30, 40])).to.eql(a);
+			expect(LatLngBounds.from([[14, 12], [30, 40]])).to.eql(a);
+		});
+
 		it('instantiates either passing two latlngs or an array of latlngs', () => {
 			const b = new LatLngBounds([
 				new LatLng(14, 12),

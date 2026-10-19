@@ -108,6 +108,25 @@ export class LatLng {
 	}
 
 	/**
+	 * Returns the given `LatLng` object as it is, or else a new `LatLng` object created
+	 * from the given arguments (the same as of the constructor) — unlike the
+	 * constructor, which always creates a new object.
+	 *
+	 * @example
+	 * ```js
+	 * LatLng.from(latlng) === latlng; // true
+	 * LatLng.from([50.5, 30.5]); // LatLng(50.5, 30.5)
+	 * ```
+	 * @param {number|LatLngExpression} lat Latitude in degrees, or the coordinates.
+	 * @param {number} [lng] Longitude in degrees.
+	 * @param {number} [alt] Altitude in meters.
+	 * @returns {LatLng}
+	 */
+	static from(lat, lng, alt) {
+		return lat instanceof LatLng ? lat : new LatLng(lat, lng, alt);
+	}
+
+	/**
 	 * Returns `true` if the LatLng object can be properly initialized with the given
 	 * arguments (the same as of the constructor).
 	 * @param {any} lat
@@ -185,7 +204,7 @@ export class LatLng {
 	equals(obj, maxMargin) {
 		if (!obj) { return false; }
 
-		obj = new LatLng(obj);
+		obj = LatLng.from(obj);
 
 		const margin = Math.max(
 			Math.abs(this.lat - obj.lat),
@@ -210,7 +229,7 @@ export class LatLng {
 	 * @returns {number}
 	 */
 	distanceTo(other) {
-		return EarthCRS.distance(this, new LatLng(other));
+		return EarthCRS.distance(this, LatLng.from(other));
 	}
 
 	/**

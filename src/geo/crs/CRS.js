@@ -147,7 +147,7 @@ export class CRS {
 	 * @returns {LatLng}
 	 */
 	static wrapLatLng(latlng) {
-		latlng = new LatLng(latlng);
+		latlng = LatLng.from(latlng);
 		const lng = this.wrapLng ? Util.wrapNum(latlng.lng, this.wrapLng, true) : latlng.lng,
 		lat = this.wrapLat ? Util.wrapNum(latlng.lat, this.wrapLat, true) : latlng.lat,
 		alt = latlng.alt;

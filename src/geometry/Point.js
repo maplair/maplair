@@ -72,6 +72,25 @@ export class Point {
 	}
 
 	/**
+	 * Returns the given `Point` object as it is (unless `round` is set), or else a new
+	 * `Point` object created from the given arguments (the same as of the constructor) —
+	 * unlike the constructor, which always creates a new object.
+	 *
+	 * @example
+	 * ```js
+	 * Point.from(point) === point; // true
+	 * Point.from([200, 300]); // Point(200, 300)
+	 * ```
+	 * @param {number|PointExpression} x The `x` coordinate, or the coordinates.
+	 * @param {number} [y] The `y` coordinate.
+	 * @param {boolean} [round]
+	 * @returns {Point}
+	 */
+	static from(x, y, round) {
+		return x instanceof Point && !round ? x : new Point(x, y, round);
+	}
+
+	/**
 	 * Returns `true` if the Point object can be properly initialized with the given
 	 * arguments (the same as of the constructor).
 	 * @param {any} x
@@ -96,7 +115,7 @@ export class Point {
 	 */
 	add(point) {
 		// non-destructive, returns a new point
-		return new Point(this)._add(new Point(point));
+		return new Point(this)._add(Point.from(point));
 	}
 
 	_add(point) {
@@ -112,7 +131,7 @@ export class Point {
 	 * @returns {Point}
 	 */
 	subtract(point) {
-		return new Point(this)._subtract(new Point(point));
+		return new Point(this)._subtract(Point.from(point));
 	}
 
 	_subtract(point) {
@@ -236,7 +255,7 @@ export class Point {
 	 * @returns {number}
 	 */
 	distanceTo(point) {
-		point = new Point(point);
+		point = Point.from(point);
 
 		const x = point.x - this.x,
 		y = point.y - this.y;
@@ -250,7 +269,7 @@ export class Point {
 	 * @returns {boolean}
 	 */
 	equals(point) {
-		point = new Point(point);
+		point = Point.from(point);
 
 		return point.x === this.x &&
 		       point.y === this.y;
@@ -263,7 +282,7 @@ export class Point {
 	 * @returns {boolean}
 	 */
 	contains(point) {
-		point = new Point(point);
+		point = Point.from(point);
 
 		return Math.abs(point.x) <= Math.abs(this.x) &&
 		       Math.abs(point.y) <= Math.abs(this.y);

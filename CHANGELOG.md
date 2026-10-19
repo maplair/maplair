@@ -36,6 +36,7 @@ For an overview and a migration guide from Leaflet 1.9.4, see the blog post: htt
 * Add `DisplaceHandler` for the displacement of overlapping circle markers
 * Add `TapDragZoomHandler` to zoom by double tapping and dragging up/down
 * Add `LatLng.parse()` for coordinates in decimal degrees and geo URIs
+* Add `LatLng.from()`, `Point.from()`, `Bounds.from()` and `LatLngBounds.from()`, which return instances as they are, unlike the constructors
 * Map: add rotation with `bearing`, `setBearing()`, `pinchRotate` and `RotateControl` (optional module `maplair/map-rotation`)
 * Marker: add the options `rotationAngle` and `rotationOrigin` (optional module `maplair/marker-rotation`)
 * Animate markers along routes with `moveTo()`/`moveAlong()` (optional module `maplair/marker-movement`) and dashes along paths with `dashSpeed` (optional module `maplair/dash-animation`)
@@ -77,6 +78,7 @@ For an overview and a migration guide from Leaflet 1.9.4, see the blog post: htt
 * Popup: avoid a second forced layout when opening a popup
 * Events: index listeners by function and context, and store them in Sets, so that adding and removing many layers isn't quadratic
 * Skip unchanged transform and z-index style writes
+* Don't copy points and bounds which are only read, e.g. in the projections and `Point#add()`
 
 #### 🐞 Bugfixes
 

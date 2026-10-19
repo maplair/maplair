@@ -18,7 +18,7 @@ export const Mercator = {
 	bounds: new Bounds([-20037508.34279, -15496570.73972], [20037508.34279, 18764656.23138]),
 
 	project(latlng) {
-		latlng = new LatLng(latlng);
+		latlng = LatLng.from(latlng);
 		const d = Math.PI / 180,
 		r = this.R,
 		tmp = this.R_MINOR / r,
@@ -33,7 +33,7 @@ export const Mercator = {
 	},
 
 	unproject(point) {
-		point = new Point(point);
+		point = Point.from(point);
 		const d = 180 / Math.PI,
 		r = this.R,
 		tmp = this.R_MINOR / r,

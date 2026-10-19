@@ -63,6 +63,19 @@ export class Bounds {
 	}
 
 	/**
+	 * Returns the given `Bounds` object as it is, or else a new `Bounds` object created
+	 * from the given arguments (the same as of the constructor) — unlike the
+	 * constructor, which always creates a new object.
+	 * @param {PointExpression|BoundsExpression} [a] The first corner, the points or the
+	 * bounds.
+	 * @param {PointExpression} [b] The opposite corner.
+	 * @returns {Bounds}
+	 */
+	static from(a, b) {
+		return a instanceof Bounds ? a : new Bounds(a, b);
+	}
+
+	/**
 	 * Extends the bounds to contain the given point or bounds.
 	 * @param {PointExpression|BoundsExpression} obj
 	 * @returns {this}
@@ -72,9 +85,9 @@ export class Bounds {
 		if (!obj) { return this; }
 
 		if (obj instanceof Point || typeof obj[0] === 'number' || 'x' in obj) {
-			min2 = max2 = new Point(obj);
+			min2 = max2 = Point.from(obj);
 		} else {
-			obj = new Bounds(obj);
+			obj = Bounds.from(obj);
 			min2 = obj.min;
 			max2 = obj.max;
 
@@ -153,9 +166,9 @@ export class Bounds {
 		let min, max;
 
 		if (typeof obj[0] === 'number' || obj instanceof Point) {
-			obj = new Point(obj);
+			obj = Point.from(obj);
 		} else {
-			obj = new Bounds(obj);
+			obj = Bounds.from(obj);
 		}
 
 		if (obj instanceof Bounds) {
@@ -178,7 +191,7 @@ export class Bounds {
 	 * @returns {boolean}
 	 */
 	intersects(bounds) { // (Bounds) -> Boolean
-		bounds = new Bounds(bounds);
+		bounds = Bounds.from(bounds);
 
 		const min = this.min,
 		max = this.max,
@@ -197,7 +210,7 @@ export class Bounds {
 	 * @returns {boolean}
 	 */
 	overlaps(bounds) { // (Bounds) -> Boolean
-		bounds = new Bounds(bounds);
+		bounds = Bounds.from(bounds);
 
 		const min = this.min,
 		max = this.max,
@@ -246,7 +259,7 @@ export class Bounds {
 	equals(bounds) {
 		if (!bounds) { return false; }
 
-		bounds = new Bounds(bounds);
+		bounds = Bounds.from(bounds);
 
 		return this.min.equals(bounds.getTopLeft()) &&
 			this.max.equals(bounds.getBottomRight());

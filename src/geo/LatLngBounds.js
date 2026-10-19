@@ -69,6 +69,19 @@ export class LatLngBounds {
 	}
 
 	/**
+	 * Returns the given `LatLngBounds` object as it is, or else a new `LatLngBounds`
+	 * object created from the given arguments (the same as of the constructor) — unlike
+	 * the constructor, which always creates a new object.
+	 * @param {LatLngExpression|LatLngBoundsExpression} [corner1] The first corner, the
+	 * points or the bounds.
+	 * @param {LatLngExpression} [corner2] The opposite corner.
+	 * @returns {LatLngBounds}
+	 */
+	static from(corner1, corner2) {
+		return corner1 instanceof LatLngBounds ? corner1 : new LatLngBounds(corner1, corner2);
+	}
+
+	/**
 	 * Extend the bounds to contain the given point or bounds.
 	 * @param {LatLngExpression|LatLngBoundsExpression} obj
 	 * @returns {this}
@@ -93,9 +106,9 @@ export class LatLngBounds {
 				return this;
 			}
 			if (LatLng.validate(obj)) {
-				return this.extend(new LatLng(obj));
+				return this.extend(LatLng.from(obj));
 			}
-			return this.extend(new LatLngBounds(obj));
+			return this.extend(LatLngBounds.from(obj));
 		}
 
 		if (!sw && !ne) {
@@ -210,9 +223,9 @@ export class LatLngBounds {
 	 */
 	contains(obj) { // (LatLngBounds) or (LatLng) -> Boolean
 		if (LatLng.validate(obj)) {
-			obj = new LatLng(obj);
+			obj = LatLng.from(obj);
 		} else {
-			obj = new LatLngBounds(obj);
+			obj = LatLngBounds.from(obj);
 		}
 
 		const sw = this._southWest,
@@ -237,7 +250,7 @@ export class LatLngBounds {
 	 * @returns {boolean}
 	 */
 	intersects(bounds) {
-		bounds = new LatLngBounds(bounds);
+		bounds = LatLngBounds.from(bounds);
 
 		const sw = this._southWest,
 		ne = this._northEast,
@@ -257,7 +270,7 @@ export class LatLngBounds {
 	 * @returns {boolean}
 	 */
 	overlaps(bounds) {
-		bounds = new LatLngBounds(bounds);
+		bounds = LatLngBounds.from(bounds);
 
 		const sw = this._southWest,
 		ne = this._northEast,
@@ -291,7 +304,7 @@ export class LatLngBounds {
 	equals(bounds, maxMargin) {
 		if (!bounds) { return false; }
 
-		bounds = new LatLngBounds(bounds);
+		bounds = LatLngBounds.from(bounds);
 
 		return this._southWest.equals(bounds.getSouthWest(), maxMargin) &&
 		       this._northEast.equals(bounds.getNorthEast(), maxMargin);

@@ -541,7 +541,7 @@ export class MaplairMap extends Evented {
 	 * @returns {this}
 	 */
 	panBy(offset, options) {
-		offset = new Point(offset).round();
+		offset = Point.from(offset).round();
 		options ??= {};
 
 		if (!offset.x && !offset.y) {
@@ -1350,7 +1350,7 @@ export class MaplairMap extends Evented {
 	 */
 	project(latlng, zoom) {
 		zoom ??= this._zoom;
-		return this.options.crs.latLngToPoint(new LatLng(latlng), zoom);
+		return this.options.crs.latLngToPoint(LatLng.from(latlng), zoom);
 	}
 
 	/**
@@ -1362,7 +1362,7 @@ export class MaplairMap extends Evented {
 	 */
 	unproject(point, zoom) {
 		zoom ??= this._zoom;
-		return this.options.crs.pointToLatLng(new Point(point), zoom);
+		return this.options.crs.pointToLatLng(Point.from(point), zoom);
 	}
 
 	/**
@@ -1373,7 +1373,7 @@ export class MaplairMap extends Evented {
 	 * @returns {LatLng}
 	 */
 	layerPointToLatLng(point) {
-		const projectedPoint = new Point(point).add(this.getPixelOrigin());
+		const projectedPoint = Point.from(point).add(this.getPixelOrigin());
 		return this.unproject(projectedPoint);
 	}
 
@@ -1385,7 +1385,7 @@ export class MaplairMap extends Evented {
 	 * @returns {Point}
 	 */
 	latLngToLayerPoint(latlng) {
-		const projectedPoint = this.project(new LatLng(latlng))._round();
+		const projectedPoint = this.project(LatLng.from(latlng))._round();
 		return projectedPoint._subtract(this.getPixelOrigin());
 	}
 
@@ -1400,7 +1400,7 @@ export class MaplairMap extends Evented {
 	 * @returns {LatLng}
 	 */
 	wrapLatLng(latlng) {
-		return this.options.crs.wrapLatLng(new LatLng(latlng));
+		return this.options.crs.wrapLatLng(LatLng.from(latlng));
 	}
 
 	/**
@@ -1426,7 +1426,7 @@ export class MaplairMap extends Evented {
 	 * @returns {number}
 	 */
 	distance(latlng1, latlng2) {
-		return this.options.crs.distance(new LatLng(latlng1), new LatLng(latlng2));
+		return this.options.crs.distance(LatLng.from(latlng1), LatLng.from(latlng2));
 	}
 
 	/**
@@ -1437,7 +1437,7 @@ export class MaplairMap extends Evented {
 	 * @returns {Point}
 	 */
 	containerPointToLayerPoint(point) {
-		return new Point(point).subtract(this._getMapPanePos());
+		return Point.from(point).subtract(this._getMapPanePos());
 	}
 
 	/**
@@ -1448,7 +1448,7 @@ export class MaplairMap extends Evented {
 	 * @returns {Point}
 	 */
 	layerPointToContainerPoint(point) {
-		return new Point(point).add(this._getMapPanePos());
+		return Point.from(point).add(this._getMapPanePos());
 	}
 
 	/**
@@ -1459,7 +1459,7 @@ export class MaplairMap extends Evented {
 	 * @returns {LatLng}
 	 */
 	containerPointToLatLng(point) {
-		const layerPoint = this.containerPointToLayerPoint(new Point(point));
+		const layerPoint = this.containerPointToLayerPoint(Point.from(point));
 		return this.layerPointToLatLng(layerPoint);
 	}
 
@@ -1471,7 +1471,7 @@ export class MaplairMap extends Evented {
 	 * @returns {Point}
 	 */
 	latLngToContainerPoint(latlng) {
-		return this.layerPointToContainerPoint(this.latLngToLayerPoint(new LatLng(latlng)));
+		return this.layerPointToContainerPoint(this.latLngToLayerPoint(LatLng.from(latlng)));
 	}
 
 	/**

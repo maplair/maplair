@@ -17,6 +17,19 @@ describe('Bounds', () => {
 		});
 	});
 
+	describe('.from', () => {
+		it('returns Bounds instances as they are', () => {
+			const bounds = new Bounds([[10, 20], [30, 40]]);
+			expect(Bounds.from(bounds)).to.equal(bounds);
+		});
+
+		it('creates Bounds from the other formats of the constructor', () => {
+			const bounds = new Bounds([10, 20], [30, 40]);
+			expect(Bounds.from([10, 20], [30, 40])).to.eql(bounds);
+			expect(Bounds.from([[10, 20], [30, 40]])).to.eql(bounds);
+		});
+	});
+
 	let a, b, c;
 
 	beforeEach(() => {
@@ -44,6 +57,13 @@ describe('Bounds', () => {
 	});
 
 	describe('#extend', () => {
+		it('does not keep a reference to the given point', () => {
+			const point = new Point(10, 20),
+			bounds = new Bounds().extend(point);
+			bounds.extend([30, 40]);
+			expect(point).to.eql(new Point(10, 20));
+		});
+
 		it('extends the bounds to contain the given point', () => {
 			a.extend([50, 20]);
 			expect(a.min).to.eql(new Point(14, 12));

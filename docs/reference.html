@@ -6485,7 +6485,14 @@ meters apart from the <a href="#latlng"><code>LatLng</code></a>.</p>
 <tr id="latlng-alt"><td><code>alt</code></td><td><code>number | undefined</code></td><td><p>Altitude in meters (optional).</p>
 </td></tr></tbody></table></div>
 <h3 id="latlng-function">Static members</h3>
-<div class="table"><table><thead><tr><th scope="col">Method</th><th scope="col">Returns</th><th scope="col">Description</th></tr></thead><tbody><tr id="latlng-validate"><td><code>validate(lat: any, lng?: any, alt?: any)</code></td><td><code>boolean</code></td><td><p>Returns <code>true</code> if the LatLng object can be properly initialized with the given
+<div class="table"><table><thead><tr><th scope="col">Method</th><th scope="col">Returns</th><th scope="col">Description</th></tr></thead><tbody><tr id="latlng-from"><td><code>from(lat: number | <a href="#latlngexpression">LatLngExpression</a>, lng?: number, alt?: number)</code></td><td><code><a href="#latlng">LatLng</a></code></td><td><p>Returns the given <a href="#latlng"><code>LatLng</code></a> object as it is, or else a new <a href="#latlng"><code>LatLng</code></a> object created
+from the given arguments (the same as of the constructor) — unlike the
+constructor, which always creates a new object.</p>
+<dl class="params"><dt><code>lat</code></dt><dd>Latitude in degrees, or the coordinates.</dd><dt><code>lng</code></dt><dd>Longitude in degrees.</dd><dt><code>alt</code></dt><dd>Altitude in meters.</dd></dl><pre><code class="language-js">LatLng.from(latlng) === latlng; // true
+LatLng.from([50.5, 30.5]); // LatLng(50.5, 30.5)
+</code></pre>
+</td></tr>
+<tr id="latlng-validate"><td><code>validate(lat: any, lng?: any, alt?: any)</code></td><td><code>boolean</code></td><td><p>Returns <code>true</code> if the LatLng object can be properly initialized with the given
 arguments (the same as of the constructor).</p>
 </td></tr>
 <tr id="latlng-parse"><td><code>parse(text: string)</code></td><td><code><a href="#latlng">LatLng</a> | null</code></td><td><p>Parses coordinates in decimal degrees: a pair of numbers (latitude first), e.g.
@@ -6571,6 +6578,11 @@ a small number.</p>
 </td></tr>
 <tr id="latlngbounds-isvalid"><td><code>isValid()</code></td><td><code>boolean</code></td><td><p>Returns <code>true</code> if the bounds are properly initialized.</p>
 </td></tr></tbody></table></div>
+<h3 id="latlngbounds-function">Static members</h3>
+<div class="table"><table><thead><tr><th scope="col">Method</th><th scope="col">Returns</th><th scope="col">Description</th></tr></thead><tbody><tr id="latlngbounds-from"><td><code>from(corner1?: <a href="#latlngexpression">LatLngExpression</a> | <a href="#latlngboundsexpression">LatLngBoundsExpression</a>, corner2?: <a href="#latlngexpression">LatLngExpression</a>)</code></td><td><code><a href="#latlngbounds">LatLngBounds</a></code></td><td><p>Returns the given <a href="#latlngbounds"><code>LatLngBounds</code></a> object as it is, or else a new <a href="#latlngbounds"><code>LatLngBounds</code></a>
+object created from the given arguments (the same as of the constructor) — unlike
+the constructor, which always creates a new object.</p>
+<dl class="params"><dt><code>corner1</code></dt><dd>The first corner, the points or the bounds.</dd><dt><code>corner2</code></dt><dd>The opposite corner.</dd></dl></td></tr></tbody></table></div>
 </section>
 
 <section id="point" class="api-class">
@@ -6635,7 +6647,14 @@ corresponding current point coordinates (in absolute values).</p>
 <tr id="point-y"><td><code>y</code></td><td><code>number</code></td><td><p>The <code>y</code> coordinate of the point.</p>
 </td></tr></tbody></table></div>
 <h3 id="point-function">Static members</h3>
-<div class="table"><table><thead><tr><th scope="col">Method</th><th scope="col">Returns</th><th scope="col">Description</th></tr></thead><tbody><tr id="point-validate"><td><code>validate(x: any, y?: any)</code></td><td><code>boolean</code></td><td><p>Returns <code>true</code> if the Point object can be properly initialized with the given
+<div class="table"><table><thead><tr><th scope="col">Method</th><th scope="col">Returns</th><th scope="col">Description</th></tr></thead><tbody><tr id="point-from"><td><code>from(x: number | <a href="#pointexpression">PointExpression</a>, y?: number, round?: boolean)</code></td><td><code><a href="#point">Point</a></code></td><td><p>Returns the given <a href="#point"><code>Point</code></a> object as it is (unless <code>round</code> is set), or else a new
+<a href="#point"><code>Point</code></a> object created from the given arguments (the same as of the constructor) —
+unlike the constructor, which always creates a new object.</p>
+<dl class="params"><dt><code>x</code></dt><dd>The <code>x</code> coordinate, or the coordinates.</dd><dt><code>y</code></dt><dd>The <code>y</code> coordinate.</dd></dl><pre><code class="language-js">Point.from(point) === point; // true
+Point.from([200, 300]); // Point(200, 300)
+</code></pre>
+</td></tr>
+<tr id="point-validate"><td><code>validate(x: any, y?: any)</code></td><td><code>boolean</code></td><td><p>Returns <code>true</code> if the Point object can be properly initialized with the given
 arguments (the same as of the constructor).</p>
 </td></tr></tbody></table></div>
 </section>
@@ -6696,6 +6715,11 @@ each direction. Negative values will retract the bounds.</p>
 </td></tr>
 <tr id="bounds-max"><td><code>max</code></td><td><code><a href="#point">Point</a></code></td><td><p>The bottom right corner of the rectangle.</p>
 </td></tr></tbody></table></div>
+<h3 id="bounds-function">Static members</h3>
+<div class="table"><table><thead><tr><th scope="col">Method</th><th scope="col">Returns</th><th scope="col">Description</th></tr></thead><tbody><tr id="bounds-from"><td><code>from(a?: <a href="#pointexpression">PointExpression</a> | <a href="#boundsexpression">BoundsExpression</a>, b?: <a href="#pointexpression">PointExpression</a>)</code></td><td><code><a href="#bounds">Bounds</a></code></td><td><p>Returns the given <a href="#bounds"><code>Bounds</code></a> object as it is, or else a new <a href="#bounds"><code>Bounds</code></a> object created
+from the given arguments (the same as of the constructor) — unlike the
+constructor, which always creates a new object.</p>
+<dl class="params"><dt><code>a</code></dt><dd>The first corner, the points or the bounds.</dd><dt><code>b</code></dt><dd>The opposite corner.</dd></dl></td></tr></tbody></table></div>
 </section>
 
 <section id="icon" class="api-class">

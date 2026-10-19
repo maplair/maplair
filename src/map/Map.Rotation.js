@@ -236,7 +236,7 @@ const mapRotationMethods = {
 	 * @returns {Point}
 	 */
 	containerPointToLayerPoint(point) { // (Point)
-		point = new Point(point);
+		point = Point.from(point);
 		if (this._bearing) {
 			// the map pane is rotated around the center of the container
 			const center = this.getSize()._divideBy(2);
@@ -253,7 +253,7 @@ const mapRotationMethods = {
 	 * @returns {Point}
 	 */
 	layerPointToContainerPoint(point) { // (Point)
-		point = new Point(point).add(this._getMapPanePos());
+		point = Point.from(point).add(this._getMapPanePos());
 		if (this._bearing) {
 			const center = this.getSize()._divideBy(2);
 			point = this._rotateToContainer(point.subtract(center))._add(center);

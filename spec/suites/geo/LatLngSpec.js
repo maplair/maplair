@@ -196,4 +196,22 @@ describe('LatLng', () => {
 			expect(a === b).to.be.false;
 		});
 	});
+
+	describe('.from', () => {
+		it('returns LatLng instances as they are', () => {
+			const a = new LatLng(50.5, 30.5, 100);
+			expect(LatLng.from(a)).to.equal(a);
+		});
+
+		it('creates a LatLng from the other formats of the constructor', () => {
+			expect(LatLng.from(50.5, 30.5, 100)).to.eql(new LatLng(50.5, 30.5, 100));
+			expect(LatLng.from([50.5, 30.5])).to.eql(new LatLng(50.5, 30.5));
+			expect(LatLng.from({lat: 50.5, lon: 30.5})).to.eql(new LatLng(50.5, 30.5));
+			expect(LatLng.from({lat: 50.5, lng: 30.5})).to.be.an.instanceof(LatLng);
+		});
+
+		it('throws an error if invalid', () => {
+			expect(() => LatLng.from(NaN, NaN)).to.throw();
+		});
+	});
 });

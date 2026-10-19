@@ -16,6 +16,25 @@ describe('Point', () => {
 		});
 	});
 
+	describe('.from', () => {
+		it('returns Point instances as they are', () => {
+			const p = new Point(1.5, 2.5);
+			expect(Point.from(p)).to.equal(p);
+		});
+
+		it('creates a rounded copy of Point instances if round is true', () => {
+			const p = new Point(1.3, 2.7);
+			expect(Point.from(p, undefined, true)).to.eql(new Point(1, 3));
+			expect(p).to.eql(new Point(1.3, 2.7));
+		});
+
+		it('creates a Point from the other formats of the constructor', () => {
+			expect(Point.from(1.5, 2.5)).to.eql(new Point(1.5, 2.5));
+			expect(Point.from([1.5, 2.5])).to.eql(new Point(1.5, 2.5));
+			expect(Point.from({x: 1.5, y: 2.5})).to.eql(new Point(1.5, 2.5));
+		});
+	});
+
 	describe('#subtract', () => {
 		it('subtracts the given point from this one', () => {
 			const a = new Point(50, 30),
@@ -27,6 +46,14 @@ describe('Point', () => {
 	describe('#add', () => {
 		it('adds given point to this one', () => {
 			expect(new Point(50, 30).add(new Point(20, 10))).to.eql(new Point(70, 40));
+		});
+
+		it('modifies neither point', () => {
+			const a = new Point(50, 30),
+			b = new Point(20, 10);
+			a.add(b);
+			expect(a).to.eql(new Point(50, 30));
+			expect(b).to.eql(new Point(20, 10));
 		});
 	});
 
