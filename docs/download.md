@@ -25,7 +25,7 @@ bodyclass: download-page
 	</tr>
 </table>
 
-[View Changelog](https://github.com/maplair/maplair/blob/main/CHANGELOG.md)
+[View Changelog on GitHub](https://github.com/maplair/maplair/blob/main/CHANGELOG.md)
 
 Note that the main version can contain incompatible changes,
 so please read the changelog carefully when upgrading to it.
