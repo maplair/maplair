@@ -11,6 +11,8 @@ import {Marker} from '../layer/marker/Marker.js';
 /** @import {MaplairEvent} from '../core/Events.js' */
 /** @import {LatLngExpression} from '../geo/LatLng.js' */
 /** @import {LatLngBoundsExpression} from '../geo/LatLngBounds.js' */
+/** @import {Layer} from '../layer/Layer.js' */
+/** @import {LayerGroup} from '../layer/LayerGroup.js' */
 
 const searchIcon = '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6.5" cy="6.5" r="4.5"/><path d="M10 10l4.5 4.5"/></svg>';
 
@@ -36,6 +38,8 @@ function delay(ms, signal) {
  * @property {LatLngBoundsExpression} [bounds] The extent of the result, e.g. of a city,
  * which the map fits to instead of zooming to the position.
  * @property {any} [raw] The original result of the service, for use in event listeners.
+ * @property {Layer} [layer] The found layer, by [`SearchControl.layers()`](#searchcontrol-layers),
+ * e.g. to open its tooltip in a `searchresult` listener.
  */
 
 /**
@@ -69,9 +73,17 @@ function delay(ms, signal) {
  * [`autoComplete`](#searchcontrol-autocomplete).
  * @property {number} [zoom=16] The zoom level for results without bounds, and the
  * maximum zoom level for fitting the bounds of results.
- * @property {boolean} [marker=true] Whether to show a marker at the selected result.
+ * @property {boolean|((result: SearchResult) => Layer|null|undefined)} [marker=true] Whether
+ * to show a marker at the selected result, or a function returning the layer to show
+ * instead, e.g. a `CircleMarker` highlighting the result (or nothing for none). The
+ * layer is removed when the search is cleared or another result is selected.
+ * @property {boolean} [clearOnMapClick=false] If `true`, a click on the map clears the
+ * search (the field, the results and the marker) and collapses the control. By
+ * default, the click only hides the results and the marker stays.
  * @property {string} [placeholder] The placeholder of the search field, by default
  * the translation of "Search".
+ * @property {string} [noResultsText] The message shown if nothing is found, by
+ * default the translation of "No results".
  * @extends ControlOptions
  */
 
@@ -136,7 +148,9 @@ export class SearchControl extends Control {
 			minLength: 3,
 			zoom: 16,
 			marker: true,
-			placeholder: undefined
+			clearOnMapClick: false,
+			placeholder: undefined,
+			noResultsText: undefined
 		});
 	}
 
@@ -216,6 +230,73 @@ export class SearchControl extends Control {
 			attribution: {get: () => `&copy; <a href="https://www.openstreetmap.org/copyright">${I18n.translate('OpenStreetMap contributors')}</a>`},
 			autoComplete: {value: !publicService}
 		});
+	}
+
+	/**
+	 * Returns a [geocoder](#searchcontrol-geocoder) searching the layers of a layer group,
+	 * e.g. the markers of a `FeatureGroup` or the features of a `GeoJSON` layer, by their
+	 * label: a property of their GeoJSON feature (`layer.feature.properties`) or the
+	 * result of a function. The group is searched at the time of the search, so layers
+	 * added later are found as well, and nested groups without a label are searched
+	 * recursively. The search ignores the case and finds the query anywhere in the
+	 * label; labels starting with it come first, then in alphabetical order. The results
+	 * contain the found `layer` and its GeoJSON feature as `raw`; layers without a
+	 * single position (e.g. polygons) have the `bounds` and their center as `latlng`.
+	 * Combine it with [`autoComplete`](#searchcontrol-autocomplete) to search while
+	 * typing, and with [`marker`](#searchcontrol-marker) `false` or a function to not
+	 * cover the found marker with another one.
+	 *
+	 * @example
+	 * ```js
+	 * const stations = new GeoJSON(data, {
+	 *     onEachFeature: (feature, layer) => layer.bindTooltip(feature.properties.name)
+	 * }).addTo(map);
+	 * new SearchControl({
+	 *     geocoder: SearchControl.layers(stations, {property: 'name'}),
+	 *     autoComplete: true,
+	 *     minLength: 1,
+	 *     marker: false
+	 * }).addTo(map);
+	 * map.on('searchresult', ({result}) => result.layer.openTooltip());
+	 * ```
+	 * @param {LayerGroup} group The layer group to search.
+	 * @param {object} [options]
+	 * @param {string} [options.property='name'] The property of the GeoJSON features to
+	 * search.
+	 * @param {(layer: Layer) => string|number|null|undefined} [options.label] A function
+	 * returning the label of a layer instead of the `property`, nothing to skip the
+	 * layer (or to search its layers, if it is a group).
+	 * @param {number} [options.limit=10] The maximum number of results.
+	 * @returns {Geocoder}
+	 */
+	static layers(group, {property = 'name', label = layer => layer.feature?.properties?.[property], limit = 10} = {}) {
+		return (query) => {
+			query = query.toLocaleLowerCase();
+			const found = [];
+			group.eachLayer(function search(layer) {
+				const text = label(layer);
+				if (text === undefined || text === null || text === '') {
+					layer.eachLayer?.(search);
+					return;
+				}
+				const result = {label: String(text), layer, raw: layer.feature},
+				index = result.label.toLocaleLowerCase().indexOf(query);
+				if (index < 0) { return; }
+				if (layer.getLatLng) {
+					result.latlng = layer.getLatLng();
+				} else if (layer.getBounds?.().isValid()) {
+					result.bounds = layer.getBounds();
+					result.latlng = result.bounds.getCenter();
+				} else {
+					return;
+				}
+				found.push({result, prefix: index === 0});
+			});
+			return Promise.resolve(found
+				.sort((a, b) => b.prefix - a.prefix || a.result.label.localeCompare(b.result.label))
+				.slice(0, limit)
+				.map(({result}) => result));
+		};
 	}
 
 	/**
@@ -349,7 +430,7 @@ export class SearchControl extends Control {
 		try {
 			const results = await this.options.geocoder(query, {signal: controller.signal});
 			if (!controller.signal.aborted) {
-				this._showResults(results, I18n.translate('No results'));
+				this._showResults(results, this.options.noResultsText ?? I18n.translate('No results'));
 			}
 			return results;
 		} catch (error) {
@@ -385,9 +466,10 @@ export class SearchControl extends Control {
 		}
 
 		this._marker?.remove();
-		if (this.options.marker) {
-			this._marker = new Marker(latlng, {title: result.label}).addTo(map);
-		}
+		const {marker} = this.options;
+		this._marker = typeof marker === 'function' ?
+			marker(result)?.addTo(map) ?? null :
+			marker ? new Marker(latlng, {title: result.label}).addTo(map) : null;
 
 		map.fire('searchresult', {result, latlng, bounds});
 		return this;
@@ -521,7 +603,10 @@ export class SearchControl extends Control {
 	}
 
 	_onMapClick() {
-		if (this._input.value) {
+		if (this.options.clearOnMapClick) {
+			this.clear();
+			this.collapse();
+		} else if (this._input.value) {
 			this._showResults([]);
 		} else {
 			this.collapse();

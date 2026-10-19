@@ -10,6 +10,8 @@ Maplair Changelog
 #### ❇️ New Features
 
 * LayersControl: add the options `inline`, `groupBy` and `toggleContent`, the methods `getLayers()` and `selectLayer()`, and `originalEvent` to `baselayerchange`, `overlayadd` and `overlayremove` for changes by the user
+* SearchControl: new static method `SearchControl.layers()` to search the layers of a layer group (e.g. GeoJSON features) by a property or a label function, the results contain the found `layer`
+* SearchControl: the option `marker` accepts a function returning the layer to show at the selected result, new options `clearOnMapClick` and `noResultsText`
 
 ## 4.0.0 (2026-10-19) 🍁 Maplair, a fork of Leaflet
 

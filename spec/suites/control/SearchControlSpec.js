@@ -1,5 +1,5 @@
 import {expect, vi} from 'vite-plus/test';
-import {LatLng, MaplairMap, SearchControl} from 'maplair';
+import {CircleMarker, FeatureGroup, GeoJSON, LatLng, LayerGroup, MaplairMap, Marker, SearchControl} from 'maplair';
 import UIEventSimulator from 'ui-event-simulator';
 import {createContainer, removeMapContainer} from '../SpecHelper.js';
 
@@ -124,7 +124,7 @@ describe('SearchControl', () => {
 		control.select(places[0]);
 		expect(map.getZoom()).to.be.at.most(10);
 		expect(map.getBounds().contains(places[0].bounds)).to.be.true;
-		expect(control._marker).to.be.undefined;
+		expect(control._marker).to.be.null;
 	});
 
 	it('finds coordinates without the geocoder', async () => {
@@ -226,12 +226,154 @@ describe('SearchControl', () => {
 		expect(() => new SearchControl()).to.throw('the geocoder option is required');
 	});
 
+	it('shows the layer of the marker function', () => {
+		const marker = vi.fn(result => new CircleMarker(result.latlng, {radius: 20}));
+		const control = new SearchControl({geocoder: geocoder(), marker}).addTo(map);
+		control.select(places[1]);
+		expect(marker).toHaveBeenCalledWith(places[1]);
+		const circle = control._marker;
+		expect(circle).to.be.instanceOf(CircleMarker);
+		expect(map.hasLayer(circle)).to.be.true;
+
+		control.select(places[0]);
+		expect(map.hasLayer(circle)).to.be.false;
+		control.clear();
+		expect(map.hasLayer(control._marker ?? circle)).to.be.false;
+
+		marker.mockReturnValue(undefined);
+		control.select(places[1]);
+		expect(control._marker).to.be.null;
+	});
+
+	it('shows the noResultsText', async () => {
+		const control = new SearchControl({geocoder: () => Promise.resolve([]), noResultsText: 'No station found.'}).addTo(map).expand();
+		await control.search('nowhere');
+		expect(control.getContainer().querySelector('[role="status"]').textContent).to.equal('No station found.');
+	});
+
+	it('clears and collapses on map click with clearOnMapClick', () => {
+		const control = new SearchControl({geocoder: geocoder(), clearOnMapClick: true}).addTo(map).expand();
+		control.select(places[1]);
+		const marker = control._marker;
+		map.fire('click');
+		expect(map.hasLayer(marker)).to.be.false;
+		expect(control._input.value).to.equal('');
+		expect(control.getContainer().classList.contains('maplair-control-search-expanded')).to.be.false;
+	});
+
+	it('keeps the result on map click by default', () => {
+		const control = new SearchControl({geocoder: geocoder()}).addTo(map).expand();
+		control.select(places[1]);
+		map.fire('click');
+		expect(map.hasLayer(control._marker)).to.be.true;
+		expect(control._input.value).to.equal(places[1].label);
+	});
+
 	it('removes the marker with the control', () => {
 		const control = new SearchControl({geocoder: geocoder()}).addTo(map);
 		control.select(places[1]);
 		const marker = control._marker;
 		control.remove();
 		expect(map.hasLayer(marker)).to.be.false;
+	});
+
+	describe('layers', () => {
+		const {signal} = new AbortController();
+
+		function station(name, latlng) {
+			const marker = new Marker(latlng);
+			marker.feature = {type: 'Feature', properties: {name, id: name.length}, geometry: null};
+			return marker;
+		}
+
+		it('searches the layers by a property, case-insensitive and anywhere', async () => {
+			const innsbruck = station('Innsbruck', [47.27, 11.4]);
+			const group = new FeatureGroup([
+				station('Hall bei Innsbruck', [47.28, 11.5]),
+				innsbruck,
+				station('Wien', [48.2, 16.37]),
+				new LayerGroup([station('Bruck an der Mur', [47.41, 15.27]), new Marker([0, 0])])
+			]);
+			const search = SearchControl.layers(group);
+			const results = await search('BRUCK', {signal});
+			expect(results.map(r => r.label)).to.eql(['Bruck an der Mur', 'Hall bei Innsbruck', 'Innsbruck']);
+			expect(results[2].layer).to.equal(innsbruck);
+			expect(results[2].raw).to.equal(innsbruck.feature);
+			expect(results[2].latlng).to.be.nearLatLng([47.27, 11.4]);
+			expect(results[2].bounds).to.be.undefined;
+			expect(await search('graz', {signal})).to.eql([]);
+
+			// with a prefix first, then in alphabetical order
+			expect((await search('i', {signal})).map(r => r.label)).to.eql(['Innsbruck', 'Hall bei Innsbruck', 'Wien']);
+		});
+
+		it('searches layers added later', async () => {
+			const group = new LayerGroup();
+			const search = SearchControl.layers(group);
+			expect(await search('wien', {signal})).to.eql([]);
+			group.addLayer(station('Wien', [48.2, 16.37]));
+			expect(await search('wien', {signal})).to.have.length(1);
+		});
+
+		it('searches by a property, a label function and with a limit', async () => {
+			const group = new LayerGroup([station('Innsbruck', [47.27, 11.4]), station('Wien', [48.2, 16.37])]);
+			expect((await SearchControl.layers(group, {property: 'id'})('9', {signal}))[0].label).to.equal('9');
+			const byLabel = SearchControl.layers(group, {label: layer => layer.feature && `Station ${layer.feature.properties.name}`});
+			expect((await byLabel('station', {signal})).map(r => r.label)).to.eql(['Station Innsbruck', 'Station Wien']);
+			expect(await SearchControl.layers(group, {limit: 1})('n', {signal})).to.have.length(1);
+		});
+
+		it('searches GeoJSON features with bounds', async () => {
+			const geojson = new GeoJSON({
+				type: 'FeatureCollection',
+				features: [
+					{type: 'Feature', properties: {name: 'Inn'}, geometry: {type: 'LineString', coordinates: [[10, 47], [12, 48]]}},
+					{type: 'Feature', properties: {name: 'Innsbruck'}, geometry: {type: 'Point', coordinates: [11.4, 47.27]}}
+				]
+			});
+			const [line, point] = await SearchControl.layers(geojson)('inn', {signal});
+			expect(line.label).to.equal('Inn');
+			expect(line.bounds.getSouthWest()).to.be.nearLatLng([47, 10]);
+			expect(line.latlng).to.be.nearLatLng([47.5, 11]);
+			expect(point.label).to.equal('Innsbruck');
+			expect(point.layer.feature.properties.name).to.equal('Innsbruck');
+		});
+
+		it('skips labelled layers without a position', async () => {
+			const feature = {type: 'Feature', properties: {name: 'Nowhere'}, geometry: null};
+			const group = new LayerGroup([
+				Object.assign(new LayerGroup([station('Innsbruck', [47.27, 11.4])]), {feature}),
+				Object.assign(new FeatureGroup(), {feature})
+			]);
+			expect(await SearchControl.layers(group)('', {signal})).to.eql([]);
+		});
+
+		it('fits the map to the bounds of a selected feature', async () => {
+			const geojson = new GeoJSON({type: 'Feature', properties: {name: 'Inn'}, geometry: {type: 'LineString', coordinates: [[10, 47], [12, 48]]}});
+			const control = new SearchControl({geocoder: SearchControl.layers(geojson)}).addTo(map);
+			const [result] = await control.search('inn');
+			control.select(result);
+			expect(map.getBounds().contains(result.bounds)).to.be.true;
+			expect(map.getZoom()).to.be.below(16);
+			expect(control._marker.getLatLng()).to.be.nearLatLng([47.5, 11]);
+		});
+
+		it('searches while typing and fires searchresult with the layer', async () => {
+			vi.useFakeTimers();
+			try {
+				const innsbruck = station('Innsbruck', [47.27, 11.4]);
+				const control = new SearchControl({geocoder: SearchControl.layers(new LayerGroup([innsbruck])), autoComplete: true, minLength: 1}).addTo(map).expand();
+				const onResult = vi.fn();
+				map.on('searchresult', onResult);
+				type(control, 'inn');
+				await vi.advanceTimersByTimeAsync(300);
+				expect(items(control)).to.have.length(1);
+				UIEventSimulator.fire('click', items(control)[0]);
+				expect(onResult.mock.calls[0][0].result.layer).to.equal(innsbruck);
+			} finally {
+				vi.useRealTimers();
+			}
+		});
 	});
 
 	describe('nominatim', () => {

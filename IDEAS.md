@@ -511,7 +511,7 @@ hover, the default stays: hover opens, click acts. Events `tooltippin`/
 
 ## 39. Search control
 
-**Status:** implemented in babc857b with geocoders instead (Nominatim by default, `SearchControl.nominatim()`, any `geocoder` function, coordinates via `LatLng.parse()`), the event is `searchresult` on the map. Not yet: searching the features of a layer by a property, and the `HighlightMarker` (a plain marker shows the result).
+**Status:** implemented in babc857b with geocoders instead (Nominatim by default, `SearchControl.nominatim()`, any `geocoder` function, coordinates via `LatLng.parse()`), the event is `searchresult` on the map. Searching the layers of a group by a property or a label function with `SearchControl.layers()` (the result has the `layer`), a custom result layer with `marker: (result) => layer`, `clearOnMapClick` and `noResultsText`. Not yet: the `HighlightMarker` (a plain marker or the layer of the `marker` function shows the result).
 
 [leaflet-search](https://github.com/stefanocudini/leaflet-search) · effort: medium
 

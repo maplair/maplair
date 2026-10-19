@@ -17,7 +17,7 @@
 	<body>
 		<div id="map"></div>
 		<script type="module">
-			import {MaplairMap, SearchControl, TextControl, TileLayer} from 'maplair';
+			import {CircleMarker, GeoJSON, MaplairMap, SearchControl, TextControl, TileLayer} from 'maplair';
 
 			const map = new MaplairMap('map').setView([47.27, 11.4], 10);
 			new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -46,6 +46,29 @@
 					}));
 				}
 			}).addTo(map);
+
+			// the markers of the map, searching while typing, with a highlight circle
+			const towns = new GeoJSON({
+				type: 'FeatureCollection',
+				features: Object.entries({
+					'Innsbruck': [11.3928, 47.2654], 'Hall in Tirol': [11.5079, 47.2833], 'Wattens': [11.5937, 47.2933],
+					'Schwaz': [11.7076, 47.3449], 'Telfs': [11.0731, 47.3069], 'Zirl': [11.2393, 47.2735]
+				}).map(([name, coordinates]) => ({type: 'Feature', properties: {name}, geometry: {type: 'Point', coordinates}}))
+			}, {
+				onEachFeature: (feature, layer) => layer.bindTooltip(feature.properties.name)
+			}).addTo(map);
+			new SearchControl({
+				position: 'bottomright',
+				geocoder: SearchControl.layers(towns, {property: 'name'}),
+				autoComplete: true,
+				minLength: 1,
+				zoom: 12,
+				placeholder: 'Search a town',
+				noResultsText: 'No town found',
+				clearOnMapClick: true,
+				marker: result => new CircleMarker(result.latlng, {radius: 20, weight: 3, color: '#e03', fill: false, interactive: false})
+			}).addTo(map);
+			map.on('searchresult', ({result}) => result.layer?.openTooltip());
 
 			const status = new TextControl({position: 'bottomleft'}).addTo(map);
 			map.on('searchresult', ({result, latlng}) => {
