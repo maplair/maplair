@@ -2,6 +2,8 @@ import {Path} from './Path.js';
 import * as Util from '../../core/Util.js';
 import {LatLng} from '../../geo/LatLng.js';
 import {Bounds} from '../../geometry/Bounds.js';
+import {pointToGeoJSON} from '../GeoJSONUtil.js';
+/** @import {Feature} from 'geojson' */
 /** @import {LatLngExpression} from '../../geo/LatLng.js' */
 /** @import {MaplairEvent} from '../../core/Events.js' */
 /** @import {PathOptions} from './Path.js' */
@@ -135,5 +137,16 @@ export class CircleMarker extends Path {
 	// Needed by the `Canvas` renderer for interactivity
 	_containsPoint(p) {
 		return p.distanceTo(this._point) <= this._pxRadius + this._clickTolerance();
+	}
+
+	/**
+	 * Coordinates values are rounded with [`formatNum`](#util-formatnum) to the
+	 * given `precision`. Returns a [`GeoJSON`](https://en.wikipedia.org/wiki/GeoJSON)
+	 * representation of the circle marker (as a GeoJSON `Point` Feature).
+	 * @param {number|false} [precision]
+	 * @returns {Feature}
+	 */
+	toGeoJSON(precision) {
+		return pointToGeoJSON(this, precision);
 	}
 }

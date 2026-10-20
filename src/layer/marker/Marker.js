@@ -6,6 +6,8 @@ import {Point} from '../../geometry/Point.js';
 import * as DomUtil from '../../dom/DomUtil.js';
 import * as DomEvent from '../../dom/DomEvent.js';
 import {MarkerDrag} from './Marker.Drag.js';
+import {pointToGeoJSON} from '../GeoJSONUtil.js';
+/** @import {Feature} from 'geojson' */
 /** @import {Icon} from './Icon.js' */
 /** @import {LatLngExpression} from '../../geo/LatLng.js' */
 /** @import {PointExpression} from '../../geometry/Point.js' */
@@ -518,5 +520,17 @@ export class Marker extends Layer {
 
 	_getTooltipAnchor() {
 		return this.options.icon.options.tooltipAnchor;
+	}
+
+	/**
+	 * Coordinates values are rounded with [`formatNum`](#util-formatnum) to the
+	 * given `precision`. Returns a [`GeoJSON`](https://en.wikipedia.org/wiki/GeoJSON)
+	 * representation of the marker (as a GeoJSON `Point` Feature).
+	 * @group Other methods
+	 * @param {number|false} [precision]
+	 * @returns {Feature}
+	 */
+	toGeoJSON(precision) {
+		return pointToGeoJSON(this, precision);
 	}
 }

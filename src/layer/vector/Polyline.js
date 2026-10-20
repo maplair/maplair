@@ -5,6 +5,8 @@ import {LatLng} from '../../geo/LatLng.js';
 import {LatLngBounds} from '../../geo/LatLngBounds.js';
 import {Bounds} from '../../geometry/Bounds.js';
 import {Point} from '../../geometry/Point.js';
+import {latLngsToCoords, getFeature} from '../GeoJSONUtil.js';
+/** @import {Feature} from 'geojson' */
 /** @import {LatLngExpression} from '../../geo/LatLng.js' */
 /** @import {PointExpression} from '../../geometry/Point.js' */
 /** @import {PathOptions} from './Path.js' */
@@ -313,5 +315,24 @@ export class Polyline extends Path {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Coordinates values are rounded with [`formatNum`](#util-formatnum) to the
+	 * given `precision`. Returns a [`GeoJSON`](https://en.wikipedia.org/wiki/GeoJSON)
+	 * representation of the polyline (as a GeoJSON `LineString` or `MultiLineString`
+	 * Feature).
+	 * @param {number|false} [precision]
+	 * @returns {Feature}
+	 */
+	toGeoJSON(precision) {
+		const multi = !LineUtil.isFlat(this._latlngs);
+
+		const coords = latLngsToCoords(this._latlngs, multi ? 1 : 0, false, precision);
+
+		return getFeature(this, {
+			type: `${multi ? 'Multi' : ''}LineString`,
+			coordinates: coords
+		});
 	}
 }

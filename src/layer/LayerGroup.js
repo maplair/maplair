@@ -1,6 +1,8 @@
 
 import {Layer} from './Layer.js';
 import * as Util from '../core/Util.js';
+import {getFeature, asFeature} from './GeoJSONUtil.js';
+/** @import {Feature, FeatureCollection} from 'geojson' */
 /** @import {InteractiveLayerOptions} from './Layer.js' */
 /** @import {MaplairMap} from '../map/Map.js' */
 
@@ -156,5 +158,74 @@ export class LayerGroup extends Layer {
 	 */
 	getLayerId(layer) {
 		return Util.stamp(layer);
+	}
+
+	/**
+	 * Returns a GeoJSON `MultiPoint` Feature of the points of the group, used by
+	 * `toGeoJSON()`.
+	 * @internal
+	 * @param {number|false} [precision]
+	 * @returns {Feature}
+	 */
+	toMultiPoint(precision) {
+		const coords = [];
+
+		this.eachLayer((layer) => {
+			coords.push(layer.toGeoJSON(precision).geometry.coordinates);
+		});
+
+		return getFeature(this, {
+			type: 'MultiPoint',
+			coordinates: coords
+		});
+	}
+
+	/**
+	 * Coordinates values are rounded with [`formatNum`](#util-formatnum) to the
+	 * given `precision`. Returns a [`GeoJSON`](https://en.wikipedia.org/wiki/GeoJSON)
+	 * representation of the layer group (as a GeoJSON `FeatureCollection`,
+	 * `GeometryCollection`, or `MultiPoint`).
+	 * @param {number|false} [precision]
+	 * @returns {Feature|FeatureCollection}
+	 */
+	toGeoJSON(precision) {
+
+		const type = this.feature?.geometry?.type;
+
+		if (type === 'MultiPoint') {
+			return this.toMultiPoint(precision);
+		}
+
+		const isGeometryCollection = type === 'GeometryCollection',
+		jsons = [];
+
+		this.eachLayer((layer) => {
+			if (layer.toGeoJSON) {
+				const json = layer.toGeoJSON(precision);
+				if (isGeometryCollection) {
+					jsons.push(json.geometry);
+				} else {
+					const feature = asFeature(json);
+					// Squash nested feature collections
+					if (feature.type === 'FeatureCollection') {
+						jsons.push(...feature.features);
+					} else {
+						jsons.push(feature);
+					}
+				}
+			}
+		});
+
+		if (isGeometryCollection) {
+			return getFeature(this, {
+				geometries: jsons,
+				type: 'GeometryCollection'
+			});
+		}
+
+		return {
+			type: 'FeatureCollection',
+			features: jsons
+		};
 	}
 }

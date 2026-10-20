@@ -4,6 +4,8 @@ import * as LineUtil from '../../geometry/LineUtil.js';
 import {Point} from '../../geometry/Point.js';
 import {Bounds} from '../../geometry/Bounds.js';
 import * as PolyUtil from '../../geometry/PolyUtil.js';
+import {latLngsToCoords, getFeature} from '../GeoJSONUtil.js';
+/** @import {Feature} from 'geojson' */
 /** @import {LatLngExpression} from '../../geo/LatLng.js' */
 /** @import {PolylineOptions} from './Polyline.js' */
 
@@ -175,4 +177,27 @@ export class Polygon extends Polyline {
 		return inside || super._containsPoint(p, true);
 	}
 
+
+	/**
+	 * Coordinates values are rounded with [`formatNum`](#util-formatnum) to the
+	 * given `precision`. Returns a [`GeoJSON`](https://en.wikipedia.org/wiki/GeoJSON)
+	 * representation of the polygon (as a GeoJSON `Polygon` or `MultiPolygon` Feature).
+	 * @param {number|false} [precision]
+	 * @returns {Feature}
+	 */
+	toGeoJSON(precision) {
+		const holes = !LineUtil.isFlat(this._latlngs),
+		multi = holes && !LineUtil.isFlat(this._latlngs[0]);
+
+		let coords = latLngsToCoords(this._latlngs, multi ? 2 : holes ? 1 : 0, true, precision);
+
+		if (!holes) {
+			coords = [coords];
+		}
+
+		return getFeature(this, {
+			type: `${multi ? 'Multi' : ''}Polygon`,
+			coordinates: coords
+		});
+	}
 }
