@@ -177,6 +177,11 @@ export class Draggable extends Evented {
 		const e = {originalEvent: this._lastEvent};
 
 		this.fire('predrag', e);
+
+		// pointer events can have fractional coordinates; snap them to device pixels, since an edge in the middle of
+		// one is drawn partly transparent on both sides and shows a seam between tiles
+		const dpr = window.devicePixelRatio;
+		this._newPos = this._newPos.multiplyBy(dpr)._round()._divideBy(dpr);
 		DomUtil.setPosition(this._element, this._newPos);
 
 		this.fire('drag', e);
