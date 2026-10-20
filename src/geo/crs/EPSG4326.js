@@ -19,5 +19,5 @@ export class EPSG4326 extends EarthCRS {
 	/** @type {Projection} */
 	static projection = LonLat;
 	/** @type {Transformation} */
-	static transformation = new Transformation(1 / 180, 1, -1 / 180, 0.5);
+	static transformation = /* @__PURE__ */ new Transformation(1 / 180, 1, -1 / 180, 0.5);
 }

@@ -54,16 +54,18 @@ export class Handler extends Class {
 	enabled() {
 		return !!this._enabled;
 	}
-}
 
-/**
- * Adds a new handler of this class to the given map with the given name, which is
- * then available as the property of the map with this name.
- * @param {MaplairMap} map
- * @param {string} name
- * @returns {typeof Handler}
- */
-Handler.addTo = function (map, name) {
-	map.addHandler(name, this);
-	return this;
-};
+	/**
+	 * Adds a new handler of this class to the given map with the given name, which is
+	 * then available as the property of the map with this name.
+	 * @template {typeof Handler} T
+	 * @this {T}
+	 * @param {MaplairMap} map
+	 * @param {string} name
+	 * @returns {T}
+	 */
+	static addTo(map, name) {
+		map.addHandler(name, this);
+		return this;
+	}
+}

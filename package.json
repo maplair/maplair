@@ -79,7 +79,6 @@
   "sideEffects": [
     "*.css",
     "./dist/maplair*.js",
-    "./src/core/Handler.js",
     "./src/map/Map.js",
     "./src/map/Map.Rotation.js",
     "./src/layer/marker/Marker.Rotation.js",
@@ -88,7 +87,6 @@
     "./src/layer/vector/Polyline.Decorations.js",
     "./src/layer/GeoJSON.Load.js",
     "./src/layer/vector/Path.ZoomStyles.js",
-    "./dist/esm/core/Handler.js",
     "./dist/esm/map/Map.js",
     "./dist/esm/map/Map.Rotation.js",
     "./dist/esm/layer/marker/Marker.Rotation.js",

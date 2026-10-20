@@ -14,7 +14,7 @@ export class SimpleCRS extends CRS {
 	/** @type {Projection} */
 	static projection = LonLat;
 	/** @type {Transformation} */
-	static transformation = new Transformation(1, 0, -1, 0);
+	static transformation = /* @__PURE__ */ new Transformation(1, 0, -1, 0);
 
 	/**
 	 * Returns `2^zoom`.

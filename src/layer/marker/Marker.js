@@ -87,7 +87,7 @@ import {pointToGeoJSON} from '../GeoJSONUtil.js';
 export class Marker extends Layer {
 
 	static defaultOptions = {
-		icon: new DefaultIcon(),
+		icon: /* @__PURE__ */ new DefaultIcon(),
 
 		// Option inherited from "Interactive layer" abstract class
 		interactive: true,
