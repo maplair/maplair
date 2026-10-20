@@ -17,14 +17,14 @@
 	<body>
 		<div id="map"></div>
 		<script type="module">
-			import {TileLayer, MaplairMap, CircleMarker} from 'maplair';
+			import {TileLayer, MaplairMap, CircleMarker, Canvas} from 'maplair';
 
 			const osm = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 				maxZoom: 19,
 				attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 			});
 
-			const map = new MaplairMap('map', {preferCanvas: true})
+			const map = new MaplairMap('map', {renderer: new Canvas()})
 				.setView([50.5, 30.51], 15)
 				.addLayer(osm);
 

@@ -17,12 +17,12 @@
 	<body>
 		<div id="map"></div>
 		<script type="module">
-			import {MaplairMap, TileLayer, LayerGroup, CircleMarker} from 'maplair';
+			import {MaplairMap, TileLayer, LayerGroup, CircleMarker, Canvas} from 'maplair';
 
 			const map = new MaplairMap('map', {
 				center: [39.84, -96.591],
 				zoom: 4,
-				preferCanvas: true
+				renderer: new Canvas()
 			}).locate();
 
 			new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);

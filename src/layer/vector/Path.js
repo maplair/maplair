@@ -1,4 +1,5 @@
 import {Layer} from '../Layer.js';
+import {SVG} from './SVG.js';
 import * as Util from '../../core/Util.js';
 /** @import {InteractiveLayerOptions} from '../Layer.js' */
 /** @import {MaplairMap} from '../../map/Map.js' */
@@ -33,8 +34,8 @@ import * as Util from '../../core/Util.js';
  * is determined.
  * @property {string} [className] Custom class name set on an element. Only for SVG renderer.
  * @property {Renderer} [renderer] Use this specific instance of `Renderer` for this
- * path. Takes precedence over the map's [default renderer](#maplairmapoptions-renderer).
- * If set, it will override the `pane` option of the path.
+ * path. If not set, the path uses the map's [renderer](#maplairmapoptions-renderer),
+ * which is `SVG` by default. If set, it overrides the `pane` option.
  * @extends InteractiveLayerOptions
  */
 
@@ -143,6 +144,11 @@ export class Path extends Layer {
 	 */
 	getElement() {
 		return this._path;
+	}
+
+	// the renderer of the path if neither the path nor the map has one
+	_createRenderer(options) {
+		return new SVG(options);
 	}
 
 	_reset() {
