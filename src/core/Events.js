@@ -1,5 +1,7 @@
 import {Class} from './Class.js';
 import * as Util from './Util.js';
+
+const warnedEvents = new Set();
 /** @import {LatLng} from '../geo/LatLng.js' */
 /** @import {LatLngBounds} from '../geo/LatLngBounds.js' */
 /** @import {Point} from '../geometry/Point.js' */
@@ -266,8 +268,9 @@ export class Evented extends Class {
 	// attach listener (without syntactic sugar now)
 	_on(type, fn, context, _once) {
 		// To be removed in maplair 3
-		if (Evented.__REMOVED_EVENTS.includes(type)) {
-			console.error(`The event ${type} has been removed. Use the PointerEvent variant instead.`);
+		if (Evented.__REMOVED_EVENTS.includes(type) && !warnedEvents.has(type)) {
+			warnedEvents.add(type);
+			console.error(`The event ${type} has been removed in Maplair. Use pointer${type.slice(5)} instead.`);
 		}
 
 		if (typeof fn !== 'function') {
