@@ -4,31 +4,9 @@ import * as DomUtil from '../dom/DomUtil.js';
 /** @import {MaplairEvent} from '../core/Events.js' */
 
 /**
- * Used internally for panning animations and utilizing CSS Transitions for modern
- * browsers.
- *
- * @example
- * ```js
- * const myPositionMarker = new Marker([48.864716, 2.294694]).addTo(map);
- *
- * myPositionMarker.on("click", function() {
- * 	const pos = map.latLngToLayerPoint(myPositionMarker.getLatLng());
- * 	pos.y -= 25;
- * 	const fx = new PosAnimation();
- *
- * 	fx.once('end',function() {
- * 		pos.y += 25;
- * 		fx.run(myPositionMarker._icon, pos, 0.8);
- * 	});
- *
- * 	fx.run(myPositionMarker._icon, pos, 0.3);
- * });
- *
- * ```
- *
- * @fires start {MaplairEvent} Fired when the animation starts.
- * @fires step {MaplairEvent} Fired continuously during the animation.
- * @fires end {MaplairEvent} Fired when the animation ends.
+ * Runs the map's pan animations: moves an element to a new position on an ease-out
+ * curve, firing `start`, `step` and `end`.
+ * @internal
  */
 export class PosAnimation extends Evented {
 	/**
