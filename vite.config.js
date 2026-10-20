@@ -46,6 +46,7 @@ const globalPackOptions = {
 	globalName: 'L',
 	outputOptions: {
 		entryFileNames: '[name].js',
+		exports: 'default',
 		postBanner: `${banner}(function (previousL) {`,
 		postFooter: `if (!(typeof exports === 'object' && typeof module !== 'undefined') && !(typeof define === 'function' && define.amd)) {
 	var L = globalThis.L;
@@ -247,8 +248,8 @@ export default defineConfig({
 		{...packOptions, entry: {maplair: 'src/Maplair.all.js'}, minify: true},
 		// one module per source file, so that bundlers can drop unused modules (see `sideEffects` in package.json)
 		{...packOptions, entry: ['src/Maplair.js', 'src/map/Map.Rotation.js', 'src/layer/marker/Marker.Rotation.js', 'src/layer/marker/Marker.Move.js', 'src/layer/vector/Path.DashAnimation.js', 'src/layer/vector/Polyline.Decorations.js', 'src/layer/GeoJSON.Load.js', 'src/layer/vector/Path.ZoomStyles.js'], unbundle: true, outDir: 'dist/esm', banner: undefined},
-		{...globalPackOptions, entry: {'maplair-global-src': 'src/Maplair.all.js'}},
-		{...globalPackOptions, entry: {'maplair-global': 'src/Maplair.all.js'}, minify: true},
+		{...globalPackOptions, entry: {'maplair-global-src': 'build/global.js'}},
+		{...globalPackOptions, entry: {'maplair-global': 'build/global.js'}, minify: true},
 	],
 	build: {
 		assetsInlineLimit: 0,

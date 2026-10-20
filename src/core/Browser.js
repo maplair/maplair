@@ -4,7 +4,7 @@ const safari = !chrome && userAgentContains('safari');
 
 const mobile = typeof orientation !== 'undefined';
 
-const reducedMotion = navigator.preferences?.reducedMotion?.value ?
+const reducedMotion = typeof navigator !== 'undefined' && navigator.preferences?.reducedMotion?.value ?
 	navigator.preferences.reducedMotion.value === 'reduce' :
 	typeof window === 'undefined' ? true : window?.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
