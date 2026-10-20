@@ -33,6 +33,8 @@ import * as Util from '../../core/Util.js';
  * [how the inside of a shape](https://developer.mozilla.org/docs/Web/SVG/Attribute/fill-rule)
  * is determined.
  * @property {string} [className] Custom class name set on an element. Only for SVG renderer.
+ * Applied when the element is created; [`setStyle`](#path-setstyle) does not update it
+ * afterwards.
  * @property {Renderer} [renderer] Use this specific instance of `Renderer` for this
  * path. If not set, the path uses the map's [renderer](#maplairmapoptions-renderer),
  * which is `SVG` by default. If set, it overrides the `pane` option.
@@ -106,6 +108,9 @@ export class Path extends Layer {
 
 	/**
 	 * Changes the appearance of a Path based on the options in the `PathOptions` object.
+	 * Note that [`className`](#pathoptions-classname) is an exception: it is applied only
+	 * when the path element is created, so passing it here updates the option but leaves
+	 * the element's class unchanged.
 	 * @param {PathOptions} style
 	 * @returns {this}
 	 */
