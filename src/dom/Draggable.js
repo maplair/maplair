@@ -50,16 +50,17 @@ export class Draggable extends Evented {
 	 * `dragStartTarget` element (equals `element` itself by default).
 	 * @param {HTMLElement} element
 	 * @param {HTMLElement} [dragStartTarget]
-	 * @param {boolean} [preventOutline]
 	 * @param {DraggableOptions} [options]
 	 */
-	constructor(element, dragStartTarget, preventOutline, options) {
+	constructor(element, dragStartTarget, options) {
+		if (typeof options === 'boolean') {
+			throw new Error('Draggable: the preventOutline argument is removed in Maplair. Pass options as the third argument.');
+		}
 		super();
 		Util.setOptions(this, options);
 
 		this._element = element;
 		this._dragStartTarget = dragStartTarget ?? element;
-		this._preventOutline = preventOutline;
 
 		this.callInitHooks(Draggable);
 	}
@@ -110,10 +111,6 @@ export class Draggable extends Evented {
 
 		if (Draggable._dragging || e.shiftKey || (e.button !== 0 && e.pointerType !== 'touch')) { return; }
 		Draggable._dragging = this;  // Prevent dragging multiple objects at once.
-
-		if (this._preventOutline) {
-			DomUtil.preventOutline(this._element);
-		}
 
 		DomUtil.disableImageDrag();
 		DomUtil.disableTextSelection();

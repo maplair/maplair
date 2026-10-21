@@ -159,41 +159,6 @@ export function enableImageDrag() {
 	DomEvent.off(window, 'dragstart', DomEvent.preventDefault);
 }
 
-let _outlineElement, _outlineStyle;
-
-/**
- * Makes the [outline](https://developer.mozilla.org/docs/Web/CSS/outline)
- * of the element `element` invisible. Used internally by Maplair to prevent
- * focusable elements from displaying an outline when the user performs a
- * drag interaction on them.
- * @param {HTMLElement} element
- * @returns {void}
- */
-export function preventOutline(element) {
-	while (element.tabIndex === -1) {
-		element = element.parentNode;
-	}
-	if (!element.style) { return; }
-	restoreOutline();
-	_outlineElement = element;
-	_outlineStyle = element.style.outlineStyle;
-	element.style.outlineStyle = 'none';
-	DomEvent.on(window, 'keydown', restoreOutline);
-}
-
-/**
- * Cancels the effects of a previous
- * [`DomUtil.preventOutline`](#domutil-preventoutline).
- * @returns {void}
- */
-export function restoreOutline() {
-	if (!_outlineElement) { return; }
-	_outlineElement.style.outlineStyle = _outlineStyle;
-	_outlineElement = undefined;
-	_outlineStyle = undefined;
-	DomEvent.off(window, 'keydown', restoreOutline);
-}
-
 /**
  * Finds the closest parent node which size (width and height) is not null.
  * @param {HTMLElement} element

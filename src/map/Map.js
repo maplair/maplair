@@ -1867,14 +1867,7 @@ export class MaplairMap extends Evented {
 			return;
 		}
 
-		const type = e.type;
-
-		if (type === 'pointerdown') {
-			// prevents outline when clicking on keyboard-focusable element
-			DomUtil.preventOutline(el);
-		}
-
-		this._fireDOMEvent(e, type);
+		this._fireDOMEvent(e, e.type);
 	};
 
 	static _pointerEvents = ['click', 'dblclick', 'pointerover', 'pointerout', 'contextmenu'];
