@@ -1,5 +1,4 @@
 import {GridLayer} from './GridLayer.js';
-import Browser from '../../core/Browser.js';
 import * as Util from '../../core/Util.js';
 import * as DomEvent from '../../dom/DomEvent.js';
 import {I18n} from '../../core/I18n.js';
@@ -150,7 +149,7 @@ export class TileLayer extends GridLayer {
 	// Detects retina displays (if `detectRetina` is set), adjusting tileSize and zoom levels.
 	_applyRetina() {
 		Object.assign(this.options, this._nonRetinaOptions);
-		this._retina = Browser.retina;
+		this._retina = window.devicePixelRatio > 1;
 
 		if (this.options.detectRetina && this._retina && this.options.maxZoom > 0) {
 
@@ -193,7 +192,7 @@ export class TileLayer extends GridLayer {
 
 	// Loads the tiles for the new resolution, see the map's `pixelratiochange` event.
 	_onPixelRatioChange() {
-		if (Browser.retina === this._retina) { return; }
+		if ((window.devicePixelRatio > 1) === this._retina) { return; }
 		const map = this._map;
 		this._applyRetina();
 		if (this.options.detectRetina) {
@@ -321,7 +320,7 @@ export class TileLayer extends GridLayer {
 	getTileUrl(coords) {
 		const data = Object.create(this.options);
 		Object.assign(data, {
-			r: Browser.retina ? '@2x' : '',
+			r: window.devicePixelRatio > 1 ? '@2x' : '',
 			s: this._getSubdomain(coords),
 			x: coords.x,
 			y: coords.y,

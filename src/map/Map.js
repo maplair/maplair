@@ -5,7 +5,6 @@ import {Point} from '../geometry/Point.js';
 import {Bounds} from '../geometry/Bounds.js';
 import {LatLng} from '../geo/LatLng.js';
 import {LatLngBounds} from '../geo/LatLngBounds.js';
-import Browser from '../core/Browser.js';
 import * as DomEvent from '../dom/DomEvent.js';
 import * as DomUtil from '../dom/DomUtil.js';
 import {PosAnimation} from '../dom/PosAnimation.js';
@@ -286,10 +285,10 @@ export class MaplairMap extends Evented {
 		maxBounds: undefined,
 		renderer: undefined,
 
-		zoomAnimation: !Browser.reducedMotion,
+		zoomAnimation: !DomUtil.reducedMotion,
 		zoomAnimationThreshold: 4,
 		continuousZoom: false,
-		fadeAnimation: !Browser.reducedMotion,
+		fadeAnimation: !DomUtil.reducedMotion,
 		markerZoomAnimation: true,
 		markerCulling: false,
 		transform3DLimit: 8388608, // Precision limit of a 32-bit float
@@ -567,7 +566,7 @@ export class MaplairMap extends Evented {
 		}
 
 		// animate pan unless browser prefers reduced motion or animate: false specified
-		if (!Browser.reducedMotion && options.animate !== false) {
+		if (!DomUtil.reducedMotion && options.animate !== false) {
 			this._mapPane.classList.add('maplair-pan-anim');
 
 			const newPos = this._getMapPanePos().subtract(offset).round();
@@ -592,7 +591,7 @@ export class MaplairMap extends Evented {
 	flyTo(targetCenter, targetZoom, options) {
 
 		options ??= {};
-		if (Browser.reducedMotion || options.animate === false) {
+		if (DomUtil.reducedMotion || options.animate === false) {
 			return this.setView(targetCenter, targetZoom, options);
 		}
 
@@ -1531,8 +1530,7 @@ export class MaplairMap extends Evented {
 		// maplair-touch and maplair-retina have no rules in maplair.css, but custom stylesheets may still target them
 		const classes = ['maplair-container', 'maplair-touch'];
 
-		if (Browser.retina) { classes.push('maplair-retina'); }
-		if (Browser.safari) { classes.push('maplair-safari'); }
+		if (window.devicePixelRatio > 1) { classes.push('maplair-retina'); }
 		if (this._fadeAnimated) { classes.push('maplair-fade-anim'); }
 
 		container.classList.add(...classes);

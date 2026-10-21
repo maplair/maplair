@@ -43,14 +43,7 @@ describe('pixelated option', () => {
 	it('keeps the default scaling of grid layers', () => {
 		const grid = imageGridLayer();
 		expect(grid.getContainer().classList.contains('maplair-pixelated')).to.be.false;
-		// not 'auto' in Safari, see .maplair-safari .maplair-tile
 		expect(imageRendering(grid.getContainer().querySelector('.maplair-tile'))).not.to.equal('pixelated');
-	});
-
-	it('overrides the image rendering for Safari', () => {
-		container.classList.add('maplair-safari');
-		const grid = imageGridLayer({pixelated: true});
-		expect(imageRendering(grid.getContainer().querySelector('.maplair-tile'))).to.equal('pixelated');
 	});
 
 	it('scales an image overlay pixelated', () => {

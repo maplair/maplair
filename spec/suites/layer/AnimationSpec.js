@@ -105,18 +105,6 @@ describe('Animated markers and paths', () => {
 			expect(moveend).not.toHaveBeenCalled();
 		});
 
-		it('jumps to the end with reduced motion', async () => {
-			const Browser = (await import('maplair')).Browser;
-			vi.spyOn(Browser, 'reducedMotion', 'get').mockReturnValue(true);
-			const marker = new Marker([0, 0]).addTo(map),
-			move = vi.fn();
-			marker.on('move', move);
-			const moveend = nextEvent(marker, 'moveend');
-			marker.moveTo([0, 10], {duration: 10000});
-			await moveend;
-			expect(move).toHaveBeenCalledOnce();
-		});
-
 		it('moves markers which are not on a map', async () => {
 			const marker = new Marker([0, 0]);
 			const moveend = nextEvent(marker, 'moveend');

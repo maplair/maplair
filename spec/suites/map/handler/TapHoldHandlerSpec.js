@@ -1,5 +1,5 @@
 import {expect, vi} from 'vite-plus/test';
-import {Browser, MaplairMap, Point} from 'maplair';
+import {MaplairMap, Point} from 'maplair';
 import Hand from 'prosthetic-hand';
 import UIEventSimulator from 'ui-event-simulator';
 import {createContainer, removeMapContainer} from '../../SpecHelper.js';
@@ -88,7 +88,7 @@ describe('TapHoldHandler', () => {
 		expect(spy).not.toHaveBeenCalled();
 	});
 
-	(Browser.pointer ? it : it.skip)('ignores events from mouse', () => {
+	it('ignores events from mouse', () => {
 		mouseFinger.down().wait(650).up();
 		vi.advanceTimersByTime(750);
 
@@ -108,10 +108,27 @@ describe('TapHoldHandler', () => {
 		expect(spy).toHaveBeenCalled();
 		expect(spy).toHaveBeenCalledOnce();
 		expect(spy.mock.lastCall[0].originalEvent._simulated).not.to.be.true;
+	});
 
-		// Note: depending on tapHoldDelay value it's also possible that native contextmenu may come after simulated one
-		//       and the only way to handle this gracefully - increase tapHoldDelay value.
-		//       Anyway that is edge case, as tapHold is meant for browsers where native contextmenu is not fired on touch.
+	it('swallows native contextmenu that comes after the simulated one', () => {
+		touchFinger.down().wait(650);
+		vi.advanceTimersByTime(660);
+
+		const nativeEvent = new MouseEvent('contextmenu', {bubbles: true, cancelable: true});
+		container.dispatchEvent(nativeEvent);
+
+		expect(spy).toHaveBeenCalledOnce();
+		expect(spy.mock.lastCall[0].originalEvent._simulated).to.be.true;
+		expect(nativeEvent.defaultPrevented).to.be.true;
+
+		touchFinger.wait(100).up();
+		vi.advanceTimersByTime(110);
+
+		// up to the next press only, e.g. a right click
+		mouseFinger.down().wait(10).up();
+		vi.advanceTimersByTime(20);
+		UIEventSimulator.fire('contextmenu', container);
+		expect(spy).toHaveBeenCalledTimes(2);
 	});
 
 	it('prevents native click', () => {

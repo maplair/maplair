@@ -9,7 +9,7 @@
 		{"title": "Basic types", "items": ["LatLng", "LatLngBounds", "Point", "Bounds", "Icon", "DefaultIcon", "DivIcon", "SvgIcon"]},
 		{"title": "Controls", "items": ["ZoomControl", "AttributionControl", "LayersControl", "LegendControl", "MiniMapControl", "ScaleControl", "SearchControl", "SideBySideControl", "FullscreenControl", "RotateControl", "ButtonControl", "ButtonBarControl", "TextControl", "ContextMenu"]},
 		{"title": "Map handlers", "items": ["DragHandler", "BoxZoomHandler", "DoubleClickZoomHandler", "ScrollWheelZoomHandler", "KeyboardHandler", "PinchZoomHandler", "TapDragZoomHandler", "TapHoldHandler", "DisplaceHandler", "MarkerDrag"]},
-		{"title": "Utility", "items": [{"name": "Browser", "module": "core/Browser"}, {"name": "Util", "module": "core/Util"}, "Transformation", {"name": "LineUtil", "module": "geometry/LineUtil"}, {"name": "PolyUtil", "module": "geometry/PolyUtil"}, "I18n"]},
+		{"title": "Utility", "items": [{"name": "Util", "module": "core/Util"}, "Transformation", {"name": "LineUtil", "module": "geometry/LineUtil"}, {"name": "PolyUtil", "module": "geometry/PolyUtil"}, "I18n"]},
 		{"title": "DOM utility", "items": [{"name": "DomEvent", "module": "dom/DomEvent"}, {"name": "DomUtil", "module": "dom/DomUtil"}, "Draggable"]},
 		{"title": "Base classes", "items": ["Class", "Evented", "Layer", "InteractiveLayerOptions", "Control", "Handler", {"name": "Projection", "module": "geo/projection/index"}, "BlanketOverlay", "Renderer"]},
 		{"title": "CRS", "items": ["CRS", "EarthCRS", "EPSG3857", "EPSG900913", "EPSG3395", "EPSG4326", "SimpleCRS"]},

@@ -1,8 +1,8 @@
 import {Path} from './Path.js';
+import * as DomUtil from '../../dom/DomUtil.js';
 import {SVG} from './SVG.js';
 import {Canvas} from './Canvas.js';
 import * as Util from '../../core/Util.js';
-import Browser from '../../core/Browser.js';
 
 const DASH_SEPARATOR_RE = /[ ,]+/;
 
@@ -89,7 +89,7 @@ Canvas.include({
 	// The shift of the dashes of an animated path, and keeps redrawing it
 	_getDashShift(layer) {
 		const speed = layer.options.dashSpeed,
-		length = speed && !Browser.reducedMotion && layer._getDashLength();
+		length = speed && !DomUtil.reducedMotion && layer._getDashLength();
 		if (!length) { return 0; }
 
 		this._animatedDashes ??= new Set();

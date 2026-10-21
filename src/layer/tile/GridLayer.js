@@ -1,5 +1,4 @@
 import {Layer} from '../Layer.js';
-import Browser from '../../core/Browser.js';
 import * as Util from '../../core/Util.js';
 import * as DomUtil from '../../dom/DomUtil.js';
 import {Point} from '../../geometry/Point.js';
@@ -148,9 +147,9 @@ export class GridLayer extends Layer {
 		tileSize: 256,
 		opacity: 1,
 		placeholder: null,
-		updateWhenIdle: Browser.reducedMotion,
+		updateWhenIdle: DomUtil.reducedMotion,
 		updateWhenZooming: true,
-		updateInterval: Browser.reducedMotion ? 5000 : 200,
+		updateInterval: DomUtil.reducedMotion ? 5000 : 200,
 		zIndex: 1,
 		bounds: null,
 		minZoom: 0,

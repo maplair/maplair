@@ -1,7 +1,6 @@
 import {DivOverlay} from './DivOverlay.js';
 import * as DomEvent from '../dom/DomEvent.js';
 import * as DomUtil from '../dom/DomUtil.js';
-import Browser from '../core/Browser.js';
 import {Point} from '../geometry/Point.js';
 import {Layer} from './Layer.js';
 import {Path} from './vector/Path.js';
@@ -26,7 +25,7 @@ import {I18n} from '../core/I18n.js';
  * can be styled using the `maplair-popup-scrolled` CSS class selector.
  * @property {boolean} [autoPan] Set it to `false` if you don't want the map to do
  * panning animation to fit the opened popup. Defaults to `true`, unless the user
- * prefers reduced motion (`Browser.reducedMotion`).
+ * prefers reduced motion (`DomUtil.reducedMotion`).
  * @property {PointExpression|null} [autoPanPaddingTopLeft=null] The margin between the
  * popup and the top left corner of the map view after autopanning was performed.
  * @property {PointExpression|null} [autoPanPaddingBottomRight=null] The margin between
@@ -323,7 +322,7 @@ export class Popup extends DivOverlay {
 		maxWidth: 300,
 		minWidth: 50,
 		maxHeight: null,
-		autoPan: !Browser.reducedMotion,
+		autoPan: !DomUtil.reducedMotion,
 		autoPanPaddingTopLeft: null,
 		autoPanPaddingBottomRight: null,
 		autoPanPadding: [5, 5],

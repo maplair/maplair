@@ -1,5 +1,4 @@
 import {TileLayer} from './TileLayer.js';
-import Browser from '../../core/Browser.js';
 import {EPSG4326} from '../../geo/crs/EPSG4326.js';
 import {Bounds} from '../../geometry/Bounds.js';
 /** @import {CRS} from '../../geo/crs/CRS.js' */
@@ -94,7 +93,7 @@ export class WMSTileLayer extends TileLayer {
 
 	// The size of the requested images: the tile size, doubled on retina displays with `detectRetina`.
 	_updateWmsSize() {
-		const realRetina = this.options.detectRetina && Browser.retina ? 2 : 1;
+		const realRetina = this.options.detectRetina && window.devicePixelRatio > 1 ? 2 : 1;
 		const tileSize = this.getTileSize();
 
 		this.wmsParams.width = tileSize.x * realRetina;

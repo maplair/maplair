@@ -1,5 +1,5 @@
 import {expect, vi} from 'vite-plus/test';
-import {Browser, Canvas, MaplairMap, Polygon, TileLayer, WMSTileLayer} from 'maplair';
+import {Canvas, MaplairMap, Polygon, TileLayer, WMSTileLayer} from 'maplair';
 import {createContainer, removeMapContainer} from '../SpecHelper.js';
 
 describe('Map: devicePixelRatio changes', () => {
@@ -36,12 +36,10 @@ describe('Map: devicePixelRatio changes', () => {
 
 		changePixelRatio(2);
 		expect(spy).toHaveBeenCalledOnce();
-		expect(Browser.retina).to.be.true;
 		expect(map._pixelRatioQuery.media).to.contain('2dppx');
 
 		changePixelRatio(1);
 		expect(spy).toHaveBeenCalledTimes(2);
-		expect(Browser.retina).to.be.false;
 	});
 
 	it('stops watching when the map is removed', () => {

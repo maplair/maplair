@@ -223,3 +223,12 @@ export function getScale(element) {
 		boundingClientRect: rect
 	};
 }
+
+/**
+ * `true` if the user has
+ * [configured their environment for reduced motion](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-motion#user_preferences).
+ * Determines whether animations should play or not.
+ * @type {boolean}
+ */
+export const reducedMotion =
+	typeof window === 'undefined' || /* @__PURE__ */ window.matchMedia('(prefers-reduced-motion: reduce)').matches;

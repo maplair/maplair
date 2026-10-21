@@ -1,5 +1,4 @@
 import {MaplairMap} from './Map.js';
-import Browser from '../core/Browser.js';
 import * as DomUtil from '../dom/DomUtil.js';
 import * as DomEvent from '../dom/DomEvent.js';
 import * as PointerEvents from '../dom/DomEvent.PointerEvents.js';
@@ -143,7 +142,7 @@ const mapRotationMethods = {
 		if (bearing === from) { return this; }
 
 		this._stop();
-		if (!options?.animate || !this._loaded || Browser.reducedMotion) {
+		if (!options?.animate || !this._loaded || DomUtil.reducedMotion) {
 			this._rotate(bearing);
 			return this._loaded ? this.fire('movestart').fire('move').fire('moveend') : this;
 		}
