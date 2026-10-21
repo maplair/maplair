@@ -1,5 +1,5 @@
 import {expect} from 'vite-plus/test';
-import {DomUtil, GridLayer, MaplairMap, Point} from 'maplair';
+import {DomUtil, GridLayer, MaplairMap, Point, SimpleCRS} from 'maplair';
 import Hand from 'prosthetic-hand';
 import {createContainer, removeMapContainer} from '../SpecHelper.js';
 
@@ -126,6 +126,47 @@ describe('worldCopyJump', () => {
 			map.panBy([600, 0], {animate: false});
 
 			expect(map.getCenter().lng).to.be.within(-160, -150);
+		});
+	});
+
+	describe('with an infinite CRS', () => {
+		beforeEach(() => {
+			// an infinite CRS has no world to wrap around, so the option must be harmless
+			map.remove();
+			map = new MaplairMap(container, {
+				crs: SimpleCRS,
+				dragging: true,
+				inertia: false,
+				fadeAnimation: false,
+				zoomAnimation: false,
+				worldCopyJump: true
+			});
+			map.setView([0, 0], 1);
+		});
+
+		it('pans without throwing', () => {
+			map.panBy([100, 0], {animate: false});
+
+			expect(map.getCenter().lng).to.be.closeTo(50, 0.5);
+		});
+
+		it('ends an animated pan without throwing', (done) => {
+			map.once('moveend', () => {
+				expect(map.getCenter().lng).to.be.closeTo(50, 0.5);
+				done();
+			});
+			map.panBy([100, 0]);
+		});
+
+		it('can be dragged without firing worldcopyjump', (done) => {
+			const jumps = [];
+			map.on('worldcopyjump', e => jumps.push(e.worlds));
+
+			dragBy(100).addEventListener('stop', () => {
+				expect(map.getCenter().lng).to.be.closeTo(-50, 0.5);
+				expect(jumps).to.eql([]);
+				done();
+			});
 		});
 	});
 

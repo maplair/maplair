@@ -21,7 +21,8 @@ import {Bounds} from '../../geometry/Bounds.js';
  * movement.
  * @property {boolean} [worldCopyJump=false] With this option enabled, the map tracks
  * when you pan to another "copy" of the world and seamlessly jumps to the original one
- * so that all overlays like markers and vector layers are still visible.
+ * so that all overlays like markers and vector layers are still visible. A map with an
+ * infinite CRS, such as `SimpleCRS`, does not jump, as it has no copies of the world.
  * @property {number} [maxBoundsViscosity=0.0] If `maxBounds` is set, this option will
  * control how solid the bounds are when dragging the map around. The default value of
  * `0.0` allows the user to drag outside the bounds at normal speed, higher values will

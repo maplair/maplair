@@ -1743,7 +1743,8 @@ export class MaplairMap extends Evented {
 	// Shifts a map pane position by whole world widths to bring the view center back into the original world, moving
 	// the pane and firing `worldcopyjump` if that makes it jump from where it is now.
 	_wrapWorldCopy(pos = this._getMapPanePos()) {
-		if (!this._loaded || !this.options.worldCopyJump) { return pos; }
+		// an infinite CRS has no world to wrap around, and no pixel world bounds either
+		if (!this._loaded || !this.options.worldCopyJump || this.options.crs.infinite) { return pos; }
 
 		const width = this.getPixelWorldBounds().getSize().x,
 		x = pos.x - width * Math.round((pos.x + this.latLngToLayerPoint([0, 0]).x - this.getSize().x / 2) / width),
