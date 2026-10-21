@@ -67,7 +67,7 @@
 	position: absolute;
 	left: 0;
 	top: 0;
-	width:100%;
+	width: 100%;
 }
 
 /* wraps the map pane of a rotated map, see setBearing() */
@@ -120,8 +120,6 @@
 	}
 
 	&.maplair-touch-drag {
-		/* Fallback for FF which doesn't support pinch-zoom */
-		touch-action: none;
 		touch-action: pinch-zoom;
 
 		&.maplair-touch-zoom {
