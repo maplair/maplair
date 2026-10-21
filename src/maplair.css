@@ -309,17 +309,9 @@
 		}
 	}
 
-	.maplair-tile {
-		transition: none;
-	}
-
 	.maplair-zoom-hide {
 		visibility: hidden;
 	}
-}
-
-.maplair-pan-anim .maplair-tile {
-	transition: none;
 }
 
 /* cursors */
