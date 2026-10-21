@@ -137,15 +137,12 @@ const layerPopupMethods = {
 	bindPopup(content, options) {
 		// eslint-disable-next-line no-use-before-define -- defined below, used when called
 		this._popup = this._initOverlay(Popup, this._popup, content, options);
-		if (!this._popupHandlersAdded) {
-			this.on({
-				click: this._openPopup,
-				keypress: this._onKeyPress,
-				remove: this.closePopup,
-				move: this._movePopup
-			});
-			this._popupHandlersAdded = true;
-		}
+		this.on({
+			click: this._openPopup,
+			keypress: this._onKeyPress,
+			remove: this.closePopup,
+			move: this._movePopup
+		});
 
 		return this;
 	},
@@ -163,7 +160,6 @@ const layerPopupMethods = {
 				remove: this.closePopup,
 				move: this._movePopup
 			});
-			this._popupHandlersAdded = false;
 			this._popup = null;
 		}
 		return this;

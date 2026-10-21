@@ -46,22 +46,14 @@ const mapControlMethods = {
 		l = 'maplair-',
 		container = this._controlContainer = DomUtil.create('div', `${l}control-container`, this._container);
 
-		function createCorner(vSide, hSide) {
-			const className = `${l + vSide} ${l}${hSide}`;
-
-			corners[vSide + hSide] = DomUtil.create('div', className, container);
+		for (const v of ['top', 'bottom']) {
+			for (const h of ['left', 'right']) {
+				corners[v + h] = DomUtil.create('div', `${l + v} ${l}${h}`, container);
+			}
 		}
-
-		createCorner('top', 'left');
-		createCorner('top', 'right');
-		createCorner('bottom', 'left');
-		createCorner('bottom', 'right');
 	},
 
 	_clearControlPos() {
-		for (const c of Object.values(this._controlCorners)) {
-			c.remove();
-		}
 		this._controlContainer.remove();
 		delete this._controlCorners;
 		delete this._controlContainer;

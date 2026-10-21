@@ -301,7 +301,8 @@ export class GridLayer extends Layer {
 			viewreset: this._resetView,
 			zoom: this._resetView,
 			moveend: this._onMoveEnd,
-			worldcopyjump: this._onWorldCopyJump
+			worldcopyjump: this._onWorldCopyJump,
+			zoomanim: this._animateZoom
 		};
 
 		if (!this.options.updateWhenIdle) {
@@ -311,10 +312,6 @@ export class GridLayer extends Layer {
 			}
 
 			events.move = this._onMove;
-		}
-
-		if (this._zoomAnimated) {
-			events.zoomanim = this._animateZoom;
 		}
 
 		return events;
@@ -584,54 +581,29 @@ export class GridLayer extends Layer {
 	}
 
 	_retainParent(x, y, z, minZoom) {
-		const x2 = Math.floor(x / 2),
-		y2 = Math.floor(y / 2),
-		z2 = z - 1,
-		coords2 = new Point(+x2, +y2);
-		coords2.z = +z2;
-
-		const key = this._tileCoordsToKey(coords2),
-		tile = this._tiles[key];
-
-		if (tile?.active) {
-			tile.retain = true;
-			return true;
-
-		} else if (tile?.loaded) {
-			tile.retain = true;
+		for (z--; z >= minZoom; z--) {
+			x = Math.floor(x / 2);
+			y = Math.floor(y / 2);
+			if (this._retain(x, y, z)) { return true; }
 		}
-
-		if (z2 > minZoom) {
-			return this._retainParent(x2, y2, z2, minZoom);
-		}
-
 		return false;
 	}
 
 	_retainChildren(x, y, z, maxZoom) {
-
 		for (let i = 2 * x; i < 2 * x + 2; i++) {
 			for (let j = 2 * y; j < 2 * y + 2; j++) {
-
-				const coords = new Point(i, j);
-				coords.z = z + 1;
-
-				const key = this._tileCoordsToKey(coords),
-				tile = this._tiles[key];
-
-				if (tile?.active) {
-					tile.retain = true;
-					continue;
-
-				} else if (tile?.loaded) {
-					tile.retain = true;
-				}
-
-				if (z + 1 < maxZoom) {
+				if (!this._retain(i, j, z + 1) && z + 1 < maxZoom) {
 					this._retainChildren(i, j, z + 1, maxZoom);
 				}
 			}
 		}
+	}
+
+	// retains the tile if it's loaded; returns true if it's active, so there's no need to look further
+	_retain(x, y, z) {
+		const tile = this._tiles[this._tileCoordsToKey({x, y, z})];
+		if (tile?.loaded) { tile.retain = true; }
+		return tile?.active;
 	}
 
 	_resetView(e) {
@@ -858,10 +830,6 @@ export class GridLayer extends Layer {
 		return LatLngBounds.from(this.options.bounds).overlaps(tileBounds);
 	}
 
-	_keyToBounds(key) {
-		return this._tileCoordsToBounds(this._keyToTileCoords(key));
-	}
-
 	_tileCoordsToNwSe(coords) {
 		const map = this._map,
 		tileSize = this.getTileSize(),
@@ -887,14 +855,6 @@ export class GridLayer extends Layer {
 		return `${coords.x}:${coords.y}:${coords.z}`;
 	}
 
-	// converts tile cache key to coordinates
-	_keyToTileCoords(key) {
-		const k = key.split(':'),
-		coords = new Point(+k[0], +k[1]);
-		coords.z = +k[2];
-		return coords;
-	}
-
 	_removeTile(key) {
 		const tile = this._tiles[key];
 		if (!tile) { return; }
@@ -905,7 +865,7 @@ export class GridLayer extends Layer {
 
 		this.fire('tileunload', {
 			tile: tile.el,
-			coords: this._keyToTileCoords(key)
+			coords: tile.coords
 		});
 	}
 

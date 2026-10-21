@@ -1077,14 +1077,13 @@ export class MaplairMap extends Evented {
 		if (this._clearControlPos) {
 			this._clearControlPos();
 		}
-		if (this._resizeRequest) {
-			cancelAnimationFrame(this._resizeRequest);
-			this._resizeRequest = null;
-		}
+		cancelAnimationFrame(this._resizeRequest);
 		cancelAnimationFrame(this._idleRequest);
 		this._watchPixelRatio(true);
 
-		this._clearHandlers();
+		for (const handler of this._handlers) {
+			handler.disable();
+		}
 
 		clearTimeout(this._transitionEndTimer);
 		clearTimeout(this._sizeTimer);
@@ -1092,8 +1091,6 @@ export class MaplairMap extends Evented {
 		if (this._loaded) {
 			this.fire('unload');
 		}
-
-		this._destroyAnimProxy();
 
 		for (const layer of Object.values(this._layers)) {
 			layer.remove();
@@ -1921,12 +1918,6 @@ export class MaplairMap extends Evented {
 		return obj.dragging?.moved() || this.boxZoom?.moved();
 	}
 
-	_clearHandlers() {
-		for (const handler of this._handlers) {
-			handler.disable();
-		}
-	}
-
 
 	/**
 	 * Runs the given function `callback` when the map gets initialized with
@@ -1973,16 +1964,6 @@ export class MaplairMap extends Evented {
 	_latLngToNewLayerPoint(latlng, zoom, center) {
 		const topLeft = this._getNewPixelOrigin(center, zoom);
 		return this.project(latlng, zoom)._subtract(topLeft);
-	}
-
-	_latLngBoundsToNewLayerBounds(latLngBounds, zoom, center) {
-		const topLeft = this._getNewPixelOrigin(center, zoom);
-		return new Bounds([
-			this.project(latLngBounds.getSouthWest(), zoom)._subtract(topLeft),
-			this.project(latLngBounds.getNorthWest(), zoom)._subtract(topLeft),
-			this.project(latLngBounds.getSouthEast(), zoom)._subtract(topLeft),
-			this.project(latLngBounds.getNorthEast(), zoom)._subtract(topLeft)
-		]);
 	}
 
 	// layer point of the current center
@@ -2114,20 +2095,6 @@ export class MaplairMap extends Evented {
 			this.project(c, z),
 			this.getZoomScale(z, 1),
 		);
-	}
-
-	_destroyAnimProxy() {
-		// Just make sure this method is safe to call from anywhere, without knowledge
-		// of whether the animation proxy was created in the first place.
-		if (this._proxy) {
-			DomEvent.off(this._proxy, 'transitionend', this._catchTransitionEnd, this);
-
-			this._proxy.remove();
-			this.off('zoomanim', this._animateProxyZoom, this);
-			this.off('load moveend', this._animMoveEnd, this);
-
-			delete this._proxy;
-		}
 	}
 
 	_catchTransitionEnd(e) {

@@ -212,16 +212,11 @@ export class ImageOverlay extends Layer {
 	 * @returns {Record<string, EventListener>}
 	 */
 	getEvents() {
-		const events = {
+		return {
 			zoom: this._reset,
-			viewreset: this._reset
+			viewreset: this._reset,
+			zoomanim: this._animateZoom
 		};
-
-		if (this._zoomAnimated) {
-			events.zoomanim = this._animateZoom;
-		}
-
-		return events;
 	}
 
 	/**
@@ -258,8 +253,7 @@ export class ImageOverlay extends Layer {
 		const wasElementSupplied = this._url.tagName === 'IMG';
 		const img = this._image = wasElementSupplied ? this._url : DomUtil.create('img');
 
-		img.classList.add('maplair-image-layer');
-		if (this._zoomAnimated) { img.classList.add('maplair-zoom-animated'); }
+		img.classList.add('maplair-image-layer', 'maplair-zoom-animated');
 		if (this.options.className) { img.classList.add(...Util.splitWords(this.options.className)); }
 
 		img.onload = this.fire.bind(this, 'load');
@@ -286,7 +280,7 @@ export class ImageOverlay extends Layer {
 
 	_animateZoom(e) {
 		const scale = this._map.getZoomScale(e.zoom),
-		offset = this._map._latLngBoundsToNewLayerBounds(this._bounds, e.zoom, e.center).min;
+		offset = this._map._latLngToNewLayerPoint(this._bounds.getNorthWest(), e.zoom, e.center);
 
 		DomUtil.setTransform(this._image, offset, scale);
 	}

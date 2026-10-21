@@ -179,8 +179,6 @@ export class DivOverlay extends Layer {
 	 * @param {MaplairMap} map
 	 */
 	onAdd(map) {
-		this._zoomAnimated = map._zoomAnimated;
-
 		if (!this._container) {
 			this._initLayout();
 		}
@@ -328,12 +326,10 @@ export class DivOverlay extends Layer {
 	getEvents() {
 		const events = {
 			zoom: this._updatePosition,
-			viewreset: this._updatePosition
+			viewreset: this._updatePosition,
+			zoomanim: this._animateZoom
 		};
 
-		if (this._zoomAnimated) {
-			events.zoomanim = this._animateZoom;
-		}
 		if (this.options.overflow) {
 			events.move = this._updatePosition;
 		}
@@ -448,14 +444,9 @@ export class DivOverlay extends Layer {
 		if (!this._map) { return; }
 
 		const pos = this._map.latLngToLayerPoint(this._latlng),
-		anchor = this._getAnchor();
-		let offset = Point.from(this.options.offset);
+		offset = Point.from(this.options.offset);
 
-		if (this._zoomAnimated || this.options.overflow) {
-			this._setContainerPosition(pos.add(anchor));
-		} else {
-			offset = offset.add(pos).add(anchor);
-		}
+		this._setContainerPosition(pos.add(this._getAnchor()));
 
 		const bottom = this._containerBottom = -offset.y,
 		left = this._containerLeft = -Math.round(this._containerWidth / 2) + offset.x;

@@ -455,7 +455,7 @@ export class Tooltip extends DivOverlay {
 
 	_initLayout() {
 		const prefix = 'maplair-tooltip',
-		className = `${prefix} ${this.options.className || ''} maplair-zoom-${this._zoomAnimated ? 'animated' : 'hide'}`;
+		className = `${prefix} ${this.options.className || ''} maplair-zoom-animated`;
 
 		this._contentNode = this._container = DomUtil.create('div', className);
 
