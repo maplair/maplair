@@ -71,7 +71,7 @@ export class VideoOverlay extends ImageOverlay {
 	}
 
 	_initImage() {
-		const wasElementSupplied = this._url.tagName === 'VIDEO';
+		const wasElementSupplied = this._url instanceof HTMLVideoElement;
 		const vid = this._image = wasElementSupplied ? this._url : DomUtil.create('video');
 
 		vid.classList.add('maplair-image-layer', 'maplair-zoom-animated');

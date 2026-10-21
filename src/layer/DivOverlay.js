@@ -184,7 +184,7 @@ export class DivOverlay extends Layer {
 		}
 
 		if (map._fadeAnimated) {
-			this._container.style.opacity = 0;
+			this._container.style.opacity = '0';
 		}
 
 		clearTimeout(this._removeTimeout);
@@ -201,7 +201,7 @@ export class DivOverlay extends Layer {
 		this.update();
 
 		if (map._fadeAnimated) {
-			this._container.style.opacity = 1;
+			this._container.style.opacity = '1';
 		}
 
 		// A popover is shown on top already, re-showing it would skip the fade animation
@@ -226,7 +226,7 @@ export class DivOverlay extends Layer {
 		}
 
 		if (map._fadeAnimated) {
-			this._container.style.opacity = 0;
+			this._container.style.opacity = '0';
 			this._removeTimeout = setTimeout(() => this._container.remove(), 200);
 		} else {
 			this._container.remove();

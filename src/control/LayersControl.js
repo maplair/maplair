@@ -286,7 +286,7 @@ export class LayersControl extends Control {
 		clearTimeout(this._collapseDelayTimeout);
 
 		this._container.classList.add('maplair-control-layers-expanded');
-		this._section.style.height = null;
+		this._section.style.height = '';
 		const acceptableHeight = this._map.getSize().y - (this._container.offsetTop + 50);
 		if (acceptableHeight < this._section.clientHeight) {
 			this._section.classList.add('maplair-control-layers-scrollbar');

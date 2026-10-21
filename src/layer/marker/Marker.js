@@ -279,7 +279,7 @@ export class Marker extends Layer {
 				icon.title = options.title;
 			}
 
-			if (icon.tagName === 'IMG') {
+			if (icon instanceof HTMLImageElement) {
 				icon.alt = options.alt ?? '';
 			}
 		}
@@ -287,7 +287,7 @@ export class Marker extends Layer {
 		icon.classList.add(classToAdd);
 
 		if (options.keyboard) {
-			icon.tabIndex = '0';
+			icon.tabIndex = 0;
 			icon.setAttribute('role', 'button');
 		}
 
@@ -481,11 +481,11 @@ export class Marker extends Layer {
 		const opacity = this.options.opacity;
 
 		if (this._icon) {
-			this._icon.style.opacity = opacity;
+			this._icon.style.opacity = `${opacity}`;
 		}
 
 		if (this._shadow) {
-			this._shadow.style.opacity = opacity;
+			this._shadow.style.opacity = `${opacity}`;
 		}
 	}
 
