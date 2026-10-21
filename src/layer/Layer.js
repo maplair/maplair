@@ -352,9 +352,9 @@ export class Layer extends Evented {
 	 */
 	setAttribution(attribution) {
 		const control = this._map?.attributionControl;
-		control?.removeAttribution(this.getAttribution());
+		control?._removeLayer({layer: this});
 		Util.setOptions(this, {attribution});
-		control?.addAttribution(this.getAttribution(), this.options.attributionOrder);
+		control?._addLayer({layer: this});
 		return this;
 	}
 
