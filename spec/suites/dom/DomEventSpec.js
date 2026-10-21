@@ -516,6 +516,17 @@ describe('DomEvent', () => {
 		});
 	});
 
+	describe('#getWheelDelta', () => {
+		it('scales pixel deltas by device pixel ratio', () => {
+			const e = new WheelEvent('wheel', {deltaY: 100, deltaMode: 0});
+			const dpr = vi.spyOn(window, 'devicePixelRatio', 'get').mockReturnValue(1);
+			expect(DomEvent.getWheelDelta(e)).to.equal(-50);
+			dpr.mockReturnValue(2);
+			expect(DomEvent.getWheelDelta(e)).to.equal(-25);
+			dpr.mockRestore();
+		});
+	});
+
 	describe('#stopPropagation', () => {
 		it('stops propagation of events from other windows (e.g. iframes)', () => {
 			const iframe = document.createElement('iframe');

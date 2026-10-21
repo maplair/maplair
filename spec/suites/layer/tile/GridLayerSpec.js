@@ -1,5 +1,5 @@
 import {expect, vi} from 'vite-plus/test';
-import {DomUtil, GridLayer, MaplairMap, Point, Util} from 'maplair';
+import {DomUtil, GridLayer, MaplairMap, Point} from 'maplair';
 import {createContainer, removeMapContainer} from '../../SpecHelper.js';
 
 describe('GridLayer', () => {
@@ -566,21 +566,18 @@ describe('GridLayer', () => {
 		}
 		*/
 
-		// animationFrame helper, just runs requestAnimationFrame() a given number of times
-		function runFrames(n) {
-			return _runFrames(n)();
-		}
-
-		function _runFrames(n) {
-			if (n) {
-				return function () {
-					// the frame chain may outlive the test, after real timers are restored
-					if (vi.isFakeTimers()) { vi.advanceTimersByTime(40); } // 40msec/frame ~= 25fps
-					map.fire('_frame');
-					requestAnimationFrame(_runFrames(n - 1));
-				};
+		// calls `start`, then synchronously runs up to n frames of 40ms (~25fps) while any animation frame
+		// callbacks are queued, instead of waiting for real frames
+		function runFrames(n, start) {
+			const callbacks = [];
+			const raf = vi.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => callbacks.push(cb));
+			start();
+			for (let i = 0; i < n && callbacks.length; i++) {
+				vi.advanceTimersByTime(40);
+				map.fire('_frame');
+				for (const cb of callbacks.splice(0)) { cb(); }
 			}
-			return Util.falseFn;
+			raf.mockRestore();
 		}
 
 		it('Loads 32, unloads 16 tiles zooming in 10-11', (done) => {
@@ -813,13 +810,7 @@ describe('GridLayer', () => {
 					done();
 				});
 
-				map.flyTo(trd, 12, {animate: true});
-
-				// map.on('_frame', function () {
-				// 	console.log('frame', counts);
-				// });
-
-				runFrames(500);
+				runFrames(500, () => map.flyTo(trd, 12, {animate: true}));
 			});
 
 			grid.options.keepBuffer = 0;

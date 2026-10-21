@@ -106,9 +106,9 @@
   "scripts": {
     "debug": "vp dev",
     "docs": "node ./build/types.js && node ./build/docs.js",
-    "test": "vp test watch --project=chromium",
-    "test:ui": "vp test watch --project=chromium --ui --browser.headless=false",
-    "coverage": "vp test run --project=chromium --coverage",
+    "test": "vp test run",
+    "test:ui": "vp test watch --ui --browser.headless=false",
+    "coverage": "vp test run --coverage",
     "build": "vp pack && node ./build/types.js",
     "test:tree-shaking": "node ./build/tree-shaking.js",
     "watch": "vp pack --watch",

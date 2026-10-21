@@ -16,6 +16,23 @@ describe('Map', () => {
 		removeMapContainer(map, container);
 	});
 
+	describe('container classes', () => {
+		it('adds maplair-retina only on high-DPI screens', () => {
+			const dpr = vi.spyOn(window, 'devicePixelRatio', 'get').mockReturnValue(1);
+			const container1 = createContainer();
+			const map1 = new MaplairMap(container1);
+			dpr.mockReturnValue(2);
+			const container2 = createContainer();
+			const map2 = new MaplairMap(container2);
+			dpr.mockRestore();
+
+			expect(container1.classList.contains('maplair-retina')).to.be.false;
+			expect(container2.classList.contains('maplair-retina')).to.be.true;
+			removeMapContainer(map1, container1);
+			removeMapContainer(map2, container2);
+		});
+	});
+
 	describe('#remove', () => {
 		let spy;
 
@@ -92,21 +109,24 @@ describe('Map', () => {
 		});
 
 		// For #9575
-		it('does not throw if removed before transition end complete', (done) => {
+		it('does not throw if removed before transition end complete', async () => {
+			vi.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
 			map.setView([0, 0], 1).setMaxBounds([[0, 1], [2, 3]]);
 
 			map._createAnimProxy();
 
-			setTimeout(() => {
-				map.remove();
-				map = null;
-			}, 10);
-
-			setTimeout(() => {
-				done();
-			}, 300);
-
 			map.setZoom(2);
+
+			// let the zoom animation start, then remove the map before its transition end timer fires
+			await new Promise((resolve) => { requestAnimationFrame(resolve); });
+			map.remove();
+			map = null;
+
+			try {
+				vi.advanceTimersByTime(300);
+			} finally {
+				vi.useRealTimers();
+			}
 		});
 
 		it('throws error if container is reused by other instance', () => {
@@ -501,18 +521,14 @@ describe('Map', () => {
 			expect(map.off).not.toHaveBeenCalled();
 		});
 
-		it('avoid subpixel / floating point related wobble (#8532)', (done) => {
+		it('avoid subpixel / floating point related wobble (#8532)', () => {
 			map.setView([50.450036, 30.5241361], 13);
 
 			const spy = vi.fn();
-			map.on('moveend', spy);
+			map.on('movestart', spy);
 			map.setMaxBounds(map.getBounds());
 
-			// Unfortunately this is one of those tests where we need to allow at least one animation tick
-			setTimeout(() => {
-				expect(spy).not.toHaveBeenCalled();
-				done();
-			}, 300);
+			expect(spy).not.toHaveBeenCalled();
 		});
 	});
 

@@ -116,25 +116,21 @@ on rebuilding the bundles whenever any source file changes.
 
 ## Running the Tests
 
-Tests run in real browsers via [Vite+](https://viteplus.dev/) (`vp test`, bundling [Vitest](https://vitest.dev/)) in browser mode (Playwright provider). Make sure the project has been built first (or run `pnpm run watch` in another terminal).
+Tests run in real browsers via [Vite+](https://viteplus.dev/) (`vp test`, bundling [Vitest](https://vitest.dev/)) in browser mode (Playwright provider), against the sources in `src/`, so no build is needed.
 
 ```
 pnpm test
 ```
 
-Runs the suite in headless Chromium and stays in watch mode. To override the browser, pass `--project`:
+Runs the suite once in headless Chromium. To run it in another browser, set `TEST_BROWSER`, and pass spec paths to run only those:
 
 ```
-pnpm test --project=firefox
-pnpm test --project=webkit
-pnpm test --project=firefox-retina
+TEST_BROWSER=firefox pnpm test
+TEST_BROWSER=webkit pnpm test
+pnpm test spec/suites/layer/PopupSpec.js
 ```
 
-For one-shot CI-style runs, use `pnpm exec vp test run` instead. To enable touch event emulation (matching what CI runs as the "touch" pass), set `VITE_TOUCH=1`:
-
-```
-VITE_TOUCH=1 pnpm exec vp test run --project=chromium
-```
+For watch mode, run `pnpm exec vp test watch`.
 
 To open the Vitest UI for interactive debugging:
 

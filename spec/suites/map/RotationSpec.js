@@ -2,7 +2,7 @@ import {expect, vi} from 'vite-plus/test';
 import {Canvas, GridLayer, MaplairMap, Marker, Point, Polygon, Popup, SVG, Tooltip} from 'maplair';
 import Hand from 'prosthetic-hand';
 import UIEventSimulator from 'ui-event-simulator';
-import {createContainer, removeMapContainer, pointerEventType} from '../SpecHelper.js';
+import {createContainer, removeMapContainer} from '../SpecHelper.js';
 import {RotateControl} from 'maplair/map-rotation';
 
 describe('Map: rotation', () => {
@@ -180,13 +180,13 @@ describe('Map: rotation', () => {
 			expect(maxDistance).to.be.lessThan(2);
 		});
 
-		it.skipIfNotTouch('does not rotate by turning two fingers by default', async () => {
+		it('does not rotate by turning two fingers by default', async () => {
 			const moveend = new Promise((resolve) => {
 				map.once('moveend', resolve);
 			});
 			const hand = new Hand({timing: 'fastframe'});
-			const f1 = hand.growFinger(...pointerEventType);
-			const f2 = hand.growFinger(...pointerEventType);
+			const f1 = hand.growFinger('pointer', {pointerType: 'touch'});
+			const f2 = hand.growFinger('pointer', {pointerType: 'touch'});
 			hand.sync(5);
 			f1.wait(100).moveTo(100, 150, 0).down().moveTo(200, 50, 400).up(100);
 			f2.wait(100).moveTo(300, 150, 0).down().moveTo(200, 250, 400).up(100);
@@ -194,15 +194,15 @@ describe('Map: rotation', () => {
 			expect(map.getBearing()).to.equal(60);
 		});
 
-		it.skipIfNotTouch('rotates by turning two fingers with pinchRotate', async () => {
+		it('rotates by turning two fingers with pinchRotate', async () => {
 			map.remove();
 			createMap({pinchRotate: true});
 			const zoomend = new Promise((resolve) => {
 				map.once('moveend', resolve);
 			});
 			const hand = new Hand({timing: 'fastframe'});
-			const f1 = hand.growFinger(...pointerEventType);
-			const f2 = hand.growFinger(...pointerEventType);
+			const f1 = hand.growFinger('pointer', {pointerType: 'touch'});
+			const f2 = hand.growFinger('pointer', {pointerType: 'touch'});
 			hand.sync(5);
 			// turn by 90° clockwise around the center, without changing the distance
 			f1.wait(100).moveTo(100, 150, 0).down().moveTo(200, 50, 400).up(100);

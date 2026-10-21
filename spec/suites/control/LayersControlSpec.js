@@ -1,7 +1,7 @@
 import {expect, vi} from 'vite-plus/test';
 import {LayersControl, MaplairMap, Marker, TileLayer, Util} from 'maplair';
 import UIEventSimulator from 'ui-event-simulator';
-import {createContainer, pointerType, removeMapContainer} from '../SpecHelper.js';
+import {createContainer, removeMapContainer} from '../SpecHelper.js';
 
 const groupPattern = /^([^<>()]+) \((.+)\)$/;
 
@@ -231,21 +231,29 @@ describe('LayersControl', () => {
 
 		it('expands when mouse is over', () => {
 			const layersCtrl = new LayersControl(null, null, {collapsed: true}).addTo(map);
-			UIEventSimulator.fire('pointerenter', layersCtrl._container, {pointerType});
+			UIEventSimulator.fire('pointerenter', layersCtrl._container, {pointerType: 'mouse'});
 			expect(map._container.querySelector('.maplair-control-layers-expanded')).to.be.ok;
 		});
 
-		it.skipIfTouch('collapses when mouse is out', () => {
+		it('collapses when mouse is out', () => {
 			const layersCtrl = new LayersControl(null, null, {collapsed: true}).addTo(map);
-			UIEventSimulator.fire('pointerenter', layersCtrl._container, {pointerType});
+			UIEventSimulator.fire('pointerenter', layersCtrl._container, {pointerType: 'mouse'});
 			expect(map._container.querySelector('.maplair-control-layers-expanded')).not.to.be.null;
-			UIEventSimulator.fire('pointerleave', layersCtrl._container, {pointerType});
+			UIEventSimulator.fire('pointerleave', layersCtrl._container, {pointerType: 'mouse'});
 			expect(map._container.querySelector('.maplair-control-layers-expanded')).to.be.null;
+		});
+
+		it('does not collapse when touch pointer leaves', () => {
+			const layersCtrl = new LayersControl(null, null, {collapsed: true}).addTo(map);
+			UIEventSimulator.fire('pointerenter', layersCtrl._container, {pointerType: 'touch'});
+			expect(map._container.querySelector('.maplair-control-layers-expanded')).not.to.be.null;
+			UIEventSimulator.fire('pointerleave', layersCtrl._container, {pointerType: 'touch'});
+			expect(map._container.querySelector('.maplair-control-layers-expanded')).not.to.be.null;
 		});
 
 		it('collapses when map is clicked', () => {
 			const layersCtrl = new LayersControl(null, null, {collapsed: true}).addTo(map);
-			UIEventSimulator.fire('pointerenter', layersCtrl._container, {pointerType});
+			UIEventSimulator.fire('pointerenter', layersCtrl._container, {pointerType: 'mouse'});
 			expect(map._container.querySelector('.maplair-control-layers-expanded')).not.to.be.null;
 			UIEventSimulator.fire('click', map._container);
 			expect(map._container.querySelector('.maplair-control-layers-expanded')).to.be.null;
@@ -253,7 +261,7 @@ describe('LayersControl', () => {
 
 		it('should collapse with a delay', (done) => {
 			const layersCtrl = new LayersControl(null, null, {collapsed: true, collapseDelay: 8}).addTo(map);
-			UIEventSimulator.fire('pointerenter', layersCtrl._container, {pointerType});
+			UIEventSimulator.fire('pointerenter', layersCtrl._container, {pointerType: 'mouse'});
 			expect(map._container.querySelector('.maplair-control-layers-expanded')).not.to.be.null;
 			UIEventSimulator.fire('click', map._container);
 			expect(map._container.querySelector('.maplair-control-layers-expanded')).to.be.ok;
@@ -271,9 +279,9 @@ describe('LayersControl', () => {
 		it('does not collapse when mouse enters or leaves', () => {
 			const layersCtrl = new LayersControl(null, null, {collapsed: false}).addTo(map);
 			expect(map._container.querySelector('.maplair-control-layers-expanded')).not.to.be.null;
-			UIEventSimulator.fire('pointerenter', layersCtrl._container, {pointerType});
+			UIEventSimulator.fire('pointerenter', layersCtrl._container, {pointerType: 'mouse'});
 			expect(map._container.querySelector('.maplair-control-layers-expanded')).not.to.be.null;
-			UIEventSimulator.fire('pointerleave', layersCtrl._container, {pointerType});
+			UIEventSimulator.fire('pointerleave', layersCtrl._container, {pointerType: 'mouse'});
 			expect(map._container.querySelector('.maplair-control-layers-expanded')).not.to.be.null;
 		});
 
@@ -420,8 +428,8 @@ describe('LayersControl', () => {
 		it('ignores collapsed: true and does not collapse', () => {
 			const layersCtrl = new LayersControl(null, null, {inline: true, collapsed: true}).addTo(map);
 			const container = layersCtrl.getContainer();
-			UIEventSimulator.fire('pointerenter', container, {pointerType});
-			UIEventSimulator.fire('pointerleave', container, {pointerType});
+			UIEventSimulator.fire('pointerenter', container, {pointerType: 'mouse'});
+			UIEventSimulator.fire('pointerleave', container, {pointerType: 'mouse'});
 			UIEventSimulator.fire('click', map._container);
 			layersCtrl.collapse();
 			expect(container.classList.contains('maplair-control-layers-expanded')).to.be.true;
