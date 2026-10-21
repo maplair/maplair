@@ -1507,6 +1507,34 @@ describe('Map', () => {
 
 			map.flyTo(center, 11, {animate: true});
 		}, 20000);
+
+		it('keeps tiles in place on a short same-zoom flight after a pan (#9438)', (done) => {
+			container.style.visibility = 'visible';
+			map.setView([50, 30], 18);
+
+			const grid = new GridLayer();
+			grid.createTile = () => document.createElement('div');
+			grid.addTo(map);
+
+			map.panBy([6, 4], {animate: false});
+
+			map.once('moveend', () => {
+				const {left, top} = container.getBoundingClientRect();
+				for (const {el, coords} of Object.values(grid._tiles)) {
+					const expected = map.latLngToContainerPoint(map.unproject(coords.multiplyBy(256), coords.z));
+					const rect = el.getBoundingClientRect();
+					expect(rect.left - left).to.be.closeTo(expected.x, 1);
+					expect(rect.top - top).to.be.closeTo(expected.y, 1);
+				}
+				done();
+			});
+
+			// skip straight from the first frame to the last one, as when the flight is shorter than a frame
+			vi.useFakeTimers({toFake: ['Date']});
+			map.flyTo([50, 30], 18);
+			vi.advanceTimersByTime(1000);
+			vi.useRealTimers();
+		});
 	});
 
 	describe('#zoomIn and #zoomOut', () => {
