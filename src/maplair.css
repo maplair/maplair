@@ -79,6 +79,7 @@
 .maplair-tile,
 .maplair-marker-icon,
 .maplair-marker-shadow {
+	-webkit-user-select: none;
 	user-select: none;
 	-webkit-user-drag: none;
 	-webkit-touch-callout: none;
@@ -1169,6 +1170,7 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	border-radius: var(--maplair-border-radius-base);
 	color: var(--maplair-color-base);
 	white-space: nowrap;
+	-webkit-user-select: none;
 	user-select: none;
 	pointer-events: none;
 	box-shadow: var(--maplair-box-shadow-medium);
