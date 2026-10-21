@@ -71,6 +71,7 @@ jobs:
       - run: 'true'
 
   test:
+    name: test (${{ matrix.name }})
     runs-on: ${{ matrix.os || 'ubuntu-latest' }}
     timeout-minutes: 8
     env:
@@ -79,12 +80,16 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - project: chromium
+          - name: chromium + retina
+            project: chromium
             extra: --project=chromium-retina
-          - project: firefox
-          - project: chromium
+          - name: firefox
+            project: firefox
+          - name: chromium windows
+            project: chromium
             os: windows-latest
-          - project: webkit
+          - name: webkit
+            project: webkit
             os: macos-latest
     steps:
       - uses: actions/checkout@v7
