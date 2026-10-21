@@ -242,7 +242,7 @@ export default defineConfig({
 			entry: {'maplair-src': 'src/Maplair.all.js'},
 			copy: [
 				'src/maplair.css',
-				{from: 'src/images/{logo,layers,marker-icon,marker-shadow}.svg', to: 'dist/images'},
+				{from: 'src/images/logo.svg', to: 'dist/images'},
 			],
 		},
 		{...packOptions, entry: {maplair: 'src/Maplair.all.js'}, minify: true},

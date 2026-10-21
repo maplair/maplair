@@ -488,7 +488,7 @@ path.maplair-interactive:focus:not(:focus-visible) {
 
 .maplair-control-layers-toggle {
 	display: block;
-	background-image: url(images/layers.svg);
+	background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26'><path fill='%23b9b9b9' d='m.032 17.056 13-8 13 8-13 8z'/><path fill='%23737373' d='m.032 17.056-.032.93 13 8 13-8 .032-.93-13 8z'/><path fill='%23cdcdcd' d='m0 13.076 13-8 13 8-13 8z'/><path fill='%23737373' d='M0 13.076v.91l13 8 13-8v-.91l-13 8z'/><path fill='%23e9e9e9' fill-opacity='.585' stroke='%23797979' stroke-width='.1' d='m0 8.986 13-8 13 8-13 8-13-8'/><path fill='%23737373' d='M0 8.986v1l13 8 13-8v-1l-13 8z'/></svg>");
 	background-position: 50% 50%;
 	background-repeat: no-repeat;
 	/* reset the user agent styles of buttons */
@@ -586,12 +586,6 @@ path.maplair-interactive:focus:not(:focus-visible) {
 		/* keep an entry together with its radio button or checkbox */
 		white-space: nowrap;
 	}
-}
-
-/* Default icon URLs */
-.maplair-default-icon-path {
-	/* used only in path-guessing heuristic, see DefaultIcon */
-	background-image: url(images/marker-icon.svg);
 }
 
 /* text control */

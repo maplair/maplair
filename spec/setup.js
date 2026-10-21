@@ -1,5 +1,5 @@
 import {chai} from 'vite-plus/test';
-import {DefaultIcon, LatLng, Point} from 'maplair';
+import {LatLng, Point} from 'maplair';
 import '../src/maplair.css';
 
 const {Assertion, util} = chai;
@@ -26,8 +26,6 @@ util.addMethod(Assertion.prototype, 'eqlLatLng', function (expected) {
 	new Assertion(this._obj.lng).to.eql(expected.lng);
 	new Assertion(this._obj.alt).to.eql(expected.alt);
 });
-
-DefaultIcon.imagePath = '/src/images/';
 
 // Shim Mocha-style `done` callback on top of Vitest's promise-based runner.
 // Wraps any `it(name, (done) => { ... })` into a promise so existing specs

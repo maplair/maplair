@@ -1,5 +1,5 @@
 import {expect} from 'vite-plus/test';
-import {MaplairMap, Marker, SvgIcon} from 'maplair';
+import {DefaultIcon, MaplairMap, Marker, SvgIcon} from 'maplair';
 import {createContainer, removeMapContainer} from '../../SpecHelper.js';
 
 describe('SvgIcon', () => {
@@ -43,7 +43,7 @@ describe('SvgIcon', () => {
 		expect(rect.height).to.equal(41);
 		expect(icon.style.marginLeft).to.equal('-12px');
 		expect(icon.style.marginTop).to.equal('-41px');
-		expect(marker._shadow.src).to.contain('marker-shadow.svg');
+		expect(marker._shadow.src).to.equal(DefaultIcon.defaultOptions.shadowUrl);
 	});
 
 	it('shows a glyph as text', () => {
