@@ -34,7 +34,7 @@ import {TapDragZoomHandler} from './handler/TapDragZoomHandler.js';
 /** @import {CRS} from '../geo/crs/CRS.js' */
 /** @import {Handler} from '../core/Handler.js' */
 /** @import {Renderer} from '../layer/vector/Renderer.js' */
-/** @import {MaplairEvent, MaplairPointerEvent, MaplairKeyboardEvent, MaplairErrorEvent, LocationEvent, ResizeEvent, CrsChangeEvent, ZoomAnimEvent} from '../core/Events.js' */
+/** @import {MaplairEvent, MaplairPointerEvent, MaplairKeyboardEvent, MaplairErrorEvent, LocationEvent, ResizeEvent, CrsChangeEvent, WorldCopyJumpEvent, ZoomAnimEvent} from '../core/Events.js' */
 
 /**
  * Options of `MaplairMap`.
@@ -266,6 +266,8 @@ import {TapDragZoomHandler} from './handler/TapDragZoomHandler.js';
  * keyboard while the map is focused.
  * @fires crschange {CrsChangeEvent} Fired when the CRS of the map changes with
  * `setCrs()`, before the view is reset.
+ * @fires worldcopyjump {WorldCopyJumpEvent} Fired when [`worldCopyJump`](#maplairmapoptions-worldcopyjump)
+ * moves the map pane by one or more world widths.
  * @fires pixelratiochange {MaplairEvent} Fired when the `devicePixelRatio` of the browser
  * changes, e.g. when moving the window to a screen with another resolution or when
  * zooming the page. Tile layers with `detectRetina` and canvas renderers adapt to it.
@@ -547,7 +549,11 @@ export class MaplairMap extends Evented {
 		// If we pan too far, Chrome gets issues with tiles
 		// and makes them disappear or appear in the wrong place (slightly offset) #2602
 		if (options.animate !== true && !this.getSize().contains(offset)) {
-			this._resetView(this.unproject(this.project(this.getCenter()).add(offset)), this.getZoom());
+			let center = this.unproject(this.project(this.getCenter()).add(offset));
+			if (this.options.worldCopyJump) {
+				center = this.wrapLatLng(center);
+			}
+			this._resetView(center, this.getZoom());
 			return this;
 		}
 
@@ -573,6 +579,7 @@ export class MaplairMap extends Evented {
 			this._panAnim.run(this._mapPane, newPos, options.duration || 0.25, options.easeLinearity);
 		} else {
 			this._rawPanBy(offset);
+			this._wrapWorldCopy();
 			this.fire('move').fire('moveend');
 		}
 
@@ -1736,6 +1743,43 @@ export class MaplairMap extends Evented {
 		DomUtil.setPosition(this._mapPane, this._getMapPanePos().subtract(offset));
 	}
 
+	// Returns a prospective map pane position shifted into the original world.
+	_wrapPanePos(pos) {
+		const worldBounds = this._loaded && this.getPixelWorldBounds();
+
+		if (!worldBounds) { return pos; }
+
+		const worldWidth = worldBounds.getSize().x,
+		halfWidth = Math.round(worldWidth / 2),
+		dx = this.latLngToLayerPoint([0, 0]).subtract(this.getSize().divideBy(2)).x,
+		x = pos.x,
+		newX1 = (x - halfWidth + dx) % worldWidth + halfWidth - dx,
+		newX2 = (x + halfWidth + dx) % worldWidth - halfWidth - dx,
+		newX = Math.abs(newX1 + dx) < Math.abs(newX2 + dx) ? newX1 : newX2;
+
+		return new Point(newX, pos.y);
+	}
+
+	_wrapWorldCopy() {
+		if (!this.options.worldCopyJump) { return; }
+
+		const pos = this._getMapPanePos(),
+		wrapped = this._wrapPanePos(pos);
+
+		if (wrapped.x === pos.x) { return; }
+
+		DomUtil.setPosition(this._mapPane, wrapped);
+		this._fireWorldCopyJump(wrapped.x - pos.x);
+	}
+
+	_fireWorldCopyJump(offsetX) {
+		const worlds = Math.round(offsetX / this.getPixelWorldBounds().getSize().x);
+
+		if (worlds) {
+			this.fire('worldcopyjump', {worlds});
+		}
+	}
+
 	_getZoomSpan() {
 		return this.getMaxZoom() - this.getMinZoom();
 	}
@@ -2046,6 +2090,7 @@ export class MaplairMap extends Evented {
 
 	_onPanTransitionEnd() {
 		this._mapPane.classList.remove('maplair-pan-anim');
+		this._wrapWorldCopy();
 		this.fire('moveend');
 	}
 

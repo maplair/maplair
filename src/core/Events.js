@@ -134,6 +134,13 @@ const warnedEvents = new Set();
  */
 
 /**
+ * The event object of `worldcopyjump`.
+ * @typedef {object} WorldCopyJumpEvent
+ * @property {number} worlds The signed number of world widths by which the map pane moved.
+ * @extends MaplairEvent
+ */
+
+/**
  * The event object of adding GeoJSON features.
  * @typedef {object} GeoJSONEvent
  * @property {Layer} layer The layer for the GeoJSON feature that is being added to the map.
