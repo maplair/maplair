@@ -710,5 +710,20 @@ describe('LayersControl', () => {
 			screenY: 100, // random number - not 0
 		});
 		expect(spy).toHaveBeenCalledOnce();
+		expect(spy.mock.calls[0][0]).to.eql({preventScroll: true, focusVisible: false});
+	});
+
+	it('does not scroll the page when refocusing the map', () => {
+		const container = map.getContainer();
+		container.style.marginTop = '3000px';
+		const control = new LayersControl({'Layer 1': new TileLayer('')}).addTo(map);
+		window.scrollTo(0, 0);
+
+		UIEventSimulator.fire('click', control._baseLayersList.getElementsByTagName('input')[0], {
+			screenX: 100,
+			screenY: 100,
+		});
+		expect(document.activeElement).to.equal(container);
+		expect(window.scrollY).to.equal(0);
 	});
 });
