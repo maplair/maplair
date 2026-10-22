@@ -5,6 +5,8 @@ Maplair Changelog
 
 ## Unreleased
 
+### Maplair
+
 (changes without author notice are by [@simon04](https://github.com/simon04))
 
 #### ❇️ New Features
@@ -15,6 +17,77 @@ Maplair Changelog
 * Add `TimeControl` to step through or play the times of time-dependent layers, e.g. a WMS with a `TIME` dimension, with ISO 8601 intervals and periods
 * WMSTileLayer: swap the tiles without flickering on `setParams()`
 * SearchControl: the option `marker` accepts a function returning the layer to show at the selected result, new options `clearOnMapClick` and `noResultsText`
+
+### Leaflet, since the fork
+
+Ported from Leaflet (changes without author notice are by [@mourner](https://github.com/mourner))
+
+#### ✨ Refactorings (⚠️ Breaking Changes)
+
+* Replace static blocks with `static defaultOptions`; `setDefaultOptions()` is a deprecated alias of `mergeOptions()` in https://github.com/Leaflet/Leaflet/pull/10432
+* Throw on classes still defining `initialize()` (from https://github.com/Leaflet/Leaflet/pull/10433)
+* Drop the `preferCanvas` option, use `renderer: new Canvas()`; custom panes get a renderer of the same kind as the map's in https://github.com/Leaflet/Leaflet/pull/10438
+* Move `toGeoJSON()` into each layer class, available without importing `GeoJSON` in https://github.com/Leaflet/Leaflet/pull/10439
+* Make `PosAnimation` internal in https://github.com/Leaflet/Leaflet/pull/10446
+* Remove browser sniffing and the `Browser` namespace (`Browser.reducedMotion` is `DomUtil.reducedMotion`), enable `tapHold` everywhere in https://github.com/Leaflet/Leaflet/pull/10447
+* Inline the built-in SVG icons, dropping the option `imagePath` of `DefaultIcon` and the images in `dist` in https://github.com/Leaflet/Leaflet/pull/10450
+* Remove `DomUtil.preventOutline()` and `restoreOutline()`, `Draggable` takes options as its third argument in https://github.com/Leaflet/Leaflet/pull/10455
+* Remove dead legacy DOM event and CSS code, including `DomEvent.getPropagationPath()` and `--maplair-size-control-touch` (the touch styles are the default) in https://github.com/Leaflet/Leaflet/pull/10431
+* Remove `DomEvent.PointerEvents.cleanupPointers()` in https://github.com/Leaflet/Leaflet/commit/cfae2c15eb66833f9260820e2d692e10f4a6c263
+* Fix remaining side effects and import cycles in https://github.com/Leaflet/Leaflet/pull/10442
+* Simplify some core code for a smaller bundle in https://github.com/Leaflet/Leaflet/pull/10452
+* Simplify the center calculation of polylines and polygons in https://github.com/Leaflet/Leaflet/pull/10451
+* Simplify `flyTo()` in https://github.com/Leaflet/Leaflet/commit/3dc172b57175994f152d6fe512b0131869ee30cb
+* The global build has plain, patchable namespaces (from https://github.com/Leaflet/Leaflet/pull/10443)
+
+#### 🐞 Bugfixes
+
+* Load tiles during panning unless reduced motion is preferred in https://github.com/Leaflet/Leaflet/commit/2550ebfa7513ed65e8b6febb4be8d68992b847ec
+* Fix the http to https upgrade of OSM URLs in https://github.com/Leaflet/Leaflet/pull/10444
+* Read the Leaflet 1 option `bubblingMouseEvents`, log removed `mouse*` events once in https://github.com/Leaflet/Leaflet/commit/2cac72a01fe1b43eb158156bf10158877a9be716
+* Fix seams between tiles when dragging the map in https://github.com/Leaflet/Leaflet/pull/10445
+* Fix Popup autoPan crash when stopping the pan removes the popup by [@DeanNorman](https://github.com/DeanNorman) in https://github.com/Leaflet/Leaflet/pull/10416
+* Wrap non-square tile columns by the tile width, not the tile height by [@Jaybhade](https://github.com/Jaybhade) in https://github.com/Leaflet/Leaflet/pull/10333
+* Fix infinite loop in `clipSegment()` with fractional clip bounds by [@spokodev](https://github.com/spokodev) in https://github.com/Leaflet/Leaflet/pull/10284
+* Keep GridLayer tiles during worldCopyJump by [@leijurv](https://github.com/leijurv) in https://github.com/Leaflet/Leaflet/pull/10353 and https://github.com/Leaflet/Leaflet/commit/39d5b54331dc96e8ac30de2c610e28003bb21901
+* Fix map jumping when dragging after pointerdown during inertia by [@Yahiro025](https://github.com/Yahiro025) in https://github.com/Leaflet/Leaflet/pull/10386
+* Fix small Circle radii coming out as ellipses by [@haranishi](https://github.com/haranishi) in https://github.com/Leaflet/Leaflet/pull/10454
+* Fix worldCopyJump throwing with an infinite CRS by [@haranishi](https://github.com/haranishi) in https://github.com/Leaflet/Leaflet/pull/10453
+* Fix attribution control keeping the credits of its initial layers by [@haranishi](https://github.com/haranishi) in https://github.com/Leaflet/Leaflet/pull/10458, and make the attribution handling more robust in https://github.com/Leaflet/Leaflet/commit/6de8f8a9ec5702642d8bfff2eb59e448668df588
+* Keep dragging switched off when a marker is removed and added again by [@haranishi](https://github.com/haranishi) in https://github.com/Leaflet/Leaflet/pull/10456
+* Keep dragging a marker when its icon is changed by [@haranishi](https://github.com/haranishi) in https://github.com/Leaflet/Leaflet/pull/10457
+* Fix DOM API misuse in https://github.com/Leaflet/Leaflet/pull/10460
+* Fix tiles, markers and tooltips being selectable in Safari in https://github.com/Leaflet/Leaflet/pull/10462
+* Fix a small `flyTo()` glitch in https://github.com/Leaflet/Leaflet/commit/3a809320007a3cad0efd920c8216bdb11ff1988a
+* Fix hover breaking on `bringToFront()` in Chrome in https://github.com/Leaflet/Leaflet/commit/0609413eb7f5d12e8dc59a15fd3058657c3897a0
+* Fix page scrolling on map refocus in https://github.com/Leaflet/Leaflet/commit/dd71a7849294265140d5d32aebbb8e1ddc7de199
+* Fix an edge case with a tiny box zoom in https://github.com/Leaflet/Leaflet/commit/a82d3832c9b803fdc74029ed6093c2dd924a64f6
+* Fix VideoOverlay throwing when created from a video element by [@Enesuygurs](https://github.com/Enesuygurs) in https://github.com/Leaflet/Leaflet/pull/10464
+* Fix the global build throwing without `navigator` (from https://github.com/Leaflet/Leaflet/pull/10443)
+
+#### 📝 Docs
+
+* Update leaflet.sidepanel plugin links by [@m-altaifi](https://github.com/m-altaifi) in https://github.com/Leaflet/Leaflet/pull/10389
+* Fix accuracy radius in the mobile geolocation example by [@xvodddwannaG](https://github.com/xvodddwannaG) in https://github.com/Leaflet/Leaflet/pull/10332
+* Evergreen language on zoom-levels and handlers tutorials by [@SatvikMishra08](https://github.com/SatvikMishra08) in https://github.com/Leaflet/Leaflet/pull/10398
+* Note that `setStyle()` does not update `className` by [@lux-in-tenebris-lucet](https://github.com/lux-in-tenebris-lucet) in https://github.com/Leaflet/Leaflet/pull/10327
+* Fix missing front matter delimiter in city-autocomplete-usa.md by [@slbarriosdev](https://github.com/slbarriosdev) in https://github.com/Leaflet/Leaflet/pull/10258
+* Fix spelling errors in Joomla plugin documentation by [@Fran-cruz](https://github.com/Fran-cruz) in https://github.com/Leaflet/Leaflet/pull/10298
+* Remove `!important` in the CSS of the website in https://github.com/Leaflet/Leaflet/commit/e2036455408de5b6dc1e6c60f10888c1f34af49b
+
+#### 🔧 Workflow
+
+* Consolidate CI jobs in https://github.com/Leaflet/Leaflet/commit/43f310b53c2632699f6a6a3679d14a3f717aacf8
+* Report the bundle size in a tiny CI job in https://github.com/Leaflet/Leaflet/pull/10430
+* Check the global build and the self-contained CSS in CI (from https://github.com/Leaflet/Leaflet/pull/10443)
+* Name the test jobs, publish the development snapshot with `gh` in https://github.com/Leaflet/Leaflet/commit/40c052b0d0fe1d7159f55d87089f24e2ed422e0d and https://github.com/Leaflet/Leaflet/commit/ac7b690b1b5d727c219fd4ef6c347b4f38fe26dd
+* Remove the stale AMD debug page in https://github.com/Leaflet/Leaflet/commit/9adfc0ac0d3a62a5b4af292f637fcb15c5e534dd
+* Remove CSS fallbacks and leftovers, explain the `!important` in https://github.com/Leaflet/Leaflet/pull/10462
+
+#### 🧪 Tests
+
+* Simplify, improve and speed up the test setup in https://github.com/Leaflet/Leaflet/pull/10463
+* Add specs of the layer lifecycle and of extending layers (from https://github.com/Leaflet/Leaflet/pull/10441)
 
 ## 4.0.0 (2026-10-19) 🍁 Maplair, a fork of Leaflet
 
