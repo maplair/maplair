@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>Meet Leaflet 1.0. - Maplair</title>
+	
+	
+	<meta charset="utf-8" />
+	
+
+	
+
+	<meta name="color-scheme" content="light dark">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="../../../docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="../../../docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="../../../docs/css/normalize.css" />
+	<link rel="stylesheet" href="../../../docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="../../../docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="../../../docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body>
+
+<header>
+	<h1><a href="https://maplair.org/"><picture><source srcset="../../../docs/images/logo-dark.png" media="(prefers-color-scheme: dark)" /><img src="../../../docs/images/logo.png" alt="Maplair" width="300" /></picture></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<a href="../../../index.html">Overview</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../examples.html">Tutorials</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../download.html">Download</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../plugins.html" title="Leaflet plugins, none of which is compatible with Maplair"><s>Plugins</s></a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../blog.html">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		<p><a href="../../../blog.html">← Back to the list of blog posts</a></p>
+
+<h2>Meet Leaflet 1.0.</h2>
+
+<p class="post-meta">Posted on 27 September 2016 by <a href="http://agafonkin.com/en">Vladimir Agafonkin</a></p>
+
+<p><img alt="This is totally not making fun of the announcements by a company with a fruit logo." src="https://cloud.githubusercontent.com/assets/25395/18873565/c4856f70-84c8-11e6-82b1-48992fc5afe8.png" width="800" /></p>
+
+<p>Today marks the final release of Leaflet 1.0. It&#8217;s a culmination of several years of work by dozens of contributors from all over the world. This is the fastest, most stable and polished Leaflet release ever.</p>
+
+<p><a href="https://github.com/Leaflet/Leaflet/blob/main/CHANGELOG.md">The changelog</a> contains <em>over 400 changes</em> compared to the previous stable, v0.7.7. The highlights include:</p>
+
+<ul>
+  <li>Huge performance improvements in all aspects of the library and vector layers in particular.</li>
+  <li>New <code class="language-plaintext highlighter-rouge">L.Tooltip</code> class for all your dynamic labeling needs.</li>
+  <li>Flyover animations (zooming and panning in a curve with <code class="language-plaintext highlighter-rouge">map.flyTo</code>).</li>
+  <li>Fractional zoom level support (<code class="language-plaintext highlighter-rouge">map.setZoom(12.34)</code>).</li>
+  <li>Much better tile loading algorithm with less flickering.</li>
+  <li>Custom pane management (including multiple vector layer panes and interleaving vectors and tile layers).</li>
+  <li>Better support for non-standard projections.</li>
+  <li>More accessibility features.</li>
+  <li>Vastly improved documentation.</li>
+  <li><em>Tons</em> of bugfixes and stability improvements.</li>
+</ul>
+
+<p>This release wouldn&#8217;t be possible without such an amazing, diverse, loving community. We&#8217;re incredibly proud to be a part of it. Thank you very much for your kind support!</p>
+
+<h3 id="new-release-cycle">New release cycle</h3>
+
+<p>This release is a way overdue and has taken too long. In part this can be attributed to our initial ambition for 1.0 that required rewriting many parts of the library almost from scratch, in part due to perfectionism (some of the beta/rc releases were already more stable than our last stable release), and in part because we underestimated the cost of introducing big breaking changes in a library used by thousands of developers.</p>
+
+<p>Starting with 1.0, we&#8217;re switching to a fast release cycle, where a new version will come out every 2–4 weeks. We&#8217;ll also prefer many small, incremental changes (with releases in between) over ambitious rewriting quests.</p>
+
+<h3 id="whats-next">What&#8217;s next?</h3>
+
+<p>In addition to supporting the new release with fixes and improvements, the following areas will now get our close attention:</p>
+
+<ul>
+  <li>A cleaner, more stable plugin ecosystem. We want to make sure that all popular plugins work well with the latest release and are maintained. We&#8217;ll revise our plugin list page, tighten our review process, take more key plugins under the wing of the Leaflet organization on GitHub and spend more time working on them.</li>
+  <li>Tutorials and examples to cover more advanced features of the library, its popular plugins, and integrations with libraries like D3 and React/Angular.</li>
+  <li>Explore switching to a more modern JavaScript flavor and module system (ES6, Babel, Rollup).</li>
+  <li>Map rotation support.</li>
+</ul>
+
+<p>Please help us test this new release, make sure it works with your favorite plugins, get involved in discussions on GitHub, and don&#8217;t forget we&#8217;re always looking for <a href="https://github.com/Leaflet/Leaflet/blob/main/CONTRIBUTING.md">new contributors</a>!</p>
+
+<p>And of course, let&#8217;s celebrate!</p>
+
+<p>Love,<br />
+The Leaflet team.</p>
+
+<p><img src="https://www.reactiongifs.com/wp-content/uploads/2013/06/umad.gif" alt="" /></p>
+
+
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/simon04">Simon Legner</a> and <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="../../../docs/js/docs.js"></script>
+
+</body>
+</html>

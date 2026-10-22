@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>Announcing Leaflet 1.0-rc2 - Maplair</title>
+	
+	
+	<meta charset="utf-8" />
+	
+
+	
+
+	<meta name="color-scheme" content="light dark">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="../../../docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="../../../docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="../../../docs/css/normalize.css" />
+	<link rel="stylesheet" href="../../../docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="../../../docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="../../../docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body>
+
+<header>
+	<h1><a href="https://maplair.org/"><picture><source srcset="../../../docs/images/logo-dark.png" media="(prefers-color-scheme: dark)" /><img src="../../../docs/images/logo.png" alt="Maplair" width="300" /></picture></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<a href="../../../index.html">Overview</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../examples.html">Tutorials</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../download.html">Download</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../plugins.html" title="Leaflet plugins, none of which is compatible with Maplair"><s>Plugins</s></a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../blog.html">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		<p><a href="../../../blog.html">← Back to the list of blog posts</a></p>
+
+<h2>Announcing Leaflet 1.0-rc2</h2>
+
+<p class="post-meta">Posted on 16 July 2016 by <a href="http://yohanboniface.me">Yohan Boniface</a></p>
+
+<p>Here comes the second release candidate for Leaflet 1.0, the most stable Leaflet version ever!</p>
+
+<p>Leaflet 1.0-rc2 is mainly bug fixing, with two notable exceptions. The full list of changes is in the <a href="https://github.com/Leaflet/Leaflet/blob/main/CHANGELOG.md#10-rc2-july-18-2016">1.0.0-rc2 changelog</a> as usual.</p>
+
+<h3 id="notable-changes">Notable changes</h3>
+
+<ul>
+  <li>
+    <p>Event refactoring: thanks to an initial work from <a href="https://github.com/fab1an">@fab1an</a>, coordinated by <a href="https://github.com/perliedman">@perliedman</a>, the events are greatly optimized: they are faster, and consume less memory.</p>
+  </li>
+  <li>
+    <p>New <code class="language-plaintext highlighter-rouge">L.Tooltip</code> class: started as a port of Leaflet.Label plugin to Leaflet core, and then reworked, this new class allows to display small tooltips attached to map features. The API is very similar to what Leaflet.Label was (with some exceptions in <a href="https://github.com/Leaflet/Leaflet.label#upgrade-path-to-ltooltip">options naming and default values</a>), so the upgrade path from Leaflet.Label to <code class="language-plaintext highlighter-rouge">L.Tooltip</code> should be straightforward, and we encourage you to do so while upgrading your Leaflet to 1.0.</p>
+  </li>
+</ul>
+
+<p><img src="/docs/images/2016-07-18-tooltip.png" alt="L.Tooltip" /></p>
+
+<p>More in the <a href="https://github.com/Leaflet/Leaflet/blob/main/CHANGELOG.md#10-rc2-july-18-2016">1.0.0-rc2 changelog</a>.</p>
+
+<h2 id="whats-left-for-100-final">What&#8217;s left for 1.0.0-final</h2>
+
+<p>The Leaflet team is very happy about the progress from rc1 to rc2, but not all features were tackled.</p>
+
+<p>Notably, the scroll zoom with an Apple Magic Mouse has proven to be very tricky to debug (especially since not all members of the team have access to one). Getting a good experience when scroll-zooming with this particular device had been planned for rc2 but ultimately it was pushed back for 1.0.0-final.</p>
+
+<p>While there are no big features planned, a few but <a href="https://github.com/Leaflet/Leaflet/milestone/21">mischievous and tricky bugs are left</a> - such as subpixel offset, CSS trickery, zoom vibration.</p>
+
+<h3 id="leafdays">Leafdays</h3>
+
+<p>The core team being spread all over Europe, we are doing so called &#8220;Leafdays&#8221; from time to time to remotely work together during one full day. Here is a debug session with <a href="https://github.com/perliedman">@perliedman</a> screen sharing:</p>
+
+<p><img src="/docs/images/2016-07-18-remote-session.png" alt="Remote session" /></p>
+
+<p>Next face-to-face session will be during <a href="http://2016.foss4g.org/">FOSS4G</a> in Bonn, in August, and we hope to see you there. Will this be the final 1.0 release session?</p>
+
+<h3 id="get-the-release-candidate">Get the release candidate</h3>
+
+<p>As with previous releases, you can use the CDN:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.0-rc.2/dist/leaflet.css" /&gt;
+&lt;script src="https://unpkg.com/leaflet@1.0.0-rc.2/dist/leaflet.js"&gt;&lt;/script&gt;
+</code></pre></div></div>
+
+<p>A non-minified version of the javascript file is also available as:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;script src="https://unpkg.com/leaflet@1.0.0-rc.2/dist/leaflet-src.js"&gt;&lt;/script&gt;
+</code></pre></div></div>
+
+<p>The release is also available through NPM (<code class="language-plaintext highlighter-rouge">npm install leaflet@rc</code>), <a href="https://github.com/Leaflet/Leaflet/archive/v1.0.0-rc.2.zip">GitHub download</a>, and <a href="http://cdn.leafletjs.com/leaflet/v1.0.0-rc.2/leaflet.zip">CDN download</a>. We discourage using Bower.</p>
+
+<p>Use it, enjoy it, and please report any <a href="https://github.com/Leaflet/Leaflet/issues">issue</a> to help preparing the final Leaflet 1.0 release!</p>
+
+<p>Best,</p>
+
+<p>The &#8220;Leafteam&#8221;</p>
+
+
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/simon04">Simon Legner</a> and <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="../../../docs/js/docs.js"></script>
+
+</body>
+</html>

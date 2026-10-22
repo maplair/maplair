@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<base target="_top">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<title>Video Overlay Tutorial - Maplair</title>
+	
+	<link rel="icon" type="image/svg+xml" href="docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+
+	<style>
+		html, body {
+			height: 100%;
+			margin: 0;
+		}
+		.maplair-container {
+			height: 400px;
+			width: 600px;
+			max-width: 100%;
+			max-height: 100%;
+		}
+	</style>
+
+	
+</head>
+<body>
+
+<div id='map'></div>
+
+<script type="module">
+	import {MaplairMap, TileLayer, LatLngBounds, VideoOverlay} from 'maplair';
+
+	const map = new MaplairMap('map');
+
+	const tiles = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		maxZoom: 19,
+		attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+	}).addTo(map);
+
+	const videoUrls = [
+		'https://www.mapbox.com/bites/00188/patricia_nasa.webm',
+		'https://www.mapbox.com/bites/00188/patricia_nasa.mp4'
+	];
+	const errorOverlayUrl = 'https://cdn-icons-png.flaticon.com/512/110/110686.png';
+	const bounds = new LatLngBounds([[32, -130], [13, -100]]);
+
+	map.fitBounds(bounds);
+
+	const videoOverlay = new VideoOverlay(videoUrls, bounds, {
+		opacity: 0.8,
+		errorOverlayUrl,
+		interactive: true,
+		autoplay: true,
+		muted: true,
+		playsInline: true
+	}).addTo(map);
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>Debugging touch interactions - Maplair</title>
+	
+	
+	<meta charset="utf-8" />
+	
+
+	
+
+	<meta name="color-scheme" content="light dark">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="../../../docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="../../../docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="../../../docs/css/normalize.css" />
+	<link rel="stylesheet" href="../../../docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="../../../docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="../../../docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body>
+
+<header>
+	<h1><a href="https://maplair.org/"><picture><source srcset="../../../docs/images/logo-dark.png" media="(prefers-color-scheme: dark)" /><img src="../../../docs/images/logo.png" alt="Maplair" width="300" /></picture></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<a href="../../../index.html">Overview</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../examples.html">Tutorials</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../download.html">Download</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../plugins.html" title="Leaflet plugins, none of which is compatible with Maplair"><s>Plugins</s></a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../blog.html">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		<p><a href="../../../blog.html">← Back to the list of blog posts</a></p>
+
+<h2>Debugging touch interactions</h2>
+
+<p class="post-meta">Posted on 20 March 2016 by <a href="http://ivan.sanchezortega.es">Iván Sánchez</a></p>
+
+<p>Most of the time, fixing bugs in the Leaflet code is a breeze. The code is simple, easy to read (for the most part) and well structured. Code conventions and unit tests make it easy for newcomers to try some modifications to the core code. During the past few months we&#8217;ve sent a few simple bug reports to the folks at <a href="https://yourfirstpr.github.io/">Your First PR</a> - we love to see first-timers contributing fixes to Leaflet!</p>
+
+<p>Some of the difficulties of maintaining/developing a javascript library like Leaflet is making sure that everything works on every major browser out there. A technique that works on Firefox on a Ubuntu desktop might result in glitches in Safari on a Macbook; something that works in Edge on Windows 10 might break completely in Chrome on Android.</p>
+
+<p>Fortunately, all of the browser-specific hacks in Leaflet can be easily seen by looking at the <a href="https://github.com/search?q=Browser+repo%3ALeaflet%2FLeaflet+language%3AJavaScript+extension%3Ajs+path%3A%2Fsrc&amp;ref=searchresults&amp;type=Code&amp;utf8=%E2%9C%93">references to <code class="language-plaintext highlighter-rouge">L.Browser</code></a> in the code.</p>
+
+<p>This can lead to somewhat <a href="https://github.com/Leaflet/Leaflet/blob/main/src/dom/DomEvent.DoubleTap.js#L65">undesirable code</a> sometimes:</p>
+
+<pre><code class="javascript">    // On some platforms (notably, chrome on win10 + touchscreen + mouse),
+    // the browser doesn't fire touchend/pointerup events but does fire
+    // native dblclicks. See #4127.
+    if (!L.Browser.edge) {
+    	obj.addEventListener('dblclick', handler, false);
+    }
+</code></pre>
+
+<p>I&#8217;ve been told more than a few times by browser developers that browser sniffing is wrong, and that feature detection is right. I mean, detecting 3D CSS transforms and HTML5 <code class="language-plaintext highlighter-rouge">&lt;video&gt;</code> support is easy, but there is no (sane) way to detect if a browser fires a <code class="language-plaintext highlighter-rouge">dblclick</code> event by itself when double-tapping a touchscreen.</p>
+
+<p>Debugging touch interactions is particularly tricky. Sometimes the conditions to reproduce a touch-interaction bug is simple (double-tap the touchscreen in the same spot), but sometimes they are more specific. In <a href="https://github.com/Leaflet/Leaflet/issues/3798">#3798</a> and <a href="https://github.com/Leaflet/Leaflet/issues/3814">#3814</a> the conditions are &#8220;drag with one finger, then put down another finger and pinch&#8221;, and in <a href="https://github.com/Leaflet/Leaflet/issues/3530">#3530</a> it&#8217;s &#8220;pinch in until <code class="language-plaintext highlighter-rouge">maxZoom</code> is reached, then do a two-finger drag&#8221;.</p>
+
+<p>The problem with this kind of bugs is that they&#8217;re <strong>frustrating</strong> and <strong>time-consuming</strong> to reproduce under controlled conditions. Imagine having a code editor and a browser debugger when at the same time using two hands to perform a very specific touch gesture while watching the debugger. Then you want to inspect a variable in the debugger but you cannot move your fingers even a pixel because that will run more code and change the state.</p>
+
+<p>And then, for the fifth time in the last hour, the wobbly phone charger connector wobbles again, and the debugger disconnects, and you have to start all over again.</p>
+
+<table class="image">
+<!-- <caption align="bottom"><small></small></caption> -->
+<tr><td style="text-align:center"><img src="https://i.chzbgr.com/full/4896152320/h3FAAE99E/" alt="rage quit" /></td></tr>
+</table>
+
+<p>If I had an extra hand or two, debugging touch interactions would be much simpler, but biotechnology is still far away from allowing me to grow an extra hand.</p>
+
+<p>Fortunately, we can leverage <a href="https://developer.mozilla.org/docs/Web/API/EventTarget/dispatchEvent">dispatching custom events to the browser</a>. Normally, when we use a mouse (or a touchpad, or a touchscreen, or a digitizer tablet), the web browser will generate a <a href="https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent"><code class="language-plaintext highlighter-rouge">MouseEvent</code></a> (or a <a href="https://developer.mozilla.org/docs/Web/API/TouchEvent"><code class="language-plaintext highlighter-rouge">TouchEvent</code></a> or a <a href="https://developer.mozilla.org/docs/Web/API/PointerEvent"><code class="language-plaintext highlighter-rouge">PointerEvent</code></a>). But instead of that, we javascript programmers can create a synthetic (i.e. fake) event, then throw it to the browser so it can dispatch it to whatever code is listening for an event.</p>
+
+<p>Unfortunately creating and dispatching such events is cumbersome. A touch gesture involves <em>at least</em> 4 to 8 events in a particular order, with particular data, with a particular timing. There have been a few attempts to automate this (the best I could find was the <a href="https://github.com/hammerjs/simulator">hammer.js simulator</a>), but there is no good way of emulating complex custom touch gestures.</p>
+
+<p>Until now.</p>
+
+<p>I&#8217;m proud to introduce <a href="https://github.com/Leaflet/prosthetic-hand"><strong>prosthetic-hand</strong></a>, for all you javascript debugging needs that require you to have an extra hand.</p>
+
+<p>With prosthetic-hand, I can now automate a pinch-zoom gesture in a Leaflet webpage:</p>
+
+<table class="image">
+<caption align="bottom"><small>You get to see my disembodied fingers as a bonus</small></caption>
+<tr><td style="text-align:center"><img src="/docs/images/2016-03-20-prosthetic-hand-zooming.gif" alt="Animated screenshot of prosthetic-hand zooming in and out" /></td></tr>
+</table>
+
+<p>With this library loaded, just ask for an extra hand (with a specific timing mode):</p>
+<pre><code class="javascript">var h = new Hand({ timing: 'frame' });
+</code></pre>
+
+<p>Then grow some fingers:</p>
+<pre><code class="javascript">var f1 = h.growFinger('touch');
+var f2 = h.growFinger('touch');
+</code></pre>
+
+<p>Then move the fingers around (using pixel coordinates and milliseconds):</p>
+<pre><code class="javascript">f1.wait(100).moveTo(250, 200, 0)
+	.down().wait(500).moveBy(-200, 0, 1000).wait(500).up().wait(500)
+	.down().wait(500).moveBy( 200, 0, 1000).wait(500).up().wait(500);
+
+f2.wait(100).moveTo(350, 200, 0)
+	.down().wait(500).moveBy( 200, 0, 1000).wait(500).up().wait(500)
+	.down().wait(500).moveBy(-200, 0, 1000).wait(500).up().wait(500);
+</code></pre>
+
+<p>You can check this in the <a href="https://leaflet.github.io/prosthetic-hand/demos/">live prosthetic-hand demos</a>.</p>
+
+<p>The prosthetic-hand library is not perfect, and some types of events only work in some browsers, but it can help trigger mouse/touch/pointer events in a repeatable way, with adjustable timing, allowing developers to keep both hands at the debugger. The timing modes allow granular control of the events fired, allowing to run less iterations of the code for the same gesture, which in turn means a simpler, better understanding of what&#8217;s going on.</p>
+
+<hr />
+
+<p>A famous quote (often <a href="http://quoteinvestigator.com/2014/03/29/sharp-axe/">misattributed to Abraham Lincoln</a>) says:</p>
+
+<blockquote>A woodsman was once asked, “What would you do if you had just five minutes to chop down a tree?” He answered, “I would spend the first two and a half minutes sharpening my axe.”</blockquote>
+
+<p>Web development is no different - having the right tools will make your task so much easier.</p>
+
+<p>It&#8217;s not just a matter of time. Maybe writing a tool from scratch was time-consuming, but the best gain is that debugging <strong>stops being frustrating</strong>. Before, it was &#8220;use a hand on the touchscreen, look closely at the debugger, don&#8217;t use breakpoints because you don&#8217;t have enough hands&#8221;. Now it&#8217;s &#8220;change the timing on the prosthetic-hand events, set a breakpoint, <em>boom</em>&#8221;.</p>
+
+<p>And what&#8217;s even better, having an automated tool means that Leaflet now has <a href="https://github.com/Leaflet/Leaflet/blob/main/spec/suites/map/handler/Map.TouchZoomSpec.js"><strong>unit tests for touch interactions</strong></a>. The PhantomJS headless web browser can understand the <code class="language-plaintext highlighter-rouge">TouchEvent</code>s that prosthetic-hand generates, and can check if a map behaves as expected when that gesture is performed.</p>
+
+<p>The amount of time and headaches we&#8217;ll save in Leaflet by having automated touch tests is going to be huge. We can only hope more projects will benefit from similar automated testing.</p>
+
+<hr />
+
+<p>Don&#8217;t just write open-source code. Make better tools for everybody.</p>
+
+<p>Yours,
+Iván</p>
+
+
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/simon04">Simon Legner</a> and <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="../../../docs/js/docs.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>Leaflet 0.6 Released, Code Sprint in DC with MapBox - Maplair</title>
+	
+	
+	<meta charset="utf-8" />
+	
+
+	
+
+	<meta name="color-scheme" content="light dark">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="../../../docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="../../../docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="../../../docs/css/normalize.css" />
+	<link rel="stylesheet" href="../../../docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="../../../docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="../../../docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body>
+
+<header>
+	<h1><a href="https://maplair.org/"><picture><source srcset="../../../docs/images/logo-dark.png" media="(prefers-color-scheme: dark)" /><img src="../../../docs/images/logo.png" alt="Maplair" width="300" /></picture></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<a href="../../../index.html">Overview</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../examples.html">Tutorials</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../download.html">Download</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../plugins.html" title="Leaflet plugins, none of which is compatible with Maplair"><s>Plugins</s></a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../blog.html">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		<p><a href="../../../blog.html">← Back to the list of blog posts</a></p>
+
+<h2>Leaflet 0.6 Released, Code Sprint in DC with MapBox</h2>
+
+<p class="post-meta">Posted on 26 June 2013 by <a href="http://agafonkin.com/en">Vladimir Agafonkin</a></p>
+
+<p><em>Leaflet 0.6 released &mdash; with nicer controls, better usability and tons of API improvements and various bugfixes &mdash; more than 120 changes! The first ever Leaflet Code Sprint happening in Washington, DC with the MapBox team&#8230;</em></p>
+
+<p>After 5 months of active development with <a href="https://github.com/Leaflet/Leaflet/graphs/contributors?from=2013-01-18&amp;to=2013-06-26&amp;type=c">36 contributors involved</a> since the previous major version, today I&#8217;m excited to finally announce the <strong>release of Leaflet 0.6</strong> stable.</p>
+
+<p>0.6 highlights include nicer controls, lots of interaction usability improvements, many new API methods, events and options, ability to save layers as <a href="http://en.wikipedia.org/wiki/GeoJSON">GeoJSON</a>, much better test infrastructure and TONS of bugfixes that made Leaflet significantly more reliable. Checkout the huge detailed list of changes (<strong>120+ total</strong>!) <a href="https://github.com/Leaflet/Leaflet/blob/main/CHANGELOG.md">in the changelog</a>. The <a href="../../../reference.html">API reference</a> was also updated to reflect all these changes.</p>
+
+<p>The final push for the release (last 2 days) was a part of the first ever <strong>Leaflet Code Sprint</strong>, organized in Washington DC by the amazing <a href="http://mapbox.com">MapBox</a>, a company responsible for perhaps the greatest innovations and awesome tools in the geospatial world of recent years, now <a href="mapbox.com/blog/mapbox-js-with-leaflet/">using Leaflet for its JS API</a> too. The sprint will go on for a week and there are many more awesome improvements to come in upcoming days (and lots of partying as well).</p>
+
+<p>On a related note, even GitHub itself is now <a href="https://github.com/blog/1541-geojson-rendering-improvements">using Leaflet for GeoJSON visualizations</a>, along with <a href="github.com/Leaflet/Leaflet.markercluster">Leaflet.markercluster</a> &amp; MapBox tiles! How cool is that?</p>
+
+<p>Special thanks go to <a href="http://universalmind.com/">Universal Mind</a>, my awesome employer and sponsor of Leaflet development for the past 5 months, to the most active contributors &mdash; <a href="https://github.com/jfirebaugh">John Firebaugh</a> and <a href="https://github.com/tmcw">Tom MacWright</a> of <a href="http://mapbox.com">MapBox</a>, <a href="https://github.com/danzel">Dave Leaver</a> and <a href="https://github.com/jacobtoye">Jacob Toye</a> of <a href="http://www.smartrak.co.nz/">Smartrak</a>, <a href="https://github.com/snkashis">Steve Kashishian</a> of <a href="http://www.firstmilegeo.com/">First Mile Geo</a>, and to everyone else involved in contributions, bug reports, mailing list, Twitter, making awesome apps, etc. You&#8217;re such an amazing community! I&#8217;m really happy to be a part of it.</p>
+
+<p>Grab the CDN links or downloads for the new release on the <a href="../../../download.html">download page</a> as always. Enjoy! And be sure try it out and report any regressions in your apps so that we can patch them up immediately.</p>
+
+<p><strong>update</strong> (June 27): 0.6.1 hotfix released with a couple of regressions fixed (particularly the one with FF scroll-zooming too fast).<br />
+<strong>update</strong> (June 28): 0.6.2 hotfix released with a couple more minor issues fixed.<br />
+<strong>update</strong> (July 17): 0.6.3 released with lots of regressions and bugs fixed.<br />
+<strong>update</strong> (July 25): 0.6.4 released with a fix to 0.6.3 regression.</p>
+
+<p>P.S. Everyone who tweets/posts about the new Leaflet release or why he loves Leaflet over the next few days will get a karma boost of over 9000 points. I heard that from a passing monk in Georgetown yesterday, true story!</p>
+
+<p>Cheers,<br />
+Vladimir, Leaflet creator and maintainer.</p>
+
+
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/simon04">Simon Legner</a> and <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="../../../docs/js/docs.js"></script>
+
+</body>
+</html>

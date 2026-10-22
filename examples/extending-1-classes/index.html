@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>Extending Maplair, Class Theory - Maplair</title>
+	
+	
+	<meta charset="utf-8" />
+	
+
+	
+
+	<meta name="color-scheme" content="light dark">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="../../docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="../../docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="../../docs/css/normalize.css" />
+	<link rel="stylesheet" href="../../docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="../../docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="../../docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body>
+
+<header>
+	<h1><a href="https://maplair.org/"><picture><source srcset="../../docs/images/logo-dark.png" media="(prefers-color-scheme: dark)" /><img src="../../docs/images/logo.png" alt="Maplair" width="300" /></picture></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<a href="../../index.html">Overview</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../examples.html">Tutorials</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../download.html">Download</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../plugins.html" title="Leaflet plugins, none of which is compatible with Maplair"><s>Plugins</s></a>
+			
+		</li>
+		<li>
+			
+				<a href="../../blog.html">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		<p class="tutorials-back"><a href="../../examples.html">← Tutorials</a></p>
+
+<h2 id="extending-maplair">Extending Maplair</h2>
+
+<p>Maplair has literally hundreds of plugins. These expand the capabilities of Maplair: sometimes in a generic way, sometimes in a very use-case-specific way. Part of the reason there are so many plugins is that Maplair is easy to extend. This tutorial will cover the most commonly used ways of doing so.</p>
+
+<p>Please note that this tutorial assumes you have a good grasp of <a href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting">JavaScript</a>, and especially <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_classes">JavaScript classes</a>.</p>
+
+<h2 id="maplair-architecture">Maplair architecture</h2>
+
+<p>Let&#8217;s have a look at a simplified UML Class diagram for Maplair. There are more than 60 classes, so the diagram is a bit big. Luckily we can make a zoomable image with an <code class="language-plaintext highlighter-rouge">ImageOverlay</code>:</p>
+
+<table role="presentation">
+<tr><td style="text-align: center; border: none; padding: 0;">
+<iframe src="class-diagram.html" width="600" height="400" style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style="text-align: center; border: none">
+<small><a href="class-diagram.html">See this example stand-alone.</a></small>
+</td></tr></table>
+
+<p>From a technical point of view, Maplair can be extended in different ways:</p>
+
+<ul>
+  <li>The most common: creating a new subclass of <code class="language-plaintext highlighter-rouge">Layer</code>, <code class="language-plaintext highlighter-rouge">Handler</code> or <code class="language-plaintext highlighter-rouge">Control</code>.
+    <ul>
+      <li>Layers move when the map is moved/zoomed</li>
+      <li>Handlers are invisible and interpret browser events</li>
+      <li>Controls are fixed interface elements</li>
+    </ul>
+  </li>
+  <li>Including more, or replacing functionality (methods, fields) of an existing class with <code class="language-plaintext highlighter-rouge">Class.include()</code></li>
+  <li>Using <code class="language-plaintext highlighter-rouge">Class.addInitHook()</code> to run additional constructor code of existing classes.</li>
+</ul>
+
+<h2 id="extending-maplair-classes">Extending Maplair Classes</h2>
+
+<p>JavaScript is a bit of a weird language. It&#8217;s not really object-oriented in the traditional sense, but handles inheritance using a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain">prototype chain</a>. Only at a later point during its lifetime <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes">syntax was added</a> to allow more &#8216;class-like&#8217; inheritance.</p>
+
+<p>Almost all classes in Maplair extend from a base class called <code class="language-plaintext highlighter-rouge">Class</code>, as well as most classes you&#8217;ll find in plugins. It adds a few utilities to standard JavaScript classes: default options, mixins and constructor hooks.</p>
+
+<h3 id="creating-a-subclass">Creating a subclass</h3>
+
+<p><code class="language-plaintext highlighter-rouge">Class</code>, or other built-in Maplair classes derived from it (such as <code class="language-plaintext highlighter-rouge">Layer</code>, <code class="language-plaintext highlighter-rouge">Handler</code>, <code class="language-plaintext highlighter-rouge">Control</code>, etc.), can be extended in the same manner as any other JavaScript class, by using the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/extends"><code class="language-plaintext highlighter-rouge">extends</code></a> keyword and a standard <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/constructor"><code class="language-plaintext highlighter-rouge">constructor()</code></a>:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">RotateMarker</span> <span class="kd">extends</span> <span class="nx">Marker</span> <span class="p">{</span>
+	<span class="kd">constructor</span><span class="p">(</span><span class="nx">latlng</span><span class="p">,</span> <span class="nx">rotation</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">super</span><span class="p">(</span><span class="nx">latlng</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+		<span class="k">this</span><span class="p">.</span><span class="nx">_rotation</span> <span class="o">=</span> <span class="nx">rotation</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>(Leaflet 1 used a special <code class="language-plaintext highlighter-rouge">initialize()</code> method instead; with Maplair, use <code class="language-plaintext highlighter-rouge">constructor()</code>.)</p>
+
+<h3 id="naming-conventions">Naming conventions</h3>
+
+<p>When creating Maplair classes, adhere to these conventions:</p>
+
+<ul>
+  <li>Class names should be in <code class="language-plaintext highlighter-rouge">UpperCamelCase</code>.</li>
+  <li>Method and property names should be in <code class="language-plaintext highlighter-rouge">lowerCamelCase</code>.</li>
+  <li>Private properties and methods start with an underscore (<code class="language-plaintext highlighter-rouge">_</code>). This indicates they&#8217;re internal and shouldn&#8217;t be used directly.</li>
+</ul>
+
+<h3 id="setting-default-options">Setting default options</h3>
+
+<p>All classes that extend from <code class="language-plaintext highlighter-rouge">Class</code> can be provided with default options in a static <code class="language-plaintext highlighter-rouge">defaultOptions</code> property:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">MyBox</span> <span class="kd">extends</span> <span class="nx">Class</span> <span class="p">{</span>
+	<span class="kd">static</span> <span class="nx">defaultOptions</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="na">width</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+		<span class="na">height</span><span class="p">:</span> <span class="mi">1</span>
+	<span class="p">};</span>
+
+	<span class="kd">constructor</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">super</span><span class="p">();</span>
+		<span class="nx">Util</span><span class="p">.</span><span class="nx">setOptions</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+		<span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MyBox</span><span class="p">(</span><span class="dl">'</span><span class="s1">Red</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span><span class="na">width</span><span class="p">:</span> <span class="mi">10</span><span class="p">});</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">instance</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span> <span class="c1">// Outputs "Red"</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">instance</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">width</span><span class="p">);</span> <span class="c1">// Outputs "10"</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">instance</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">height</span><span class="p">);</span> <span class="c1">// Outputs "1", the default</span>
+</code></pre></div></div>
+
+<p>These options are inherited from parent classes, and merged automatically:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">MyCube</span> <span class="kd">extends</span> <span class="nx">MyBox</span> <span class="p">{</span>
+	<span class="kd">static</span> <span class="nx">defaultOptions</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="na">depth</span><span class="p">:</span> <span class="mi">1</span>
+	<span class="p">};</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">cube</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MyCube</span><span class="p">(</span><span class="dl">'</span><span class="s1">Blue</span><span class="dl">'</span><span class="p">);</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">cube</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">width</span><span class="p">);</span> <span class="c1">// Outputs "1", parent class default</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">cube</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">height</span><span class="p">);</span> <span class="c1">// Outputs "1", parent class default</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">cube</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">depth</span><span class="p">);</span> <span class="c1">// Outputs "1"</span>
+</code></pre></div></div>
+
+<h3 id="classinclude"><code class="language-plaintext highlighter-rouge">Class.include()</code></h3>
+
+<p>Maplair provides <code class="language-plaintext highlighter-rouge">.include()</code> to add or override methods in existing classes. This is useful for monkey-patching or adding functionality to base classes:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">MyLayer</span> <span class="kd">extends</span> <span class="nx">Layer</span> <span class="p">{</span>
+	<span class="kd">constructor</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">super</span><span class="p">();</span>
+		<span class="nx">Util</span><span class="p">.</span><span class="nx">setOptions</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+		<span class="k">this</span><span class="p">.</span><span class="nx">_count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="nx">incrementCount</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="o">++</span><span class="k">this</span><span class="p">.</span><span class="nx">_count</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Add new methods or override existing ones</span>
+<span class="nx">MyLayer</span><span class="p">.</span><span class="nx">include</span><span class="p">({</span>
+	<span class="nx">_getCountStep</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="mi">2</span><span class="p">;</span>
+	<span class="p">},</span>
+
+	<span class="nx">incrementCount</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_count</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getCountStep</span><span class="p">();</span>
+	<span class="p">}</span>
+<span class="p">});</span>
+
+<span class="kd">const</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MyLayer</span><span class="p">();</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">instance</span><span class="p">.</span><span class="nx">incrementCount</span><span class="p">());</span> <span class="c1">// Outputs "2"</span>
+</code></pre></div></div>
+
+<p>Note: Use <code class="language-plaintext highlighter-rouge">.include()</code> sparingly, as modifying base classes can have unexpected side effects. As a general rule of thumb, try to extend existing classes instead.</p>
+
+<h3 id="initialization-hooks">Initialization hooks</h3>
+
+<p>Use <code class="language-plaintext highlighter-rouge">addInitHook()</code> to run additional code at the end of the constructor of a class — typically of an existing class, e.g. to add an editing handler to every <code class="language-plaintext highlighter-rouge">Polyline</code>. This is useful for setup that depends on state from the class being modified (e.g. using <code class="language-plaintext highlighter-rouge">.include()</code>).</p>
+
+<p>The hooks of a class run when its constructor calls <code class="language-plaintext highlighter-rouge">this.callInitHooks()</code>, which all Maplair classes do at the end of their constructor. Hooks of parent classes run first, and each hook runs once per object. To support hooks on your own classes, call <code class="language-plaintext highlighter-rouge">this.callInitHooks()</code> at the end of their constructor:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">MyBox</span> <span class="kd">extends</span> <span class="nx">Class</span> <span class="p">{</span>
+	<span class="kd">static</span> <span class="nx">defaultOptions</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="na">width</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+		<span class="na">height</span><span class="p">:</span> <span class="mi">1</span>
+	<span class="p">};</span>
+
+	<span class="kd">constructor</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">super</span><span class="p">();</span>
+		<span class="nx">Util</span><span class="p">.</span><span class="nx">setOptions</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+		<span class="k">this</span><span class="p">.</span><span class="nx">callInitHooks</span><span class="p">();</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">MyBox</span><span class="p">.</span><span class="nx">addInitHook</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+	<span class="k">this</span><span class="p">.</span><span class="nx">_area</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">width</span> <span class="o">*</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">height</span><span class="p">;</span>
+<span class="p">});</span>
+
+<span class="nx">MyBox</span><span class="p">.</span><span class="nx">include</span><span class="p">({</span>
+	<span class="nx">getArea</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_area</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">});</span>
+
+<span class="kd">const</span> <span class="nx">box</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MyBox</span><span class="p">({</span><span class="na">width</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="na">height</span><span class="p">:</span> <span class="mi">10</span><span class="p">});</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">box</span><span class="p">.</span><span class="nx">getArea</span><span class="p">());</span> <span class="c1">// Outputs "50"</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">addInitHook()</code> can also call a named method with arguments:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">MyCube</span> <span class="kd">extends</span> <span class="nx">MyBox</span> <span class="p">{</span>
+	<span class="kd">static</span> <span class="nx">defaultOptions</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="na">depth</span><span class="p">:</span> <span class="mi">1</span>
+	<span class="p">};</span>
+
+	<span class="nx">_calculateVolume</span><span class="p">(</span><span class="nx">multiplier</span><span class="cm">/*, arg2, arg3. etc. */</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">this</span><span class="p">.</span><span class="nx">_volume</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">width</span> <span class="o">*</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">height</span> <span class="o">*</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">depth</span> <span class="o">*</span> <span class="nx">multiplier</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// MyCube has no constructor of its own, so the MyBox constructor runs its hooks too</span>
+
+<span class="nx">MyCube</span><span class="p">.</span><span class="nx">addInitHook</span><span class="p">(</span><span class="dl">'</span><span class="s1">_calculateVolume</span><span class="dl">'</span><span class="p">,</span> <span class="mi">1</span><span class="cm">/*, arg2, arg3. etc. */</span><span class="p">);</span>
+
+<span class="kd">const</span> <span class="nx">cube</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MyCube</span><span class="p">({</span><span class="na">width</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="na">height</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="na">depth</span><span class="p">:</span> <span class="mi">4</span><span class="p">});</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">cube</span><span class="p">.</span><span class="nx">_volume</span><span class="p">);</span> <span class="c1">// Outputs "24"</span>
+</code></pre></div></div>
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/simon04">Simon Legner</a> and <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="../../docs/js/docs.js"></script>
+
+</body>
+</html>

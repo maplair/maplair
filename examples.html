@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>Tutorials - Maplair</title>
+	
+	
+	<meta charset="utf-8" />
+	
+
+	
+
+	<meta name="color-scheme" content="light dark">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="docs/css/normalize.css" />
+	<link rel="stylesheet" href="docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body class="examples">
+
+<header>
+	<h1><a href="https://maplair.org/"><picture><source srcset="docs/images/logo-dark.png" media="(prefers-color-scheme: dark)" /><img src="docs/images/logo.png" alt="Maplair" width="300" /></picture></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<a href="index.html">Overview</a>
+			
+		</li>
+		<li>
+			
+				<span>Tutorials</span>
+			
+		</li>
+		<li>
+			
+				<a href="reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<a href="download.html">Download</a>
+			
+		</li>
+		<li>
+			
+				<a href="plugins.html" title="Leaflet plugins, none of which is compatible with Maplair"><s>Plugins</s></a>
+			
+		</li>
+		<li>
+			
+				<a href="blog.html">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		<h2 id="maplair-tutorials">Maplair Tutorials</h2>
+
+<p>Every tutorial here comes with step-by-step code explanation and is easy enough even for beginner JavaScript developers.</p>
+
+<hr />
+
+<p><a href="examples/quick-start/"><img src="examples/quick-start/thumbnail.png" alt="Link to Maplair Quick Start Guide" class="example-img bordered-img" /></a></p>
+
+<h3 id="maplair-quick-start-guide"><a href="examples/quick-start/">Maplair Quick Start Guide</a></h3>
+
+<p>A simple step-by-step guide that will quickly get you started with Maplair basics, including setting up a Maplair map (with OpenStreetMap tiles) on your page, working with markers, polylines and popups, and dealing with events.</p>
+
+<hr />
+
+<p><a href="examples/mobile/"><img src="examples/mobile/thumbnail.png" alt="Link to Maplair on Mobile" class="example-img bordered-img" /></a></p>
+
+<h3 id="maplair-on-mobile"><a href="examples/mobile/">Maplair on Mobile</a></h3>
+
+<p>In this tutorial, you&#8217;ll learn how to create a fullscreen map tuned for mobile devices like iPhone, iPad or Android phones, and how to easily detect and use the current user location.</p>
+
+<hr />
+
+<p><a href="examples/custom-icons/"><img src="examples/custom-icons/thumbnail.png" alt="Link to Markers with Custom Icons" class="example-img bordered-img" /></a></p>
+
+<h3 id="markers-with-custom-icons"><a href="examples/custom-icons/">Markers with Custom Icons</a></h3>
+
+<p>In this pretty tutorial, you&#8217;ll learn how to easily define your own icons for use by the markers you put on the map.</p>
+
+<hr />
+
+<p><a href="examples/accessibility/"><img src="examples/accessibility/thumbnail.png" alt="Link to Accessible Maps" class="example-img bordered-img" /></a></p>
+
+<h3 id="accessible-maps"><a href="examples/accessibility/">Accessible Maps</a></h3>
+
+<p>A guide to basic Maplair accessibility - make your maps usable to persons of a wide range of abilities.</p>
+
+<hr />
+
+<p><a href="examples/geojson/"><img src="examples/geojson/thumbnail.png" alt="Link to Using GeoJSON with Maplair" class="example-img bordered-img" /></a></p>
+
+<h3 id="using-geojson-with-maplair"><a href="examples/geojson/">Using GeoJSON with Maplair</a></h3>
+
+<p>In this tutorial, you&#8217;ll learn how to create and interact with map vectors created from <a href="http://geojson.org/">GeoJSON</a> objects.</p>
+
+<hr />
+
+<p><a href="examples/choropleth/"><img src="examples/choropleth/thumbnail.png" alt="Link to Interactive Choropleth Map" class="example-img bordered-img" /></a></p>
+
+<h3 id="interactive-choropleth-map"><a href="examples/choropleth/">Interactive Choropleth Map</a></h3>
+
+<p>A case study of creating a colorful interactive <a href="http://en.wikipedia.org/wiki/Choropleth_map">choropleth map</a> of US States Population Density with GeoJSON and some custom controls. News websites will love this.</p>
+
+<hr />
+
+<p><a href="examples/layers-control/"><img src="examples/layers-control/thumbnail.png" alt="Link to Layer Groups and Layers Control" class="example-img bordered-img" /></a></p>
+
+<h3 id="layer-groups-and-layers-control"><a href="examples/layers-control/">Layer Groups and Layers Control</a></h3>
+
+<p>A tutorial on how to manage groups of layers and use the layer switching control.</p>
+
+<hr />
+
+<p><a href="examples/zoom-levels/"><img src="examples/zoom-levels/thumbnail.png" alt="Link to Zoom Levels" class="example-img bordered-img" /></a></p>
+
+<h3 id="zoom-levels"><a href="examples/zoom-levels/">Zoom Levels</a></h3>
+
+<p>A deeper look into what zoom levels are.</p>
+
+<hr />
+
+<p><a href="examples/crs-simple/"><img src="examples/crs-simple/thumbnail.png" alt="Link to Non-geographical Maps" class="example-img bordered-img" /></a></p>
+
+<h3 id="non-geographical-maps"><a href="examples/crs-simple/">Non-geographical Maps</a></h3>
+
+<p>A primer on <code class="language-plaintext highlighter-rouge">SimpleCRS</code>, how to make maps with no concept of &#8220;latitude&#8221; or &#8220;longitude&#8221;.</p>
+
+<hr />
+
+<p><a href="examples/wms/"><img src="examples/wms/thumbnail.png" alt="Link to WMS and TMS" class="example-img bordered-img" /></a></p>
+
+<h3 id="wms-and-tms"><a href="examples/wms/">WMS and TMS</a></h3>
+
+<p>How to integrate with WMS and TMS services from professional GIS software.</p>
+
+<hr />
+
+<p><a href="examples/map-panes/"><img src="examples/map-panes/thumbnail.png" alt="Link to Working with Map Panes" class="example-img bordered-img" /></a></p>
+
+<h3 id="working-with-map-panes"><a href="examples/map-panes/">Working with Map Panes</a></h3>
+
+<p>How the default map panes work to display overlays on top of tiles, and how to override that.</p>
+
+<hr />
+
+<p><a href="examples/overlays/"><img src="examples/overlays/thumbnail.gif" alt="Link to Overlays: Image, Video, SVG" class="example-img bordered-img" /></a></p>
+
+<h3 id="overlays-image-video-svg"><a href="examples/overlays/">Overlays: Image, Video, SVG</a></h3>
+
+<p>Maplair can help you display images, videos and SVG elements somewhere on the map.</p>
+
+<hr />
+
+<p>The following tutorials cover how to create plugins for Maplair, and are intended only for developers experienced in JavaScript:</p>
+
+<hr />
+
+<p><a href="examples/extending-1-classes/"><img src="examples/extending-1-classes/thumbnail.png" alt="Link to Extending Maplair: Class Theory" class="example-img bordered-img" /></a></p>
+
+<h3 id="extending-maplair-class-theory"><a href="examples/extending-1-classes/">Extending Maplair: Class Theory</a></h3>
+
+<p>An overview of Maplair&#8217;s classes, class inheritance, and conventions.</p>
+
+<hr />
+
+<p><a href="examples/extending-2-layers/"><img src="examples/extending-2-layers/thumbnail.png" alt="Link to Extending Maplair: Layers" class="example-img bordered-img" /></a></p>
+
+<h3 id="extending-maplair-layers"><a href="examples/extending-2-layers/">Extending Maplair: Layers</a></h3>
+
+<p>How to extend layers or create new ones, using specific entry points for doing so.</p>
+
+<hr />
+
+<p><a href="examples/extending-3-controls/"><img src="examples/extending-3-controls/thumbnail.png" alt="Link to Extending Maplair: Handlers and Controls" class="example-img bordered-img" /></a></p>
+
+<h3 id="extending-maplair-handlers-and-controls"><a href="examples/extending-3-controls/">Extending Maplair: Handlers and Controls</a></h3>
+
+<p>How to extend or create non-layers.</p>
+
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/simon04">Simon Legner</a> and <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="docs/js/docs.js"></script>
+
+</body>
+</html>

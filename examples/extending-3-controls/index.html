@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>Extending Maplair, Handlers and Controls - Maplair</title>
+	
+	
+	<meta charset="utf-8" />
+	
+
+	
+
+	<meta name="color-scheme" content="light dark">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="../../docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="../../docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="../../docs/css/normalize.css" />
+	<link rel="stylesheet" href="../../docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="../../docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="../../docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body>
+
+<header>
+	<h1><a href="https://maplair.org/"><picture><source srcset="../../docs/images/logo-dark.png" media="(prefers-color-scheme: dark)" /><img src="../../docs/images/logo.png" alt="Maplair" width="300" /></picture></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<a href="../../index.html">Overview</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../examples.html">Tutorials</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../download.html">Download</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../plugins.html" title="Leaflet plugins, none of which is compatible with Maplair"><s>Plugins</s></a>
+			
+		</li>
+		<li>
+			
+				<a href="../../blog.html">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		<p class="tutorials-back"><a href="../../examples.html">← Tutorials</a></p>
+
+<p><br /></p>
+
+<p>This tutorial assumes you&#8217;ve read the <a href="./extending-1-classes.html">theory of Maplair class inheritance</a>.</p>
+
+<p>In Maplair, a &#8220;layer&#8221; is anything that moves with the map. In contraposition to that, a &#8220;control&#8221; is a HTML element that remains static relative to the map container, and a &#8220;handler&#8221; is a piece of invisible code that changes the map&#8217;s behaviour.</p>
+
+<h2 id="handlers">Handlers</h2>
+
+<p>Map handlers process DOM events from the browser (like <code class="language-plaintext highlighter-rouge">click</code>, <code class="language-plaintext highlighter-rouge">dblclick</code> or <code class="language-plaintext highlighter-rouge">mousewheel</code>) and change the state of the map.</p>
+
+<p>Handlers are relatively simple: they just need an <code class="language-plaintext highlighter-rouge">addHooks()</code> method (which runs when the handler is enabled in a map) and a <code class="language-plaintext highlighter-rouge">removeHooks()</code>, which runs when the handler is disabled. A skeleton for handlers is:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">CustomHandler</span> <span class="kd">extends</span> <span class="nx">Handler</span> <span class="p">{</span>
+	<span class="nx">addHooks</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nx">DomEvent</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nb">document</span><span class="p">,</span> <span class="dl">'</span><span class="s1">eventname</span><span class="dl">'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_doSomething</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+	<span class="p">}</span>
+
+	<span class="nx">removeHooks</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nx">DomEvent</span><span class="p">.</span><span class="nx">off</span><span class="p">(</span><span class="nb">document</span><span class="p">,</span> <span class="dl">'</span><span class="s1">eventname</span><span class="dl">'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_doSomething</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+	<span class="p">}</span>
+
+	<span class="nx">_doSomething</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span> <span class="err">…</span> <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>This can be illustrated with a simple handler to pan the map when a mobile device is tilted, through <a href="https://developer.mozilla.org/en-US/docs/Web/API/Detecting_device_orientation"><code class="language-plaintext highlighter-rouge">deviceorientation</code> events</a>:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">TiltHandler</span> <span class="kd">extends</span> <span class="nx">Handler</span> <span class="p">{</span>
+	<span class="nx">addHooks</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nx">DomEvent</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nb">window</span><span class="p">,</span> <span class="dl">'</span><span class="s1">deviceorientation</span><span class="dl">'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_tilt</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+	<span class="p">}</span>
+
+	<span class="nx">removeHooks</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nx">DomEvent</span><span class="p">.</span><span class="nx">off</span><span class="p">(</span><span class="nb">window</span><span class="p">,</span> <span class="dl">'</span><span class="s1">deviceorientation</span><span class="dl">'</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_tilt</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+	<span class="p">}</span>
+
+	<span class="nx">_tilt</span><span class="p">(</span><span class="nx">ev</span><span class="p">)</span> <span class="p">{</span>
+		<span class="c1">// Treat Gamma angle as horizontal pan (1 degree = 1 pixel) and Beta angle as vertical pan</span>
+		<span class="k">this</span><span class="p">.</span><span class="nx">_map</span><span class="p">.</span><span class="nx">panBy</span><span class="p">(</span> <span class="k">new</span> <span class="nx">Point</span><span class="p">(</span> <span class="nx">ev</span><span class="p">.</span><span class="nx">gamma</span><span class="p">,</span> <span class="nx">ev</span><span class="p">.</span><span class="nx">beta</span> <span class="p">)</span> <span class="p">);</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The handler can be attached to the map using <code class="language-plaintext highlighter-rouge">map.addHandler('tilt', TiltHandler)</code> - this will store an instance of <code class="language-plaintext highlighter-rouge">TiltHandler</code> as <code class="language-plaintext highlighter-rouge">map.tilt</code>. However, it&#8217;s more usual to attach handlers to all maps with the <code class="language-plaintext highlighter-rouge">addInitHook</code> syntax:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>MaplairMap.addInitHook('addHandler', 'tilt', TiltHandler);
+</code></pre></div></div>
+
+<p>Our handler can now be enabled by running <code class="language-plaintext highlighter-rouge">map.tilt.enable()</code> and disabled by <code class="language-plaintext highlighter-rouge">map.tilt.disable()</code></p>
+
+<p>Moreover, if the map has a property named the same as the handler, then that handler will be enabled by default if that options is <code class="language-plaintext highlighter-rouge">true</code>, so this will enable our handler by default:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>const map = new MaplairMap('mapDiv', { tilt: true });
+</code></pre></div></div>
+
+<p>To see this example, you&#8217;ll need a mobile browser that supports the <a href="https://developer.mozilla.org/docs/Web/API/Window/deviceorientation_event"><code class="language-plaintext highlighter-rouge">deviceorientation</code> event</a> — support and behavior still vary across devices, so beware.</p>
+
+<table role="presentation">
+<tr><td style="text-align: center; border: none; padding: 0;">
+<iframe src="tilt.html" width="600" height="400" style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style="text-align: center; border: none">
+<small><a href="tilt.html">See this example stand-alone.</a></small>
+</td></tr></table>
+
+<p>Depending on the type of event, a map handler can attach event listeners to the <code class="language-plaintext highlighter-rouge">document</code>, the <code class="language-plaintext highlighter-rouge">window</code>, or the container of the <code class="language-plaintext highlighter-rouge">MaplairMap</code> it&#8217;s attached to.</p>
+
+<h2 id="controls">Controls</h2>
+
+<p>You already know controls - the zoom control in the top left corner, the scale at the bottom left, the layer switcher at the top right. At their core, a <code class="language-plaintext highlighter-rouge">Control</code> is an HTML Element that is at a static position in the map container.</p>
+
+<p>To make a control, simply inherit from <code class="language-plaintext highlighter-rouge">Control</code> and implement <code class="language-plaintext highlighter-rouge">onAdd()</code> and <code class="language-plaintext highlighter-rouge">onRemove()</code>. These methods work in a similar way to their <code class="language-plaintext highlighter-rouge">Layer</code> counterparts (they run whenever the control is added to or removed from the map), except that <code class="language-plaintext highlighter-rouge">onAdd()</code> must return an instance of <code class="language-plaintext highlighter-rouge">HTMLElement</code> representing the control. Adding the element to the map is done automatically, and so is removing it.</p>
+
+<p>The simplest example of a custom control would be a watermark, which is just an image:</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">WatermarkControl</span> <span class="kd">extends</span> <span class="nx">Control</span> <span class="p">{</span>
+	<span class="nx">onAdd</span><span class="p">(</span><span class="nx">map</span><span class="p">)</span> <span class="p">{</span>
+		<span class="kd">const</span> <span class="nx">img</span> <span class="o">=</span> <span class="nx">DomUtil</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="dl">'</span><span class="s1">img</span><span class="dl">'</span><span class="p">);</span>
+
+		<span class="nx">img</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">../../docs/images/logo.png</span><span class="dl">'</span><span class="p">;</span>
+		<span class="nx">img</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">width</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">200px</span><span class="dl">'</span><span class="p">;</span>
+
+		<span class="k">return</span> <span class="nx">img</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="nx">onRemove</span><span class="p">(</span><span class="nx">map</span><span class="p">)</span> <span class="p">{</span>
+		<span class="c1">// Nothing to do here</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">new</span> <span class="nx">WatermarkControl</span><span class="p">({</span> <span class="na">position</span><span class="p">:</span> <span class="dl">'</span><span class="s1">bottomleft</span><span class="dl">'</span> <span class="p">}).</span><span class="nx">addTo</span><span class="p">(</span><span class="nx">map</span><span class="p">);</span>
+</code></pre></div></div>
+
+<table role="presentation">
+<tr><td style="text-align: center; border: none; padding: 0;">
+<iframe src="watermark.html" width="600" height="400" style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style="text-align: center; border: none">
+<small><a href="watermark.html">See this example stand-alone.</a></small>
+</td></tr></table>
+
+<p>If your custom control has interactive elements such as clickable buttons, remember to use <code class="language-plaintext highlighter-rouge">DomEvent.on()</code> inside <code class="language-plaintext highlighter-rouge">onAdd()</code> and <code class="language-plaintext highlighter-rouge">DomEvent.off()</code> inside <code class="language-plaintext highlighter-rouge">onRemove()</code>.</p>
+
+<p>If your custom control consists of more than one HTML element (like <code class="language-plaintext highlighter-rouge">ZoomControl</code>, which has two buttons), you&#8217;ll have to create the whole hierarchy of elements and return the topmost container.</p>
+
+<h2 id="publishing-your-plugin">Publishing Your Plugin</h2>
+
+<p>If you have understood everything so far, you&#8217;re ready to make some Maplair plugins! But make sure to read the <a href="https://github.com/maplair/maplair/blob/main/PLUGIN-GUIDE.md"><code class="language-plaintext highlighter-rouge">PLUGIN-GUIDE.md</code> file</a>, as it contains some tips and good practices about naming and publishing your plugin.</p>
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/simon04">Simon Legner</a> and <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="../../docs/js/docs.js"></script>
+
+</body>
+</html>

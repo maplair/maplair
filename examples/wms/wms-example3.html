@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<base target="_top">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<title>WMS Example 3 - Maplair</title>
+	
+	<link rel="icon" type="image/svg+xml" href="docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+
+	<style>
+		html, body {
+			height: 100%;
+			margin: 0;
+		}
+		.maplair-container {
+			height: 400px;
+			width: 600px;
+			max-width: 100%;
+			max-height: 100%;
+		}
+	</style>
+
+	
+</head>
+<body>
+
+<div id='map'></div>
+
+<script type="module">
+	import {MaplairMap, CRS, WMSTileLayer, LayersControl} from 'maplair';
+
+	const map = new MaplairMap('map', {
+		center: [-17, -67],
+		zoom: 3
+	});
+
+	const basemaps = {
+		Topography: new WMSTileLayer('http://ows.mundialis.de/services/service?', {
+			layers: 'TOPO-WMS'
+		}),
+
+		Places: new WMSTileLayer('http://ows.mundialis.de/services/service?', {
+			layers: 'OSM-Overlay-WMS'
+		}),
+
+		'Topography, then places': new WMSTileLayer('http://ows.mundialis.de/services/service?', {
+			layers: 'TOPO-WMS,OSM-Overlay-WMS'
+		}),
+
+		'Places, then topography': new WMSTileLayer('http://ows.mundialis.de/services/service?', {
+			layers: 'OSM-Overlay-WMS,TOPO-WMS'
+		})
+	};
+
+	const layerControl = new LayersControl(basemaps, {}, {collapsed: false}).addTo(map);
+
+	basemaps.Topography.addTo(map);
+</script>
+
+
+
+</body>
+</html>

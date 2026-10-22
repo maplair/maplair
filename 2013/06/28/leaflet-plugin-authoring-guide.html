@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>Leaflet Plugin Authoring Guide - Maplair</title>
+	
+	
+	<meta charset="utf-8" />
+	
+
+	
+
+	<meta name="color-scheme" content="light dark">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="../../../docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="../../../docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="../../../docs/css/normalize.css" />
+	<link rel="stylesheet" href="../../../docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="../../../docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="../../../docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body>
+
+<header>
+	<h1><a href="https://maplair.org/"><picture><source srcset="../../../docs/images/logo-dark.png" media="(prefers-color-scheme: dark)" /><img src="../../../docs/images/logo.png" alt="Maplair" width="300" /></picture></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<a href="../../../index.html">Overview</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../examples.html">Tutorials</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../download.html">Download</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../plugins.html" title="Leaflet plugins, none of which is compatible with Maplair"><s>Plugins</s></a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../blog.html">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		<p><a href="../../../blog.html">← Back to the list of blog posts</a></p>
+
+<h2>Leaflet Plugin Authoring Guide</h2>
+
+<p class="post-meta">Posted on 28 June 2013 by <a href="http://agafonkin.com/en">Vladimir Agafonkin</a></p>
+
+<p>One of the greatest things about Leaflet is its powerful plugin ecosystem.
+The <a href="https://leafletjs.com/plugins.html">Leaflet plugins page</a> lists dozens of awesome plugins, and more are being added every week.</p>
+
+<p>This guide lists a number of best practices for publishing a Leaflet plugin that meets the quality standards of Leaflet itself. Also available <a href="https://github.com/Leaflet/Leaflet/blob/main/PLUGIN-GUIDE.md">in the repo</a>.</p>
+
+<h3 id="presentation">Presentation</h3>
+
+<h4 id="repository">Repository</h4>
+
+<p>The best place to put your Leaflet plugin to is a separate <a href="http://github.com">GitHub</a> repository.
+If you create a collection of plugins for different uses,
+don&#8217;t put them in one repo &mdash;
+it&#8217;s usually easier to work with small, self-contained plugins in individual repositories.</p>
+
+<h4 id="demo">Demo</h4>
+
+<p>The most essential thing to do when publishing a plugin is to include a demo that showcases what the plugin does &mdash;
+it&#8217;s usually the first thing people will look for.</p>
+
+<p>The easiest way to put up a demo is using <a href="http://pages.github.com/">GitHub Pages</a>.
+A good <a href="https://help.github.com/articles/creating-project-pages-manually">starting point</a> is creating a <code class="language-plaintext highlighter-rouge">gh-pages</code> branch in your repo and adding an <code class="language-plaintext highlighter-rouge">index.html</code> page to it  &mdash;
+after pushing, it&#8217;ll be published as <code class="language-plaintext highlighter-rouge">http://&lt;user&gt;.github.io/&lt;repo&gt;</code>.</p>
+
+<h4 id="readme">Readme</h4>
+
+<p>The next thing you need to have is a descriptive <code class="language-plaintext highlighter-rouge">README.md</code> in the root of the repo (or a link to a website with a similar content).
+At a minimum it should contain the following items:</p>
+
+<ul>
+  <li>name of the plugin</li>
+  <li>a simple, concise description of what it does</li>
+  <li>requirements
+    <ul>
+      <li>Leaflet version</li>
+      <li>other external dependencies (if any)</li>
+      <li>browser / device compatibility</li>
+    </ul>
+  </li>
+  <li>links to demos</li>
+  <li>instructions for including the plugin</li>
+  <li>simple usage code example</li>
+  <li>API reference (methods, options, events)</li>
+</ul>
+
+<h4 id="license">License</h4>
+
+<p>Every open source repository should include a license.
+If you don&#8217;t know what open source license to choose for your code,
+<a href="http://opensource.org/licenses/MIT">MIT License</a> and <a href="http://opensource.org/licenses/BSD-2-Clause">BSD 2-Clause License</a> are both good choices.
+You can either put it in the repo as a <code class="language-plaintext highlighter-rouge">LICENSE</code> file or just link to the license from the Readme.</p>
+
+<h3 id="code">Code</h3>
+
+<h4 id="file-structure">File Structure</h4>
+
+<p>Keep the file structure clean and simple,
+don&#8217;t pile up lots of files in one place  &mdash;
+make it easy for a new person to find their way in your repo.</p>
+
+<p>A barebones repo for a simple plugin would look like this:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>my-plugin.js
+README.md
+</code></pre></div></div>
+
+<p>An example of a file structure for a more sophisticated plugin:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/src        JS source files
+/dist       minified plugin JS, CSS, images
+/spec       test files
+/examples   HTML examples of plugin usage
+README.md
+LICENSE
+package.json
+</code></pre></div></div>
+
+<h4 id="code-conventions">Code Conventions</h4>
+
+<p>Everyone&#8217;s tastes are different, but it&#8217;s important to be consistent with whatever conventions you choose for your plugin.</p>
+
+<p>For a good starting point, check out <a href="https://github.com/airbnb/javascript">Airbnb JavaScript Guide</a>.
+Leaflet follows pretty much the same conventions
+except for using smart tabs (hard tabs for indentation, spaces for alignment)
+and putting a space after the <code class="language-plaintext highlighter-rouge">function</code> keyword.</p>
+
+<h4 id="plugin-api">Plugin API</h4>
+
+<p>Never expose global variables in your plugin.<br />
+If you have a new class, put it directly in the <code class="language-plaintext highlighter-rouge">L</code> namespace (<code class="language-plaintext highlighter-rouge">L.MyPlugin</code>).<br />
+If you inherit one of the existing classes, make it a sub-property (<code class="language-plaintext highlighter-rouge">L.TileLayer.Banana</code>).<br />
+If you want to add new methods to existing Leaflet classes, you can do it like this: <code class="language-plaintext highlighter-rouge">L.Marker.include({myPlugin: …})</code>.</p>
+
+<p>Function, method and property names should be in <code class="language-plaintext highlighter-rouge">camelCase</code>.<br />
+Class names should be in <code class="language-plaintext highlighter-rouge">CapitalizedCamelCase</code>.</p>
+
+<p>If you have a lot of arguments in your function, consider accepting an options object instead (putting default values where possible so that users don&#8217;t need specify all of them):</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>// bad
+marker.myPlugin('bla', 'foo', null, {}, 5, 0);
+
+// good
+marker.myPlugin('bla', {
+	optionOne: 'foo',
+	optionThree: 5
+});
+</code></pre></div></div>
+
+<p>And most importantly, keep it simple. Leaflet is all about <em>simplicity</em>.</p>
+
+<p>Cheers,<br />
+Vladimir.</p>
+
+
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/simon04">Simon Legner</a> and <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="../../../docs/js/docs.js"></script>
+
+</body>
+</html>

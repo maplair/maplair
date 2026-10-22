@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>Maplair 4.0 — a fork of Leaflet - Maplair</title>
+	
+	
+	<meta charset="utf-8" />
+	
+
+	
+
+	<meta name="color-scheme" content="light dark">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="../../../docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="../../../docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="../../../docs/css/normalize.css" />
+	<link rel="stylesheet" href="../../../docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="../../../docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="../../../docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body>
+
+<header>
+	<h1><a href="https://maplair.org/"><picture><source srcset="../../../docs/images/logo-dark.png" media="(prefers-color-scheme: dark)" /><img src="../../../docs/images/logo.png" alt="Maplair" width="300" /></picture></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<a href="../../../index.html">Overview</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../examples.html">Tutorials</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../download.html">Download</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../plugins.html" title="Leaflet plugins, none of which is compatible with Maplair"><s>Plugins</s></a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../blog.html">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		<p><a href="../../../blog.html">← Back to the list of blog posts</a></p>
+
+<h2>Maplair 4.0 — a fork of Leaflet</h2>
+
+<p class="post-meta">Posted on 19 October 2026 by <a href="https://github.com/simon04">Simon Legner</a></p>
+
+<p>Today we&#8217;re releasing <strong>Maplair 4.0.0</strong>, the first stable release of Maplair: a fork of <a href="https://leafletjs.com">Leaflet</a>, the open-source JavaScript library for interactive maps that Volodymyr Agafonkin created in 2010. It brings many features which Leaflet apps used plugins or workarounds for — map rotation, fullscreen, search, heatmaps, a minimap, legends and more — all of them dropped by bundlers unless you use them.</p>
+
+<p>Maplair builds on the work that went into Leaflet 2.0 — the move to ES modules, standard JavaScript classes and Pointer Events — and continues it: some changes that were proposed for Leaflet, but didn&#8217;t land there, are part of Maplair. Many thanks to Volodymyr Agafonkin and to the hundreds of Leaflet contributors, whose work Maplair is based on.</p>
+
+<h3 id="why-40">Why 4.0?</h3>
+
+<p>Maplair&#8217;s first version is 4.0, so that it can&#8217;t be confused with Leaflet 2.x or 3.x. If you&#8217;re coming from Leaflet 1.9.4, read on for everything that changed in between; if you already use the Leaflet 2.0 alpha, most of it will look familiar.</p>
+
+<h3 id="whats-new">What&#8217;s new</h3>
+
+<ul>
+  <li>
+    <p><strong>Translations</strong> of the built-in texts (zoom buttons, popups, scale, attribution …) with the new <a href="../../../reference.html#i18n"><code class="language-plaintext highlighter-rouge">I18n</code></a> API. German, Spanish, French, Czech, Slovak, Hungarian, Slovenian, Italian and Romansh are included; help translate on <a href="https://app.transifex.com/simon04/maplair/">Transifex</a>.</p>
+
+    <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">import</span> <span class="p">{</span><span class="nx">I18n</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">maplair</span><span class="dl">'</span><span class="p">;</span>
+  <span class="k">import</span> <span class="nx">de</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">maplair/i18n/de.json</span><span class="dl">'</span> <span class="kd">with</span> <span class="p">{</span><span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">json</span><span class="dl">'</span><span class="p">};</span>
+
+  <span class="nx">I18n</span><span class="p">.</span><span class="nx">registerLocale</span><span class="p">(</span><span class="dl">'</span><span class="s1">de</span><span class="dl">'</span><span class="p">,</span> <span class="nx">de</span><span class="p">);</span>
+  <span class="nx">I18n</span><span class="p">.</span><span class="nx">setLocale</span><span class="p">(</span><span class="dl">'</span><span class="s1">de</span><span class="dl">'</span><span class="p">);</span>
+</code></pre></div>    </div>
+  </li>
+  <li><strong>Better performance with many markers:</strong> the new map option <code class="language-plaintext highlighter-rouge">markerCulling</code> takes markers far outside of the view off the page, and the new marker option <code class="language-plaintext highlighter-rouge">shadow: false</code> drops the marker shadows. Popups open with one layout pass instead of two, adding many layers no longer slows down quadratically, and unchanged positions aren&#8217;t written to the page again.</li>
+  <li><strong>Tree-shaking:</strong> bundlers include only what you use — e.g. a map with just a tile layer is about 34 KB of gzipped JS, about half the size of all of Maplair (63 KB).</li>
+  <li><strong>A new look:</strong> a maple leaf logo and marker 🍁.</li>
+  <li><strong>Standard JavaScript classes:</strong> classes use <code class="language-plaintext highlighter-rouge">constructor()</code> like any other JavaScript class, and <code class="language-plaintext highlighter-rouge">new Point(point)</code> creates a copy like any other constructor.</li>
+  <li><strong>Type declarations and a new API reference:</strong> the doc comments are JSDoc with TypeScript types now. The package ships type declarations (<code class="language-plaintext highlighter-rouge">dist/types/</code>) for Maplair and its optional modules, and the <a href="../../../reference.html">API reference</a> is generated from them, with inherited options, events and methods.</li>
+</ul>
+
+<h4 id="new-controls">New controls</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">FullscreenControl</code> (map option <code class="language-plaintext highlighter-rouge">fullscreenControl</code>) with <code class="language-plaintext highlighter-rouge">toggleFullscreen()</code>, <code class="language-plaintext highlighter-rouge">isFullscreen()</code> and the events <code class="language-plaintext highlighter-rouge">enterfullscreen</code>, <code class="language-plaintext highlighter-rouge">exitfullscreen</code> and <code class="language-plaintext highlighter-rouge">fullscreenchange</code>. Without the Fullscreen API, e.g. on iPhones, the map fills the window instead.</li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">SearchControl</code>: a search field with results to pick with the pointer or the keyboard, finding coordinates and geo URIs by itself (with the new <code class="language-plaintext highlighter-rouge">LatLng.parse()</code>). Bring your own <code class="language-plaintext highlighter-rouge">geocoder</code> function, or use <code class="language-plaintext highlighter-rouge">SearchControl.nominatim()</code> with your own Nominatim server — or with the public one, if your use complies with the <a href="https://operations.osmfoundation.org/policies/nominatim/">Nominatim usage policy</a>, which you confirm with <code class="language-plaintext highlighter-rouge">acceptUsagePolicy: true</code>:</p>
+
+    <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">new</span> <span class="nx">SearchControl</span><span class="p">({</span>
+      <span class="na">geocoder</span><span class="p">:</span> <span class="nx">SearchControl</span><span class="p">.</span><span class="nx">nominatim</span><span class="p">({</span><span class="na">acceptUsagePolicy</span><span class="p">:</span> <span class="kc">true</span><span class="p">})</span>
+  <span class="p">}).</span><span class="nx">addTo</span><span class="p">(</span><span class="nx">map</span><span class="p">);</span>
+</code></pre></div>    </div>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">ButtonControl</code> and <code class="language-plaintext highlighter-rouge">ButtonBarControl</code> for buttons of your own, styled like the zoom buttons, with states, disabling and access keys; <code class="language-plaintext highlighter-rouge">TextControl</code> for a title or a status line.</li>
+  <li><code class="language-plaintext highlighter-rouge">MiniMapControl</code>: an overview map showing the view of the map, to drag or click.</li>
+  <li><code class="language-plaintext highlighter-rouge">SideBySideControl</code>: a draggable divider to compare two layers.</li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">LegendControl</code> and <code class="language-plaintext highlighter-rouge">Classification</code>: classify features by value or by range (like the categorized and graduated renderers of QGIS), style a <code class="language-plaintext highlighter-rouge">GeoJSON</code> layer with it, and show the classes in a legend, optionally with the feature count:</p>
+
+    <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kd">const</span> <span class="nx">temperature</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Classification</span><span class="p">([</span>
+      <span class="p">{</span><span class="na">upper</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="na">symbol</span><span class="p">:</span> <span class="p">{</span><span class="na">fillColor</span><span class="p">:</span> <span class="dl">'</span><span class="s1">#5bc0de</span><span class="dl">'</span><span class="p">},</span> <span class="na">legend</span><span class="p">:</span> <span class="dl">'</span><span class="s1">&lt; 0 °C</span><span class="dl">'</span><span class="p">},</span>
+      <span class="p">{</span><span class="na">lower</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="na">upper</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="na">symbol</span><span class="p">:</span> <span class="p">{</span><span class="na">fillColor</span><span class="p">:</span> <span class="dl">'</span><span class="s1">#33ee33</span><span class="dl">'</span><span class="p">},</span> <span class="na">legend</span><span class="p">:</span> <span class="dl">'</span><span class="s1">0–10 °C</span><span class="dl">'</span><span class="p">},</span>
+      <span class="p">{</span><span class="na">lower</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="na">symbol</span><span class="p">:</span> <span class="p">{</span><span class="na">fillColor</span><span class="p">:</span> <span class="dl">'</span><span class="s1">#f0a030</span><span class="dl">'</span><span class="p">},</span> <span class="na">legend</span><span class="p">:</span> <span class="dl">'</span><span class="s1">≥ 10 °C</span><span class="dl">'</span><span class="p">}</span>
+  <span class="p">],</span> <span class="p">{</span><span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Air temperature</span><span class="dl">'</span><span class="p">,</span> <span class="na">value</span><span class="p">:</span> <span class="dl">'</span><span class="s1">temperature</span><span class="dl">'</span><span class="p">});</span>
+
+  <span class="k">new</span> <span class="nx">GeoJSON</span><span class="p">(</span><span class="nx">stations</span><span class="p">,</span> <span class="p">{</span>
+      <span class="na">pointToLayer</span><span class="p">:</span> <span class="p">(</span><span class="nx">feature</span><span class="p">,</span> <span class="nx">latlng</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">new</span> <span class="nx">CircleMarker</span><span class="p">(</span><span class="nx">latlng</span><span class="p">),</span>
+      <span class="na">style</span><span class="p">:</span> <span class="nx">temperature</span><span class="p">.</span><span class="nx">style</span>
+  <span class="p">}).</span><span class="nx">addTo</span><span class="p">(</span><span class="nx">map</span><span class="p">);</span>
+</code></pre></div>    </div>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">ContextMenu</code> for menus on right click or long tap, on the map or on layers.</li>
+  <li>The new control option <code class="language-plaintext highlighter-rouge">order</code> sorts the controls of a corner.</li>
+</ul>
+
+<h4 id="map-and-interaction">Map and interaction</h4>
+
+<ul>
+  <li><strong>Rotation:</strong> the map option <code class="language-plaintext highlighter-rouge">bearing</code> with <code class="language-plaintext highlighter-rouge">setBearing()</code>, rotating with two fingers (<code class="language-plaintext highlighter-rouge">pinchRotate</code>) and a compass (<code class="language-plaintext highlighter-rouge">RotateControl</code>); <code class="language-plaintext highlighter-rouge">Marker</code> options <code class="language-plaintext highlighter-rouge">rotationAngle</code> and <code class="language-plaintext highlighter-rouge">rotationOrigin</code>, e.g. for the heading of a vehicle.</li>
+  <li><strong>Smoother zooming:</strong> <code class="language-plaintext highlighter-rouge">continuousZoom: true</code> zooms through fractional zoom levels, also with the scroll wheel. Pinching on a touchpad zooms, and with <code class="language-plaintext highlighter-rouge">scrollWheelZoom: 'trackpad'</code>, scrolling on a touchpad pans. Tap once, then touch again and drag up or down to zoom (<code class="language-plaintext highlighter-rouge">tapDragZoom</code>, enabled by default).</li>
+  <li><code class="language-plaintext highlighter-rouge">Hash</code> keeps the view (and optionally the layers) in the URL, as <code class="language-plaintext highlighter-rouge">#zoom/lat/lng</code>, as geo URI or in the query string; <code class="language-plaintext highlighter-rouge">MapSync</code> keeps the views of several maps in sync.</li>
+  <li><code class="language-plaintext highlighter-rouge">setCrs()</code> changes the CRS of the map at runtime.</li>
+  <li>The new <code class="language-plaintext highlighter-rouge">idle</code> event is fired when the view isn&#8217;t changing and all layers have loaded, and view changes caused by the user have the DOM event as <code class="language-plaintext highlighter-rouge">originalEvent</code>.</li>
+  <li>The map follows changes of the <code class="language-plaintext highlighter-rouge">devicePixelRatio</code>, e.g. when moving the window to another screen, and a hidden map (e.g. in an inactive tab) keeps its view.</li>
+  <li><strong>Accessibility:</strong> the map has an accessible name (option <code class="language-plaintext highlighter-rouge">ariaLabel</code>), <kbd>?</kbd> shows the keyboard shortcuts, the controls use <code class="language-plaintext highlighter-rouge">&lt;button&gt;</code> elements, and popups opened with the keyboard get the focus.</li>
+  <li>Popups and tooltips can extend beyond the map with the <code class="language-plaintext highlighter-rouge">overflow</code> option, and tooltips with <code class="language-plaintext highlighter-rouge">direction: 'auto'</code> open on the side where they fit.</li>
+</ul>
+
+<h4 id="layers-and-markers">Layers and markers</h4>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">SvgIcon</code> draws the default marker in any color, with a character, emoji or SVG path as glyph:</p>
+
+    <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">new</span> <span class="nx">Marker</span><span class="p">(</span><span class="nx">latlng</span><span class="p">,</span> <span class="p">{</span><span class="na">icon</span><span class="p">:</span> <span class="k">new</span> <span class="nx">SvgIcon</span><span class="p">({</span><span class="na">color</span><span class="p">:</span> <span class="dl">'</span><span class="s1">green</span><span class="dl">'</span><span class="p">,</span> <span class="na">glyph</span><span class="p">:</span> <span class="dl">'</span><span class="s1">🚲</span><span class="dl">'</span><span class="p">})}).</span><span class="nx">addTo</span><span class="p">(</span><span class="nx">map</span><span class="p">);</span>
+</code></pre></div>    </div>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">HeatLayer</code> draws heatmaps of tens of thousands of points.</li>
+  <li><code class="language-plaintext highlighter-rouge">DisplaceHandler</code> moves overlapping circle markers apart (opt in with <code class="language-plaintext highlighter-rouge">MaplairMap.addInitHook('addHandler', 'displace', DisplaceHandler)</code> and the option <code class="language-plaintext highlighter-rouge">displace: true</code>).</li>
+  <li>Tile layers: <code class="language-plaintext highlighter-rouge">fetchOptions</code> loads tiles with <code class="language-plaintext highlighter-rouge">fetch()</code>, e.g. with an <code class="language-plaintext highlighter-rouge">Authorization</code> header, and aborts requests of tiles no longer needed; <code class="language-plaintext highlighter-rouge">setUrl()</code> swaps the tiles without flickering; <code class="language-plaintext highlighter-rouge">placeholder</code> sets a background while tiles load; <code class="language-plaintext highlighter-rouge">WMSTileLayer#getLegendUrl()</code> returns the URL of the legend.</li>
+  <li><code class="language-plaintext highlighter-rouge">pixelated: true</code> keeps the pixels of tiles and image overlays crisp when zoomed.</li>
+  <li><code class="language-plaintext highlighter-rouge">setInteractive()</code> changes whether a layer is interactive, and <code class="language-plaintext highlighter-rouge">setAttribution()</code> changes its attribution, sorted by the new option <code class="language-plaintext highlighter-rouge">attributionOrder</code>.</li>
+</ul>
+
+<h4 id="optional-modules">Optional modules</h4>
+
+<p>These features extend existing classes, so they&#8217;re separate modules: import them to use them, e.g. <code class="language-plaintext highlighter-rouge">import 'maplair/zoom-styles';</code>. The bundles <code class="language-plaintext highlighter-rouge">maplair.js</code> and <code class="language-plaintext highlighter-rouge">maplair-global.js</code> contain all of them.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">maplair/map-rotation</code> and <code class="language-plaintext highlighter-rouge">maplair/marker-rotation</code>: the rotation of the map and of markers.</li>
+  <li><code class="language-plaintext highlighter-rouge">maplair/marker-movement</code>: <code class="language-plaintext highlighter-rouge">Marker#moveTo()</code> and <code class="language-plaintext highlighter-rouge">moveAlong()</code> move a marker smoothly along a route.</li>
+  <li><code class="language-plaintext highlighter-rouge">maplair/dash-animation</code>: the path option <code class="language-plaintext highlighter-rouge">dashSpeed</code> animates dashes along a path (&#8220;marching ants&#8221;).</li>
+  <li><code class="language-plaintext highlighter-rouge">maplair/path-decorations</code>: the path options <code class="language-plaintext highlighter-rouge">arrowheads</code> and <code class="language-plaintext highlighter-rouge">text</code>, e.g. for directions and street names along lines.</li>
+  <li><code class="language-plaintext highlighter-rouge">maplair/geojson-loading</code>: <code class="language-plaintext highlighter-rouge">GeoJSON#load()</code> and the option <code class="language-plaintext highlighter-rouge">url</code> load GeoJSON from a URL.</li>
+  <li><code class="language-plaintext highlighter-rouge">maplair/zoom-styles</code>: a path <code class="language-plaintext highlighter-rouge">weight</code> and a circle marker <code class="language-plaintext highlighter-rouge">radius</code> depending on the zoom, as a function or as zoom stops.</li>
+</ul>
+
+<h4 id="theming">Theming</h4>
+
+<p>The colors, borders, shadows, fonts and spacing are CSS variables now, so that you can theme maps by overriding them:</p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">:root</span> <span class="p">{</span>
+	<span class="py">--maplair-background-color-base</span><span class="p">:</span> <span class="m">#202122</span><span class="p">;</span>
+	<span class="py">--maplair-color-base</span><span class="p">:</span> <span class="m">#eaecf0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="migrating-from-leaflet-194">Migrating from Leaflet 1.9.4</h3>
+
+<p>Maplair targets browsers which support the web features that are <a href="https://web.dev/baseline">Baseline Widely available</a> (supported by all major browsers for at least 30 months); Internet Explorer isn&#8217;t supported anymore.</p>
+
+<h4 id="package-files-and-loading">Package, files and loading</h4>
+
+<ul>
+  <li>
+    <p>Install the <code class="language-plaintext highlighter-rouge">maplair</code> package (<code class="language-plaintext highlighter-rouge">npm install maplair</code>), and import from <code class="language-plaintext highlighter-rouge">maplair</code>. Maplair is published as ES modules with named exports only — there&#8217;s no default export and no global <code class="language-plaintext highlighter-rouge">L</code>:</p>
+
+    <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">import</span> <span class="p">{</span><span class="nx">MaplairMap</span><span class="p">,</span> <span class="nx">TileLayer</span><span class="p">,</span> <span class="nx">Marker</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">maplair</span><span class="dl">'</span><span class="p">;</span>
+
+  <span class="kd">const</span> <span class="nx">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MaplairMap</span><span class="p">(</span><span class="dl">'</span><span class="s1">map</span><span class="dl">'</span><span class="p">).</span><span class="nx">setView</span><span class="p">([</span><span class="mf">51.505</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.09</span><span class="p">],</span> <span class="mi">13</span><span class="p">);</span>
+  <span class="k">new</span> <span class="nx">TileLayer</span><span class="p">(</span><span class="dl">'</span><span class="s1">https://tile.openstreetmap.org/{z}/{x}/{y}.png</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+      <span class="na">maxZoom</span><span class="p">:</span> <span class="mi">19</span><span class="p">,</span>
+      <span class="na">attribution</span><span class="p">:</span> <span class="dl">'</span><span class="s1">© &lt;a href="https://www.openstreetmap.org/copyright"&gt;OpenStreetMap&lt;/a&gt;</span><span class="dl">'</span>
+  <span class="p">}).</span><span class="nx">addTo</span><span class="p">(</span><span class="nx">map</span><span class="p">);</span>
+  <span class="k">new</span> <span class="nx">Marker</span><span class="p">([</span><span class="mf">51.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.09</span><span class="p">]).</span><span class="nx">addTo</span><span class="p">(</span><span class="nx">map</span><span class="p">);</span>
+</code></pre></div>    </div>
+
+    <p>Without a bundler, use an <a href="../../../download.html">import map</a>, e.g. pointing <code class="language-plaintext highlighter-rouge">maplair</code> to <code class="language-plaintext highlighter-rouge">https://cdn.jsdelivr.net/npm/maplair@4.0.0/dist/maplair.js</code>, and <code class="language-plaintext highlighter-rouge">&lt;script type="module"&gt;</code>.</p>
+  </li>
+  <li>For old-style scripts, <code class="language-plaintext highlighter-rouge">dist/maplair-global.js</code> still provides a global <code class="language-plaintext highlighter-rouge">L</code> (e.g. <code class="language-plaintext highlighter-rouge">new L.MaplairMap('map')</code>), including <code class="language-plaintext highlighter-rouge">L.noConflict()</code>.</li>
+  <li>The files were renamed: <code class="language-plaintext highlighter-rouge">leaflet.js</code> → <code class="language-plaintext highlighter-rouge">maplair.js</code>, <code class="language-plaintext highlighter-rouge">leaflet-src.js</code> → <code class="language-plaintext highlighter-rouge">maplair-src.js</code>, <code class="language-plaintext highlighter-rouge">leaflet.css</code> → <code class="language-plaintext highlighter-rouge">maplair.css</code> (also importable as <code class="language-plaintext highlighter-rouge">maplair/styles.css</code>).</li>
+  <li>All CSS classes were renamed from <code class="language-plaintext highlighter-rouge">leaflet-*</code> to <code class="language-plaintext highlighter-rouge">maplair-*</code>, e.g. <code class="language-plaintext highlighter-rouge">.leaflet-container</code> → <code class="language-plaintext highlighter-rouge">.maplair-container</code>, <code class="language-plaintext highlighter-rouge">.leaflet-popup</code> → <code class="language-plaintext highlighter-rouge">.maplair-popup</code>. Update your stylesheets and any code selecting these classes.</li>
+  <li>The images are SVG files: <code class="language-plaintext highlighter-rouge">marker-icon.svg</code>, <code class="language-plaintext highlighter-rouge">marker-shadow.svg</code> and <code class="language-plaintext highlighter-rouge">layers.svg</code> replace <code class="language-plaintext highlighter-rouge">marker-icon.png</code>, <code class="language-plaintext highlighter-rouge">marker-icon-2x.png</code>, <code class="language-plaintext highlighter-rouge">marker-shadow.png</code>, <code class="language-plaintext highlighter-rouge">layers.png</code> and <code class="language-plaintext highlighter-rouge">layers-2x.png</code>.</li>
+</ul>
+
+<h4 id="creating-objects">Creating objects</h4>
+
+<ul>
+  <li>The factory functions were removed — use constructors instead: <code class="language-plaintext highlighter-rouge">L.marker(latlng)</code> → <code class="language-plaintext highlighter-rouge">new Marker(latlng)</code>, <code class="language-plaintext highlighter-rouge">L.map('map')</code> → <code class="language-plaintext highlighter-rouge">new MaplairMap('map')</code>, etc.</li>
+  <li><code class="language-plaintext highlighter-rouge">L.Map</code> is now <code class="language-plaintext highlighter-rouge">MaplairMap</code> (<code class="language-plaintext highlighter-rouge">Map</code> is still exported as an alias, but shadows JavaScript&#8217;s built-in <code class="language-plaintext highlighter-rouge">Map</code> when imported).</li>
+  <li>
+    <p>Classes that were attached to other classes are separate exports now:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Leaflet 1.9.4</th>
+          <th>Maplair 4.0</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code class="language-plaintext highlighter-rouge">L.Control.Zoom</code>, <code class="language-plaintext highlighter-rouge">L.Control.Attribution</code>, <code class="language-plaintext highlighter-rouge">L.Control.Layers</code>, <code class="language-plaintext highlighter-rouge">L.Control.Scale</code></td>
+          <td><code class="language-plaintext highlighter-rouge">ZoomControl</code>, <code class="language-plaintext highlighter-rouge">AttributionControl</code>, <code class="language-plaintext highlighter-rouge">LayersControl</code>, <code class="language-plaintext highlighter-rouge">ScaleControl</code></td>
+        </tr>
+        <tr>
+          <td><code class="language-plaintext highlighter-rouge">L.Map.Drag</code>, <code class="language-plaintext highlighter-rouge">L.Map.BoxZoom</code>, <code class="language-plaintext highlighter-rouge">L.Map.DoubleClickZoom</code>, <code class="language-plaintext highlighter-rouge">L.Map.Keyboard</code>, <code class="language-plaintext highlighter-rouge">L.Map.ScrollWheelZoom</code>, <code class="language-plaintext highlighter-rouge">L.Map.TapHold</code>, <code class="language-plaintext highlighter-rouge">L.Map.TouchZoom</code></td>
+          <td><code class="language-plaintext highlighter-rouge">DragHandler</code>, <code class="language-plaintext highlighter-rouge">BoxZoomHandler</code>, <code class="language-plaintext highlighter-rouge">DoubleClickZoomHandler</code>, <code class="language-plaintext highlighter-rouge">KeyboardHandler</code>, <code class="language-plaintext highlighter-rouge">ScrollWheelZoomHandler</code>, <code class="language-plaintext highlighter-rouge">TapHoldHandler</code>, <code class="language-plaintext highlighter-rouge">PinchZoomHandler</code></td>
+        </tr>
+        <tr>
+          <td><code class="language-plaintext highlighter-rouge">L.TileLayer.WMS</code></td>
+          <td><code class="language-plaintext highlighter-rouge">WMSTileLayer</code></td>
+        </tr>
+        <tr>
+          <td><code class="language-plaintext highlighter-rouge">L.Icon.Default</code></td>
+          <td><code class="language-plaintext highlighter-rouge">DefaultIcon</code></td>
+        </tr>
+        <tr>
+          <td><code class="language-plaintext highlighter-rouge">L.CRS.EPSG3857</code>, <code class="language-plaintext highlighter-rouge">L.CRS.EPSG4326</code>, <code class="language-plaintext highlighter-rouge">L.CRS.EPSG3395</code>, <code class="language-plaintext highlighter-rouge">L.CRS.EPSG900913</code>, <code class="language-plaintext highlighter-rouge">L.CRS.Earth</code>, <code class="language-plaintext highlighter-rouge">L.CRS.Simple</code></td>
+          <td><code class="language-plaintext highlighter-rouge">EPSG3857</code>, <code class="language-plaintext highlighter-rouge">EPSG4326</code>, <code class="language-plaintext highlighter-rouge">EPSG3395</code>, <code class="language-plaintext highlighter-rouge">EPSG900913</code>, <code class="language-plaintext highlighter-rouge">EarthCRS</code>, <code class="language-plaintext highlighter-rouge">SimpleCRS</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>The touch zoom handler was renamed: the map option <code class="language-plaintext highlighter-rouge">touchZoom</code> and the property <code class="language-plaintext highlighter-rouge">map.touchZoom</code> still work, but are deprecated in favour of <code class="language-plaintext highlighter-rouge">pinchZoom</code>.</li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">new LatLng(latlng)</code>, <code class="language-plaintext highlighter-rouge">new Point(point)</code>, <code class="language-plaintext highlighter-rouge">new LatLngBounds(bounds)</code> and <code class="language-plaintext highlighter-rouge">new Bounds(bounds)</code> now always create a new object (Leaflet&#8217;s factories returned the given object). To convert without copying, use <code class="language-plaintext highlighter-rouge">LatLng.from()</code>, <code class="language-plaintext highlighter-rouge">Point.from()</code>, <code class="language-plaintext highlighter-rouge">LatLngBounds.from()</code> and <code class="language-plaintext highlighter-rouge">Bounds.from()</code>, which return instances as they are, e.g. <code class="language-plaintext highlighter-rouge">L.latLng(latlng)</code> → <code class="language-plaintext highlighter-rouge">LatLng.from(latlng)</code>. <code class="language-plaintext highlighter-rouge">LatLng#clone()</code> and <code class="language-plaintext highlighter-rouge">Point#clone()</code> were removed — use the constructors instead. Layers like <code class="language-plaintext highlighter-rouge">ImageOverlay</code> keep their own copy of the coordinates passed to them.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>&#160;</th>
+          <th>Constructor</th>
+          <th>Factory</th>
+          <th>Copy</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Leaflet 1.9.4</td>
+          <td><code class="language-plaintext highlighter-rouge">new L.LatLng(lat, lng, alt)</code>: numbers only</td>
+          <td><code class="language-plaintext highlighter-rouge">L.latLng(x)</code>: also arrays and objects, returns <code class="language-plaintext highlighter-rouge">LatLng</code> instances as they are</td>
+          <td><code class="language-plaintext highlighter-rouge">latlng.clone()</code></td>
+        </tr>
+        <tr>
+          <td>Leaflet 2.0 alpha</td>
+          <td><code class="language-plaintext highlighter-rouge">new LatLng(x)</code>: also arrays and objects, but returns <code class="language-plaintext highlighter-rouge">LatLng</code> instances as they are</td>
+          <td>removed</td>
+          <td><code class="language-plaintext highlighter-rouge">latlng.clone()</code></td>
+        </tr>
+        <tr>
+          <td>Maplair 4.0</td>
+          <td><code class="language-plaintext highlighter-rouge">new LatLng(x)</code>: also arrays and objects, always a new object</td>
+          <td><code class="language-plaintext highlighter-rouge">LatLng.from(x)</code>: also arrays and objects, returns <code class="language-plaintext highlighter-rouge">LatLng</code> instances as they are</td>
+          <td><code class="language-plaintext highlighter-rouge">new LatLng(latlng)</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><code class="language-plaintext highlighter-rouge">Point</code>, <code class="language-plaintext highlighter-rouge">LatLngBounds</code> and <code class="language-plaintext highlighter-rouge">Bounds</code> follow the same pattern (in Leaflet, the constructors of the bounds took corner points too, and the bounds had no <code class="language-plaintext highlighter-rouge">clone()</code>).</p>
+  </li>
+</ul>
+
+<h4 id="classes-and-plugins">Classes and plugins</h4>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">Class.extend()</code> was removed; use JavaScript classes: <code class="language-plaintext highlighter-rouge">class MyLayer extends Layer { … }</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">initialize()</code> was replaced by the standard <code class="language-plaintext highlighter-rouge">constructor()</code>. Call <code class="language-plaintext highlighter-rouge">super(…)</code> instead of <code class="language-plaintext highlighter-rouge">ParentClass.prototype.initialize.call(this, …)</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">include</code> and <code class="language-plaintext highlighter-rouge">statics</code> in class definitions are gone; use <code class="language-plaintext highlighter-rouge">MyClass.include({…})</code> and <code class="language-plaintext highlighter-rouge">static</code> members, and configure default options with <code class="language-plaintext highlighter-rouge">setDefaultOptions()</code> in a static block.</li>
+  <li>Hooks added with <code class="language-plaintext highlighter-rouge">addInitHook()</code> run at the end of the constructor of the class they were added to, which calls <code class="language-plaintext highlighter-rouge">this.callInitHooks()</code> — so a hook added to <code class="language-plaintext highlighter-rouge">Polyline</code> sees a fully constructed polyline. All Maplair classes support hooks; your own classes do, if they call <code class="language-plaintext highlighter-rouge">this.callInitHooks()</code> at the end of their constructor. Hooks of a parent class run before the constructor of a subclass continues. See the <a href="../../../examples/extending-1-classes/">tutorial on extending classes</a>.</li>
+  <li>Leaflet plugins import from <code class="language-plaintext highlighter-rouge">leaflet</code> and expect <code class="language-plaintext highlighter-rouge">leaflet-*</code> CSS classes and the <code class="language-plaintext highlighter-rouge">L</code> global, so most won&#8217;t work with Maplair unchanged.</li>
+</ul>
+
+<h4 id="events">Events</h4>
+
+<ul>
+  <li>Maplair uses <a href="https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events">Pointer Events</a> instead of mouse and touch events. Listen to <code class="language-plaintext highlighter-rouge">pointerdown</code>, <code class="language-plaintext highlighter-rouge">pointermove</code>, <code class="language-plaintext highlighter-rouge">pointerup</code>, <code class="language-plaintext highlighter-rouge">pointerover</code>, <code class="language-plaintext highlighter-rouge">pointerout</code> etc. instead of <code class="language-plaintext highlighter-rouge">mousedown</code>, <code class="language-plaintext highlighter-rouge">mousemove</code>, <code class="language-plaintext highlighter-rouge">mouseup</code>, <code class="language-plaintext highlighter-rouge">mouseover</code>, <code class="language-plaintext highlighter-rouge">mouseout</code>, <code class="language-plaintext highlighter-rouge">touchstart</code> etc. Maplair logs an error when listening to a removed <code class="language-plaintext highlighter-rouge">mouse*</code> event.</li>
+  <li>The aliases <code class="language-plaintext highlighter-rouge">addEventListener</code>, <code class="language-plaintext highlighter-rouge">removeEventListener</code>, <code class="language-plaintext highlighter-rouge">addOneTimeEventListener</code>, <code class="language-plaintext highlighter-rouge">fireEvent</code> and <code class="language-plaintext highlighter-rouge">hasEventListeners</code> of <code class="language-plaintext highlighter-rouge">Evented</code>, and <code class="language-plaintext highlighter-rouge">addListener</code> and <code class="language-plaintext highlighter-rouge">removeListener</code> of <code class="language-plaintext highlighter-rouge">DomEvent</code>, were removed — use <code class="language-plaintext highlighter-rouge">on</code>, <code class="language-plaintext highlighter-rouge">off</code>, <code class="language-plaintext highlighter-rouge">once</code>, <code class="language-plaintext highlighter-rouge">fire</code> and <code class="language-plaintext highlighter-rouge">listens</code>.</li>
+  <li><code class="language-plaintext highlighter-rouge">DomEvent.getMousePosition()</code> was renamed to <code class="language-plaintext highlighter-rouge">DomEvent.getPointerPosition()</code>.</li>
+  <li>The map listens to window resizes with a <code class="language-plaintext highlighter-rouge">ResizeObserver</code>, so it updates its size when its container changes size for any reason.</li>
+</ul>
+
+<h4 id="utilities-and-options">Utilities and options</h4>
+
+<ul>
+  <li>Helpers that are now part of JavaScript or the DOM were removed — use the standard APIs instead:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">Util</code>: <code class="language-plaintext highlighter-rouge">bind()</code>, <code class="language-plaintext highlighter-rouge">isArray()</code>, <code class="language-plaintext highlighter-rouge">create()</code>, <code class="language-plaintext highlighter-rouge">trim()</code>, <code class="language-plaintext highlighter-rouge">indexOf()</code>, <code class="language-plaintext highlighter-rouge">extend()</code>, <code class="language-plaintext highlighter-rouge">getParamString()</code>, <code class="language-plaintext highlighter-rouge">requestAnimFrame()</code>/<code class="language-plaintext highlighter-rouge">cancelAnimFrame()</code>, <code class="language-plaintext highlighter-rouge">emptyImageUrl</code> — use <code class="language-plaintext highlighter-rouge">Function#bind()</code>, <code class="language-plaintext highlighter-rouge">Array.isArray()</code>, <code class="language-plaintext highlighter-rouge">Object.create()</code>, <code class="language-plaintext highlighter-rouge">String#trim()</code>, <code class="language-plaintext highlighter-rouge">Array#indexOf()</code>, <code class="language-plaintext highlighter-rouge">Object.assign()</code> or <code class="language-plaintext highlighter-rouge">{...}</code>, <code class="language-plaintext highlighter-rouge">URLSearchParams</code>, <code class="language-plaintext highlighter-rouge">requestAnimationFrame()</code>/<code class="language-plaintext highlighter-rouge">cancelAnimationFrame()</code>.</li>
+      <li><code class="language-plaintext highlighter-rouge">DomUtil</code>: <code class="language-plaintext highlighter-rouge">hasClass()</code>, <code class="language-plaintext highlighter-rouge">addClass()</code>, <code class="language-plaintext highlighter-rouge">removeClass()</code>, <code class="language-plaintext highlighter-rouge">setClass()</code>, <code class="language-plaintext highlighter-rouge">getClass()</code>, <code class="language-plaintext highlighter-rouge">remove()</code>, <code class="language-plaintext highlighter-rouge">empty()</code>, <code class="language-plaintext highlighter-rouge">setOpacity()</code>, <code class="language-plaintext highlighter-rouge">getStyle()</code>, <code class="language-plaintext highlighter-rouge">testProp()</code>, <code class="language-plaintext highlighter-rouge">TRANSFORM</code>, <code class="language-plaintext highlighter-rouge">TRANSITION</code>, <code class="language-plaintext highlighter-rouge">TRANSITION_END</code> — use <code class="language-plaintext highlighter-rouge">classList</code>, <code class="language-plaintext highlighter-rouge">Element#remove()</code>, <code class="language-plaintext highlighter-rouge">Element#replaceChildren()</code>, <code class="language-plaintext highlighter-rouge">style</code>/<code class="language-plaintext highlighter-rouge">getComputedStyle()</code>.</li>
+    </ul>
+  </li>
+  <li>Most <code class="language-plaintext highlighter-rouge">Browser</code> detection flags were removed (e.g. <code class="language-plaintext highlighter-rouge">ie</code>, <code class="language-plaintext highlighter-rouge">edge</code>, <code class="language-plaintext highlighter-rouge">webkit</code>, <code class="language-plaintext highlighter-rouge">android</code>, <code class="language-plaintext highlighter-rouge">gecko</code>, <code class="language-plaintext highlighter-rouge">opera</code>, <code class="language-plaintext highlighter-rouge">any3d</code>, <code class="language-plaintext highlighter-rouge">canvas</code>, <code class="language-plaintext highlighter-rouge">svg</code>, <code class="language-plaintext highlighter-rouge">vml</code>, <code class="language-plaintext highlighter-rouge">passiveEvents</code>), as were <code class="language-plaintext highlighter-rouge">L_NO_TOUCH</code>, the VML renderer and <code class="language-plaintext highlighter-rouge">LayerGroup#invoke()</code> (use <code class="language-plaintext highlighter-rouge">eachLayer()</code>).</li>
+  <li>The zoom control options <code class="language-plaintext highlighter-rouge">zoomInTitle</code>/<code class="language-plaintext highlighter-rouge">zoomOutTitle</code> and the popup option <code class="language-plaintext highlighter-rouge">closeButtonLabel</code> were removed; translate these texts with <a href="../../../reference.html#i18n"><code class="language-plaintext highlighter-rouge">I18n</code></a> instead.</li>
+  <li>The default attribution prefix links to maplair.org with a 🍁 instead of the Ukrainian flag (CSS class <code class="language-plaintext highlighter-rouge">maplair-attribution-leaf</code> instead of <code class="language-plaintext highlighter-rouge">maplair-attribution-flag</code>), and the OpenStreetMap attribution added for OpenStreetMap tiles now links the whole text &#8220;OpenStreetMap contributors&#8221;.</li>
+  <li>Tile layers default to the <code class="language-plaintext highlighter-rouge">strict-origin-when-cross-origin</code> referrer policy.</li>
+  <li>The layers control uses <code class="language-plaintext highlighter-rouge">&lt;fieldset&gt;</code> instead of <code class="language-plaintext highlighter-rouge">&lt;section&gt;</code>.</li>
+  <li>The zoom, layers and fullscreen controls and the popup close button are <code class="language-plaintext highlighter-rouge">&lt;button&gt;</code> elements instead of <code class="language-plaintext highlighter-rouge">&lt;a href="#"&gt;</code>, and the map container gets <code class="language-plaintext highlighter-rouge">role="region"</code> and an <code class="language-plaintext highlighter-rouge">aria-label</code> unless it has them already.</li>
+  <li>The styles use CSS variables, which changes some details slightly: e.g. the controls are 8px instead of 10px away from the edge of the map, and font sizes are in <code class="language-plaintext highlighter-rouge">rem</code>.</li>
+  <li>Tile layers with <code class="language-plaintext highlighter-rouge">detectRetina</code> no longer request tiles beyond <code class="language-plaintext highlighter-rouge">maxNativeZoom</code>.</li>
+</ul>
+
+<h3 id="feedback">Feedback</h3>
+
+<p>Please report problems and share feedback on <a href="https://github.com/maplair/maplair/issues">GitHub</a> — and have fun mapping with Maplair! 🍁</p>
+
+
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/simon04">Simon Legner</a> and <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="../../../docs/js/docs.js"></script>
+
+</body>
+</html>

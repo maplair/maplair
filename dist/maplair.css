@@ -1,0 +1,1255 @@
+:root {
+	/* colors */
+	--maplair-color-base: #333333;
+	--maplair-color-subtle: #757575;
+	--maplair-color-disabled: #aaaaaa;
+	--maplair-color-progressive: #0078a8;
+
+	--maplair-background-color-base: #ffffff;
+	--maplair-background-color-neutral: #dddddd;
+	--maplair-background-color-neutral-subtle: #f4f4f4;
+	--maplair-background-color-interactive-subtle--hover: #f4f4f4;
+	--maplair-background-color-interactive--active: rgba(51, 181, 229, 0.4);
+	--maplair-background-color-disabled-subtle: #f4f4f4;
+	--maplair-background-color-backdrop-light: rgba(255, 255, 255, 0.8);
+
+	--maplair-border-color-base: #777777;
+	--maplair-border-color-subtle: #cccccc;
+	--maplair-border-color-muted: rgba(0, 0, 0, 0.2);
+	--maplair-border-color-progressive: #3388ff;
+
+	/* borders */
+	--maplair-border-width-base: 1px;
+	--maplair-border-width-thick: 2px;
+
+	--maplair-border-radius-small: 2px;
+	--maplair-border-radius-base: 4px;
+	--maplair-border-radius-large: 12px;
+
+	/* box shadows */
+	--maplair-box-shadow-medium: 0 1px 5px rgba(0, 0, 0, 0.5);
+	--maplair-box-shadow-large: 0 3px 14px rgba(0, 0, 0, 0.4);
+
+	/* typography */
+	--maplair-font-family-base: "Helvetica Neue", Arial, Helvetica, sans-serif;
+	--maplair-font-family-monospace: "Lucida Console", Monaco, monospace;
+	--maplair-font-size-x-small: 0.75rem;
+	--maplair-font-size-small: 0.8125rem;
+	--maplair-font-size-medium: 1rem;
+	--maplair-font-size-large: 1.125rem;
+	--maplair-font-size-x-large: 1.375rem;
+	--maplair-line-height-content: 1.5;
+	--maplair-line-height-small: 1.3;
+	--maplair-line-height-x-small: 1.1;
+
+	/* spacing, the number is the size in percent of 16px */
+	--maplair-spacing-25: 4px;
+	--maplair-spacing-50: 8px;
+	--maplair-spacing-75: 12px;
+	--maplair-spacing-100: 16px;
+
+	/* sizes */
+	--maplair-size-control: 30px;
+}
+
+/* required styles */
+
+.maplair-pane,
+.maplair-tile,
+.maplair-marker-icon,
+.maplair-marker-shadow,
+.maplair-tile-container,
+.maplair-pane > svg,
+.maplair-pane > canvas,
+.maplair-zoom-box,
+.maplair-image-layer,
+.maplair-layer {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+}
+
+/* wraps the map pane of a rotated map, see setBearing() */
+.maplair-rotate-pane {
+	position: absolute;
+	inset: 0;
+}
+
+.maplair-tile,
+.maplair-marker-icon,
+.maplair-marker-shadow {
+	-webkit-user-select: none;
+	user-select: none;
+	-webkit-user-drag: none;
+	-webkit-touch-callout: none;
+}
+
+.maplair-marker-icon,
+.maplair-marker-shadow {
+	display: block;
+}
+
+/* !important to survive host-page resets like `img, svg { max-width: 100% }`, which break the map */
+
+.maplair-container {
+	overflow: hidden;
+
+	.maplair-overlay-pane svg {
+		max-width: none !important;
+		max-height: none !important;
+	}
+
+	.maplair-marker-pane img,
+	.maplair-shadow-pane img,
+	.maplair-tile-pane img,
+	img.maplair-image-layer,
+	.maplair-tile {
+		max-width: none !important;
+		max-height: none !important;
+		width: auto;
+		padding: 0;
+	}
+
+	img.maplair-tile {
+		/* See: https://bugs.chromium.org/p/chromium/issues/detail?id=600120 */
+		mix-blend-mode: plus-lighter;
+	}
+
+	&.maplair-touch-zoom {
+		touch-action: pan-x pan-y;
+	}
+
+	&.maplair-touch-drag {
+		touch-action: pinch-zoom;
+
+		&.maplair-touch-zoom {
+			touch-action: none;
+		}
+	}
+
+	-webkit-tap-highlight-color: transparent;
+
+	a {
+		-webkit-tap-highlight-color: var(--maplair-background-color-interactive--active);
+	}
+}
+
+.maplair-tile {
+	visibility: hidden;
+}
+
+.maplair-tile-loaded {
+	visibility: inherit;
+}
+
+.maplair-zoom-box {
+	width: 0;
+	height: 0;
+	box-sizing: border-box;
+	z-index: 800;
+	border: var(--maplair-border-width-thick) dotted var(--maplair-border-color-progressive);
+	background: color-mix(in srgb, var(--maplair-background-color-base) 50%, transparent);
+}
+
+.maplair-pane {
+	z-index: 400;
+}
+
+.maplair-tile-pane {
+	z-index: 200;
+}
+
+.maplair-overlay-pane {
+	z-index: 400;
+}
+
+.maplair-shadow-pane {
+	z-index: 500;
+}
+
+.maplair-marker-pane {
+	z-index: 600;
+}
+
+.maplair-tooltip-pane {
+	z-index: 650;
+}
+
+.maplair-popup-pane {
+	z-index: 700;
+}
+
+.maplair-map-pane {
+	canvas {
+		z-index: 100;
+	}
+
+	svg {
+		z-index: 200;
+	}
+}
+
+/* control positioning */
+
+.maplair-control {
+	position: relative;
+	z-index: 800;
+	pointer-events: auto;
+	float: left;
+	clear: both;
+
+	/* Prevent printers from removing background-images of controls. */
+	@media print {
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+	}
+}
+
+.maplair-top,
+.maplair-bottom {
+	position: absolute;
+	z-index: 1000;
+	pointer-events: none;
+}
+
+.maplair-top {
+	top: 0;
+	.maplair-control {
+		margin-top: var(--maplair-spacing-50);
+	}
+}
+
+.maplair-right {
+	right: 0;
+	.maplair-control {
+		float: right;
+		margin-right: var(--maplair-spacing-50);
+	}
+}
+
+.maplair-bottom {
+	bottom: 0;
+	.maplair-control {
+		margin-bottom: var(--maplair-spacing-50);
+	}
+}
+
+.maplair-left {
+	left: 0;
+	.maplair-control {
+		margin-left: var(--maplair-spacing-50);
+	}
+}
+
+
+/* nearest-neighbour scaling, see the `pixelated` option */
+.maplair-pixelated {
+	&,
+	.maplair-tile {
+		image-rendering: pixelated;
+	}
+}
+
+/* decorations of paths, see the arrowheads and text options */
+.maplair-path-arrowheads,
+.maplair-path-text {
+	pointer-events: none;
+}
+
+/* animated dashes of paths, see the dashSpeed option */
+.maplair-dash-animated {
+	animation: maplair-dash var(--maplair-dash-duration) linear infinite;
+
+	@media (prefers-reduced-motion: reduce) {
+		animation: none;
+	}
+}
+
+@keyframes maplair-dash {
+	from {
+		stroke-dashoffset: 0;
+	}
+
+	to {
+		stroke-dashoffset: calc(-1 * var(--maplair-dash-length));
+	}
+}
+
+/* zoom and fade animations */
+
+.maplair-fade-anim {
+	.maplair-popup {
+		opacity: 0;
+		transition: opacity 0.2s linear;
+
+		@media (prefers-reduced-motion: reduce) {
+			transition: none;
+		}
+	}
+
+	.maplair-map-pane .maplair-popup {
+		opacity: 1;
+	}
+}
+
+.maplair-zoom-animated {
+	transform-origin: 0 0;
+	svg& {
+		will-change: transform;
+	}
+}
+
+.maplair-zoom-anim {
+	.maplair-zoom-animated {
+		transition: transform 0.25s cubic-bezier(0, 0, 0.25, 1);
+
+		@media (prefers-reduced-motion: reduce) {
+			transition: none;
+		}
+	}
+
+	.maplair-zoom-hide {
+		visibility: hidden;
+	}
+}
+
+/* cursors */
+
+.maplair-interactive {
+	cursor: pointer;
+}
+
+.maplair-grab {
+	cursor: grab;
+}
+
+.maplair-crosshair {
+	cursor: crosshair;
+
+	.maplair-interactive {
+		cursor: crosshair;
+	}
+}
+
+.maplair-popup-pane,
+.maplair-control {
+	cursor: auto;
+}
+
+.maplair-dragging {
+	.maplair-grab {
+		cursor: grabbing;
+
+		.maplair-interactive {
+			cursor: grabbing;
+		}
+	}
+
+	.maplair-marker-draggable {
+		cursor: grabbing;
+	}
+}
+
+/* marker & overlays interactivity */
+.maplair-marker-icon,
+.maplair-marker-shadow,
+.maplair-image-layer,
+.maplair-pane > svg path,
+.maplair-tile-container {
+	pointer-events: none;
+}
+
+.maplair-marker-icon.maplair-interactive,
+.maplair-image-layer.maplair-interactive,
+.maplair-pane > svg path.maplair-interactive,
+svg.maplair-image-layer.maplair-interactive path {
+	pointer-events: auto;
+}
+
+/* visual tweaks */
+
+.maplair-container {
+	background: var(--maplair-background-color-neutral);
+	outline-offset: 1px;
+	font-family: var(--maplair-font-family-base);
+	font-size: var(--maplair-font-size-x-small);
+	line-height: var(--maplair-line-height-content);
+
+	a {
+		color: var(--maplair-color-progressive);
+	}
+}
+
+/* prevent showing outline-box on Chromium when clicking on a vector with a tooltip */
+path.maplair-interactive:focus:not(:focus-visible) {
+	outline: 0;
+}
+
+/* general toolbar styles */
+
+/* reset the user agent styles of buttons, without specificity to keep the styles of controls */
+:where(.maplair-bar button) {
+	box-sizing: content-box;
+	padding: 0;
+	border-width: 0 0 var(--maplair-border-width-base);
+	font: inherit;
+	cursor: pointer;
+}
+
+.maplair-bar {
+	border-radius: var(--maplair-border-radius-base);
+
+	a,
+	button {
+		background-color: var(--maplair-background-color-base);
+		border-bottom: var(--maplair-border-width-base) solid var(--maplair-border-color-subtle);
+		width: var(--maplair-size-control);
+		height: var(--maplair-size-control);
+		line-height: var(--maplair-size-control);
+		display: block;
+		text-align: center;
+		text-decoration: none;
+		color: var(--maplair-color-base);
+		background-position: 50% 50%;
+		background-repeat: no-repeat;
+		&:hover,
+		&:focus {
+			background-color: var(--maplair-background-color-interactive-subtle--hover);
+		}
+
+		&:first-child {
+			border-top-left-radius: var(--maplair-border-radius-small);
+			border-top-right-radius: var(--maplair-border-radius-small);
+		}
+
+		&:last-child {
+			border-bottom-left-radius: var(--maplair-border-radius-small);
+			border-bottom-right-radius: var(--maplair-border-radius-small);
+			border-bottom: none;
+		}
+
+		&.maplair-disabled {
+			cursor: default;
+			background-color: var(--maplair-background-color-disabled-subtle);
+			color: var(--maplair-color-disabled);
+		}
+	}
+}
+
+.maplair-control-fullscreen-button svg,
+.maplair-control-rotate-button svg {
+	vertical-align: middle;
+}
+
+/* the map enlarged to the window where the Fullscreen API is not available */
+.maplair-pseudo-fullscreen {
+	position: fixed !important;
+	inset: 0 !important;
+	width: 100% !important;
+	height: 100% !important;
+	z-index: 99999;
+}
+
+/* zoom control */
+
+.maplair-control-zoom-in,
+.maplair-control-zoom-out {
+	font: bold var(--maplair-font-size-x-large) var(--maplair-font-family-monospace);
+	text-indent: 1px;
+}
+
+
+/* layers control */
+
+.maplair-control-layers {
+	background: var(--maplair-background-color-base);
+	border-radius: var(--maplair-border-radius-base);
+
+	.maplair-control-layers-list {
+		display: none;
+	}
+
+	label {
+		display: block;
+		font-size: var(--maplair-font-size-small);
+	}
+}
+
+.maplair-control-layers-toggle {
+	display: block;
+	background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26'><path fill='%23b9b9b9' d='m.032 17.056 13-8 13 8-13 8z'/><path fill='%23737373' d='m.032 17.056-.032.93 13 8 13-8 .032-.93-13 8z'/><path fill='%23cdcdcd' d='m0 13.076 13-8 13 8-13 8z'/><path fill='%23737373' d='M0 13.076v.91l13 8 13-8v-.91l-13 8z'/><path fill='%23e9e9e9' fill-opacity='.585' stroke='%23797979' stroke-width='.1' d='m0 8.986 13-8 13 8-13 8-13-8'/><path fill='%23737373' d='M0 8.986v1l13 8 13-8v-1l-13 8z'/></svg>");
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	/* reset the user agent styles of buttons */
+	background-color: transparent;
+	padding: 0;
+	border: 0;
+	cursor: pointer;
+	width: 44px;
+	height: 44px;
+
+	/* custom content (option toggleContent) instead of the icon */
+	&:not(:empty) {
+		background-image: none;
+		color: var(--maplair-color-base);
+		font: inherit;
+		font-size: var(--maplair-font-size-large);
+	}
+}
+
+.maplair-control-layers-expanded {
+	padding: var(--maplair-spacing-50);
+	color: var(--maplair-color-base);
+	background: var(--maplair-background-color-base);
+
+	.maplair-control-layers-toggle {
+		display: none;
+	}
+
+	.maplair-control-layers-list {
+		display: block;
+		position: relative;
+	}
+}
+
+.maplair-control-layers-list {
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+
+.maplair-control-layers-scrollbar {
+	overflow-y: scroll;
+	overflow-x: hidden;
+	padding-right: var(--maplair-spacing-25);
+}
+
+.maplair-control-layers-selector {
+	margin-top: 2px;
+	position: relative;
+	top: 1px;
+}
+
+.maplair-control-layers-separator {
+	height: 0;
+	border-top: var(--maplair-border-width-base) solid var(--maplair-border-color-subtle);
+	margin: var(--maplair-spacing-25) calc(-1 * var(--maplair-spacing-50));
+}
+
+.maplair-control-layers-group-name {
+	font-size: var(--maplair-font-size-small);
+	font-weight: bold;
+}
+
+/* inline layers control, laid out like the attribution control */
+
+.maplair-control-layers-inline {
+	&.maplair-control-layers-expanded {
+		padding: 0 var(--maplair-spacing-25);
+	}
+
+	.maplair-control-layers-list {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		column-gap: var(--maplair-spacing-50);
+	}
+
+	.maplair-control-layers-base,
+	.maplair-control-layers-overlays {
+		display: contents;
+	}
+
+	.maplair-control-layers-separator {
+		display: none;
+	}
+
+	.maplair-control-layers-group {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		column-gap: var(--maplair-spacing-50);
+	}
+
+	label {
+		/* keep an entry together with its radio button or checkbox */
+		white-space: nowrap;
+	}
+}
+
+/* text control */
+
+.maplair-control-text {
+	padding: var(--maplair-spacing-25) var(--maplair-spacing-50);
+	background: var(--maplair-background-color-base);
+	color: var(--maplair-color-base);
+	border-radius: var(--maplair-border-radius-base);
+	box-shadow: var(--maplair-box-shadow-medium);
+	line-height: var(--maplair-line-height-small);
+
+	&[hidden] {
+		display: none;
+	}
+}
+
+/* search control */
+
+.maplair-control-search {
+	position: relative;
+	background: var(--maplair-background-color-base);
+
+	&.maplair-control-search-loading .maplair-control-search-toggle {
+		cursor: progress;
+		color: var(--maplair-color-subtle);
+	}
+}
+
+.maplair-control-search-form {
+	display: flex;
+	align-items: center;
+	margin: 0;
+
+	.maplair-control-search-toggle,
+	.maplair-control-search-reset {
+		flex: none;
+		border-radius: var(--maplair-border-radius-base);
+		border-bottom: none;
+	}
+
+	.maplair-control-search-toggle svg {
+		vertical-align: middle;
+	}
+
+	.maplair-control-search-reset {
+		font-size: var(--maplair-font-size-large);
+		color: var(--maplair-color-subtle);
+	}
+}
+
+.maplair-control-search-input {
+	box-sizing: border-box;
+	width: 240px;
+	max-width: calc(100vw - 100px);
+	height: var(--maplair-size-control);
+	padding: 0 var(--maplair-spacing-25);
+	border: 0;
+	background: transparent;
+	color: var(--maplair-color-base);
+	font: inherit;
+	font-size: var(--maplair-font-size-small);
+
+	&::-webkit-search-cancel-button {
+		display: none;
+	}
+
+	&:focus {
+		outline: none;
+	}
+}
+
+.maplair-control-search:not(.maplair-control-search-expanded) {
+	.maplair-control-search-input,
+	.maplair-control-search-reset,
+	.maplair-control-search-results,
+	.maplair-control-search-message {
+		display: none;
+	}
+}
+
+.maplair-control-search:focus-within:has(.maplair-control-search-input:focus-visible) {
+	outline: var(--maplair-border-width-thick) solid var(--maplair-border-color-progressive);
+}
+
+.maplair-control-search-form:has(.maplair-control-search-input:placeholder-shown) .maplair-control-search-reset {
+	visibility: hidden;
+}
+
+.maplair-control-search-results {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	max-height: 50vh;
+	overflow-y: auto;
+	border-top: var(--maplair-border-width-base) solid var(--maplair-border-color-subtle);
+
+	&[hidden] {
+		display: none;
+	}
+}
+
+.maplair-control-search-result {
+	max-width: calc(240px + 2 * var(--maplair-size-control));
+	padding: var(--maplair-spacing-25) var(--maplair-spacing-50);
+	color: var(--maplair-color-base);
+	line-height: var(--maplair-line-height-small);
+	cursor: pointer;
+
+	&:hover {
+		background-color: var(--maplair-background-color-interactive-subtle--hover);
+	}
+
+	&[aria-selected="true"] {
+		background-color: var(--maplair-background-color-interactive--active);
+	}
+}
+
+.maplair-control-search-message {
+	padding: var(--maplair-spacing-25) var(--maplair-spacing-50);
+	border-top: var(--maplair-border-width-base) solid var(--maplair-border-color-subtle);
+	color: var(--maplair-color-subtle);
+
+	&[hidden] {
+		display: none;
+	}
+}
+
+/* time control */
+
+.maplair-bar.maplair-control-time {
+	display: flex;
+	align-items: center;
+	background-color: var(--maplair-background-color-base);
+	font-size: var(--maplair-font-size-small);
+
+	/* the buttons in a row */
+	button {
+		flex: none;
+		border-bottom: none;
+		border-right: var(--maplair-border-width-base) solid var(--maplair-border-color-subtle);
+		border-radius: 0;
+
+		&:first-child {
+			border-radius: var(--maplair-border-radius-base) 0 0 var(--maplair-border-radius-base);
+		}
+	}
+
+	svg {
+		vertical-align: middle;
+	}
+}
+
+.maplair-control-time-slider {
+	width: 160px;
+	max-width: calc(100vw - 260px);
+	margin: 0 var(--maplair-spacing-50);
+	accent-color: var(--maplair-color-progressive);
+}
+
+.maplair-control-time-label {
+	padding-right: var(--maplair-spacing-50);
+	white-space: nowrap;
+	font-variant-numeric: tabular-nums;
+}
+
+/* legend control */
+
+.maplair-control-legend {
+	padding: var(--maplair-spacing-25) var(--maplair-spacing-50);
+	background: var(--maplair-background-color-base);
+	color: var(--maplair-color-base);
+	border-radius: var(--maplair-border-radius-base);
+	box-shadow: var(--maplair-box-shadow-medium);
+	font-size: var(--maplair-font-size-x-small);
+	line-height: var(--maplair-line-height-small);
+	max-height: 50vh;
+	overflow-y: auto;
+
+	&[hidden] {
+		display: none;
+	}
+
+	summary {
+		cursor: pointer;
+		font-weight: bold;
+	}
+
+	ul {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	li {
+		display: flex;
+		align-items: center;
+		gap: var(--maplair-spacing-25);
+	}
+}
+
+.maplair-control-legend-section {
+	margin-top: var(--maplair-spacing-25);
+}
+
+.maplair-control-legend-name {
+	font-weight: bold;
+}
+
+.maplair-control-legend-total,
+.maplair-control-legend-count {
+	color: var(--maplair-color-subtle);
+}
+
+.maplair-control-legend-count {
+	margin-left: auto;
+	padding-left: var(--maplair-spacing-50);
+	font-variant-numeric: tabular-nums;
+}
+
+.maplair-control-legend-patch {
+	flex: none;
+}
+
+.maplair-control-legend-bar {
+	display: flex;
+	height: var(--maplair-spacing-50);
+	margin-top: var(--maplair-spacing-25);
+	border-radius: var(--maplair-border-radius-small);
+	overflow: hidden;
+}
+
+/* attribution and scale controls */
+
+.maplair-container .maplair-control-attribution {
+	background: var(--maplair-background-color-backdrop-light);
+	margin: 0;
+}
+
+.maplair-control-attribution,
+.maplair-control-scale-line {
+	padding: 0 var(--maplair-spacing-25);
+	color: var(--maplair-color-base);
+	line-height: var(--maplair-line-height-small);
+}
+
+.maplair-control-attribution a {
+	text-decoration: none;
+
+	&:hover,
+	&:focus {
+		text-decoration: underline;
+	}
+}
+
+.maplair-attribution-leaf {
+	margin-right: 0.277em;
+}
+
+.maplair-control-scale {
+	.maplair-left & {
+		margin-left: var(--maplair-spacing-25);
+	}
+
+	.maplair-bottom & {
+		margin-bottom: var(--maplair-spacing-25);
+	}
+}
+
+.maplair-control-scale-line {
+	border: var(--maplair-border-width-thick) solid var(--maplair-border-color-base);
+	border-top: none;
+	line-height: var(--maplair-line-height-x-small);
+	padding: 2px var(--maplair-spacing-25) 1px;
+	white-space: nowrap;
+	box-sizing: border-box;
+	background: var(--maplair-background-color-backdrop-light);
+	text-shadow: 1px 1px var(--maplair-background-color-base);
+
+	&:not(:first-child) {
+		border-top: var(--maplair-border-width-thick) solid var(--maplair-border-color-base);
+		border-bottom: none;
+		margin-top: calc(-1 * var(--maplair-border-width-thick));
+
+		&:not(:last-child) {
+			border-bottom: var(--maplair-border-width-thick) solid var(--maplair-border-color-base);
+		}
+	}
+}
+
+.maplair-control-layers,
+.maplair-bar {
+	border: var(--maplair-border-width-thick) solid var(--maplair-border-color-muted);
+	background-clip: padding-box;
+}
+
+/* overview map */
+
+.maplair-control-minimap {
+	position: relative;
+	border: var(--maplair-border-width-thick) solid var(--maplair-border-color-muted);
+	border-radius: var(--maplair-border-radius-base);
+	background-clip: padding-box;
+	box-shadow: var(--maplair-box-shadow-medium);
+
+	&.maplair-control-minimap-collapsed {
+		width: var(--maplair-size-control) !important;
+		height: var(--maplair-size-control) !important;
+
+		.maplair-control-minimap-map {
+			display: none;
+		}
+
+		.maplair-control-minimap-toggle {
+			transform: none;
+		}
+	}
+}
+
+.maplair-control-minimap-map {
+	width: 100%;
+	height: 100%;
+	border-radius: var(--maplair-border-radius-small);
+}
+
+.maplair-control-minimap-toggle {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	z-index: 1000;
+	width: var(--maplair-size-control);
+	height: var(--maplair-size-control);
+	padding: 0;
+	border: 0;
+	border-radius: var(--maplair-border-radius-small);
+	background: var(--maplair-background-color-base);
+	color: var(--maplair-color-base);
+	font: bold var(--maplair-font-size-medium)/var(--maplair-size-control) var(--maplair-font-family-base);
+	cursor: pointer;
+	transform: rotate(180deg);
+
+	&::before {
+		content: "⇱";
+	}
+}
+
+/* side-by-side divider */
+
+.maplair-sidebyside-divider {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	z-index: 900;
+	width: 4px;
+	margin-left: -2px;
+	background: var(--maplair-background-color-base);
+	box-shadow: var(--maplair-box-shadow-medium);
+	cursor: ew-resize;
+	touch-action: none;
+
+	&:focus:not(:focus-visible) {
+		outline: none;
+	}
+
+	/* the handle */
+	&::before {
+		content: "⇔";
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 32px;
+		height: 32px;
+		margin: -16px 0 0 -16px;
+		border-radius: 50%;
+		background: var(--maplair-background-color-base);
+		box-shadow: var(--maplair-box-shadow-medium);
+		font: bold var(--maplair-font-size-large)/32px var(--maplair-font-family-base);
+		text-align: center;
+		color: var(--maplair-color-base);
+	}
+}
+
+/* context menu */
+
+.maplair-contextmenu {
+	position: fixed;
+	inset: auto;
+	margin: 0;
+	padding: var(--maplair-spacing-25) 0;
+	min-width: 150px;
+	border: 0;
+	border-radius: var(--maplair-border-radius-base);
+	background: var(--maplair-background-color-base);
+	color: var(--maplair-color-base);
+	box-shadow: var(--maplair-box-shadow-medium);
+	font: var(--maplair-font-size-x-small)/var(--maplair-line-height-content) var(--maplair-font-family-base);
+}
+
+.maplair-contextmenu-item {
+	display: block;
+	width: 100%;
+	padding: var(--maplair-spacing-25) var(--maplair-spacing-75);
+	border: 0;
+	background: none;
+	color: inherit;
+	font: inherit;
+	text-align: left;
+	cursor: pointer;
+
+	&:hover,
+	&:focus {
+		background: var(--maplair-background-color-interactive-subtle--hover);
+	}
+
+	&:disabled {
+		color: var(--maplair-color-disabled);
+		cursor: default;
+		background: none;
+	}
+}
+
+.maplair-contextmenu-separator {
+	margin: var(--maplair-spacing-25) 0;
+	border-top: var(--maplair-border-width-base) solid var(--maplair-border-color-subtle);
+}
+
+/* keyboard shortcuts help */
+
+.maplair-keyboard-help {
+	padding: var(--maplair-spacing-25) var(--maplair-spacing-100);
+	border: 0;
+	border-radius: var(--maplair-border-radius-large);
+	background: var(--maplair-background-color-base);
+	color: var(--maplair-color-base);
+	box-shadow: var(--maplair-box-shadow-large);
+	font: var(--maplair-font-size-small)/var(--maplair-line-height-content) var(--maplair-font-family-base);
+
+	h2 {
+		font-size: var(--maplair-font-size-medium);
+	}
+
+	dl {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		gap: var(--maplair-spacing-50) var(--maplair-spacing-100);
+	}
+
+	div {
+		display: contents;
+	}
+
+	dd {
+		margin: 0;
+	}
+
+	kbd {
+		display: inline-block;
+		min-width: 1.2em;
+		margin-right: var(--maplair-spacing-25);
+		padding: 0 var(--maplair-spacing-25);
+		border: var(--maplair-border-width-base) solid var(--maplair-border-color-subtle);
+		border-radius: var(--maplair-border-radius-small);
+		background: var(--maplair-background-color-neutral-subtle);
+		font: inherit;
+		text-align: center;
+	}
+}
+
+/* popup */
+
+.maplair-popup {
+	position: absolute;
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+.maplair-popup-content-wrapper {
+	padding: 1px;
+	text-align: left;
+	border-radius: var(--maplair-border-radius-large);
+}
+
+.maplair-popup-content {
+	margin: var(--maplair-spacing-75) calc(2 * var(--maplair-spacing-75)) var(--maplair-spacing-75) var(--maplair-spacing-100);
+	line-height: var(--maplair-line-height-small);
+	font-size: var(--maplair-font-size-small);
+	min-height: 1px;
+
+	p {
+		margin: var(--maplair-spacing-100) 0;
+	}
+}
+
+.maplair-popup-tip-container {
+	width: 40px;
+	height: 20px;
+	position: absolute;
+	left: 50%;
+	margin-top: -1px;
+	margin-left: -20px;
+	overflow: hidden;
+	pointer-events: none;
+}
+
+.maplair-popup-tip {
+	width: 17px;
+	height: 17px;
+	padding: 1px;
+	margin: -10px auto 0;
+	pointer-events: auto;
+	transform: rotate(45deg);
+}
+
+.maplair-popup-content-wrapper,
+.maplair-popup-tip {
+	background: var(--maplair-background-color-base);
+	color: var(--maplair-color-base);
+	box-shadow: var(--maplair-box-shadow-large);
+}
+
+.maplair-container .maplair-popup-close-button {
+	position: absolute;
+	top: 0;
+	right: 0;
+	border: none;
+	text-align: center;
+	width: 24px;
+	height: 24px;
+	font: var(--maplair-font-size-medium)/24px var(--maplair-font-family-base);
+	color: var(--maplair-color-subtle);
+	text-decoration: none;
+	background: transparent;
+	padding: 0;
+	cursor: pointer;
+
+	&:hover,
+	&:focus {
+		color: var(--maplair-color-base);
+	}
+}
+
+.maplair-popup-scrolled {
+	overflow: auto;
+}
+
+/* div icon */
+
+.maplair-div-icon {
+	background: var(--maplair-background-color-base);
+	border: var(--maplair-border-width-base) solid var(--maplair-border-color-base);
+}
+
+/* MarkerClusterGroup */
+
+.maplair-cluster {
+	--maplair-cluster-color: #6ecc39;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	background: var(--maplair-cluster-color);
+	box-shadow: 0 0 0 5px color-mix(in srgb, var(--maplair-cluster-color) 40%, transparent);
+	color: #000;
+	font: bold var(--maplair-font-size-x-small) / 1 var(--maplair-font-family-base);
+}
+.maplair-cluster-medium {
+	--maplair-cluster-color: #f0c20c;
+}
+.maplair-cluster-large {
+	--maplair-cluster-color: #f18017;
+}
+.maplair-cluster-leg {
+	stroke: var(--maplair-color-base);
+	stroke-opacity: 0.5;
+}
+
+/* Tooltip */
+/* Base styles for the element that has a tooltip */
+.maplair-tooltip {
+	position: absolute;
+	padding: var(--maplair-spacing-50);
+	background-color: var(--maplair-background-color-base);
+	border: var(--maplair-border-width-base) solid var(--maplair-background-color-base);
+	border-radius: var(--maplair-border-radius-base);
+	color: var(--maplair-color-base);
+	white-space: nowrap;
+	-webkit-user-select: none;
+	user-select: none;
+	pointer-events: none;
+	box-shadow: var(--maplair-box-shadow-medium);
+
+	&.maplair-interactive {
+		cursor: pointer;
+		pointer-events: auto;
+	}
+}
+
+.maplair-tooltip-top:before,
+.maplair-tooltip-bottom:before,
+.maplair-tooltip-left:before,
+.maplair-tooltip-right:before {
+	position: absolute;
+	pointer-events: none;
+	border: 6px solid transparent;
+	background: transparent;
+	content: "";
+}
+
+/* Directions */
+
+.maplair-tooltip-bottom {
+	margin-top: 6px;
+
+	&:before {
+		left: calc(50% + var(--maplair-tooltip-tip-shift, 0px));
+		margin-left: -6px;
+		top: 0;
+		margin-top: -12px;
+		border-bottom-color: var(--maplair-background-color-base);
+	}
+}
+
+.maplair-tooltip-top {
+	margin-top: -6px;
+
+	&:before {
+		left: calc(50% + var(--maplair-tooltip-tip-shift, 0px));
+		margin-left: -6px;
+		bottom: 0;
+		margin-bottom: -12px;
+		border-top-color: var(--maplair-background-color-base);
+	}
+}
+
+
+.maplair-tooltip-left {
+	margin-left: -6px;
+
+	&:before {
+		top: calc(50% + var(--maplair-tooltip-tip-shift, 0px));
+		margin-top: -6px;
+		right: 0;
+		margin-right: -12px;
+		border-left-color: var(--maplair-background-color-base);
+	}
+}
+
+.maplair-tooltip-right {
+	margin-left: 6px;
+
+	&:before {
+		top: calc(50% + var(--maplair-tooltip-tip-shift, 0px));
+		margin-top: -6px;
+		left: 0;
+		margin-left: -12px;
+		border-right-color: var(--maplair-background-color-base);
+	}
+}
+
+/* Overlays extending beyond the map, shown as popover in the top layer */
+
+:where(.maplair-overflow) {
+	/* reset the user agent styles of popovers */
+	inset: auto;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: inherit;
+	overflow: visible;
+}
+
+.maplair-overflow {
+	position: fixed;
+	top: 0;
+	left: 0;
+}

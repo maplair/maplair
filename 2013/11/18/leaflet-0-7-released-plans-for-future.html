@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>Leaflet 0.7 Release, MapBox and Plans for Future - Maplair</title>
+	
+	
+	<meta charset="utf-8" />
+	
+
+	
+
+	<meta name="color-scheme" content="light dark">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="../../../docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="../../../docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="../../../docs/css/normalize.css" />
+	<link rel="stylesheet" href="../../../docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="../../../docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="../../../docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body>
+
+<header>
+	<h1><a href="https://maplair.org/"><picture><source srcset="../../../docs/images/logo-dark.png" media="(prefers-color-scheme: dark)" /><img src="../../../docs/images/logo.png" alt="Maplair" width="300" /></picture></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<a href="../../../index.html">Overview</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../examples.html">Tutorials</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../download.html">Download</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../plugins.html" title="Leaflet plugins, none of which is compatible with Maplair"><s>Plugins</s></a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../blog.html">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		<p><a href="../../../blog.html">← Back to the list of blog posts</a></p>
+
+<h2>Leaflet 0.7 Release, MapBox and Plans for Future</h2>
+
+<p class="post-meta">Posted on 18 November 2013 by <a href="http://agafonkin.com/en">Vladimir Agafonkin</a></p>
+
+<p><em>Leaflet 0.7 Released &mdash; with IE11 touch support, upscaling tiles and tons of other improvements and bugfixes! Meanwhile, I&#8217;ve joined the MapBox team full-time&#8230;</em></p>
+
+<p>After another 5 months of active development with <a href="https://github.com/Leaflet/Leaflet/graphs/contributors?from=2013-06-27&amp;to=2013-11-18&amp;type=c">lots of contributors involved</a>, I&#8217;m happy to announce the <strong>release of Leaflet 0.7</strong> stable.</p>
+
+<p>This is a bugfix-heavy release &mdash; as Leaflet becomes more and more stable feature-wise, the focus shifts towards stability, usability and API improvements over new features. I&#8217;ve also been holding back some of the planned deep refactorings (which I&#8217;ll talk about later in the post) until 0.7 is released, so that the heavy risky stuff is done at the beginning of the release cycle, leaving plenty of room to catch bugs and incompatible changes that can unintentionally break existing apps.</p>
+
+<h3 id="joining-mapbox">Joining MapBox</h3>
+
+<p>In other news, I <a href="https://www.mapbox.com/blog/vladimir-agafonkin-joins-mapbox/">joined the MapBox team full-time</a>. This is extremely exciting for me, as this was my dream job for quite a while &mdash; <a href="https://www.mapbox.com">MapBox</a> have changed the world of interactive mapping forever with all their amazing work, having some of the greatest geomapping engineers and designers of the world working together, pushing the boundaries of what&#8217;s possible and inspiring others every day.</p>
+
+<p>For Leaflet, this can only mean very good things &mdash; much more time on Leaflet development, more enthusiasm, more play, more crazy experiments with maps (like <a href="https://www.mapbox.com/blog/dynamic-hill-shading/">this one</a>), and lots of learning. I&#8217;m now one of the happiest map geeks ever. Stay tuned for tons of awesome!</p>
+
+<h3 id="07-changes">0.7 changes</h3>
+
+<p>You can check out the <a href="https://github.com/Leaflet/Leaflet/blob/main/CHANGELOG.md#07-dev-master">detailed changelog</a> of what&#8217;s already done over the recent months for 0.7 (about 90 improvements and bugfixes), but I&#8217;d like to mention some highlights:</p>
+
+<ul>
+  <li>Added the ability to <strong>upscale tiles</strong> to higher zoom levels (e.g. have zoom 19-20 when the source has 18 max).</li>
+  <li>Added support for <strong>IE11 touch devices</strong>. MS unexpectedly broke their pointer API compatibility between Developer Preview and final IE11 release, and we eventually rewrote quite a bit of code to make everything work smoothly across all IE versions (both desktop &amp; mobile), fixing a bunch of IE10 bugs along the way as well.</li>
+  <li>Officially <strong>dropped IE6 support</strong> (nobody cares anyway) and cleaned up/fixed IE7-8 styles.</li>
+  <li>Dropped the need for <strong>IE conditional comment</strong> when including Leaflet, making the snippet much simpler &mdash; all IE7/8-specific styles got simplified and moved to the main <code class="language-plaintext highlighter-rouge">leaflet.css</code> file.</li>
+  <li>Fixed an <strong>obscure iOS7 memory leak</strong> that crashed Safari when you tried to create several thousands of layers (e.g. markers for clustering). I still don&#8217;t understand why it happens, but we managed to fix it with a bit of trickery.</li>
+  <li>Fixed a critical <strong>Chrome for Android</strong> bug that made the tiles disappear after zooming on some devices.</li>
+  <li>Removed some <strong>Earth-related hardcode</strong> in TileLayer implementation to make it easier for plugins like Proj4Leaflet to handle complex projections without horrible hacks. Some other work in this direction to follow in 0.8.</li>
+  <li>Improved <strong>panning performance</strong> on complex pages with significant number of elements &mdash; we found out that simple things like setting a different cursor to <code class="language-plaintext highlighter-rouge">document</code> (for a &#8220;grabbing&#8221; hand) caused noticeable performance hit on some browsers (Chrome in particular).</li>
+  <li><strong>Changed the way maxBounds works</strong>, not enforcing a derived <code class="language-plaintext highlighter-rouge">minZoom</code> from it but restricting panning across lower zoom levels, along with some tricks to make it play better with panning inertia or offset zooming, etc.</li>
+</ul>
+
+<h3 id="plans-for-08">Plans for 0.8</h3>
+
+<p>There are several big undertakings in refactoring Leaflet that I&#8217;d want to switch to immediately after releasing 0.7 &mdash; I&#8217;ve been holding them off for too long, and they&#8217;ll be extremely beneficial for plugin and Leaflet-based API authors. Some of them are already in progress.</p>
+
+<ul>
+  <li>Refactoring the <strong>layers</strong> architecture. Currently there&#8217;s a lot of duplication of logic across implementation of different layers (map, markers, vector layers, etc.), specifically event handling, zoom animation logic, zIndex and pane handling (what appears on top of what etc.). Making the code consistent, more universal and shared across different layers will make it much easier to customize layers and make your own (e.g. integrate d3, etc.)</li>
+  <li>Splitting the huge TileLayer implementation into <strong>GridLayer and TileLayer</strong>, separating image tiles-related logic and grid-logic that will make other grid-like layer implementations (e.g. UTFGrid interaction or tiled GeoJSON) much simpler.</li>
+  <li>Refactoring <strong>zoom animation logic</strong> to make the long-awaited Easey-style animations (zoom-panning between points) possible.</li>
+  <li>Refactoring <strong>projections</strong> code to make it easier to set up flat maps and weird projections and customize how Leaflet handles them.</li>
+  <li>Refactoring the <strong>vector layers</strong> code to make it possible to use different rendering backends (Canvas, SVG, etc.) for different layers on the same map and switch between them easily. This will also open it up for interesting extensions, like indexing layers with <a href="https://github.com/mourner/rbush">RBush</a> for fast interaction features.</li>
+</ul>
+
+<p>While it&#8217;s an ambitious plan and it may take more than one stable release, finishing all those refactorings will mean that Leaflet is getting ready for a 1.0 release.</p>
+
+<p>Another direction I&#8217;d like to focus on after releasing 0.7 is <strong>website and documentation improvements</strong>. First, Leaflet is begging for <strong>more step-by-step tutorials</strong> (with more advanced features like custom layers, custom controls, etc.), and I&#8217;d love to do a docs/tutorials sprint some time in future. Second, the presentation could be significantly improved &mdash; adding a prominent visual <strong>showcase</strong> or app gallery, making Leaflet users more prominent with some logos and quotes/testimonials, and updating the layout/design for a more stylish, clean look, etc.</p>
+
+<p>Hope that gives a good glimpse of the stuff to expect from Leaflet in near future, and don&#8217;t hesitate to ask any questions in comments &mdash; I&#8217;ll be happy to answer!</p>
+
+<p>Grab the CDN links or downloads for the new release on the <a href="../../../download.html">download page</a> as always. Be sure to try it out on your apps and report any regressions so that we can patch them up immediately. And lets make some nice Twitter buzz about the release as usual!</p>
+
+<p>To all the people wo&#8217;ve been involved in Leaflet contributions, bug reports, mailing list, Twitter buzz, making awesome apps and spreading the word about Leaflet &mdash; thank you! You are the most awesome community ever.</p>
+
+<p>Cheers,<br />
+Vladimir.</p>
+
+
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/simon04">Simon Legner</a> and <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="../../../docs/js/docs.js"></script>
+
+</body>
+</html>
