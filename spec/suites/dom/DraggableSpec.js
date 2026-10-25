@@ -1,7 +1,6 @@
 import {expect} from 'vite-plus/test';
 import {DomEvent, Draggable, MaplairMap} from 'maplair';
-import Hand from 'prosthetic-hand';
-import {createContainer, removeMapContainer} from '../SpecHelper.js';
+import {createContainer, removeMapContainer, Finger} from '../SpecHelper.js';
 
 describe('Draggable', () => {
 	it('throws on the removed preventOutline argument', () => {
@@ -10,18 +9,14 @@ describe('Draggable', () => {
 		expect(() => new Draggable(el, el, {clickTolerance: 5})).not.to.throw();
 	});
 
-	// synthetic events with a made-up pointerId make setPointerCapture throw in Firefox, so use real pointers
 	async function drag(el, onMove) {
 		// away from the zoom control
 		el.style.cssText = 'position: absolute; left: 100px; top: 100px; width: 100px; height: 100px';
 		const {left, top} = el.getBoundingClientRect();
-		const hand = new Hand({timing: 'fastframe'});
-		const finger = hand.growFinger('pointer', {pointerType: 'mouse'});
-		finger.moveTo(left + 10, top + 10).down().moveBy(20, 20);
-		await hand.run();
+		const finger = new Finger();
+		await finger.moveTo(left + 10, top + 10).down().moveBy(20, 20);
 		onMove();
-		finger.up();
-		await hand.run();
+		await finger.up();
 	}
 
 	it('sets the maplair-dragging class on the map container while dragging, leaving the page alone', async () => {

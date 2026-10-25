@@ -1,7 +1,6 @@
 import {expect} from 'vite-plus/test';
 import {LatLngBounds, MaplairMap, Point, VideoOverlay} from 'maplair';
-import {createContainer, removeMapContainer} from '../SpecHelper.js';
-import Hand from 'prosthetic-hand';
+import {createContainer, removeMapContainer, Finger} from '../SpecHelper.js';
 
 describe('VideoOverlay', () => {
 	let container, map;
@@ -76,18 +75,10 @@ describe('VideoOverlay', () => {
 	// Drags across the video with pointer events (VideoOverlay listens to `pointerdown`)
 	// and resolves with how far the map pane moved, in pixels. Pixels rather than
 	// LatLng, since the map center may snap to whole pixels at any time.
-	function dragAcrossVideo() {
-		return new Promise((resolve) => {
-			const before = map._getMapPanePos();
-			const hand = new Hand({
-				timing: 'fastframe',
-				onStop() {
-					resolve(map._getMapPanePos().subtract(before));
-				}});
-			const mouse = hand.growFinger('pointer', {pointerType: 'mouse'});
-			mouse.moveTo(200, 200, 100)
-				.down().moveBy(50, 50, 10).up();
-		});
+	async function dragAcrossVideo() {
+		const before = map._getMapPanePos();
+		await new Finger().moveTo(200, 200).down().moveBy(50, 50).up();
+		return map._getMapPanePos().subtract(before);
 	}
 
 	it('drags the map while mousemove on video', async () => {

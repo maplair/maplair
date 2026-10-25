@@ -1,8 +1,7 @@
 import {expect, vi} from 'vite-plus/test';
 import {Canvas, GridLayer, MaplairMap, Marker, Point, Polygon, Popup, SVG, Tooltip} from 'maplair';
-import Hand from 'prosthetic-hand';
 import UIEventSimulator from 'ui-event-simulator';
-import {createContainer, removeMapContainer} from '../SpecHelper.js';
+import {createContainer, removeMapContainer, Finger} from '../SpecHelper.js';
 import {RotateControl} from 'maplair/map-rotation';
 
 describe('Map: rotation', () => {
@@ -131,9 +130,7 @@ describe('Map: rotation', () => {
 			const moveend = new Promise((resolve) => {
 				map.once('moveend', resolve);
 			});
-			const hand = new Hand({timing: 'fastframe'});
-			const finger = hand.growFinger('pointer', {pointerType: 'mouse'});
-			finger.wait(100).moveTo(start.x, start.y, 0).down().moveBy(80, 50, 200).up();
+			await new Finger().moveTo(start.x, start.y).down().moveBy(80, 50).up();
 			await moveend;
 			expectNear(map.latLngToContainerPoint(latlng), start.add([80, 50]), 2);
 		});
@@ -180,16 +177,23 @@ describe('Map: rotation', () => {
 			expect(maxDistance).to.be.lessThan(2);
 		});
 
+		// turns two fingers by 90° clockwise around the center, in straight lines in several steps,
+		// ending at the same distance
+		function turnTwoFingers() {
+			const f1 = new Finger('touch').moveTo(100, 150).down(),
+			f2 = new Finger('touch').moveTo(300, 150).down();
+			for (let i = 1; i <= 10; i++) {
+				f1.moveTo(100 + 10 * i, 150 - 10 * i);
+				f2.moveTo(300 - 10 * i, 150 + 10 * i);
+			}
+			return Promise.all([f1.up(), f2.up()]);
+		}
+
 		it('does not rotate by turning two fingers by default', async () => {
 			const moveend = new Promise((resolve) => {
 				map.once('moveend', resolve);
 			});
-			const hand = new Hand({timing: 'fastframe'});
-			const f1 = hand.growFinger('pointer', {pointerType: 'touch'});
-			const f2 = hand.growFinger('pointer', {pointerType: 'touch'});
-			hand.sync(5);
-			f1.wait(100).moveTo(100, 150, 0).down().moveTo(200, 50, 400).up(100);
-			f2.wait(100).moveTo(300, 150, 0).down().moveTo(200, 250, 400).up(100);
+			await turnTwoFingers();
 			await moveend;
 			expect(map.getBearing()).to.equal(60);
 		});
@@ -200,13 +204,7 @@ describe('Map: rotation', () => {
 			const zoomend = new Promise((resolve) => {
 				map.once('moveend', resolve);
 			});
-			const hand = new Hand({timing: 'fastframe'});
-			const f1 = hand.growFinger('pointer', {pointerType: 'touch'});
-			const f2 = hand.growFinger('pointer', {pointerType: 'touch'});
-			hand.sync(5);
-			// turn by 90° clockwise around the center, without changing the distance
-			f1.wait(100).moveTo(100, 150, 0).down().moveTo(200, 50, 400).up(100);
-			f2.wait(100).moveTo(300, 150, 0).down().moveTo(200, 250, 400).up(100);
+			await turnTwoFingers();
 			await zoomend;
 			// the threshold of 15° is not rotated
 			expect(map.getBearing()).to.be.closeTo(360 - 75, 5);

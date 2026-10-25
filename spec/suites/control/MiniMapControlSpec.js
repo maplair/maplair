@@ -1,8 +1,7 @@
 import {expect} from 'vite-plus/test';
 import {GridLayer, MaplairMap, MiniMapControl} from 'maplair';
-import Hand from 'prosthetic-hand';
 import UIEventSimulator from 'ui-event-simulator';
-import {createContainer, removeMapContainer} from '../SpecHelper.js';
+import {createContainer, removeMapContainer, Finger} from '../SpecHelper.js';
 import 'maplair/map-rotation';
 
 describe('MiniMapControl', () => {
@@ -69,9 +68,7 @@ describe('MiniMapControl', () => {
 		const moveend = new Promise((resolve) => {
 			map.once('moveend', resolve);
 		});
-		const hand = new Hand({timing: 'fastframe'});
-		const finger = hand.growFinger('pointer', {pointerType: 'mouse'});
-		finger.wait(50).moveTo(rect.left + 80, rect.top + 60, 0).down().moveBy(-20, 0, 200).up();
+		await new Finger().moveTo(rect.left + 80, rect.top + 60).down().moveBy(-20, 0).up();
 		await moveend;
 		// dragging the overview to the left moves the view to the east
 		expect(map.getCenter().lng).to.be.greaterThan(before.lng + 1);

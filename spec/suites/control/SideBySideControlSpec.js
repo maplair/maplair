@@ -1,8 +1,7 @@
 import {expect, vi} from 'vite-plus/test';
 import {GridLayer, ImageOverlay, MaplairMap, SideBySideControl} from 'maplair';
-import Hand from 'prosthetic-hand';
 import UIEventSimulator from 'ui-event-simulator';
-import {createContainer, removeMapContainer} from '../SpecHelper.js';
+import {createContainer, removeMapContainer, Finger} from '../SpecHelper.js';
 import 'maplair/map-rotation';
 
 describe('SideBySideControl', () => {
@@ -78,11 +77,7 @@ describe('SideBySideControl', () => {
 		dividermove = vi.fn();
 		map.on('dividermove', dividermove);
 
-		await new Promise((resolve) => {
-			const hand = new Hand({timing: 'fastframe', onStop: resolve});
-			const finger = hand.growFinger('pointer', {pointerType: 'mouse'});
-			finger.wait(50).moveTo(200, 150, 0).down().moveTo(300, 160, 200).up();
-		});
+		await new Finger().moveTo(200, 150).down().moveTo(300, 160).up();
 		expect(divider().style.left).to.equal('300px');
 		expect(layerAt(290, 100)).to.equal(left);
 		expect(dividermove).toHaveBeenCalled();

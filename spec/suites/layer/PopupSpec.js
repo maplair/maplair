@@ -1,8 +1,7 @@
 import {expect, vi} from 'vite-plus/test';
 import {DivIcon, DomUtil, FeatureGroup, DefaultIcon, MaplairMap, Marker, Point, Polygon, Popup} from 'maplair';
-import Hand from 'prosthetic-hand';
 import UIEventSimulator from 'ui-event-simulator';
-import {createContainer, removeMapContainer} from '../SpecHelper.js';
+import {createContainer, removeMapContainer, Finger} from '../SpecHelper.js';
 
 describe('Popup', () => {
 	let container, map;
@@ -448,7 +447,7 @@ describe('Popup', () => {
 			expect(map.hasLayer(p2)).to.be.true;
 		});
 
-		it('should not be closen when dragging map', (done) => {
+		it('should not be closen when dragging map', async () => {
 			container.style.position = 'absolute';
 			container.style.left = 0;
 			container.style.top = 0;
@@ -460,17 +459,10 @@ describe('Popup', () => {
 			map.openPopup(p);
 			expect(map.hasLayer(p)).to.be.true;
 			map.on('drag', spy);
-			const hand = new Hand({
-				timing: 'fastframe',
-				onStop() {
-					expect(spy).toHaveBeenCalled();
-					expect(map.hasLayer(p)).to.be.true;
-					done();
-				}
-			});
-			const mouse = hand.growFinger('pointer', {pointerType: 'mouse'});
-			mouse.moveTo(coords.left + 100, coords.left + 100, 0)
-				.down().moveBy(10, 10, 20).up();
+			await new Finger().moveTo(coords.left + 100, coords.top + 100).down().moveBy(10, 10).up();
+
+			expect(spy).toHaveBeenCalled();
+			expect(map.hasLayer(p)).to.be.true;
 		});
 
 		it('moves the map over a short distance to the popup if it is not in the view (keepInView)', (done) => {

@@ -223,9 +223,6 @@ importers:
       playwright:
         specifier: ^1.64.1
         version: 1.64.1
-      prosthetic-hand:
-        specifier: ^2.2.2
-        version: 2.2.2
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -1409,9 +1406,6 @@ packages:
     resolution: {integrity: sha512-Qb1gy5OrP5+zDf2Bvnzdl3jsTf1qXVMazbvCoKhtKqVs4/YK4ozX4gKQJJVyNe+cajNPn0KoC0MC3FUmaHWEmQ==}
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
 
-  prosthetic-hand@2.2.2:
-    resolution: {integrity: sha512-XlHdVcrymvO1UracjvCTDtBLc8mils3RKvUk3ZlJKJRVsDhJE7Yvou6DUV5DK1peYrm193d7yIlnykUKB3yABQ==}
-
   punycode.js@2.3.1:
     resolution: {integrity: sha512-uxFIHU0YlHYhDQtV4R9J6a52SLx28BCjT+4ieh7IGbgwVJWO+km431c4yRlREUAsAmt/uMjQUyQHNEPf0M39CA==}
     engines: {node: '>=6'}
@@ -2591,8 +2585,6 @@ snapshots:
       ansi-regex: 5.0.1
       ansi-styles: 5.2.0
       react-is: 17.0.2
-
-  prosthetic-hand@2.2.2: {}
 
   punycode.js@2.3.1: {}
 

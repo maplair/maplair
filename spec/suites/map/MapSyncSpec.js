@@ -1,7 +1,6 @@
 import {expect, vi} from 'vite-plus/test';
 import {MaplairMap, MapSync, Marker} from 'maplair';
-import Hand from 'prosthetic-hand';
-import {createContainer, removeMapContainer} from '../SpecHelper.js';
+import {createContainer, removeMapContainer, Finger} from '../SpecHelper.js';
 import 'maplair/map-rotation';
 
 describe('MapSync', () => {
@@ -69,9 +68,7 @@ describe('MapSync', () => {
 
 		it('follows dragging', async () => {
 			const moveend = nextEvent(maps[0], 'moveend');
-			const hand = new Hand({timing: 'fastframe'});
-			const finger = hand.growFinger('pointer', {pointerType: 'mouse'});
-			finger.wait(100).moveTo(150, 100, 0).down().moveBy(80, 40, 200).up();
+			await new Finger().moveTo(150, 100).down().moveBy(80, 40).up();
 			await moveend;
 			expectSameView(maps[0], maps[1]);
 		});

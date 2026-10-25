@@ -1,8 +1,7 @@
 import {expect} from 'vite-plus/test';
 import {MaplairMap} from 'maplair';
-import Hand from 'prosthetic-hand';
 import UIEventSimulator from 'ui-event-simulator';
-import {createContainer, removeMapContainer} from '../SpecHelper.js';
+import {createContainer, removeMapContainer, Finger} from '../SpecHelper.js';
 
 describe('Map: originalEvent of user-initiated view changes', () => {
 	let container, map, events;
@@ -71,9 +70,7 @@ describe('Map: originalEvent of user-initiated view changes', () => {
 
 		it('has the pointer events for dragging', async () => {
 			const moveend = nextEvent('moveend');
-			const hand = new Hand({timing: 'fastframe'});
-			const finger = hand.growFinger('pointer', {pointerType: 'mouse'});
-			finger.wait(100).moveTo(200, 200, 0).down().moveBy(50, 50, 200).up();
+			await new Finger().moveTo(200, 200).down().moveBy(50, 50).up();
 			await moveend;
 			expect(events.map(e => e.type)).to.include.members(['movestart', 'move', 'moveend']);
 			for (const e of events) {
@@ -83,10 +80,7 @@ describe('Map: originalEvent of user-initiated view changes', () => {
 
 		it('has the pointer events for tap-drag zoom', async () => {
 			const zoomend = nextEvent('zoomend');
-			const hand = new Hand({timing: 'fastframe'});
-			const finger = hand.growFinger('pointer', {pointerType: 'touch'});
-			finger.wait(100).moveTo(200, 200, 0).down().wait(50).up().wait(50)
-				.down().moveBy(0, 128, 300).up();
+			await new Finger('touch').moveTo(200, 200).down().up().down().moveBy(0, 128).up();
 			await zoomend;
 			expect(map.getZoom()).to.equal(6);
 			for (const e of events) {
