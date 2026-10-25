@@ -2270,4 +2270,4 @@ for (const feature of [
 	feature.register(MaplairMap);
 }
 
-export const Map = MaplairMap;
+export {MaplairMap as Map};
