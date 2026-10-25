@@ -39,6 +39,11 @@ Ported from Leaflet (changes without author notice are by [@mourner](https://git
 * Simplify the center calculation of polylines and polygons in https://github.com/Leaflet/Leaflet/pull/10451
 * Simplify `flyTo()` in https://github.com/Leaflet/Leaflet/commit/3dc172b57175994f152d6fe512b0131869ee30cb
 * The global build has plain, patchable namespaces (from https://github.com/Leaflet/Leaflet/pull/10443)
+* Zoom by the typed character for non-US keyboard layouts, `KeyboardHandler.keyCodes` is replaced by `KeyboardHandler.keys`, `aria-keyshortcuts` is opt-in with the new map option `ariaKeyShortcuts` (with [@babielmam](https://github.com/babielmam)) in https://github.com/Leaflet/Leaflet/pull/10469
+* Stop restyling the whole page on map and marker drags, remove `DomUtil.disableTextSelection()` and `enableTextSelection()` in https://github.com/Leaflet/Leaflet/pull/10470
+* Respect reduced motion through options instead of overrides, replacing `DomUtil.reducedMotion`, in https://github.com/Leaflet/Leaflet/pull/10466, and reduce rather than remove motion in https://github.com/Leaflet/Leaflet/pull/10479; the default `inertiaMaxSpeed` is 1400
+* Improve the keyboard accessibility of markers (Enter and Space click interactive markers), remove the `keypress` event in https://github.com/Leaflet/Leaflet/pull/10473
+* Export `Map` as an alias of `MaplairMap` more idiomatically in https://github.com/Leaflet/Leaflet/commit/4bc93b605f043cb2ff6bbe0615c03109fd0b6723
 
 #### 🐞 Bugfixes
 
@@ -64,6 +69,13 @@ Ported from Leaflet (changes without author notice are by [@mourner](https://git
 * Fix an edge case with a tiny box zoom in https://github.com/Leaflet/Leaflet/commit/a82d3832c9b803fdc74029ed6093c2dd924a64f6
 * Fix VideoOverlay throwing when created from a video element by [@Enesuygurs](https://github.com/Enesuygurs) in https://github.com/Leaflet/Leaflet/pull/10464
 * Fix the global build throwing without `navigator` (from https://github.com/Leaflet/Leaflet/pull/10443)
+* Fix usability on maps with `zoomAnimation` disabled in https://github.com/Leaflet/Leaflet/pull/10465
+* Avoid relayouts on wheel zoom and pinch zoom in https://github.com/Leaflet/Leaflet/commit/9c0cef035e695650964786af63f3222f42f15f1f and https://github.com/Leaflet/Leaflet/commit/0f8f2fb008900f05b5b614b6e76a2ea7a426eb9f
+* Fix `toGeoJSON()` dropping MultiPoint members of a GeometryCollection by [@nk-batman21](https://github.com/nk-batman21) in https://github.com/Leaflet/Leaflet/pull/10468
+* Fix WMSTileLayer throwing on relative service URLs by [@nk-batman21](https://github.com/nk-batman21) in https://github.com/Leaflet/Leaflet/pull/10474
+* Fix VideoOverlay ignoring `keepAspectRatio: false` in Firefox and Safari by [@nk-batman21](https://github.com/nk-batman21) in https://github.com/Leaflet/Leaflet/pull/10475
+* Limit the destination of `flyTo()` to `maxBounds` by [@Don-Yin](https://github.com/Don-Yin) in https://github.com/Leaflet/Leaflet/pull/10477
+* Fix a drag sometimes getting stuck after a quick pan outside the window in https://github.com/Leaflet/Leaflet/commit/cdff2a590004f604db7ef44f69b0ea02073cfea6
 
 #### 📝 Docs
 
@@ -74,6 +86,12 @@ Ported from Leaflet (changes without author notice are by [@mourner](https://git
 * Fix missing front matter delimiter in city-autocomplete-usa.md by [@slbarriosdev](https://github.com/slbarriosdev) in https://github.com/Leaflet/Leaflet/pull/10258
 * Fix spelling errors in Joomla plugin documentation by [@Fran-cruz](https://github.com/Fran-cruz) in https://github.com/Leaflet/Leaflet/pull/10298
 * Remove `!important` in the CSS of the website in https://github.com/Leaflet/Leaflet/commit/e2036455408de5b6dc1e6c60f10888c1f34af49b
+* Clarify the stacking of layers within a pane by [@VisakanM-bit](https://github.com/VisakanM-bit) in https://github.com/Leaflet/Leaflet/pull/10297
+* Add the Leaflet WebGL Markers plugin by [@tang-tc](https://github.com/tang-tc) in https://github.com/Leaflet/Leaflet/pull/10349
+* Add the PartiallyEditablePolyline plugin by [@hiroaki](https://github.com/hiroaki) in https://github.com/Leaflet/Leaflet/pull/10395
+* Add the @s57-parser/leaflet plugin by [@devladpopov](https://github.com/devladpopov) in https://github.com/Leaflet/Leaflet/pull/10394
+* Add the leaflet-daynight plugin by [@LoganD900](https://github.com/LoganD900) in https://github.com/Leaflet/Leaflet/pull/10388
+* Add the Leaflet.GridLayer.Relief plugin by [@glandais](https://github.com/glandais) in https://github.com/Leaflet/Leaflet/pull/10348
 
 #### 🔧 Workflow
 
@@ -88,6 +106,8 @@ Ported from Leaflet (changes without author notice are by [@mourner](https://git
 
 * Simplify, improve and speed up the test setup in https://github.com/Leaflet/Leaflet/pull/10463
 * Add specs of the layer lifecycle and of extending layers (from https://github.com/Leaflet/Leaflet/pull/10441)
+* Speed up a slow `flyTo()` test and fix a flaky DragHandler test in https://github.com/Leaflet/Leaflet/commit/051c4a65082dd3259858f9000189faf7d351522a and https://github.com/Leaflet/Leaflet/commit/a8a1904c390540735d7906f152e628971df0e0b6
+* Replace prosthetic-hand with a small built-in `Finger` helper in https://github.com/Leaflet/Leaflet/pull/10476
 
 ## 4.0.0 (2026-10-19) 🍁 Maplair, a fork of Leaflet
 
