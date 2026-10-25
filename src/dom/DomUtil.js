@@ -115,42 +115,6 @@ export function getPosition(el) {
 	return positions.get(el) ?? new Point(0, 0);
 }
 
-const documentStyle = /* @__PURE__ */ (() => (typeof document === 'undefined' ? {} : document.documentElement.style))();
-// Safari still needs a vendor prefix, we need to detect with property name is supported.
-const userSelectProp = /* @__PURE__ */ ['userSelect', 'WebkitUserSelect'].find(prop => prop in documentStyle);
-let prevUserSelect;
-
-/**
- * Prevents the user from selecting text in the document. Used internally
- * by Maplair to override the behaviour of any click-and-drag interaction on
- * the map. Affects drag interactions on the whole document.
- * @returns {void}
- */
-export function disableTextSelection() {
-	const value = documentStyle[userSelectProp];
-
-	if (value === 'none') {
-		return;
-	}
-
-	prevUserSelect = value;
-	documentStyle[userSelectProp] = 'none';
-}
-
-/**
- * Cancels the effects of a previous
- * [`DomUtil.disableTextSelection`](#domutil-disabletextselection).
- * @returns {void}
- */
-export function enableTextSelection() {
-	if (typeof prevUserSelect === 'undefined') {
-		return;
-	}
-
-	documentStyle[userSelectProp] = prevUserSelect;
-	prevUserSelect = undefined;
-}
-
 /**
  * Prevents the user from generating `dragstart` DOM events, usually generated when
  * the user drags an image.

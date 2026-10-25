@@ -113,7 +113,6 @@ export class Draggable extends Evented {
 		Draggable._dragging = this;  // Prevent dragging multiple objects at once.
 
 		DomUtil.disableImageDrag();
-		DomUtil.disableTextSelection();
 
 		if (this._moving) { return; }
 
@@ -139,8 +138,9 @@ export class Draggable extends Evented {
 
 		const offset = new Point(e.clientX, e.clientY)._subtract(this._startPoint);
 
-		if (!offset.x && !offset.y) { return; }
-		if (Math.abs(offset.x) + Math.abs(offset.y) < this.options.clickTolerance) { return; }
+		// once the drag has started, the pointer must be followed even when it comes back near the start point
+		const dist = Math.abs(offset.x) + Math.abs(offset.y);
+		if (!this._moved && (!dist || dist < this.options.clickTolerance)) { return; }
 
 		// We assume that the parent container's position, border and scale do not change for the duration of the drag.
 		// Therefore there is no need to account for the position and border (they are eliminated by the subtraction)
@@ -157,7 +157,9 @@ export class Draggable extends Evented {
 
 			this._moved = true;
 
-			this._element.ownerDocument.body.classList.add('maplair-dragging');
+			// on the map container rather than the body, so that toggling it doesn't restyle the whole page
+			this._draggingContainer = this._element.closest('.maplair-container') ?? this._element;
+			this._draggingContainer.classList.add('maplair-dragging');
 
 			this._lastTarget = e.target;
 			this._lastTarget.classList.add('maplair-drag-target');
@@ -195,7 +197,8 @@ export class Draggable extends Evented {
 	 * @returns {void}
 	 */
 	finishDrag(noInertia) {
-		this._element.ownerDocument.body.classList.remove('maplair-dragging');
+		this._draggingContainer?.classList.remove('maplair-dragging');
+		this._draggingContainer = null;
 
 		if (this._lastTarget) {
 			this._lastTarget.classList.remove('maplair-drag-target');
@@ -206,7 +209,6 @@ export class Draggable extends Evented {
 		DomEvent.off(this._dragStartTarget, 'pointerup pointercancel', this._onUp, this);
 
 		DomUtil.enableImageDrag();
-		DomUtil.enableTextSelection();
 
 		const fireDragend = this._moved && this._moving;
 

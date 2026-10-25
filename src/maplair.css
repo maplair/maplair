@@ -76,11 +76,25 @@
 	inset: 0;
 }
 
+/* without this, a long press on the map selects the nearest page text on iOS, and a drag leaving the map selects
+   page text in Firefox; popups and controls stop pointerdown from reaching the map, so their text stays selectable */
+.maplair-container,
+.maplair-dragging,
+.maplair-control-zoom-in,
+.maplair-control-zoom-out {
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+.maplair-popup-pane,
+.maplair-control-container {
+	-webkit-user-select: text;
+	user-select: text;
+}
+
 .maplair-tile,
 .maplair-marker-icon,
 .maplair-marker-shadow {
-	-webkit-user-select: none;
-	user-select: none;
 	-webkit-user-drag: none;
 	-webkit-touch-callout: none;
 }
@@ -338,7 +352,7 @@
 }
 
 .maplair-dragging {
-	.maplair-grab {
+	&.maplair-grab {
 		cursor: grabbing;
 
 		.maplair-interactive {
@@ -1162,8 +1176,6 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	border-radius: var(--maplair-border-radius-base);
 	color: var(--maplair-color-base);
 	white-space: nowrap;
-	-webkit-user-select: none;
-	user-select: none;
 	pointer-events: none;
 	box-shadow: var(--maplair-box-shadow-medium);
 

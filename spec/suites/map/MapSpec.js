@@ -2816,4 +2816,17 @@ describe('Map', () => {
 			map.flyToBounds(bounds, {animate: false});
 		});
 	});
+
+	describe('text selection', () => {
+		it('makes the map surface unselectable, but not popups and controls', () => {
+			map.setView([0, 0], 1).openPopup('popup text', [0, 0]);
+			const userSelect = el => getComputedStyle(el).userSelect;
+
+			// only elements with their own rule: Firefox and WebKit report descendants of a `none` element as `auto`
+			expect(userSelect(container)).to.equal('none');
+			expect(userSelect(container.querySelector('.maplair-popup-pane'))).to.equal('text');
+			expect(userSelect(container.querySelector('.maplair-control-container'))).to.equal('text');
+			expect(userSelect(container.querySelector('.maplair-control-zoom-in'))).to.equal('none');
+		});
+	});
 });
