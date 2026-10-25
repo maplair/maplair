@@ -1,5 +1,6 @@
 import {expect} from 'vite-plus/test';
-import {WMSTileLayer} from 'maplair';
+import {MaplairMap, WMSTileLayer} from 'maplair';
+import {createContainer, removeMapContainer} from '../../SpecHelper.js';
 
 describe('WMSTileLayer', () => {
 	describe('constructor', () => {
@@ -51,6 +52,29 @@ describe('WMSTileLayer', () => {
 			const url = new URL(layer.getLegendUrl());
 			expect(url.searchParams.get('REQUEST')).to.equal('GetLegendGraphic');
 			expect(url.searchParams.get('LAYER')).to.equal('roads');
+		});
+	});
+
+	describe('#getTileUrl', () => {
+		let container, map;
+
+		beforeEach(() => {
+			container = createContainer();
+			map = new MaplairMap(container).setView([0, 0], 0);
+		});
+
+		afterEach(() => {
+			removeMapContainer(map, container);
+		});
+
+		it('accepts a relative service URL', () => {
+			const layer = new WMSTileLayer('/wms?map=foo', {layers: 'roads'}).addTo(map);
+			const url = new URL(layer.getContainer().querySelector('img').src);
+
+			expect(url.origin).to.equal(location.origin);
+			expect(url.pathname).to.equal('/wms');
+			expect(url.searchParams.get('map')).to.equal('foo');
+			expect(url.searchParams.get('layers')).to.equal('roads');
 		});
 	});
 });
