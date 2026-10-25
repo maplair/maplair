@@ -22,7 +22,7 @@ import {pointToGeoJSON} from '../GeoJSONUtil.js';
  * marker. See [Icon documentation](#Icon) for details on how to customize the marker
  * icon. If not specified, a common instance of `DefaultIcon` is used.
  * @property {boolean} [keyboard=true] Whether the marker can be tabbed to with a keyboard
- * and clicked by pressing enter.
+ * and, if interactive, clicked by pressing Enter or Space.
  * @property {string} [title=''] Text for the browser tooltip that appear on marker hover
  * (no tooltip by default).
  * [Useful for accessibility](https://maplair.org/examples/accessibility/#markers-must-be-labelled).
@@ -288,7 +288,10 @@ export class Marker extends Layer {
 
 		if (options.keyboard) {
 			icon.tabIndex = 0;
-			icon.setAttribute('role', 'button');
+			if (options.interactive) {
+				icon.setAttribute('role', 'button');
+			}
+			DomEvent.on(icon, 'keydown', this._onKeyDown, this);
 		}
 
 		this._icon = icon;
@@ -344,6 +347,7 @@ export class Marker extends Layer {
 		if (this.options.autoPanOnFocus) {
 			DomEvent.off(this._icon, 'focus', this._panOnFocus, this);
 		}
+		DomEvent.off(this._icon, 'keydown', this._onKeyDown, this);
 
 		this._icon.remove();
 		this.removeInteractiveTarget(this._icon);
@@ -413,6 +417,13 @@ export class Marker extends Layer {
 
 	_updateInteractive() {
 		if (!this._icon) { return; }
+		if (this.options.keyboard) {
+			if (this.options.interactive) {
+				this._icon.setAttribute('role', 'button');
+			} else {
+				this._icon.removeAttribute('role');
+			}
+		}
 		if (this.options.interactive) {
 			this._initInteraction();
 			if (this._draggableBeforeNonInteractive) {
@@ -503,6 +514,17 @@ export class Marker extends Layer {
 
 	_resetZIndex() {
 		this._updateZIndex(0);
+	}
+
+	_onKeyDown(e) {
+		// a key pressed on a focusable element inside a DivIcon (e.g. a <button>) already clicks it natively
+		if (this.options.interactive && e.target === this._icon && !e.repeat && (e.key === 'Enter' || e.key === ' ')) {
+			e.preventDefault(); // stop Space from scrolling the page
+			// lets a popup opened by the click take the focus, see Popup.onAdd()
+			this._clickedByKeyboard = true;
+			this._icon.click();
+			this._clickedByKeyboard = false;
+		}
 	}
 
 	_panOnFocus() {

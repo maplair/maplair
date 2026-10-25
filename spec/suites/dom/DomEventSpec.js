@@ -589,17 +589,17 @@ describe('DomEvent', () => {
 			const mapClickListener = vi.fn();
 			const mapOtherListener = vi.fn();
 			map.on('click', mapClickListener);          // control case
-			map.on('keypress', mapOtherListener);       // control case
+			map.on('keydown', mapOtherListener);       // control case
 
 			UIEventSimulator.fire('click', grandChild);
-			UIEventSimulator.fire('keypress', grandChild);
+			UIEventSimulator.fire('keydown', grandChild);
 
 			expect(mapOtherListener).toHaveBeenCalled(); // control case
 			expect(listener).toHaveBeenCalled();
 			expect(mapClickListener).not.toHaveBeenCalled();
 
 			UIEventSimulator.fire('click', child);
-			UIEventSimulator.fire('keypress', child);
+			UIEventSimulator.fire('keydown', child);
 
 			expect(listener).toHaveBeenCalledTimes(2);
 			expect(mapClickListener).not.toHaveBeenCalled();

@@ -260,12 +260,8 @@ const zoomAnimDuration = 250;
  * @fires preclick {MaplairPointerEvent} Fired before pointer click on the map (sometimes
  * useful when you want something to happen on click before any existing click handlers
  * start running).
- * @fires keypress {MaplairKeyboardEvent} Fired when the user presses a key from the
- * keyboard that produces a character value while the map is focused.
  * @fires keydown {MaplairKeyboardEvent} Fired when the user presses a key from the
- * keyboard while the map is focused. Unlike the `keypress` event, the `keydown` event is
- * fired for keys that produce a character value and for keys that do not produce a
- * character value.
+ * keyboard while the map is focused.
  * @fires keyup {MaplairKeyboardEvent} Fired when the user releases a key from the
  * keyboard while the map is focused.
  * @fires crschange {CrsChangeEvent} Fired when the CRS of the map changes with
@@ -1785,7 +1781,7 @@ export class MaplairMap extends Evented {
 		const onOff = remove ? DomEvent.off : DomEvent.on;
 
 		onOff(this._container, 'click dblclick pointerdown pointerup ' +
-			'pointerover pointerout pointermove contextmenu keypress keydown keyup', this._handleDOMEvent, this);
+			'pointerover pointerout pointermove contextmenu keydown keyup', this._handleDOMEvent, this);
 
 		if (this.options.trackResize) {
 			if (!remove) {
@@ -1900,7 +1896,7 @@ export class MaplairMap extends Evented {
 			originalEvent: e
 		};
 
-		if (e.type !== 'keypress' && e.type !== 'keydown' && e.type !== 'keyup') {
+		if (e.type !== 'keydown' && e.type !== 'keyup') {
 			const isMarker = target.getLatLng && (!target._pxRadius || target._pxRadius <= 10);
 			data.containerPoint = isMarker ?
 				this.latLngToContainerPoint(target.getLatLng()) : this.pointerEventToContainerPoint(e);

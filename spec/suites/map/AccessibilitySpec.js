@@ -130,7 +130,7 @@ describe('Accessibility', () => {
 		});
 
 		function pressEnter() {
-			UIEventSimulator.fire('keypress', marker.getElement(), {code: 'Enter'});
+			UIEventSimulator.fire('keydown', marker.getElement(), {key: 'Enter'});
 		}
 
 		it('moves the focus into a popup opened with the keyboard', () => {

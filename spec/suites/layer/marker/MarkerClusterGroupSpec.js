@@ -152,7 +152,7 @@ describe('MarkerClusterGroup', () => {
 	it('zooms to a cluster on Enter', () => {
 		const group = new MarkerClusterGroup([new Marker([0, 0]), new Marker([0, 0.02])]).addTo(map);
 		const element = clusterMarkers(group)[0].getElement();
-		UIEventSimulator.fire('keypress', element, {code: 'Enter'});
+		UIEventSimulator.fire('keydown', element, {key: 'Enter'});
 		expect(map.getZoom()).to.be.greaterThan(10);
 	});
 

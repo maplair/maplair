@@ -189,20 +189,18 @@ describe('KeyboardHandler', () => {
 	});
 
 	describe('keys events binding', () => {
-		it('keypress', (done) => {
-			const keyDownSpy = vi.fn();
+		it('keypress is not fired', () => {
 			const keyPressSpy = vi.fn();
-			const keyUpSpy = vi.fn();
 
-			map.on('keypress', keyPressSpy);
+			const errorStub = vi.spyOn(console, 'error').mockImplementation(() => {});
+			try {
+				map.on('keypress', keyPressSpy);
+			} finally {
+				errorStub.mockRestore();
+			}
 			UIEventSimulator.fire('keypress', container, KEY_LOWERCASE_A);
 
-			setTimeout(() => {
-				expect(keyDownSpy).not.toHaveBeenCalled();
-				expect(keyPressSpy).toHaveBeenCalled();
-				expect(keyUpSpy).not.toHaveBeenCalled();
-				done();
-			}, 50);
+			expect(keyPressSpy).not.toHaveBeenCalled();
 		});
 
 		it('keydown', (done) => {

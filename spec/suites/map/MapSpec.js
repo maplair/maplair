@@ -2058,6 +2058,14 @@ describe('Map', () => {
 			expect(errorSpy.mock.calls[0][0]).to.eq('The event mouseout has been removed in Maplair. Use pointerout instead.');
 			errorSpy.mockRestore();
 		});
+
+		it('prints to console.error about the removed keypress event', () => {
+			const errorSpy = vi.spyOn(console, 'error');
+			map.on('keypress', () => {});
+			expect(errorSpy).toHaveBeenCalledOnce();
+			expect(errorSpy.mock.calls[0][0]).to.eq('The event keypress has been removed in Maplair. Use keydown instead.');
+			errorSpy.mockRestore();
+		});
 	});
 
 	describe('#getScaleZoom && #getZoomScale', () => {

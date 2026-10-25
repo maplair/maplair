@@ -138,7 +138,6 @@ const layerPopupMethods = {
 		this._popup = this._initOverlay(Popup, this._popup, content, options);
 		this.on({
 			click: this._openPopup,
-			keypress: this._onKeyPress,
 			remove: this.closePopup,
 			move: this._movePopup
 		});
@@ -155,7 +154,6 @@ const layerPopupMethods = {
 		if (this._popup) {
 			this.off({
 				click: this._openPopup,
-				keypress: this._onKeyPress,
 				remove: this.closePopup,
 				move: this._movePopup
 			});
@@ -259,14 +257,6 @@ const layerPopupMethods = {
 
 	_movePopup(e) {
 		this._popup.setLatLng(e.latlng);
-	},
-
-	_onKeyPress(e) {
-		if (e.originalEvent.code === 'Enter') {
-			this._popup._openedByKeyboard = true;
-			this._openPopup(e);
-			this._popup._openedByKeyboard = false;
-		}
 	}
 };
 /** @typedef {typeof layerPopupMethods} LayerPopupMethods */
@@ -380,7 +370,7 @@ export class Popup extends DivOverlay {
 
 		super.onAdd(map);
 
-		if (this._openedByKeyboard) {
+		if (this._source?._clickedByKeyboard) {
 			// Move the focus into the popup, so that its content is read and reachable
 			if (!this._closeButton) {
 				this._container.tabIndex = -1;

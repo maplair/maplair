@@ -297,11 +297,7 @@ export class MarkerClusterGroup extends FeatureGroup {
 		const cluster = {latlng, bounds: new LatLngBounds(markers.map(marker => marker.getLatLng())), markers, count: markers.length},
 		icon = this.options.iconCreateFunction?.(cluster) ?? this._createIcon(cluster),
 		marker = new Marker(latlng, {icon, title: I18n.translate('{count} markers', {count: cluster.count})});
-		marker.on({
-			click: e => this._onClusterClick(cluster, marker, e),
-			// like a popup, for the keyboard
-			keypress: e => e.originalEvent.code === 'Enter' && this._onClusterClick(cluster, marker, e)
-		});
+		marker.on('click', e => this._onClusterClick(cluster, marker, e));
 		return marker;
 	}
 
