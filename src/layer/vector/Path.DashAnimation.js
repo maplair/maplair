@@ -1,5 +1,4 @@
 import {Path} from './Path.js';
-import * as DomUtil from '../../dom/DomUtil.js';
 import {SVG} from './SVG.js';
 import {Canvas} from './Canvas.js';
 import * as Util from '../../core/Util.js';
@@ -89,7 +88,7 @@ Canvas.include({
 	// The shift of the dashes of an animated path, and keeps redrawing it
 	_getDashShift(layer) {
 		const speed = layer.options.dashSpeed,
-		length = speed && !DomUtil.reducedMotion && layer._getDashLength();
+		length = speed && !this._map._prefersReducedMotion() && layer._getDashLength();
 		if (!length) { return 0; }
 
 		this._animatedDashes ??= new Set();

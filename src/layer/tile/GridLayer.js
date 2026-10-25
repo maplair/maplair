@@ -21,16 +21,13 @@ import {LatLngBounds} from '../../geo/LatLngBounds.js';
  * of tiles while they are loading, e.g. `'#ddd'` or
  * `'url(loading.svg) center no-repeat #eee'`. Tiles with a placeholder appear without
  * fading in.
- * @property {boolean} [updateWhenIdle] Load new tiles only when panning ends. Defaults
- * to `false` (tiles are loaded _during_ panning) unless the browser is configured for
- * reduced motion.
+ * @property {boolean} [updateWhenIdle=false] Load new tiles only when panning ends.
  * @property {boolean} [updateWhenZooming=true] By default, a smooth zoom animation
  * (during a [pinch zoom](#map-pinchzoom) or a [`flyTo()`](#map-flyto)) will update grid
  * layers every integer zoom level. Setting this option to `false` will update the grid
  * layer only when the smooth animation ends.
- * @property {number} [updateInterval] Tiles will not update more than once every
- * `updateInterval` milliseconds when panning. Defaults to `200`, increased to five
- * seconds if the browser is configured for reduced motion.
+ * @property {number} [updateInterval=200] Tiles will not update more than once every
+ * `updateInterval` milliseconds when panning.
  * @property {number} [zIndex=1] The explicit zIndex of the tile layer.
  * @property {LatLngBoundsExpression|null} [bounds=null] If set, tiles will only be
  * loaded inside the set `LatLngBounds`.
@@ -147,9 +144,9 @@ export class GridLayer extends Layer {
 		tileSize: 256,
 		opacity: 1,
 		placeholder: null,
-		updateWhenIdle: DomUtil.reducedMotion,
+		updateWhenIdle: false,
 		updateWhenZooming: true,
-		updateInterval: DomUtil.reducedMotion ? 5000 : 200,
+		updateInterval: 200,
 		zIndex: 1,
 		bounds: null,
 		minZoom: 0,

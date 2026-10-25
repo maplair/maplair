@@ -23,9 +23,8 @@ import {I18n} from '../core/I18n.js';
  * @property {number|null} [maxHeight=null] If set, creates a scrollable container of
  * the given height inside a popup if its content exceeds it. The scrollable container
  * can be styled using the `maplair-popup-scrolled` CSS class selector.
- * @property {boolean} [autoPan] Set it to `false` if you don't want the map to do
- * panning animation to fit the opened popup. Defaults to `true`, unless the user
- * prefers reduced motion (`DomUtil.reducedMotion`).
+ * @property {boolean} [autoPan=true] Set it to `false` if you don't want the map to do
+ * panning animation to fit the opened popup.
  * @property {PointExpression|null} [autoPanPaddingTopLeft=null] The margin between the
  * popup and the top left corner of the map view after autopanning was performed.
  * @property {PointExpression|null} [autoPanPaddingBottomRight=null] The margin between
@@ -318,7 +317,7 @@ export class Popup extends DivOverlay {
 		maxWidth: 300,
 		minWidth: 50,
 		maxHeight: null,
-		autoPan: !DomUtil.reducedMotion,
+		autoPan: true,
 		autoPanPaddingTopLeft: null,
 		autoPanPaddingBottomRight: null,
 		autoPanPadding: [5, 5],

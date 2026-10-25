@@ -142,7 +142,7 @@ const mapRotationMethods = {
 		if (bearing === from) { return this; }
 
 		this._stop();
-		if (!options?.animate || !this._loaded || DomUtil.reducedMotion) {
+		if (!options?.animate || !this._loaded || this._prefersReducedMotion()) {
 			this._rotate(bearing);
 			return this._loaded ? this.fire('movestart').fire('move').fire('moveend') : this;
 		}

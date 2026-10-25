@@ -1,5 +1,4 @@
 import {Marker} from './Marker.js';
-import * as DomUtil from '../../dom/DomUtil.js';
 import {LatLng} from '../../geo/LatLng.js';
 import {Point} from '../../geometry/Point.js';
 /** @import {LatLngExpression} from '../../geo/LatLng.js' */
@@ -73,7 +72,7 @@ const markerMoveMethods = {
 
 		const frame = () => {
 			// the distance moved, at a constant speed
-			let distance = duration && !DomUtil.reducedMotion ? Math.min(1, (performance.now() - start) / duration) * total : total,
+			let distance = duration && !this._map?._prefersReducedMotion() ? Math.min(1, (performance.now() - start) / duration) * total : total,
 			i = 0;
 			const moved = distance;
 			while (i < lengths.length - 1 && distance > lengths[i]) {

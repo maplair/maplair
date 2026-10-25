@@ -63,8 +63,8 @@ const zoomAnimDuration = 250;
  * @property {Renderer} [renderer] The default method for drawing vector layers on the
  * map. `SVG` or `Canvas` by default depending on browser support.
  * @property {boolean} [zoomAnimation] Whether the map zoom animation is enabled.
- * Animations are enabled by default unless the user has configured their browser for
- * reduced [motion](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-motion#user_preferences).
+ * Defaults to `true` unless the user prefers
+ * [reduced motion](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-motion).
  * @property {number} [zoomAnimationThreshold=4] Won't animate zoom if the zoom
  * difference exceeds this value.
  * @property {boolean} [continuousZoom=false] Whether zoom animations (e.g. of the zoom
@@ -72,9 +72,9 @@ const zoomAnimDuration = 250;
  * zoom levels, like `flyTo()` and pinch zoom, instead of scaling the map with a CSS
  * transition between two zoom levels. Also makes the scroll wheel zoom smoothly with
  * each wheel event (see `scrollWheelZoom`), snapping to `zoomSnap` when scrolling ends.
- * @property {boolean} [fadeAnimation] Whether the tile fade animation is enabled.
- * Animations are enabled by default unless the user has configured their browser for
- * reduced [motion](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-motion#user_preferences).
+ * @property {boolean} [fadeAnimation] Whether the tile and popup fade animation is
+ * enabled. Defaults to `true` unless the user prefers
+ * [reduced motion](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-motion).
  * @property {boolean} [markerZoomAnimation=true] Whether markers animate their zoom
  * with the zoom animation, if disabled they will disappear for the length of the
  * animation.
@@ -132,10 +132,11 @@ const zoomAnimDuration = 250;
 /**
  * Options of the `MaplairMap` methods which modify the center of the map.
  * @typedef {object} PanOptions
- * @property {boolean} [animate] If `true`, panning will always be animated if possible.
- * If `false`, it will not animate panning, either resetting the map view if panning
- * more than a screen away, or just setting a new offset for the map pane (except for
- * `panBy` which always does the latter).
+ * @property {boolean} [animate] If `true`, panning will always be animated if possible,
+ * even if the user prefers reduced motion. If `false`, it will not animate panning,
+ * either resetting the map view if panning more than a screen away, or just setting a
+ * new offset for the map pane (except for `panBy` which always does the latter). If not
+ * specified, panning is animated unless the user prefers reduced motion.
  * @property {number} [duration=0.25] Duration of animated panning, in seconds.
  * @property {number} [easeLinearity=0.25] The curvature factor of panning animation
  * easing (third parameter of the [Cubic Bezier curve](https://cubic-bezier.com/)).
@@ -290,10 +291,10 @@ export class MaplairMap extends Evented {
 		maxBounds: undefined,
 		renderer: undefined,
 
-		zoomAnimation: !DomUtil.reducedMotion,
+		zoomAnimation: undefined,
 		zoomAnimationThreshold: 4,
 		continuousZoom: false,
-		fadeAnimation: !DomUtil.reducedMotion,
+		fadeAnimation: undefined,
 		markerZoomAnimation: true,
 		markerCulling: false,
 		transform3DLimit: 8388608, // Precision limit of a 32-bit float
@@ -348,6 +349,7 @@ export class MaplairMap extends Evented {
 
 		this.callInitHooks(MaplairMap);
 
+		this.options.zoomAnimation ??= !this._prefersReducedMotion();
 		this._zoomAnimated = this.options.zoomAnimation;
 
 		// zoom transitions run with the same duration for all layers, so if one of transitionend events
@@ -534,9 +536,9 @@ export class MaplairMap extends Evented {
 	panTo(center, options) {
 		return this.setView(center, this._zoom, {pan: options});
 	}
-
 	/**
-	 * Pans the map by a given number of pixels (animated).
+	 * Pans the map by a given number of pixels (animated, unless the user prefers reduced
+	 * motion and `animate: true` isn't passed).
 	 * @group Methods for modifying map state
 	 * @param {PointExpression} offset
 	 * @param {PanOptions} [options]
@@ -571,8 +573,8 @@ export class MaplairMap extends Evented {
 			this.fire('movestart');
 		}
 
-		// animate pan unless browser prefers reduced motion or animate: false specified
-		if (!DomUtil.reducedMotion && options.animate !== false) {
+		// animate pan unless animate: false specified, or the user prefers reduced motion and animate: true isn't
+		if (options.animate === true || (options.animate !== false && !this._prefersReducedMotion())) {
 			this._mapPane.classList.add('maplair-pan-anim');
 
 			const newPos = this._getMapPanePos().subtract(offset).round();
@@ -588,7 +590,8 @@ export class MaplairMap extends Evented {
 
 	/**
 	 * Sets the view of the map (geographical center and zoom) performing a smooth
-	 * pan-zoom animation.
+	 * pan-zoom animation, or instantly if the user prefers reduced motion (unless
+	 * `animate: true` is passed).
 	 * @group Methods for modifying map state
 	 * @param {LatLngExpression} targetCenter
 	 * @param {number} [targetZoom]
@@ -598,8 +601,8 @@ export class MaplairMap extends Evented {
 	flyTo(targetCenter, targetZoom, options) {
 
 		options ??= {};
-		if (DomUtil.reducedMotion || options.animate === false) {
-			return this.setView(targetCenter, targetZoom, options);
+		if (options.animate === false || (options.animate !== true && this._prefersReducedMotion())) {
+			return this.setView(targetCenter, targetZoom, {...options, zoom: {...options.zoom, animate: false}});
 		}
 
 		this._stop();
@@ -1522,6 +1525,7 @@ export class MaplairMap extends Evented {
 	_initLayout() {
 		const container = this._container;
 
+		this.options.fadeAnimation ??= !this._prefersReducedMotion();
 		this._fadeAnimated = this.options.fadeAnimation;
 
 		// maplair-touch and maplair-retina have no rules in maplair.css, but custom stylesheets may still target them
@@ -1994,6 +1998,11 @@ export class MaplairMap extends Evented {
 		}
 
 		return this.unproject(centerPoint.add(offset), zoom);
+	}
+
+	// not cached, so that a preference changed mid-session applies right away
+	_prefersReducedMotion() {
+		return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 	}
 
 	// adjust offset for view to get inside bounds

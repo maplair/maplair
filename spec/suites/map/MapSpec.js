@@ -1,5 +1,5 @@
 import {expect, vi} from 'vite-plus/test';
-import {Bounds, Canvas, CircleMarker, DivIcon, DomEvent, GridLayer, Handler, LatLngBounds, Layer, MaplairMap, Marker, Point, Polygon, TileLayer, Util, LayersControl, LatLng} from 'maplair';
+import {Bounds, Canvas, CircleMarker, DivIcon, DomEvent, GridLayer, Handler, LatLngBounds, Layer, MaplairMap, Marker, Point, Polygon, Popup, TileLayer, Util, LayersControl, LatLng} from 'maplair';
 import UIEventSimulator from 'ui-event-simulator';
 import {createContainer, removeMapContainer} from '../SpecHelper.js';
 
@@ -2685,6 +2685,79 @@ describe('Map', () => {
 			expect(map.panBy(offset, {animate: false})).to.equal(map);
 			expect(map.getCenter().distanceTo(target)).to.be.lessThan(5);
 			expect(map.getCenter()).to.be.nearLatLng([-10.9196177602, 10.9863281250]);
+		});
+	});
+
+	describe('with reduced motion', () => {
+		beforeEach(() => {
+			const matchMedia = window.matchMedia.bind(window);
+			const reduced = query => (query === '(prefers-reduced-motion: reduce)' ? {matches: true} : matchMedia(query));
+			vi.spyOn(window, 'matchMedia').mockImplementation(reduced);
+			map.setView([0, 0], 5);
+		});
+
+		afterEach(() => {
+			vi.restoreAllMocks();
+		});
+
+		it('turns off zoom and fade animations by default', () => {
+			const container2 = createContainer();
+			const map2 = new MaplairMap(container2);
+			expect(map2._zoomAnimated).to.be.false;
+			expect(map2._fadeAnimated).to.be.false;
+			expect(map2.options.zoomAnimation).to.be.false;
+			expect(map2.options.fadeAnimation).to.be.false;
+			removeMapContainer(map2, container2);
+		});
+
+		it('keeps zoom and fade animations that are turned on explicitly', () => {
+			const container2 = createContainer();
+			const map2 = new MaplairMap(container2, {zoomAnimation: true, fadeAnimation: true});
+			expect(map2._zoomAnimated).to.be.true;
+			expect(map2._fadeAnimated).to.be.true;
+			removeMapContainer(map2, container2);
+		});
+
+		it('pans instantly', () => {
+			const moveend = vi.fn();
+			map.on('moveend', moveend);
+			const center = map.getCenter();
+			map.panBy([100, 100]);
+			expect(moveend).toHaveBeenCalledOnce();
+			expect(map.getCenter().distanceTo(center)).to.be.greaterThan(1000);
+		});
+
+		it('still animates a pan with animate: true', () => {
+			const moveend = vi.fn();
+			map.on('moveend', moveend);
+			map.panBy([100, 100], {animate: true});
+			expect(moveend).not.toHaveBeenCalled();
+			expect(map._panAnim._inProgress).to.be.true;
+		});
+
+		it('flies instantly', () => {
+			map.flyTo([10, 11], 12);
+			expect(map.getCenter()).to.eqlLatLng(new LatLng(10, 11));
+			expect(map.getZoom()).to.equal(12);
+		});
+
+		it('flies instantly by one zoom level even with zoom animation on', () => {
+			expect(map._zoomAnimated).to.be.true;
+			new GridLayer().addTo(map);
+			const zoomanim = vi.fn();
+			const zoomend = vi.fn();
+			map.on({zoomanim, zoomend});
+			map.flyTo([0.1, 0.1], 6);
+			expect(zoomanim).not.toHaveBeenCalled();
+			expect(zoomend).toHaveBeenCalledOnce();
+			expect(map.getZoom()).to.equal(6);
+		});
+
+		it('keeps popup autoPan', () => {
+			const spy = vi.fn();
+			map.on('autopanstart', spy);
+			new Popup({keepInView: false}).setLatLng(map.containerPointToLatLng([5, 5])).setContent('popup').openOn(map);
+			expect(spy).toHaveBeenCalled();
 		});
 	});
 
