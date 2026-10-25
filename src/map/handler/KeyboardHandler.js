@@ -14,6 +14,10 @@ import {I18n} from '../../core/I18n.js';
  * navigate the map with keyboard arrows and `+`/`-` keys.
  * @property {number} [keyboardPanDelta=80] Amount of pixels to pan when pressing an
  * arrow key.
+ * @property {boolean|string} [ariaKeyShortcuts=false] Sets the `aria-keyshortcuts`
+ * attribute of the map container. ARIA names keys by what they type on a given layout,
+ * so `true` uses the names for a US English layout, which can be wrong for pages in
+ * other languages; pass a string to set the value for your audience's layout instead.
  */
 
 /**
@@ -33,17 +37,19 @@ import {I18n} from '../../core/I18n.js';
 export class KeyboardHandler extends Handler {
 
 	/**
-	 * The [codes](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code)
-	 * of the keys for panning and zooming the map.
+	 * The [values](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key)
+	 * of the keys for panning and zooming the map, so zoom keys follow the keyboard
+	 * layout and cover the numpad too; `=` and `_` keep the US `+` and `-` keys working
+	 * both with and without Shift.
 	 * @type {Record<'left'|'right'|'down'|'up'|'zoomIn'|'zoomOut', string[]>}
 	 */
-	static keyCodes = {
+	static keys = {
 		left: ['ArrowLeft'],
 		right: ['ArrowRight'],
 		down: ['ArrowDown'],
 		up: ['ArrowUp'],
-		zoomIn: ['Equal', 'NumpadAdd', 'BracketRight'],
-		zoomOut: ['Minus', 'NumpadSubtract', 'Digit6', 'Slash']
+		zoomIn: ['+', '='],
+		zoomOut: ['-', '_']
 	};
 
 	/**
@@ -69,8 +75,12 @@ export class KeyboardHandler extends Handler {
 			container.tabIndex = 0;
 		}
 
-		// add aria-attribute for keyboard shortcuts to the container
-		container.ariaKeyShortcuts = Object.values(KeyboardHandler.keyCodes).flat().join(' ');
+		const shortcuts = this._map.options.ariaKeyShortcuts;
+		if (shortcuts) {
+			// ARIA names physical keys by their unshifted character, so the default is for a US layout
+			container.ariaKeyShortcuts = shortcuts === true ?
+				'ArrowLeft ArrowRight ArrowUp ArrowDown = Plus -' : shortcuts;
+		}
 
 		on(container, {
 			focus: this._onFocus,
@@ -89,6 +99,10 @@ export class KeyboardHandler extends Handler {
 	 */
 	removeHooks() {
 		this._removeHooks();
+
+		if (this._map.options.ariaKeyShortcuts) {
+			this._map._container.removeAttribute('aria-keyshortcuts');
+		}
 
 		off(this._map._container, {
 			focus: this._onFocus,
@@ -161,33 +175,21 @@ export class KeyboardHandler extends Handler {
 	}
 
 	_setPanDelta(panDelta) {
-		const keys = this._panKeys = {},
-		codes = KeyboardHandler.keyCodes;
+		const panKeys = this._panKeys = {},
+		{left, right, down, up} = KeyboardHandler.keys;
 
-		for (const code of codes.left) {
-			keys[code] = [-1 * panDelta, 0];
-		}
-		for (const code of codes.right) {
-			keys[code] = [panDelta, 0];
-		}
-		for (const code of codes.down) {
-			keys[code] = [0, panDelta];
-		}
-		for (const code of codes.up) {
-			keys[code] = [0, -1 * panDelta];
-		}
+		for (const key of left) { panKeys[key] = [-panDelta, 0]; }
+		for (const key of right) { panKeys[key] = [panDelta, 0]; }
+		for (const key of down) { panKeys[key] = [0, panDelta]; }
+		for (const key of up) { panKeys[key] = [0, -panDelta]; }
 	}
 
 	_setZoomDelta(zoomDelta) {
-		const keys = this._zoomKeys = {},
-		codes = KeyboardHandler.keyCodes;
+		const zoomKeys = this._zoomKeys = {},
+		{zoomIn, zoomOut} = KeyboardHandler.keys;
 
-		for (const code of codes.zoomIn) {
-			keys[code] = zoomDelta;
-		}
-		for (const code of codes.zoomOut) {
-			keys[code] = -zoomDelta;
-		}
+		for (const key of zoomIn) { zoomKeys[key] = zoomDelta; }
+		for (const key of zoomOut) { zoomKeys[key] = -zoomDelta; }
 	}
 
 	_addHooks() {
@@ -207,7 +209,7 @@ export class KeyboardHandler extends Handler {
 			return;
 		}
 
-		const key = e.code,
+		const key = e.key,
 		map = this._map;
 		let offset;
 
@@ -249,7 +251,8 @@ export class KeyboardHandler extends Handler {
 	static register(MaplairMap) {
 		MaplairMap.mergeOptions({
 			keyboard: true,
-			keyboardPanDelta: 80
+			keyboardPanDelta: 80,
+			ariaKeyShortcuts: false
 		});
 
 		MaplairMap.addInitHook('addHandler', 'keyboard', KeyboardHandler);

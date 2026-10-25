@@ -57,7 +57,7 @@ describe('Map: originalEvent of user-initiated view changes', () => {
 
 		it('has the keydown event for keyboard panning and zooming', () => {
 			map.keyboard._onFocus();
-			UIEventSimulator.fire('keydown', document, {code: 'Minus'});
+			UIEventSimulator.fire('keydown', document, {key: '-', code: 'Minus'});
 			expect(events.map(e => e.type)).to.include('zoomend');
 			expect(originalEventTypes()).to.eql(['keydown']);
 		});
