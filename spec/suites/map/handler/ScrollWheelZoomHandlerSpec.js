@@ -25,6 +25,7 @@ describe('ScrollWheelZoomHandler', () => {
 	});
 
 	afterEach(() => {
+		vi.useRealTimers();
 		removeMapContainer(map, container);
 	});
 
@@ -92,29 +93,49 @@ describe('ScrollWheelZoomHandler', () => {
 		});
 	});
 
-	it('changes the option \'wheelPxPerZoomLevel\'', (done) => {
+	it('changes the option \'wheelPxPerZoomLevel\'', () => {
+		vi.useFakeTimers({toFake: ['setTimeout', 'clearTimeout', 'Date']});
 		const wheelPxPerZoomLevelBefore = map.options.wheelPxPerZoomLevel;
 		map.setZoom(15, {animate: false});
+		vi.advanceTimersByTime(300);
 
 		const zoom = map.getZoom();
 		UIEventSimulator.fire(wheel, container, scrollIn);
+		vi.advanceTimersByTime(100);
 
-		map.once('zoomend', () => {
-			expect(map.getZoom()).to.be.greaterThan(zoom);
-			const zoomDiff = map.getZoom() - zoom;
+		expect(map.getZoom()).to.be.greaterThan(zoom);
+		const zoomDiff = map.getZoom() - zoom;
 
-			map.setZoom(zoom, {animate: false});
-			expect(map.getZoom()).to.equal(zoom);
+		map.setZoom(zoom, {animate: false});
+		expect(map.getZoom()).to.equal(zoom);
 
-			map.options.wheelPxPerZoomLevel = 30 / DomEvent.getWheelPxFactor();
-			UIEventSimulator.fire(wheel, container, scrollIn);
+		map.options.wheelPxPerZoomLevel = 30 / DomEvent.getWheelPxFactor();
+		vi.advanceTimersByTime(300);
+		UIEventSimulator.fire(wheel, container, scrollIn);
+		vi.advanceTimersByTime(100);
 
-			map.once('zoomend', () => {
-				expect(map.getZoom()).to.be.greaterThan(zoom);
-				expect(map.getZoom() - zoom).to.be.greaterThan(zoomDiff);
-				map.options.wheelPxPerZoomLevel = wheelPxPerZoomLevelBefore;
-				done();
-			});
-		});
+		expect(map.getZoom() - zoom).to.be.greaterThan(zoomDiff);
+		map.options.wheelPxPerZoomLevel = wheelPxPerZoomLevelBefore;
+	});
+
+	it('ignores wheel zooms right after a zoom without animation, like an animated zoom does', () => {
+		vi.useFakeTimers({toFake: ['setTimeout', 'clearTimeout', 'Date']});
+		const zoom = map.getZoom();
+		const zoomend = vi.fn();
+		map.on('zoomend', zoomend);
+
+		UIEventSimulator.fire(wheel, container, scrollIn);
+		vi.advanceTimersByTime(100);
+		UIEventSimulator.fire(wheel, container, scrollIn);
+		vi.advanceTimersByTime(100);
+
+		expect(zoomend).toHaveBeenCalledOnce();
+		const zoom2 = map.getZoom();
+		expect(zoom2).to.be.greaterThan(zoom);
+
+		vi.advanceTimersByTime(200);
+		UIEventSimulator.fire(wheel, container, scrollIn);
+		vi.advanceTimersByTime(100);
+		expect(map.getZoom()).to.be.greaterThan(zoom2);
 	});
 });

@@ -226,8 +226,10 @@ export class KeyboardHandler extends Handler {
 				map.panBy(offset);
 			}
 		} else if (key in this._zoomKeys) {
-			map._setUserEvent(e);
-			map.setZoom(map.getZoom() + (e.shiftKey ? 3 : 1) * this._zoomKeys[key]);
+			if (!map._zoomInputBlocked()) {
+				map._setUserEvent(e);
+				map.setZoom(map.getZoom() + (e.shiftKey ? 3 : 1) * this._zoomKeys[key]);
+			}
 
 		} else if (key === 'Escape' && map._popup && map._popup.options.closeOnEscapeKey) {
 			map.closePopup();

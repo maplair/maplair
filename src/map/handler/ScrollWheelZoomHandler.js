@@ -254,7 +254,7 @@ export class ScrollWheelZoomHandler extends Handler {
 		this._delta = 0;
 		this._startTime = null;
 
-		if (!delta) { return; }
+		if (!delta || map._zoomInputBlocked()) { return; }
 
 		map._setUserEvent(this._lastEvent);
 		if (map.options.scrollWheelZoom === 'center') {

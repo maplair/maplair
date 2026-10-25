@@ -98,6 +98,21 @@ describe('KeyboardHandler', () => {
 
 			expect(map.getZoom()).to.be.lessThan(5);
 		});
+
+		it('ignores zoom keys right after a zoom without animation, like an animated zoom does', () => {
+			vi.useFakeTimers({toFake: ['Date']});
+			try {
+				UIEventSimulator.fire('keydown', document, {code: KEYCODE_PLUS});
+				UIEventSimulator.fire('keydown', document, {code: KEYCODE_PLUS});
+				expect(map.getZoom()).to.equal(6);
+
+				vi.advanceTimersByTime(250);
+				UIEventSimulator.fire('keydown', document, {code: KEYCODE_PLUS});
+				expect(map.getZoom()).to.equal(7);
+			} finally {
+				vi.useRealTimers();
+			}
+		});
 	});
 
 	describe('does not move the map if disabled', () => {
