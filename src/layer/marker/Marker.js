@@ -69,9 +69,6 @@ import {pointToGeoJSON} from '../GeoJSONUtil.js';
  * @extends MaplairEvent
  */
 
-// how far (in pixels) an icon may extend from its position, to tell whether it is in view during a zoom animation
-const zoomAnimationMargin = 256;
-
 /**
  * Marker is used to display clickable/draggable icons on the map. Extends `Layer`.
  *
@@ -413,26 +410,9 @@ export class Marker extends Layer {
 
 	_animateZoom(opt) {
 		if (this._culled) { return; }
-		const map = this._map,
-		pos = map._latLngToNewLayerPoint(this._latlng, opt.zoom, opt.center).round();
-
-		// Don't start a transition for a marker that stays out of view: it is positioned by the `zoom` event at
-		// the end of the animation (which is only fired when the zoom changes).
-		if (opt.zoom !== map.getZoom() && !this._segmentIntersectsView(DomUtil.getPosition(this._icon), pos)) { return; }
+		const pos = this._map._latLngToNewLayerPoint(this._latlng, opt.zoom, opt.center).round();
 
 		this._setPos(pos);
-	}
-
-	// Whether the line segment from `from` to `to` (in layer pixels) intersects the view, approximated by the circle
-	// around its center through its corners, extended by a margin for the size of the icon
-	_segmentIntersectsView(from, to) {
-		const size = this._map.getSize(),
-		center = this._map.containerPointToLayerPoint(size.divideBy(2)),
-		d = to.subtract(from),
-		// the point of the path closest to the center
-		t = Math.min(1, Math.max(0, ((center.x - from.x) * d.x + (center.y - from.y) * d.y) / (d.x * d.x + d.y * d.y || 1))),
-		closest = from.add(d.multiplyBy(t));
-		return closest.distanceTo(center) <= Math.hypot(size.x, size.y) / 2 + zoomAnimationMargin;
 	}
 
 	_updateInteractive() {
