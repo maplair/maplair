@@ -88,6 +88,46 @@ describe('Marker', () => {
 		});
 	});
 
+	describe('zoom animation', () => {
+		beforeEach(() => {
+			container.style.width = '400px';
+			container.style.height = '400px';
+			map.invalidateSize().setView([0, 0], 5, {animate: false});
+		});
+
+		it('starts a transition only for markers moving through the view', () => {
+			const near = new Marker([0, 1]).addTo(map),
+			far = new Marker([0, 60]).addTo(map),
+			nearPos = DomUtil.getPosition(near.getElement()),
+			farPos = DomUtil.getPosition(far.getElement());
+
+			map.fire('zoomanim', {center: map.getCenter(), zoom: 6});
+
+			expect(DomUtil.getPosition(near.getElement())).not.to.eql(nearPos);
+			expect(DomUtil.getPosition(far.getElement())).to.eql(farPos);
+		});
+
+		it('positions the markers it skipped at the end of the zoom', () => {
+			const far = new Marker([0, 60]).addTo(map);
+
+			map.fire('zoomanim', {center: map.getCenter(), zoom: 6});
+			map.setZoom(6, {animate: false});
+
+			expect(DomUtil.getPosition(far.getElement())).to.eql(map.latLngToLayerPoint(far.getLatLng()).round());
+		});
+
+		it('starts a transition for markers passing through the view on their way', () => {
+			// zooming out around a point 1000 px right of the center moves the marker from 700 px left of the
+			// center to 575 px right of it, out of view at both ends
+			const marker = new Marker([0, -30.76]).addTo(map),
+			pos = DomUtil.getPosition(marker.getElement());
+
+			map.fire('zoomanim', {center: new LatLng(0, -131.84), zoom: 3});
+
+			expect(DomUtil.getPosition(marker.getElement())).not.to.eql(pos);
+		});
+	});
+
 	describe('shadow option', () => {
 		it('adds the icon shadow by default', () => {
 			const marker = new Marker([0, 0]).addTo(map);
