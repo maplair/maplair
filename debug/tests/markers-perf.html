@@ -38,6 +38,7 @@
 			 * Add `?noshadow` to the URL to compare with markers without shadows,
 			 * `?culling` to enable the map's `markerCulling` option, and e.g. `?spread=3`
 			 * to place the markers in an area 3 times as wide and high as the view.
+			 * `node build/markers-perf.js` runs and profiles this page in headless Chromium.
 			 */
 
 			const params = new URLSearchParams(location.search);
