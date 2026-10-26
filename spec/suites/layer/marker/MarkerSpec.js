@@ -86,6 +86,18 @@ describe('Marker', () => {
 			cullingMap.setView([60, 60], 5);
 			expect(marker.getElement().parentNode).to.equal(cullingMap._panes.markerPane);
 		});
+
+		it('computes the culling bounds once per view', () => {
+			const markers = [[0, 0], [60, 60], [30, 30]].map(latlng => new Marker(latlng).addTo(cullingMap)),
+			getBounds = vi.spyOn(cullingMap, 'getBounds');
+
+			cullingMap.setView([60, 60], 5);
+			expect(getBounds).toHaveBeenCalledTimes(1);
+			expect(markers.map(m => !!m.getElement().parentNode)).to.eql([false, true, false]);
+
+			cullingMap.panBy([1000, 0], {animate: false});
+			expect(getBounds).toHaveBeenCalledTimes(2);
+		});
 	});
 
 	describe('shadow option', () => {

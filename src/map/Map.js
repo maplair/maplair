@@ -328,6 +328,7 @@ export class MaplairMap extends Evented {
 		this.on({
 			movestart: this._onBusy,
 			zoomstart: this._onBusy,
+			move: this._onMove,
 			moveend: this._onViewChanged,
 			layerremove: this._scheduleIdleCheck
 		}, this);
@@ -1650,6 +1651,11 @@ export class MaplairMap extends Evented {
 	_onBusy() {
 		this._viewChanging = true;
 		this._idle = false;
+	}
+
+	// resets the bounds of the `markerCulling` option, computed once per view by `Marker._updateCulling()`
+	_onMove() {
+		this._cullingBounds = null;
 	}
 
 	_onViewChanged() {

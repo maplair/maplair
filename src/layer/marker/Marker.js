@@ -362,7 +362,10 @@ export class Marker extends Layer {
 	_updateCulling() {
 		if (!this._icon || !this._map) { return; }
 
-		const visible = this._map.getBounds().pad(0.5).contains(this._latlng) ||
+		const map = this._map,
+		// computed once per view for all markers, reset by the map on `move`
+		bounds = map._cullingBounds ??= map.getBounds().pad(0.5),
+		visible = bounds.contains(this._latlng) ||
 			!!this.dragging?._draggable?._moving ||
 			this._icon.contains(document.activeElement);
 
