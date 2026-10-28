@@ -2281,3 +2281,4 @@ for (const feature of [
 }
 
 export {MaplairMap as Map};
+export {MaplairMap as LeafletMap};

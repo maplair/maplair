@@ -17,6 +17,7 @@ Maplair Changelog
 * Add `TimeControl` to step through or play the times of time-dependent layers, e.g. a WMS with a `TIME` dimension, with ISO 8601 intervals and periods
 * WMSTileLayer: swap the tiles without flickering on `setParams()`
 * SearchControl: the option `marker` accepts a function returning the layer to show at the selected result, new options `clearOnMapClick` and `noResultsText`
+* Export `LeafletMap` as an alias of `MaplairMap`, like `Map`, for compatibility with code written for Leaflet 2
 
 ### Leaflet, since the fork
 
