@@ -204,15 +204,13 @@ const layerTooltipMethods = {
 	},
 
 	/**
-	 * Closes the tooltip bound to this layer if it is open. Returns the bound tooltip
-	 * (not the layer), or `undefined` without one.
+	 * Closes the tooltip bound to this layer if it is open.
 	 * @group Tooltip methods
-	 * @returns {Tooltip|undefined}
+	 * @returns {this}
 	 */
 	closeTooltip() {
-		if (this._tooltip) {
-			return this._tooltip.close();
-		}
+		this._tooltip?.close();
+		return this;
 	},
 
 	/**
@@ -231,7 +229,7 @@ const layerTooltipMethods = {
 	 * @returns {boolean}
 	 */
 	isTooltipOpen() {
-		return this._tooltip.isOpen();
+		return this._tooltip?.isOpen() ?? false;
 	},
 
 	/**
