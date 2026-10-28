@@ -464,15 +464,12 @@ export class Popup extends DivOverlay {
 		}
 
 		if (this.options.trackResize) {
-			this._resizeObserver = new ResizeObserver(((entries) => {
+			this._resizeObserver = new ResizeObserver(() => {
 				if (!this._map) { return; }
-				this._containerWidth = entries[0]?.contentRect?.width;
-				this._containerHeight = entries[0]?.contentRect?.height;
-
 				this._updateLayout();
 				this._updatePosition();
 				this._adjustPan();
-			}));
+			});
 
 			this._resizeObserver.observe(this._contentNode);
 		}
@@ -485,16 +482,15 @@ export class Popup extends DivOverlay {
 		style.maxWidth = `${this.options.maxWidth}px`;
 		style.minWidth = `${this.options.minWidth}px`;
 
-		const maxHeight = this.options.maxHeight,
-		scrolledClass = 'maplair-popup-scrolled';
+		style.height = '';
 
-		// only measure the height (forcing a layout) if needed
-		if (maxHeight && (this._containerHeight ?? container.offsetHeight) > maxHeight) {
+		// only measure the height of the content (forcing a layout) if needed
+		const maxHeight = this.options.maxHeight,
+		scrolled = !!maxHeight && container.offsetHeight > maxHeight;
+		if (scrolled) {
 			style.height = `${maxHeight}px`;
-			container.classList.add(scrolledClass);
-		} else {
-			container.classList.remove(scrolledClass);
 		}
+		container.classList.toggle('maplair-popup-scrolled', scrolled);
 
 		this._containerWidth = this._container.offsetWidth;
 		this._containerHeight = this._container.offsetHeight;
