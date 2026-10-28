@@ -76,6 +76,9 @@ Ported from Leaflet (changes without author notice are by [@mourner](https://git
 * Fix VideoOverlay ignoring `keepAspectRatio: false` in Firefox and Safari by [@nk-batman21](https://github.com/nk-batman21) in https://github.com/Leaflet/Leaflet/pull/10475
 * Limit the destination of `flyTo()` to `maxBounds` by [@Don-Yin](https://github.com/Don-Yin) in https://github.com/Leaflet/Leaflet/pull/10477
 * Fix a drag sometimes getting stuck after a quick pan outside the window in https://github.com/Leaflet/Leaflet/commit/cdff2a590004f604db7ef44f69b0ea02073cfea6
+* Fix the tile zoom of GridLayer `redraw()` on a fractional map zoom (with [@adamnson](https://github.com/adamnson)) in https://github.com/Leaflet/Leaflet/commit/199eae85af7534f17ab119f4c830c500b6b9e49f
+* Fix light seams between tiles during a zoom animation in Chrome, tiles fade in with the Web Animations API in https://github.com/Leaflet/Leaflet/pull/10471
+* Return the layer from `closeTooltip()`, fix `isTooltipOpen()` throwing without a bound tooltip in https://github.com/Leaflet/Leaflet/commit/7f89a0681e6e33e25edfefb1586cae7b42948e35
 
 #### 📝 Docs
 
@@ -92,6 +95,11 @@ Ported from Leaflet (changes without author notice are by [@mourner](https://git
 * Add the @s57-parser/leaflet plugin by [@devladpopov](https://github.com/devladpopov) in https://github.com/Leaflet/Leaflet/pull/10394
 * Add the leaflet-daynight plugin by [@LoganD900](https://github.com/LoganD900) in https://github.com/Leaflet/Leaflet/pull/10388
 * Add the Leaflet.GridLayer.Relief plugin by [@glandais](https://github.com/glandais) in https://github.com/Leaflet/Leaflet/pull/10348
+* Update the maptiler-geocoding-control plugin for v2 by [@katemihalikova](https://github.com/katemihalikova) in https://github.com/Leaflet/Leaflet/pull/10195
+* Add the Leaflet.WorldWrap plugin by [@EricDalnas](https://github.com/EricDalnas) in https://github.com/Leaflet/Leaflet/pull/10188
+* Add the leaflet-draggable-tooltips plugin by [@georiv](https://github.com/georiv) in https://github.com/Leaflet/Leaflet/pull/10243 and https://github.com/Leaflet/Leaflet/pull/10481
+* Add the leaflet-india-boundary plugin by [@lux-in-tenebris-lucet](https://github.com/lux-in-tenebris-lucet) in https://github.com/Leaflet/Leaflet/pull/10328
+* Add the leaflet-floating-measure plugin by [@ringraham](https://github.com/ringraham) in https://github.com/Leaflet/Leaflet/pull/10345
 
 #### 🔧 Workflow
 
