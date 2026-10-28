@@ -5,9 +5,9 @@ Contributing to Maplair
  2. [Reporting Bugs](#reporting-bugs)
  3. [Contributing Code](#contributing-code)
  4. [Running the Tests](#running-the-tests)
- 6. [Improving Documentation](#improving-documentation)
- 7. [Code of Conduct](#code-of-conduct)
- 8. [Thank You](#thank-you)
+ 5. [Improving Documentation](#improving-documentation)
+ 6. [Code of Conduct](#code-of-conduct)
+ 7. [Thank You](#thank-you)
 
 ## Getting Involved
 
@@ -62,7 +62,7 @@ please consider submitting another pull request with the corresponding [document
 
 ### Setting up the Build System
 
-The Maplair build system uses [NodeJS](http://nodejs.org/) and the [pnpm](https://pnpm.io/) package manager.
+The Maplair build system uses [NodeJS](https://nodejs.org/) and the [pnpm](https://pnpm.io/) package manager.
 To set up the Maplair build system, install [NodeJS](https://nodejs.org/) and [pnpm](https://pnpm.io/installation)
 (the pnpm version of the project, set in the `packageManager` field of `package.json`, is picked automatically).
 Then run the following command in the project root to install dependencies:
