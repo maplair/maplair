@@ -329,6 +329,25 @@ describe('Marker', () => {
 				marker._panOnFocus();
 			}).to.not.throw();
 		});
+
+		it('pans to fit the rendered icon on focus', () => {
+			const spy = vi.spyOn(map, 'panInside');
+			const getPadding = (icon) => {
+				const marker = new Marker([70, 0], {icon}).addTo(map);
+				marker._panOnFocus();
+				const {paddingTopLeft, paddingBottomRight} = spy.mock.lastCall[1];
+				return [paddingTopLeft.x, paddingTopLeft.y, paddingBottomRight.x, paddingBottomRight.y];
+			};
+			const html = '<div style="width: 40px; height: 20px;"></div>';
+
+			expect(getPadding(new DivIcon({className: '', iconSize: [20, 30], iconAnchor: [5, 10]}))).to.eql([5, 10, 15, 20]);
+			expect(getPadding(new DivIcon({className: '', iconSize: [20, 30]}))).to.eql([10, 15, 10, 15]);
+			expect(getPadding(new DivIcon({className: '', iconSize: 32}))).to.eql([16, 16, 16, 16]);
+			expect(getPadding(new DivIcon({className: '', iconSize: 'auto', html}))[3]).to.equal(20);
+			expect(getPadding(new DivIcon({className: '', iconSize: [100, 'auto'], html}))).to.eql([50, 0, 50, 20]);
+
+			spy.mockRestore();
+		});
 	});
 
 	describe('dragging', () => {
