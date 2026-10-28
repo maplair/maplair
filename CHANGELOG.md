@@ -3,7 +3,9 @@ Maplair Changelog
 
 (all changes of Leaflet without author notice are by [@mourner](https://github.com/mourner))
 
-## Unreleased
+## 4.1.0 (2026-10-28)
+
+⚠️ Despite the minor version, this release contains breaking changes ported from Leaflet, see the refactorings below.
 
 ### Maplair
 
