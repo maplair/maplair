@@ -23,11 +23,3 @@ updates:
       interval: weekly
     labels:
       - dependencies
-  - package-ecosystem: bundler
-    directory: ./docs
-    open-pull-requests-limit: 999
-    rebase-strategy: disabled
-    schedule:
-      interval: weekly
-    labels:
-      - dependencies

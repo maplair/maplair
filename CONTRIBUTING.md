@@ -145,7 +145,8 @@ Playwright will install its own browser binaries the first time it runs (`pnpm e
 ## Improving Documentation
 
 The code of the live Maplair website that contains all documentation and examples is located in the `docs/` directory of the `main` branch
-and is automatically generated from a set of HTML and Markdown files by [Jekyll](http://jekyllrb.com/).
+and is generated from a set of HTML and Markdown files by a small Node script, [`build/site.js`](./build/site.js),
+which covers the part of [Jekyll](https://jekyllrb.com/) the website uses (front matter, Liquid, Markdown, layouts and posts).
 
 The easiest way to make little improvements such as fixing typos without even leaving the browser
 is by editing one of the files with the online GitHub editor:
@@ -153,19 +154,9 @@ browse the [`docs/ directory`](https://github.com/maplair/maplair/tree/main/docs
 choose a certain file for editing, click the Edit button, make changes and follow instructions from there.
 Once it gets merged, the changes will immediately appear on the website.
 
-To work on the documentation locally ensure you have Ruby installed. You can download it from the [Ruby website](https://www.ruby-lang.org/en/downloads/) or use [`rbenv`](https://github.com/rbenv/rbenv) (recommended).
-
-You'll need to install the same Ruby version as specified in [`.ruby-version`](./docs/.ruby-version). If you are using `rbenv` you can install this by running `rbenv install` from the `docs/` directory.
-
-If you need to make edits in a local repository to see how it looks in the process, do the following:
-
-1. Open a terminal in the `docs/` directory.
-2. Make sure you are on the `main` branch by running `git checkout main`.
-3. Run `bundle install` to install the dependencies.
-4. Run `pnpm run serve` to serve the documentation.
-5. Open [http://localhost:4000](http://localhost:4000) in your web browser.
-
-Now any file changes in `docs/` will be applied when you reload pages.
+To preview the website locally, run `pnpm run serve` and open the printed URL.
+It builds the website into `_site/` (in a fraction of a second) and serves it; run `pnpm run site` to rebuild after changes.
+The examples load Maplair from `docs/dist/`, so run `vp pack && cp -r dist docs/dist` first.
 After committing the changes, just send a pull request.
 
 ### API documentation

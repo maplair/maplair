@@ -109,6 +109,7 @@ Ported from Leaflet (changes without author notice are by [@mourner](https://git
 * Name the test jobs, publish the development snapshot with `gh` in https://github.com/Leaflet/Leaflet/commit/40c052b0d0fe1d7159f55d87089f24e2ed422e0d and https://github.com/Leaflet/Leaflet/commit/ac7b690b1b5d727c219fd4ef6c347b4f38fe26dd
 * Remove the stale AMD debug page in https://github.com/Leaflet/Leaflet/commit/9adfc0ac0d3a62a5b4af292f637fcb15c5e534dd
 * Remove CSS fallbacks and leftovers, explain the `!important` in https://github.com/Leaflet/Leaflet/pull/10462
+* Build the website with a small Node script instead of Jekyll in https://github.com/Leaflet/Leaflet/pull/10484
 
 #### 🧪 Tests
 

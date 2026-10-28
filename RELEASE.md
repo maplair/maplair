@@ -45,7 +45,7 @@ Then make the GitHub release (as pre-release) with the npm tarball.
 - [ ] Write a blog post about the new release and put it in `/docs/_posts/`
 - [ ] [Click here to save a snapshot](https://web.archive.org/save/https://maplair.org/reference.html)
 of the version of docs prior to this release to the Internet Archive's Wayback Machine.
-- [ ] Run `pnpm run docs` to generate the new `docs/reference.html` and update `latest_maplair_version` in `docs/_config.yml`
+- [ ] Run `pnpm run docs` to generate the new `docs/reference.html` and update `latest_maplair_version` in `build/site.json`
 - [ ] Update link to latest release in `docs/download.md`
 - [ ] Update the announcement section in `docs/index.html`
 - [ ] Commit all the changes and submit a PR for someone to review
