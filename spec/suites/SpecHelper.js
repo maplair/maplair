@@ -1,3 +1,5 @@
+import {vi} from 'vite-plus/test';
+
 export function createContainer(width, height) {
 	width = width ? width : '400px';
 	height = height ? height : '400px';
@@ -17,6 +19,28 @@ export function removeMapContainer(map, container) {
 	if (container) {
 		document.body.removeChild(container);
 	}
+}
+
+// fake timers that also drive element animations: Vitest doesn't fake Web Animations, so `animate` is replaced
+// with a stub whose `onfinish` fires on a faked timeout after the animation duration; undo with restoreClock()
+let animate;
+
+export function createClock() {
+	vi.useFakeTimers({
+		now: 0,
+		toFake: ['setTimeout', 'clearTimeout', 'Date']
+	});
+	animate = vi.spyOn(Element.prototype, 'animate').mockImplementation((keyframes, duration) => {
+		const animation = {};
+		setTimeout(() => animation.onfinish?.(), duration);
+		return animation;
+	});
+}
+
+export function restoreClock() {
+	animate?.mockRestore();
+	animate = undefined;
+	vi.useRealTimers();
 }
 
 // Simulates a mouse, pen or touch pointer. Steps are queued and dispatched as pointer events, one step per animation

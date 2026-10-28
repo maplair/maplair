@@ -1,6 +1,6 @@
 import {expect, vi} from 'vite-plus/test';
 import {SimpleCRS, MaplairMap, TileLayer, LatLng} from 'maplair';
-import {createContainer, removeMapContainer} from '../../SpecHelper.js';
+import {createClock, createContainer, removeMapContainer, restoreClock} from '../../SpecHelper.js';
 
 describe('TileLayer', () => {
 	let container, map;
@@ -207,10 +207,7 @@ describe('TileLayer', () => {
 		}
 
 		beforeEach(() => {
-			vi.useFakeTimers({
-				now: 0,
-				toFake: ['setTimeout', 'clearTimeout', 'Date']
-			});
+			createClock();
 
 			kittenLayer = kittenLayerFactory({keepBuffer: 0});
 
@@ -234,7 +231,7 @@ describe('TileLayer', () => {
 		});
 
 		afterEach(() => {
-			vi.useRealTimers();
+			restoreClock();
 			kittenLayer.off();
 			kittenLayer = undefined;
 			counts = undefined;

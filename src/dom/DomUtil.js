@@ -92,16 +92,21 @@ export function setTransform(el, offset, scale) {
 const positions = new WeakMap();
 
 /**
- * Sets the position of `el` to coordinates specified by `point`,
- * using CSS translate or top/left positioning depending on the browser
- * (used by Maplair internally to position its layers).
+ * Sets the position of `el` to coordinates specified by `point` using a CSS translate
+ * (used by Maplair internally to position its layers). With `flat`, the translate is 2D,
+ * so `el` is painted into its parent's compositor layer instead of getting a layer of its own.
  * @param {HTMLElement|SVGElement} el
  * @param {Point} point
+ * @param {boolean} [flat]
  * @returns {void}
  */
-export function setPosition(el, point) {
+export function setPosition(el, point, flat) {
 	positions.set(el, point);
-	setTransform(el, point);
+	if (flat) {
+		el.style.transform = `translate(${point.x}px, ${point.y}px)`;
+	} else {
+		setTransform(el, point);
+	}
 }
 
 /**
