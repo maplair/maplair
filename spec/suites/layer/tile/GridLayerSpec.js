@@ -312,6 +312,43 @@ describe('GridLayer', () => {
 		});
 	});
 
+	describe('when removed from a tile event listener', () => {
+		let done;
+
+		class AsyncGrid extends GridLayer {
+			createTile(coords, tileDone) {
+				const tile = document.createElement('div');
+				done.push(() => tileDone(null, tile));
+				return tile;
+			}
+		}
+
+		beforeEach(() => {
+			done = [];
+			map.options.fadeAnimation = false;
+			map.setView([0, 0], 0);
+		});
+
+		it('does not throw when the map is removed on load', () => {
+			const grid = new AsyncGrid().addTo(map);
+			const onLoad = vi.fn(() => { map.remove(); map = null; });
+			grid.on('load', onLoad);
+
+			for (const fn of done) { fn(); }
+			expect(onLoad).toHaveBeenCalledOnce();
+		});
+
+		it('does not fire load when the layer is removed on tileload', () => {
+			const grid = new AsyncGrid().addTo(map);
+			const onLoad = vi.fn();
+			grid.once('tileload', () => grid.remove());
+			grid.on('load', onLoad);
+
+			for (const fn of done) { fn(); }
+			expect(onLoad).not.toHaveBeenCalled();
+		});
+	});
+
 	describe('min/maxNativeZoom option', () => {
 		it('calls createTile() with maxNativeZoom when map zoom is larger', (done) => {
 			map.setView([0, 0], 10);
