@@ -120,8 +120,9 @@ export class WMSTileLayer extends TileLayer {
 		this._crs = this.options.crs ?? this._map.options.crs;
 		this._wmsVersion = parseFloat(this.wmsParams.version);
 
-		const projectionKey = this._wmsVersion >= 1.3 ? 'crs' : 'srs';
-		this.wmsParams[projectionKey] = this._crs.code;
+		delete this.wmsParams.srs;
+		delete this.wmsParams.crs;
+		this.wmsParams[this._wmsVersion >= 1.3 ? 'crs' : 'srs'] = this._crs.code;
 	}
 
 	/**
@@ -198,6 +199,8 @@ export class WMSTileLayer extends TileLayer {
 	setParams(params, noRedraw) {
 
 		Object.assign(this.wmsParams, params);
+
+		if (this._map) { this._updateCrs(); }
 
 		if (!noRedraw) {
 			this._keepCurrentTiles();
