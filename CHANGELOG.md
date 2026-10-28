@@ -3,6 +3,26 @@ Maplair Changelog
 
 (all changes of Leaflet without author notice are by [@mourner](https://github.com/mourner))
 
+## Unreleased
+
+### Leaflet, since the fork
+
+Ported from Leaflet (changes without author notice are by [@mourner](https://github.com/mourner))
+
+#### 🐞 Bugfixes
+
+* Fix Popup `maxHeight` not scrolling or resizing with the content by [@nk-batman21](https://github.com/nk-batman21) in https://github.com/Leaflet/Leaflet/pull/10487
+* Fix invalid WMSTileLayer URLs after changing the WMS version by [@osiandhammaloka](https://github.com/osiandhammaloka) in https://github.com/Leaflet/Leaflet/pull/10482
+* Fix focusing a marker whose icon has an `'auto'` size by [@A350xt](https://github.com/A350xt) in https://github.com/Leaflet/Leaflet/pull/10375, and auto-sized marker icons stretching to the full map width in https://github.com/Leaflet/Leaflet/commit/779c7fd5492d36b7738e8bd2b8cdac804754c41d
+* Respect layers added or removed by LayersControl event handlers by [@A350xt](https://github.com/A350xt) in https://github.com/Leaflet/Leaflet/pull/10374
+* Fix Circle `getBounds()` throwing when not added to a map (with [@Schleuse](https://github.com/Schleuse)) in https://github.com/Leaflet/Leaflet/commit/4c7958990cfe586dfc05eede518694b81fe9f32c
+* Fix FeatureGroup `getBounds()` throwing for layers without a position, include nested layer groups (with [@rafaelgallani](https://github.com/rafaelgallani)) in https://github.com/Leaflet/Leaflet/commit/ee37d374222822139af43580906a966186bccebf
+* Fix an error when removing the map or a GridLayer on tile load (with [@pierreeurope](https://github.com/pierreeurope)) in https://github.com/Leaflet/Leaflet/commit/62c5f52791c5055ef4c94e508525b554ab158d15
+
+#### 📝 Docs
+
+* Fix doc typos and outdated links (with [@Kumar007-7](https://github.com/Kumar007-7)) in https://github.com/Leaflet/Leaflet/commit/ff2715f95cd8542eaf8706b9459620bedb3baec7
+
 ## 4.1.0 (2026-10-28)
 
 ⚠️ Despite the minor version, this release contains breaking changes ported from Leaflet, see the refactorings below.
