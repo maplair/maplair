@@ -1,5 +1,5 @@
 ﻿import {expect} from 'vite-plus/test';
-import {Marker, FeatureGroup, LayerGroup, Util} from 'maplair';
+import {Marker, FeatureGroup, LayerGroup, LatLngBounds, TileLayer, Util} from 'maplair';
 
 describe('FeatureGroup', () => {
 	describe('#_propagateEvent', () => {
@@ -85,6 +85,24 @@ describe('FeatureGroup', () => {
 
 			fg.removeLayer(Util.stamp(marker));
 			expect(fg.hasLayer(marker)).to.be.false;
+		});
+	});
+
+	describe('#getBounds', () => {
+		it('includes the layers of nested layer groups', () => {
+			const fg = new FeatureGroup([
+				new Marker([0, 0]),
+				new LayerGroup([new Marker([2, 3]), new LayerGroup([new Marker([-1, 5])])]),
+				new FeatureGroup([new Marker([4, -2])])
+			]);
+
+			expect(fg.getBounds()).to.eql(new LatLngBounds([-1, -2], [4, 5]));
+		});
+
+		it('skips layers without a position', () => {
+			const fg = new FeatureGroup([new Marker([1, 2]), new TileLayer(''), new LayerGroup()]);
+
+			expect(fg.getBounds()).to.eql(new LatLngBounds([1, 2], [1, 2]));
 		});
 	});
 });
