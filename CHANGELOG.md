@@ -9,6 +9,12 @@ Maplair Changelog
 
 Ported from Leaflet (changes without author notice are by [@mourner](https://github.com/mourner))
 
+#### ✨ Refactorings (⚠️ Breaking Changes)
+
+* `latLngToLayerPoint()` and `latLngToContainerPoint()` keep subpixel precision instead of rounding, so polylines and polygons don't zigzag along whole pixels, in https://github.com/Leaflet/Leaflet/pull/10494
+* Various small cleanups, e.g. KeyboardHandler reads `keyboardPanDelta` and `zoomDelta` on each key, Canvas draws ellipses with `ellipse()`, in https://github.com/Leaflet/Leaflet/pull/10490
+* Only stop the propagation of clicks opening a popup in https://github.com/Leaflet/Leaflet/commit/{prop}
+
 #### 🐞 Bugfixes
 
 * Fix Popup `maxHeight` not scrolling or resizing with the content by [@nk-batman21](https://github.com/nk-batman21) in https://github.com/Leaflet/Leaflet/pull/10487
@@ -18,10 +24,27 @@ Ported from Leaflet (changes without author notice are by [@mourner](https://git
 * Fix Circle `getBounds()` throwing when not added to a map (with [@Schleuse](https://github.com/Schleuse)) in https://github.com/Leaflet/Leaflet/commit/4c7958990cfe586dfc05eede518694b81fe9f32c
 * Fix FeatureGroup `getBounds()` throwing for layers without a position, include nested layer groups (with [@rafaelgallani](https://github.com/rafaelgallani)) in https://github.com/Leaflet/Leaflet/commit/ee37d374222822139af43580906a966186bccebf
 * Fix an error when removing the map or a GridLayer on tile load (with [@pierreeurope](https://github.com/pierreeurope)) in https://github.com/Leaflet/Leaflet/commit/62c5f52791c5055ef4c94e508525b554ab158d15
+* Fix an error with empty `subdomains` in https://github.com/Leaflet/Leaflet/commit/{sub}
+* Switch the tooltip handlers when rebinding a tooltip with different options, open it on focus after the layer is added again, don't fire `tileerror` for tiles pruned with `errorTileUrl` in https://github.com/Leaflet/Leaflet/pull/10490
+* Fix the map drifting under the cursor on zoom in https://github.com/Leaflet/Leaflet/commit/{drift}
+* Close popups on Escape more reliably, e.g. with the focus on a marker in https://github.com/Leaflet/Leaflet/commit/{esc}
+* Isolate the stacking context of the map container in https://github.com/Leaflet/Leaflet/commit/{iso}
+* Accept marker icons without `createShadow()` (from https://github.com/Leaflet/Leaflet/pull/10489)
 
 #### 📝 Docs
 
 * Fix doc typos and outdated links (with [@Kumar007-7](https://github.com/Kumar007-7)) in https://github.com/Leaflet/Leaflet/commit/ff2715f95cd8542eaf8706b9459620bedb3baec7
+* Use viewport units in the mobile example by [@pierreeurope](https://github.com/pierreeurope) in https://github.com/Leaflet/Leaflet/pull/10120
+* Fix a few stale things in the plugin guide in https://github.com/Leaflet/Leaflet/commit/{guide}
+
+#### 🔧 Workflow
+
+* Minify `maplair.css` with lightningcss in https://github.com/Leaflet/Leaflet/pull/10493
+* Reduce Dependabot noise with a better config in https://github.com/Leaflet/Leaflet/commit/{dep}
+
+#### 🧪 Tests
+
+* Fix test flakiness on slow runners in https://github.com/Leaflet/Leaflet/commit/{flaky}
 
 ## 4.1.0 (2026-10-28)
 
