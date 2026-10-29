@@ -297,6 +297,14 @@ describe('Marker', () => {
 			expect(marker._shadow.parentNode).to.equal(map._panes.shadowPane);
 		});
 
+		it('accepts an icon without createShadow', () => {
+			const icon = {options: {}, createIcon: () => document.createElement('div')};
+			const marker = new Marker([0, 0], {icon}).addTo(map);
+
+			expect(marker._icon.parentNode).to.equal(map._panes.markerPane);
+			expect(marker._shadow).to.be.null;
+		});
+
 		it('sets the alt attribute to a default value when no alt text is passed', () => {
 			const marker = new Marker([0, 0], {icon: icon1});
 			map.addLayer(marker);

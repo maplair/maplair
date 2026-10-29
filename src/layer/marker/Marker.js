@@ -307,7 +307,7 @@ export class Marker extends Layer {
 			DomEvent.on(icon, 'focus', this._panOnFocus, this);
 		}
 
-		const newShadow = options.shadow ? options.icon.createShadow(this._shadow) : null;
+		const newShadow = options.shadow ? options.icon.createShadow?.(this._shadow) ?? null : null;
 		let addShadow = false;
 
 		if (newShadow !== this._shadow) {
