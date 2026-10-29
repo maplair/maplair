@@ -112,6 +112,7 @@
 
 .maplair-container {
 	overflow: hidden;
+	isolation: isolate;
 
 	.maplair-overlay-pane svg {
 		max-width: none !important;
