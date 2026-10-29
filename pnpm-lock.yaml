@@ -217,6 +217,9 @@ importers:
       eslint-plugin-baseline-js:
         specifier: ^0.7.5
         version: 0.7.5(eslint@10.12.0)
+      lightningcss:
+        specifier: ^1.33.0
+        version: 1.33.0
       liquidjs:
         specifier: ^10.30.0
         version: 10.30.0

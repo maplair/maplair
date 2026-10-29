@@ -1,4 +1,6 @@
+import {readFileSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
+import {transform as transformCss} from 'lightningcss';
 import {defineConfig} from 'vite-plus';
 import {playwright} from 'vite-plus/test/browser-playwright';
 import pkg from './package.json' with {type: 'json'};
@@ -19,6 +21,19 @@ const banner = `/* @preserve
  * (c) ${maplairYears} Simon Legner and Maplair contributors, (c) 2010-2026 Volodymyr Agafonkin, (c) 2010-2011 CloudMade
  */
 `;
+
+/** Emits the minified `maplair.css`. */
+const cssPlugin = {
+	name: 'css',
+	generateBundle() {
+		const {code} = transformCss({
+			filename: 'maplair.css',
+			code: readFileSync(new URL('./src/maplair.css', import.meta.url)),
+			minify: true
+		});
+		this.emitFile({type: 'asset', fileName: 'maplair.css', source: code});
+	},
+};
 
 /** Options shared by all library bundles built with `vp pack`. */
 const packOptions = {
@@ -239,8 +254,8 @@ export default defineConfig({
 		{
 			...packOptions,
 			entry: {'maplair-src': 'src/Maplair.all.js'},
+			plugins: [cssPlugin],
 			copy: [
-				'src/maplair.css',
 				{from: 'src/images/logo.svg', to: 'dist/images'},
 			],
 		},
