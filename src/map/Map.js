@@ -635,7 +635,6 @@ export class MaplairMap extends Evented {
 
 		const r0 = r(0);
 
-		function w(s) { return w0 * (Math.cosh(r0) / Math.cosh(r0 + rho * s)); }
 		function u(s) { return w0 * (Math.cosh(r0) * Math.tanh(r0 + rho * s) - Math.sinh(r0)) / rho2; }
 
 		function easeOut(t) { return 1 - (1 - t) ** 1.5; }
@@ -653,7 +652,7 @@ export class MaplairMap extends Evented {
 
 				this._move(
 					this.unproject(from.add(to.subtract(from).multiplyBy(u(s) / u1)), startZoom),
-					this.getScaleZoom(w0 / w(s), startZoom),
+					this.getScaleZoom(Math.cosh(r0 + rho * s) / Math.cosh(r0), startZoom),
 					{flyTo: true});
 
 			} else {

@@ -159,26 +159,17 @@ export class Class {
 	 * @returns {T}
 	 */
 	static include(props) {
-		for (const k of getAllMethodNames(props)) {
-			if (k !== 'constructor' && k !== 'options') {
-				this.prototype[k] = props[k];
+		for (let obj = props; obj && obj !== Object.prototype; obj = Object.getPrototypeOf(obj)) {
+			for (const k of Object.getOwnPropertyNames(obj)) {
+				if (k !== 'constructor' && k !== 'options') {
+					this.prototype[k] = props[k];
+				}
 			}
 		}
 		if (props.options) {
 			this.mergeOptions(props.options);
 		}
 		return this;
-
-		function *getAllMethodNames(obj) {
-			do {
-				if (obj === Object || obj === Object.prototype) {
-					break;
-				}
-				for (const k of Object.getOwnPropertyNames(obj)) {
-					yield k;
-				}
-			} while ((obj = Object.getPrototypeOf(obj)) !== null);
-		}
 	}
 
 	/**

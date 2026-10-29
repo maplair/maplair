@@ -87,14 +87,11 @@ export class Bounds {
 		if (obj instanceof Point || typeof obj[0] === 'number' || 'x' in obj) {
 			min2 = max2 = Point.from(obj);
 		} else {
-			obj = Bounds.from(obj);
-			min2 = obj.min;
-			max2 = obj.max;
-
-			if (!min2 || !max2) { return this; }
+			({min: min2, max: max2} = Bounds.from(obj));
+			if (!min2) { return this; }
 		}
 
-		if (!this.min && !this.max) {
+		if (!this.min) {
 			this.min = new Point(min2);
 			this.max = new Point(max2);
 		} else {

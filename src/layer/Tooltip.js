@@ -121,13 +121,16 @@ const layerTooltipMethods = {
 	 * @returns {this}
 	 */
 	bindTooltip(content, options) {
+		// an open tooltip is replaced, a closed one reused
+		const old = this.isTooltipOpen() ? null : this._tooltip;
 
-		if (this._tooltip && this.isTooltipOpen()) {
+		// the handlers depend on the old options, so they go before the new ones are applied
+		if (this._tooltip) {
 			this.unbindTooltip();
 		}
 
 		// eslint-disable-next-line no-use-before-define -- defined below, used when called
-		this._tooltip = this._initOverlay(Tooltip, this._tooltip, content, options);
+		this._tooltip = this._initOverlay(Tooltip, old, content, options);
 		this._initTooltipInteractions();
 
 		if (this._tooltip.options.permanent && this._map && this._map.hasLayer(this)) {
@@ -152,29 +155,27 @@ const layerTooltipMethods = {
 	},
 
 	_initTooltipInteractions(remove) {
-		if (!remove && this._tooltipHandlersAdded) { return; }
-		const onOff = remove ? 'off' : 'on',
+		const {permanent, sticky} = this._tooltip.options,
 		events = {
 			remove: this.closeTooltip,
 			move: this._moveTooltip
 		};
-		if (!this._tooltip.options.permanent) {
+		if (permanent) {
+			events.add = this._openTooltip;
+		} else {
 			events.pointerover = this._openTooltip;
 			events.pointerout = this.closeTooltip;
 			events.click = this._openTooltip;
+			// layer elements can be recreated on every add
+			events.add = this._toggleFocusListeners;
 			if (this._map) {
-				this._addFocusListeners(remove);
-			} else {
-				events.add = () => this._addFocusListeners(remove);
+				this._toggleFocusListeners(!remove);
 			}
-		} else {
-			events.add = this._openTooltip;
 		}
-		if (this._tooltip.options.sticky) {
+		if (sticky) {
 			events.pointermove = this._moveTooltip;
 		}
-		this[onOff](events);
-		this._tooltipHandlersAdded = !remove;
+		this[remove ? 'off' : 'on'](events);
 	},
 
 	/**
@@ -254,11 +255,12 @@ const layerTooltipMethods = {
 		return this._tooltip;
 	},
 
-	_addFocusListeners(remove) {
+	// also the `add` listener, so any truthy argument adds
+	_toggleFocusListeners(add) {
 		if (this.getElement) {
-			this._addFocusListenersOnLayer(this, remove);
+			this._addFocusListenersOnLayer(this, !add);
 		} else if (this.eachLayer) {
-			this.eachLayer(layer => this._addFocusListenersOnLayer(layer, remove), this);
+			this.eachLayer(layer => this._addFocusListenersOnLayer(layer, !add), this);
 		}
 	},
 
