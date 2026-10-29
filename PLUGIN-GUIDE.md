@@ -19,8 +19,7 @@ This guide lists a number of best practices for publishing a Maplair plugin that
 	- [Accessibility Testing](#accessibility-testing)
 	- [Learn about web accessibility](#learn-about-web-accessibility)
 4. [Publishing on NPM](#publishing-on-npm)
-5. [Module Loaders](#module-loaders)
-6. [Adding to the plugins list](#adding-to-the-plugins-list)
+5. [Adding to the plugins list](#adding-to-the-plugins-list)
 
 ## Presentation
 
@@ -100,17 +99,15 @@ package.json
 
 Everyone's tastes are different, but it's important to be consistent with whatever conventions you choose for your plugin.
 
-For a good starting point, check out [Airbnb JavaScript Guide](https://github.com/airbnb/javascript).
-Maplair follows pretty much the same conventions
-except for using smart tabs (hard tabs for indentation, spaces for alignment)
-and putting a space after the `function` keyword.
+Write your plugin as an ES module using modern JavaScript (classes, `const`/`let`, arrow functions).
+Maplair itself uses smart tabs (hard tabs for indentation, spaces for alignment) and [Oxlint](https://oxc.rs/) to keep its code consistent.
 
 ### Plugin API
 
 * Never expose global variables in your plugin.
 * If you inherit one of the existing classes or have a new class, export it and make it available via import.
 * If you want to add new methods to Maplair classes, you can do it like this: `Marker.include({myPlugin: …})`.
-* Make your plugin importable like this: `import MyPlugin from 'maplair-my-plugin'`.
+* Import what you need from Maplair with named imports (`import {Marker, Util} from 'maplair'`), and use named exports in your plugin too, so it's importable like this: `import {MyPlugin} from 'maplair-my-plugin'`.
 
 
 Function, method, property and factory names should be in `camelCase`.<br>
@@ -182,7 +179,7 @@ NPM (Node Packaged Modules) is a package manager and code repository for JavaScr
 
 NPM has an excellent [developers guide](https://docs.npmjs.com/using-npm/developers.html) to help you through the process.
 
-When you publish your plugin you should add a dependency on `maplair` to your `package.json` file. This will automatically install Maplair when your package is installed.
+When you publish your plugin, list `maplair` in `peerDependencies` (not `dependencies`) in your `package.json`. This way your plugin uses the same copy of Maplair as the app; with a separate copy, checks like `instanceof LatLng` fail between the two.
 
 Here is an example of a `package.json` file for a Maplair plugin.
 
@@ -191,11 +188,12 @@ Here is an example of a `package.json` file for a Maplair plugin.
   "name": "my-maplair-plugin",
   "version": "1.0.0",
   "description": "A simple maplair plugin.",
-  "main": "my-plugin.js",
+  "type": "module",
+  "exports": "./my-plugin.js",
   "author": "You",
-  "license": "IST",
+  "license": "MIT",
   "peerDependencies": {
-    "maplair": "^1.0.0"
+    "maplair": "^4.0.0"
   }
 }
 ```
@@ -210,7 +208,7 @@ trigger a build/minification just before publishing your package with a
   "name": "my-maplair-plugin",
   ...
   "scripts": {
-    "prepublishOnly": "grunt build"
+    "prepublishOnly": "npm run build"
   }
 }
 ```
