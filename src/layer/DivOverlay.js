@@ -443,7 +443,7 @@ export class DivOverlay extends Layer {
 	_updatePosition() {
 		if (!this._map) { return; }
 
-		const pos = this._map.latLngToLayerPoint(this._latlng),
+		const pos = this._map.latLngToLayerPoint(this._latlng)._round(),
 		offset = Point.from(this.options.offset);
 
 		this._setContainerPosition(pos.add(this._getAnchor()));

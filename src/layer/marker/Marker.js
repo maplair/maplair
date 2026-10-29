@@ -254,7 +254,7 @@ export class Marker extends Layer {
 	update() {
 
 		if (this._icon && this._map && !this._culled) {
-			const pos = this._map.latLngToLayerPoint(this._latlng).round();
+			const pos = this._map.latLngToLayerPoint(this._latlng)._round();
 			this._setPos(pos);
 		}
 
@@ -413,7 +413,7 @@ export class Marker extends Layer {
 
 	_animateZoom(opt) {
 		if (this._culled) { return; }
-		const pos = this._map._latLngToNewLayerPoint(this._latlng, opt.zoom, opt.center).round();
+		const pos = this._map._latLngToNewLayerPoint(this._latlng, opt.zoom, opt.center)._round();
 
 		this._setPos(pos);
 	}

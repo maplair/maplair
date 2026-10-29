@@ -139,7 +139,8 @@ describe('Map: rotation', () => {
 			const point = new Point(100, 250),
 			latlng = map.containerPointToLatLng(point);
 			map.setZoomAround(point, 7);
-			expectNear(map.latLngToContainerPoint(latlng), point);
+			// the view is snapped to whole pixels, by up to half a pixel, which zooming by 2 levels amplifies
+			expectNear(map.latLngToContainerPoint(latlng), point, 2);
 		});
 
 		it('keeps the location below the pointer when pinching on a touchpad', async () => {

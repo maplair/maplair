@@ -174,7 +174,7 @@ export class SVG extends Renderer {
 
 		// drawing a circle with two half-arcs
 		const d = layer._empty() ? 'M0 0' :
-			`M${p.x - r},${p.y
+			`M${num(p.x - r)},${num(p.y)
 			}${arc}${r * 2},0 ${
 				arc}${-r * 2},0 `;
 
@@ -214,7 +214,7 @@ export class SVG extends Renderer {
 	 */
 	static pointsToPath(rings, closed) {
 		const str = rings.flatMap(points => [
-			...points.map((p, j) => `${(j ? 'L' : 'M') + p.x} ${p.y}`),
+			...points.map((p, j) => `${(j ? 'L' : 'M') + num(p.x)} ${num(p.y)}`),
 			// closes the ring for polygons
 			closed ? 'z' : ''
 		]).join('');
@@ -223,4 +223,14 @@ export class SVG extends Renderer {
 		return str || 'M0 0';
 	}
 
+}
+
+// Formats a pixel coordinate with 0.1px precision. Built from integer parts because V8 stringifies small integers
+// much faster than fractional numbers, and path strings with many vertices are rebuilt on every redraw.
+function num(v) {
+	const n = Math.round(v * 10),
+	a = n < 0 ? -n : n,
+	i = Math.floor(a / 10),
+	d = a - i * 10;
+	return (n < 0 ? '-' : '') + (d ? `${i}.${d}` : i);
 }

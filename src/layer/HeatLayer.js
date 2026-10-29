@@ -187,7 +187,7 @@ export class HeatLayer extends BlanketOverlay {
 
 		// merge the points per grid cell, weighted by their intensity
 		for (const latlng of this._latlngs) {
-			const point = map.latLngToLayerPoint(latlng).subtract(offset);
+			const point = map.latLngToLayerPoint(latlng)._round()._subtract(offset);
 			if (point.x < -r || point.y < -r || point.x > width + r || point.y > height + r) { continue; }
 			const intensity = (latlng.alt ?? latlng[2] ?? 1) * zoomFactor,
 			key = `${Math.floor(point.x / cellSize)}:${Math.floor(point.y / cellSize)}`,

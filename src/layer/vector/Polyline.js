@@ -257,7 +257,7 @@ export class Polyline extends Path {
 			points = this._rings[i];
 
 			for (j = 0, len2 = points.length; j < len2 - 1; j++) {
-				segment = LineUtil.clipSegment(points[j], points[j + 1], bounds, j, true);
+				segment = LineUtil.clipSegment(points[j], points[j + 1], bounds, j);
 
 				if (!segment) { continue; }
 

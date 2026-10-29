@@ -1,6 +1,8 @@
 import {expect} from 'vite-plus/test';
-import {MaplairMap, LatLng, Polyline} from 'maplair';
+import {MaplairMap, LatLng, Polyline, SVG, Point} from 'maplair';
 import {createContainer, removeMapContainer} from '../../SpecHelper.js';
+
+const oneDecimalMoveTo = /^M-?\d+(\.\d)? -?\d+(\.\d)?L/;
 
 describe('Polyline', () => {
 	let map, container;
@@ -295,6 +297,22 @@ describe('Polyline', () => {
 			const point2 = polyln.closestLayerPoint(p2);
 
 			expect(point.distance).to.be.lessThan(point2.distance);
+		});
+	});
+
+	describe('SVG path', () => {
+		it('keeps vertices at subpixel precision', () => {
+			const polyline = new Polyline([[55.8, 37.6], [55.8, 37.61]], {renderer: new SVG()}).addTo(map);
+			const [a, b] = polyline._parts[0];
+			expect(b.x - a.x).to.be.within(0.1, 1); // was rounded to 0 or 1 before
+			expect(polyline._path.getAttribute('d')).to.match(oneDecimalMoveTo);
+		});
+
+		it('formats coordinates with 0.1px precision', () => {
+			const path = SVG.pointsToPath([[
+				new Point(0, -0.04), new Point(1.25, -1.25), new Point(-123.456, 3), new Point(5e9 + 0.3, -0.06)
+			]], true);
+			expect(path).to.equal('M0 0L1.3 -1.2L-123.5 3L5000000000.3 -0.1z');
 		});
 	});
 });

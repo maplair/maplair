@@ -471,7 +471,7 @@ const divOverlayRotationMethods = {
 		if (!this._map) { return; }
 
 		const map = this._map,
-		pos = map.latLngToLayerPoint(this._latlng),
+		pos = map.latLngToLayerPoint(this._latlng)._round(),
 		// on a rotated map, the anchor is relative to the upright overlay
 		anchor = map._rotateToPane(new Point(this._getAnchor()));
 		let offset = Point.from(this.options.offset);

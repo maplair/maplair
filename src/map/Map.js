@@ -1386,8 +1386,7 @@ export class MaplairMap extends Evented {
 	 * @returns {Point}
 	 */
 	latLngToLayerPoint(latlng) {
-		const projectedPoint = this.project(LatLng.from(latlng))._round();
-		return projectedPoint._subtract(this.getPixelOrigin());
+		return this.project(LatLng.from(latlng))._subtract(this.getPixelOrigin());
 	}
 
 	/**
@@ -1981,7 +1980,7 @@ export class MaplairMap extends Evented {
 
 	// offset of the specified place to the current center in pixels
 	_getCenterOffset(latlng) {
-		return this.latLngToLayerPoint(latlng).subtract(this._getCenterLayerPoint());
+		return this.latLngToLayerPoint(latlng)._round()._subtract(this._getCenterLayerPoint());
 	}
 
 	// adjust center for view to get inside bounds
