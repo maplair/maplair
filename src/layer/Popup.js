@@ -438,12 +438,6 @@ export class Popup extends DivOverlay {
 		this._contentNode = DomUtil.create('div', `${prefix}-content`, wrapper);
 
 		DomEvent.disableClickPropagation(container);
-		// The keyboard handler of the map does not get keys while the focus is in the popup
-		DomEvent.on(container, 'keydown', (e) => {
-			if (e.key === 'Escape' && this.options.closeOnEscapeKey) {
-				this.close();
-			}
-		});
 		DomEvent.disableScrollPropagation(this._contentNode);
 		DomEvent.on(container, 'contextmenu', DomEvent.stopPropagation);
 
