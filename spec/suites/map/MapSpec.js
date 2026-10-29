@@ -169,6 +169,26 @@ describe('Map', () => {
 			center.lat += 10;
 			expect(map.getCenter()).to.eqlLatLng(new LatLng(10, 10));
 		});
+
+		it('keeps a precise center through animated zooms after a pan', () => {
+			container.style.width = '801px';
+			container.style.height = '601px';
+			map.setView([51.18, -1.83], 14);
+			map.panBy([37, 23], {animate: false});
+			const center = map.getCenter();
+
+			vi.useFakeTimers({toFake: ['setTimeout', 'clearTimeout', 'requestAnimationFrame']});
+			const zoomend = vi.fn();
+			map.on('zoomend', zoomend);
+			for (const zoom of [13, 12, 11, 10, 9, 8, 7, 6, 7, 8, 9, 10, 11, 12, 13, 14]) {
+				map.setZoom(zoom, {animate: true});
+				vi.advanceTimersByTime(300);
+			}
+			vi.useRealTimers();
+
+			expect(zoomend).toHaveBeenCalledTimes(16);
+			expect(map.getCenter()).to.eqlLatLng(center);
+		});
 	});
 
 	describe('#whenReady', () => {
@@ -364,10 +384,25 @@ describe('Map', () => {
 			expect(map.getBounds().contains([5, 5])).to.be.true;
 		});
 
-		it('pass latLng and keep specified latLng in view at high zoom fails', () => {
-			map.setZoomAround([5, 5], 12); // usually fails around 9 zoom level
+		it('pass latLng and keep specified latLng stationary at high zoom', () => {
+			const point = map.latLngToContainerPoint([5, 5]);
+			map.setZoomAround([5, 5], 12);
 
-			expect(map.getBounds().contains([5, 5])).to.be.false;
+			expect(map.latLngToContainerPoint([5, 5])).to.be.near(point);
+		});
+
+		it('returns to the same view when zooming out and back in around a point', () => {
+			container.style.width = '801px';
+			container.style.height = '601px';
+			map.setView([51.18, -1.83], 14);
+			const point = new Point(612, 143);
+			const latlng = map.containerPointToLatLng(point);
+
+			for (const zoom of [13, 12, 11, 10, 9, 8, 7, 6, 7, 8, 9, 10, 11, 12, 13, 14]) {
+				map.setZoomAround(point, zoom, {animate: false});
+			}
+
+			expect(map.containerPointToLatLng(point)).to.eqlLatLng(latlng);
 		});
 
 		it('throws if map is not loaded', () => {

@@ -451,12 +451,14 @@ export class MaplairMap extends Evented {
 	 * @returns {this}
 	 */
 	setZoomAround(latlng, zoom, options) {
-		const scale = this.getZoomScale(zoom),
-		viewHalf = this.getSize().divideBy(2),
-		containerPoint = latlng instanceof Point ? latlng : this.latLngToContainerPoint(latlng),
-
-		centerOffset = containerPoint.subtract(viewHalf).multiplyBy(1 - 1 / scale),
-		newCenter = this.containerPointToLatLng(viewHalf.add(centerOffset));
+		// work in unrounded projected coordinates so that zooming back and forth around the same point
+		// doesn't accumulate pixel rounding errors (amplified by the zoom scale) and drift the view;
+		// a pixel offset goes through layer points, which account for a rotation of the map
+		const center = this.project(this.getCenter()),
+		offset = latlng instanceof Point ?
+			this.containerPointToLayerPoint(latlng).subtract(this.containerPointToLayerPoint(this.getSize().divideBy(2))) :
+			this.project(latlng).subtract(center),
+		newCenter = this.unproject(center.add(offset.multiplyBy(1 - 1 / this.getZoomScale(zoom))));
 
 		return this.setView(newCenter, zoom, {zoom: options});
 	}
@@ -1136,7 +1138,7 @@ export class MaplairMap extends Evented {
 	getCenter() {
 		this._checkIfLoaded();
 
-		if (this._lastCenter && !this._moved()) {
+		if (this._lastCenter && this._getMapPanePos().equals(this._lastCenterPanePos)) {
 			return new LatLng(this._lastCenter);
 		}
 		return this.layerPointToLatLng(this._getCenterLayerPoint());
@@ -1714,6 +1716,7 @@ export class MaplairMap extends Evented {
 
 		this._zoom = zoom;
 		this._lastCenter = center;
+		this._lastCenterPanePos = this._getMapPanePos();
 		this._pixelOrigin = this._getNewPixelOrigin(center);
 
 		if (!suppressEvent) {
@@ -1952,11 +1955,6 @@ export class MaplairMap extends Evented {
 
 	_getMapPanePos() {
 		return DomUtil.getPosition(this._mapPane);
-	}
-
-	_moved() {
-		const pos = this._getMapPanePos();
-		return pos && !pos.equals([0, 0]);
 	}
 
 	_getTopLeftPoint(center, zoom) {
