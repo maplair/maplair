@@ -2,7 +2,6 @@ import {expect, vi} from 'vite-plus/test';
 import {Canvas, LatLng, MaplairMap, Marker, Polyline, SVG} from 'maplair';
 import {createContainer, removeMapContainer} from '../SpecHelper.js';
 import 'maplair/marker-movement';
-import 'maplair/marker-rotation';
 import 'maplair/dash-animation';
 
 describe('Animated markers and paths', () => {
@@ -83,7 +82,7 @@ describe('Animated markers and paths', () => {
 			marker.moveAlong([[0, 1], [-1, 1]], {duration: 100, rotate: true});
 			await moveend;
 			// heading south at the end
-			expect(marker.options.rotationAngle).to.be.closeTo(180, 1e-6);
+			expect(marker.getRotation()).to.be.closeTo(180, 1e-6);
 			expect(marker.getElement().style.transform).to.contain('rotate(180deg)');
 		});
 

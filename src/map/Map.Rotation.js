@@ -12,7 +12,6 @@ import {Popup} from '../layer/Popup.js';
 import {Tooltip} from '../layer/Tooltip.js';
 import {Marker} from '../layer/marker/Marker.js';
 import {MarkerDrag} from '../layer/marker/Marker.Drag.js';
-import '../layer/marker/Marker.Rotation.js';
 import {DragHandler} from './handler/DragHandler.js';
 import {PinchZoomHandler} from './handler/PinchZoomHandler.js';
 import {ScrollWheelZoomHandler} from './handler/ScrollWheelZoomHandler.js';
@@ -65,7 +64,7 @@ const rotatedMaps = new WeakMap();
 const {panBy} = MaplairMap.prototype,
 {getEvents: getDivOverlayEvents} = DivOverlay.prototype,
 {_setPosition: setTooltipPosition} = Tooltip.prototype,
-{getEvents: getMarkerEvents} = Marker.prototype,
+{getEvents: getMarkerEvents, _positionElements: positionMarkerElements} = Marker.prototype,
 {_onDown: onDraggableDown, _updatePosition: updateDraggablePosition} = Draggable.prototype,
 {_onPointerStart: onPinchStart} = PinchZoomHandler.prototype,
 {_onDown: onTapDragDown} = TapDragZoomHandler.prototype,
@@ -625,7 +624,23 @@ const tooltipRotationMethods = {
 Tooltip.include(tooltipRotationMethods);
 
 /**
- * Methods of `Marker` for the map rotation: the marker is updated on rotation.
+ * Options of `Marker` for the map rotation.
+ * @typedef {object} MarkerMapRotationOptions
+ * @lends MarkerOptions
+ * @property {boolean} [rotateWithView=false] On a rotated map (see
+ * `MaplairMap.setBearing()`), whether the icon rotates with the map (e.g. for arrows
+ * pointing in a geographic direction) instead of staying upright. The `rotation` of
+ * the marker is relative to the screen, or to north with `rotateWithView`.
+ */
+Marker.include({
+	options: {
+		rotateWithView: false
+	}
+});
+
+/**
+ * Methods of `Marker` for the map rotation: the marker is updated on rotation, and
+ * its icon and shadow stay upright.
  * @lends Marker.prototype
  */
 const markerRotationMethods = {
@@ -636,6 +651,15 @@ const markerRotationMethods = {
 	 */
 	getEvents() {
 		return {...getMarkerEvents.call(this), rotate: this.update};
+	},
+
+	_positionElements(pos) {
+		positionMarkerElements.call(this, pos);
+		const bearing = this.options.rotateWithView ? 0 : (this._map?.getBearing() ?? 0);
+		if (!bearing) { return; }
+		for (const el of [this._icon, this._shadow]) {
+			if (el) { el.style.transform += ` rotate(${bearing}deg)`; }
+		}
 	}
 };
 /** @typedef {typeof markerRotationMethods} MarkerMapRotationMethods */

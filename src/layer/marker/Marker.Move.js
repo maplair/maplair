@@ -11,9 +11,8 @@ import {Point} from '../../geometry/Point.js';
  * @property {number} [duration=1000] The duration of the movement in milliseconds.
  * @property {number} [speed] The speed in meters (or units of the CRS) per second
  * instead of the `duration`.
- * @property {boolean} [rotate=false] Whether to set the `rotationAngle` of the icon to
- * the heading of the movement (for icons pointing up; needs the marker rotation, see
- * `rotationAngle`).
+ * @property {boolean} [rotate=false] Whether to set the `rotation` of the marker to
+ * the heading of the movement (for icons pointing up).
  */
 
 // The methods extended below
@@ -81,7 +80,7 @@ const markerMoveMethods = {
 			}
 			const from = points[i], to = points[i + 1];
 			if (options.rotate && !from.equals(to)) {
-				this.options.rotationAngle = this._heading(from, to);
+				this.options.rotation = this._heading(from, to);
 			}
 			this.setLatLng(this._interpolate(from, to, lengths[i] ? Math.min(1, distance / lengths[i]) : 1));
 

@@ -33,6 +33,10 @@ import {pointToGeoJSON} from '../GeoJSONUtil.js';
  * top of all others (or below), specifying a high value like `1000` (or high negative
  * value, respectively).
  * @property {number} [opacity=1] The opacity of the marker.
+ * @property {number|null} [rotation=null] Rotation of the marker icon in degrees,
+ * clockwise, around the icon anchor, e.g. for the heading of a vehicle. A rotated
+ * marker, even at 0°, has no shadow, since the shadow of an upright pin looks wrong
+ * under a tilted one. `null` means no rotation.
  * @property {boolean} [riseOnHover=false] If `true`, the marker will get on top of
  * others when you hover the pointer over it.
  * @property {number} [riseOffset=250] The z-index offset used for the `riseOnHover`
@@ -97,6 +101,7 @@ export class Marker extends Layer {
 		alt: 'Marker',
 		zIndexOffset: 0,
 		opacity: 1,
+		rotation: null,
 		riseOnHover: false,
 		riseOffset: 250,
 		pane: 'markerPane',
@@ -390,18 +395,27 @@ export class Marker extends Layer {
 	}
 
 	_setPos(pos) {
-
-		if (this._icon) {
-			DomUtil.setPosition(this._icon, pos);
-		}
-
-		if (this._shadow) {
-			DomUtil.setPosition(this._shadow, pos);
-		}
+		this._positionElements(pos);
 
 		this._zIndex = pos.y + this.options.zIndexOffset;
 
 		this._resetZIndex();
+	}
+
+	_positionElements(pos) {
+		const rotation = this.options.rotation;
+
+		if (this._icon) {
+			DomUtil.setPosition(this._icon, pos);
+			if (rotation != null) {
+				this._icon.style.transform += ` rotate(${rotation}deg)`;
+			}
+		}
+
+		if (this._shadow) {
+			DomUtil.setPosition(this._shadow, pos);
+			this._shadow.style.display = rotation == null ? '' : 'none';
+		}
 	}
 
 	_updateZIndex(offset) {
@@ -486,6 +500,30 @@ export class Marker extends Layer {
 	}
 
 	/**
+	 * Returns the current [rotation](#markeroptions-rotation) of the marker in degrees.
+	 * @returns {number|null}
+	 */
+	getRotation() {
+		return this.options.rotation;
+	}
+
+	/**
+	 * Changes the [rotation](#markeroptions-rotation) of the marker; `null` removes it.
+	 * @param {number|null} rotation
+	 * @returns {this}
+	 */
+	setRotation(rotation) {
+		this.options.rotation = rotation;
+		// mid-zoom, the icon is transitioning to a position that update() can't compute yet; the zoom end applies it
+		if (this._icon && !this._map._animatingZoom) {
+			this._positionElements(DomUtil.getPosition(this._icon));
+			this._popup?._updatePosition();
+			this._tooltip?._updatePosition();
+		}
+		return this;
+	}
+
+	/**
 	 * Changes the opacity of the marker.
 	 * @param {number} opacity
 	 * @returns {this}
@@ -546,11 +584,22 @@ export class Marker extends Layer {
 	}
 
 	_getPopupAnchor() {
-		return this.options.icon.options.popupAnchor;
+		return this._rotateAnchor(this.options.icon.options.popupAnchor);
 	}
 
 	_getTooltipAnchor() {
-		return this.options.icon.options.tooltipAnchor;
+		return this._rotateAnchor(this.options.icon.options.tooltipAnchor);
+	}
+
+	// anchors are offsets from the icon anchor, which is also the rotation origin
+	_rotateAnchor(anchor) {
+		const angle = this.options.rotation * Math.PI / 180;
+		if (!angle || !anchor) { return anchor; }
+
+		const {x, y} = Point.from(anchor),
+		cos = Math.cos(angle),
+		sin = Math.sin(angle);
+		return new Point(x * cos - y * sin, x * sin + y * cos);
 	}
 
 	/**

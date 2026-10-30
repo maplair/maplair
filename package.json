@@ -49,10 +49,6 @@
       "types": "./dist/types/map/Map.Rotation.d.ts",
       "default": "./dist/esm/map/Map.Rotation.js"
     },
-    "./marker-rotation": {
-      "types": "./dist/types/layer/marker/Marker.Rotation.d.ts",
-      "default": "./dist/esm/layer/marker/Marker.Rotation.js"
-    },
     "./marker-movement": {
       "types": "./dist/types/layer/marker/Marker.Move.d.ts",
       "default": "./dist/esm/layer/marker/Marker.Move.js"
@@ -83,7 +79,6 @@
     "./dist/maplair*.js",
     "./src/map/Map.js",
     "./src/map/Map.Rotation.js",
-    "./src/layer/marker/Marker.Rotation.js",
     "./src/layer/marker/Marker.Move.js",
     "./src/layer/vector/Path.DashAnimation.js",
     "./src/layer/vector/Polyline.Decorations.js",
@@ -91,7 +86,6 @@
     "./src/layer/vector/Path.ZoomStyles.js",
     "./dist/esm/map/Map.js",
     "./dist/esm/map/Map.Rotation.js",
-    "./dist/esm/layer/marker/Marker.Rotation.js",
     "./dist/esm/layer/marker/Marker.Move.js",
     "./dist/esm/layer/vector/Path.DashAnimation.js",
     "./dist/esm/layer/vector/Polyline.Decorations.js",

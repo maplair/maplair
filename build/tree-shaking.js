@@ -10,7 +10,6 @@ const dir = fileURLToPath(new URL('./.tree-shaking/', import.meta.url));
 // code which only the respective feature contains
 const features = {
 	'map-rotation': 'maplair-rotate-pane',
-	'marker-rotation': 'setRotationAngle',
 	'marker-movement': 'moveAlong',
 	'dash-animation': 'maplair-dash-animated',
 	'path-decorations': 'maplair-path-arrowheads',
@@ -39,8 +38,7 @@ const apps = {
 	'without features': {code: base, expected: []},
 	...Object.fromEntries(Object.keys(features).map(feature => [feature, {
 		code: `import 'maplair/${feature}';\n${base}`,
-		// the map rotation keeps markers upright with the marker rotation
-		expected: feature === 'map-rotation' ? [feature, 'marker-rotation'] : [feature]
+		expected: [feature]
 	}])),
 	'search-control': {
 		code: `import {SearchControl} from 'maplair';\n${base}new SearchControl({geocoder: SearchControl.nominatim({acceptUsagePolicy: true})}).addTo(map);\n`,

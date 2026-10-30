@@ -137,6 +137,8 @@ export class Icon extends Class {
 			img.style.marginLeft = `${-anchor.x}px`;
 			img.style.marginTop  = `${-anchor.y}px`;
 		}
+		// the origin of the marker rotation: the anchor, which is the top left corner without one
+		img.style.transformOrigin = anchor ? `${anchor.x}px ${anchor.y}px` : '0 0';
 
 		if (size) {
 			img.style.width  = `${size.x}px`;

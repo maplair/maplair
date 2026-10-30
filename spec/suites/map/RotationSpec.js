@@ -233,6 +233,25 @@ describe('Map: rotation', () => {
 			expect(marker.getElement().style.transform).not.to.contain('rotate');
 		});
 
+		it('keeps the rotation of markers relative to the screen', () => {
+			const marker = new Marker([11, 21], {rotation: 45}).addTo(map);
+			map.setBearing(30);
+			expect(marker.getElement().style.transform).to.contain('rotate(45deg) rotate(30deg)');
+		});
+
+		it('keeps the rotation of markers relative to north with rotateWithView', () => {
+			const marker = new Marker([11, 21], {rotation: 45, rotateWithView: true}).addTo(map);
+			map.setBearing(30);
+			expect(marker.getElement().style.transform).to.contain('rotate(45deg)');
+			expect(marker.getElement().style.transform).not.to.contain('rotate(30deg)');
+		});
+
+		it('keeps marker shadows upright', () => {
+			const marker = new Marker([11, 21]).addTo(map);
+			map.setBearing(30);
+			expect(marker._shadow.style.transform).to.contain('rotate(30deg)');
+		});
+
 		it('keeps popups upright above their source', () => {
 			const latlng = [11, 21],
 			marker = new Marker(latlng).addTo(map).bindPopup('Popup', {autoPan: false}).openPopup(),

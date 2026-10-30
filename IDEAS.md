@@ -417,7 +417,8 @@ the given distances and angles. Recomputed in `_update()`.
 
 ## 33. Rotated marker icons
 
-**Status:** implemented in 34e47b5c, an optional module `maplair/marker-rotation` since d5c59a1c.
+**Status:** implemented in 34e47b5c, an optional module `maplair/marker-rotation` since d5c59a1c,
+replaced by the Marker option `rotation` of Leaflet (https://github.com/Leaflet/Leaflet/pull/10489).
 
 [Leaflet.RotatedMarker](https://github.com/bbecquet/Leaflet.RotatedMarker) (0.27k ⭐) · ~0.3 kB
 
