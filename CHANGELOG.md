@@ -11,6 +11,7 @@ Ported from Leaflet (changes without author notice are by [@mourner](https://git
 
 #### ✨ Refactorings (⚠️ Breaking Changes)
 
+* Marker: the option `rotation` (in degrees, `null` for none) with `setRotation()` and `getRotation()` rotates the icon around its anchor, rotates the popup and tooltip anchors and hides the shadow; it replaces the optional module `maplair/marker-rotation` with `rotationAngle`, `rotationOrigin`, `setRotationAngle()` and `setRotationOrigin()`, `rotateWithView` is part of `maplair/map-rotation`, in https://github.com/Leaflet/Leaflet/pull/10489
 * `latLngToLayerPoint()` and `latLngToContainerPoint()` keep subpixel precision instead of rounding, so polylines and polygons don't zigzag along whole pixels, in https://github.com/Leaflet/Leaflet/pull/10494
 * Various small cleanups, e.g. KeyboardHandler reads `keyboardPanDelta` and `zoomDelta` on each key, Canvas draws ellipses with `ellipse()`, in https://github.com/Leaflet/Leaflet/pull/10490
 * Only stop the propagation of clicks opening a popup in https://github.com/Leaflet/Leaflet/commit/{prop}
@@ -29,7 +30,7 @@ Ported from Leaflet (changes without author notice are by [@mourner](https://git
 * Fix the map drifting under the cursor on zoom in https://github.com/Leaflet/Leaflet/commit/{drift}
 * Close popups on Escape more reliably, e.g. with the focus on a marker in https://github.com/Leaflet/Leaflet/commit/{esc}
 * Isolate the stacking context of the map container in https://github.com/Leaflet/Leaflet/commit/{iso}
-* Accept marker icons without `createShadow()` (from https://github.com/Leaflet/Leaflet/pull/10489)
+* Accept marker icons without `createShadow()` in https://github.com/Leaflet/Leaflet/pull/10489
 
 #### 📝 Docs
 
