@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<base target="_top">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<title>Tilt Handler Example - Maplair</title>
+	
+	<link rel="icon" type="image/svg+xml" href="docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+
+	<style>
+		html, body {
+			height: 100%;
+			margin: 0;
+		}
+		.maplair-container {
+			height: 400px;
+			width: 600px;
+			max-width: 100%;
+			max-height: 100%;
+		}
+	</style>
+
+	
+</head>
+<body>
+
+<div id='map'></div>
+
+<style>
+
+#info {
+	position:absolute; 
+	top:0; 
+	right:0; 
+	width: 20em; 
+	height: 7.5em; 
+	background: rgba(255,255,255,.5); 
+	z-index:500; 
+	font: 12px Sans;
+}
+
+.crsMarker {
+	border-top: 2px green solid;
+	border-left: 2px green solid;
+}
+</style>
+<div id='info' style=''></div>
+<script type="module">
+	import {MaplairMap, Handler, Point, DomEvent, TileLayer} from 'maplair';
+
+	const trd = [63.41, 10.41];
+	
+	class TiltHandler extends Handler {
+		addHooks() {
+			DomEvent.on(window, 'deviceorientation', this._tilt, this);
+		}
+	
+		removeHooks() {
+			DomEvent.off(window, 'deviceorientation', this._tilt, this);
+		}
+
+		_tilt(ev) {
+			// Treat Gamma angle as horizontal pan (1 degree = 1 pixel) and Beta angle as vertical pan
+			const offset = new Point(ev.gamma, ev.beta);
+			let info;
+			if (offset) {
+				this._map.panBy(offset);
+				info = `${ev.gamma},${ev.beta}`;
+			} else {
+				info = 'Device orientation not detected';
+			}
+			document.getElementById('info').innerHTML = info;
+		}
+	}
+	
+	MaplairMap.addInitHook('addHandler', 'tilt', TiltHandler);
+
+	const map = new MaplairMap('map', {
+		center: [0, 0],
+		zoom: 1,
+		tilt: true
+	});
+
+	const osm = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		maxZoom: 19,
+		attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+	}).addTo(map);
+</script>
+
+
+</body>
+</html>

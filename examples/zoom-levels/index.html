@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>Zoom Levels - Maplair</title>
+	
+	
+	<meta charset="utf-8" />
+	
+
+	
+
+	<meta name="color-scheme" content="light dark">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="../../docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="../../docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="../../docs/css/normalize.css" />
+	<link rel="stylesheet" href="../../docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="../../docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="../../docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body>
+
+<header>
+	<h1><a href="https://maplair.org/"><picture><source srcset="../../docs/images/logo-dark.png" media="(prefers-color-scheme: dark)" /><img src="../../docs/images/logo.png" alt="Maplair" width="300" /></picture></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<a href="../../index.html">Overview</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../examples.html" class="active">Tutorials</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../download.html">Download</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../plugins.html" title="Leaflet plugins, none of which is compatible with Maplair"><s>Plugins</s></a>
+			
+		</li>
+		<li>
+			
+				<a href="../../blog.html">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		
+<p class="tutorials-back"><a href="../../examples.html">← Tutorials</a></p>
+
+<style>
+.tiles img {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 5px;
+}
+.tiles.small img {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 1px;
+    width: 64px;
+    height: 64px;
+}
+.tiles {
+    line-height: 0;
+}
+.tiles.legend {
+    line-height: 1;
+}
+</style>
+<h2 id="zoom-levels">Zoom Levels</h2>
+<p>Maplair works with <a href="https://en.wikipedia.org/wiki/Latitude">latitude</a>, <a href="https://en.wikipedia.org/wiki/Longitude">longitude</a> and “zoom level”.</p>
+<p>Lower zoom levels means that the map shows entire continents, while higher zoom
+levels means that the map can show details of a city.</p>
+<p>To understand how zoom levels work, first we need a basic introduction to <i>geodesy</i>.</p>
+<h2 id="the-shape-of-the-earth">The Shape of the Earth</h2>
+<p>Let’s have a look at a simple map locked at zoom zero:</p>
+<pre><code class="language-plaintext">const map = new MaplairMap('map', {
+	minZoom: 0,
+	maxZoom: 0
+});
+
+const osmAttribution = '© &lt;a href=&quot;https://www.openstreetmap.org/copyright&quot;&gt;OpenStreetMap&lt;/a&gt; contributors';
+
+const osm = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	attribution: osmAttribution
+}).addTo(map);
+
+map.setView([0, 0], 0);
+</code></pre>
+<table role="presentation">
+<tr><td style='text-align: center; border: none; padding: 0;'>
+<iframe src='example-zero.html'
+	width='600'
+	height='400'
+	style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style='text-align: center; border: none'>
+<small><a href='example-zero.html'>See this example stand-alone.</a></small>
+</td></tr></table>
+<p>Notice that the “whole earth” is just one image, 256 pixels wide and 256 pixels high:</p>
+<div class='tiles' style='text-align: center'>
+<img src="https://tile.openstreetmap.org/0/0/0.png" class="bordered-img" alt=""/>
+</div>
+<p>Just to be clear: the earth is not a square. Rather, the earth has an irregular shape that can be approximated to <a href="https://en.wikipedia.org/wiki/Geoid">something similar to a sphere</a>.</p>
+<p>So we <em>assume</em> that the earth is mostly round. To make it flat, we put an imaginary cylinder around, unroll it, and cut it so it looks square:</p>
+<div class='tiles legend' style='text-align: center'>
+<a title="By derived from US Government USGS [Public domain], via Wikimedia Commons" href="https://en.wikipedia.org/wiki/Map_projection#Cylindrical"><img width="512" alt="Usgs map mercator" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Usgs_map_mercator.svg/512px-Usgs_map_mercator.svg.png"/>
+<br/>
+This is called a "cylindrical map projection".
+</a>
+</div>
+<p>This is not the only way of displaying the surface on the earth on a plane. There
+are <a href="https://en.wikipedia.org/wiki/Map_projection">hundreds of ways</a>, each of them
+with its own advantages and disadvantages. The following 6-minute video is a nice
+introduction to the topic:</p>
+<center><iframe width="696" height="392" src="https://www.youtube.com/embed/kIID5FDi2JQ" frameborder="0" allowfullscreen></iframe></center>
+<p>Things like geodesy, map projections and coordinate systems are hard, <em>very hard</em>
+(and out of scope for this tutorial). Assuming that the earth is a square is not
+always the right thing to do, but most of the time works fine enough, makes things
+simpler, and allows Maplair (and other map libraries) to be fast.</p>
+<h2 id="powers-of-two">Powers of Two</h2>
+<p>For now, let’s just <em><strong>assume</strong></em> that the world is a square:</p>
+<div class='tiles' style='text-align: center'>
+<img src="https://tile.openstreetmap.org/0/0/0.png" class="bordered-img" alt=""/>
+</div>
+<p>When we represent the world at zoom level <strong>zero</strong>, it’s 256 pixels wide and high. When we go into zoom level <strong>one</strong>, it doubles its width and height, and can be represented by four 256-pixel-by-256-pixel images:</p>
+<div class='tiles' style='text-align: center'>
+<div>
+<img src="https://tile.openstreetmap.org/1/0/0.png" class="bordered-img" alt=""/><img src="https://tile.openstreetmap.org/1/1/0.png" class="bordered-img" alt=""/>
+</div>
+<div>
+<img src="https://tile.openstreetmap.org/1/0/1.png" class="bordered-img" alt=""/><img src="https://tile.openstreetmap.org/1/1/1.png" class="bordered-img" alt=""/>
+</div>
+</div>
+<p>At each zoom level, each tile is divided in four, and its size (length of the edge, given by the <code>tileSize</code> option) doubles, quadrupling the area. (in other words, the width and height of the world is <code>256·2<sup>zoomlevel</sup></code> pixels):</p>
+<table><tr><td>
+<div class='tiles small' style='text-align: center'>
+<img src="https://tile.openstreetmap.org/0/0/0.png" class="bordered-img" alt=""/>
+</div>
+</td><td>
+<div class='tiles small' style='text-align: center'>
+<div>
+<img src="https://tile.openstreetmap.org/1/0/0.png" class="bordered-img" alt=""/><img src="https://tile.openstreetmap.org/1/1/0.png" class="bordered-img" alt=""/>
+</div>
+<div>
+<img src="https://tile.openstreetmap.org/1/0/1.png" class="bordered-img" alt=""/><img src="https://tile.openstreetmap.org/1/1/1.png" class="bordered-img" alt=""/>
+</div>
+</div>
+</td><td>
+<div class='tiles small' style='text-align: center'>
+<div>
+<img src="https://tile.openstreetmap.org/2/0/0.png" class="bordered-img" alt=""/><img src="https://tile.openstreetmap.org/2/1/0.png" class="bordered-img" alt=""/><img src="https://tile.openstreetmap.org/2/2/0.png" class="bordered-img" alt=""/><img src="https://tile.openstreetmap.org/2/3/0.png" class="bordered-img" alt=""/>
+</div>
+<div>
+<img src="https://tile.openstreetmap.org/2/0/1.png" class="bordered-img" alt=""/><img src="https://tile.openstreetmap.org/2/1/1.png" class="bordered-img" alt=""/><img src="https://tile.openstreetmap.org/2/2/1.png" class="bordered-img" alt=""/><img src="https://tile.openstreetmap.org/2/3/1.png" class="bordered-img" alt=""/>
+</div>
+<div>
+<img src="https://tile.openstreetmap.org/2/0/2.png" class="bordered-img" alt=""/><img src="https://tile.openstreetmap.org/2/1/2.png" class="bordered-img" alt=""/><img src="https://tile.openstreetmap.org/2/2/2.png" class="bordered-img" alt=""/><img src="https://tile.openstreetmap.org/2/3/2.png" class="bordered-img" alt=""/>
+</div>
+<div>
+<img src="https://tile.openstreetmap.org/2/0/3.png" class="bordered-img" alt=""/><img src="https://tile.openstreetmap.org/2/1/3.png" class="bordered-img" alt=""/><img src="https://tile.openstreetmap.org/2/2/3.png" class="bordered-img" alt=""/><img src="https://tile.openstreetmap.org/2/3/3.png" class="bordered-img" alt=""/>
+</div>
+</div>
+</td></tr>
+<tr><td>Zoom 0</td><td>Zoom 1</td><td>Zoom 2</td></tr></table>
+<p>This goes on and on. Most tile services offer tiles up to zoom level 18, depending on
+their coverage. This is enough to see a few city blocks per tile.</p>
+<h2 id="a-note-about-scale">A Note About Scale</h2>
+<p>One of the disadvantages of using a cylindrical projection is that the scale is not
+constant, and measuring distances or sizes is not reliable, specially at low zoom levels.</p>
+<p>In <a href="https://en.wikipedia.org/wiki/Map_projection#Projections_by_preservation_of_a_metric_property">technical terms</a>,
+the cylindrical projection that Maplair uses is <i>conformal</i> (preserves shapes),
+but not <i>equidistant</i> (does not preserve distances), and not <i>equal-area</i>
+(does not preserve areas, as things near the equator appear smaller than they are).</p>
+<p>By adding a <code>ScaleControl</code> to a map, and panning to the equator and to 60° north,
+we can see how the scale factor <b>doubles</b>. The following example uses
+<a href="https://developer.mozilla.org/docs/Web/API/WindowTimers/setTimeout">javascript timeouts</a>
+to  do this automatically:</p>
+<pre><code class="language-plaintext">new ScaleControl().addTo(map);
+
+setInterval(function(){
+	map.setView([0, 0]);
+	setTimeout(function(){
+		map.setView([60, 0]);
+	}, 2000);
+}, 4000);
+</code></pre>
+<table role="presentation">
+<tr><td style='text-align: center; border: none; padding: 0;'>
+<iframe src='example-scale.html'
+	width='600'
+	height='400'
+	style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style='text-align: center; border: none'>
+<small><a href='example-scale.html'>See this example stand-alone.</a></small>
+</td></tr></table>
+<p><code>ScaleControl</code> shows the scale which applies to the center point of the map.
+At high zoom levels, the scale changes very little, and is not noticeable.</p>
+<h2 id="controlling-the-zoom">Controlling the Zoom</h2>
+<p>A maplair map has several ways to control the zoom level shown, but the most obvious
+one is <a href="/reference.html#map-setzoom"><code>setZoom()</code></a>. For example, <code>map.setZoom(0);</code>
+will set the zoom level of <code>map</code> to <code>0</code>.</p>
+<p>This example again uses timeouts to alternate between zoom levels <code>0</code> and <code>1</code> automatically:</p>
+<pre><code class="language-plaintext">setInterval(function(){
+	map.setZoom(0);
+	setTimeout(function(){
+		map.setZoom(1);
+	}, 2000);
+}, 4000);
+</code></pre>
+<table role="presentation">
+<tr><td style='text-align: center; border: none; padding: 0;'>
+<iframe src='example-setzoom.html'
+	width='600'
+	height='400'
+	style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style='text-align: center; border: none'>
+<small><a href='example-setzoom.html'>See this example stand-alone.</a></small>
+</td></tr></table>
+<p>Notice how the images shown at zoom levels 0 and one correspond with the images
+shown in the previous section!</p>
+<p>Other ways of setting the zoom are:</p>
+<ul>
+<li><a href="/reference.html#map-setview"><code>setView(center, zoom)</code></a>, which also sets the map center</li>
+<li><a href="/reference.html#map-flyto"><code>flyTo(center, zoom)</code></a>, like <code>setView</code> but with a smooth animation</li>
+<li><a href="/reference.html#map-zoomin"><code>zoomIn()</code> / <code>zoomIn(delta)</code></a>, zooms in <code>delta</code> zoom levels, <code>1</code> by default</li>
+<li><a href="/reference.html#map-zoomout"><code>zoomOut()</code> / <code>zoomOut(delta)</code></a>, zooms out <code>delta</code> zoom levels, <code>1</code> by default</li>
+<li><a href="/reference.html#map-setzoomaround"><code>setZoomAround(fixedPoint, zoom)</code></a>, sets the zoom level while keeping a point fixed (what scrollwheel zooming does)</li>
+<li><a href="/reference.html#map-fitbounds"><code>fitBounds(bounds)</code></a>, automatically calculates the zoom to fit a rectangular area on the map</li>
+</ul>
+<h2 id="fractional-zoom">Fractional Zoom</h2>
+<p>Maplair supports <em>fractional zoom</em>: the zoom level of the map is not limited to
+integer numbers (<code>0</code>, <code>1</code>, <code>2</code>, and so on). You can also use fractional numbers like
+<code>1.5</code> or <code>1.25</code>.</p>
+<p>Fractional zoom is disabled by default. To enable it, use the
+<a href="/reference.html#map-zoomsnap">map’s <code>zoomSnap</code> option</a>.
+The <code>zoomSnap</code> option has a default value of <code>1</code> (which means that the zoom level
+of the map can be <code>0</code>, <code>1</code>, <code>2</code>, and so on).</p>
+<p>If you set the value of <code>zoomSnap</code> to <code>0.5</code>, the valid zoom levels of the map
+will be <code>0</code>, <code>0.5</code>, <code>1</code>, <code>1.5</code>, <code>2</code>, and so on.</p>
+<p>If you set a value of <code>0.1</code>, the valid zoom levels of the map will be <code>0</code>, <code>0.1</code>,
+<code>0.2</code>, <code>0.3</code>, <code>0.4</code>, and so on.</p>
+<p>The following example uses a <code>zoomSnap</code> value of <code>0.25</code>:</p>
+<pre><code class="language-plaintext">const map = new MaplairMap('map', {
+	zoomSnap: 0.25
+});
+</code></pre>
+<table role="presentation">
+<tr><td style='text-align: center; border: none; padding: 0;'>
+<iframe src='example-fractional.html'
+	width='600'
+	height='400'
+	style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style='text-align: center; border: none'>
+<small><a href='example-fractional.html'>See this example stand-alone.</a></small>
+</td></tr></table>
+<p>As you can see, Maplair will only load the tiles for zoom levels <code>0</code> or <code>1</code>, and will scale them
+as needed.</p>
+<p>Maplair will <em>snap</em> the zoom level to the closest valid one. For example,
+if you have <code>zoomSnap: 0.25</code> and you try to do <code>map.setZoom(0.8)</code>, the zoom will
+snap back to <code>0.75</code>. The same happens with <code>map.fitBounds(bounds)</code>, or when ending
+a pinch-zoom gesture on a touchscreen.</p>
+<p><code>zoomSnap</code> can be set to zero. This means that Maplair will <strong>not</strong>
+snap the zoom level.</p>
+<p>There is another important map option related to <code>zoomSnap</code>: <a href="/reference.html#map-zoomdelta">the <code>zoomDelta</code> option</a>.
+This controls how many zoom levels to zoom in/out when using the zoom buttons
+(from the default <a href="/reference.html#control-zoom"><code>ZoomControl</code></a>)
+or the <code>+</code>/<code>-</code> keys in your keyboard.</p>
+<p>For the mousewheel zoom, the <a href="/reference.html#map-wheelpxperzoomlevel"><code>wheelPxPerZoomLevel</code></a>
+option controls how fast the mousewheel zooms in or out.</p>
+<p>Here is an example with <code>zoomSnap</code> set to zero:</p>
+<pre><code class="language-plaintext">const map = new MaplairMap('map', {
+	zoomDelta: 0.25,
+	zoomSnap: 0
+});
+</code></pre>
+<p>Try the following, and see how the zoom level changes:</p>
+<ul>
+<li>Pinch-zoom if you have a touchscreen</li>
+<li>Zoom in/out with your mousewheel</li>
+<li>Do a box zoom (drag with your mouse while pressing the <code>shift</code> key in your keyboard)</li>
+<li>Use the zoom in/out buttons</li>
+</ul>
+<table role="presentation">
+<tr><td style='text-align: center; border: none; padding: 0;'>
+<iframe src='example-delta.html'
+	width='600'
+	height='400'
+	style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style='text-align: center; border: none'>
+<small><a href='example-delta.html'>See this example stand-alone.</a></small>
+</td></tr></table>
+<p>That concludes this tutorial. Now play with your zoom levels in your maps!</p>
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/simon04">Simon Legner</a> and <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="../../docs/js/docs.js"></script>
+
+</body>
+</html>

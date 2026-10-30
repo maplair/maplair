@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>Leaflet.MarkerCluster 0.1 Released - Maplair</title>
+	
+	
+	<meta charset="utf-8" />
+	
+
+	
+
+	<meta name="color-scheme" content="light dark">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="../../../docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="../../../docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="../../../docs/css/normalize.css" />
+	<link rel="stylesheet" href="../../../docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="../../../docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="../../../docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body>
+
+<header>
+	<h1><a href="https://maplair.org/"><picture><source srcset="../../../docs/images/logo-dark.png" media="(prefers-color-scheme: dark)" /><img src="../../../docs/images/logo.png" alt="Maplair" width="300" /></picture></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<a href="../../../index.html">Overview</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../examples.html">Tutorials</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../download.html">Download</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../plugins.html" title="Leaflet plugins, none of which is compatible with Maplair"><s>Plugins</s></a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../blog.html" class="active">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		
+<p><a href="../../../blog.html">← Back to the list of blog posts</a></p>
+
+<h2>Leaflet.MarkerCluster 0.1 Released</h2>
+
+<p class="post-meta">Posted on 20 August 2012 by <a href="https://github.com/danzel/">Dave Leaver</a></p>
+
+<p><em>This is a guest post from Dave Leaver, an active Leaflet contributor (particularly, he implemented 0.4 zoom animation improvements) and also the author of the best marker clustering plugin out there, which is presented in this post.</em></p>
+<p>Almost anyone who has a map with markers on it will eventually end up having those markers overlap. At my day job at <a href="http://www.smartrak.co.nz/" title="Smartrak GPS Fleet Tracking">Smartrak</a> we regularly have customers with thousands of points on the map. When you zoom it out, these markers all overlap and make the map look messy and crowded. There are also cases where the markers overlap even on the maximum zoom level, which makes interacting with them impossible. Also, having a large amount of markers on the map usually ends up lowering performance to an unacceptable level.</p>
+<p>To improve this, many sites use marker clustering, a technique of grouping markers that are close to each other together on each zom level. One good example of this is <a href="http://www.redfin.com/homes-for-sale">Redfin</a>. We needed something like this, but in Leaflet. In the spirit of open source we developed and released our solution so that everyone can take advantage of it. So we proudly present <a href="https://github.com/leaflet/Leaflet.markercluster">Leaflet.MarkerCluster</a>.</p>
+<div id="map" class="map" style="height: 320px"></div>
+<h3 id="features">Features</h3>
+<p>The clusterer has all sorts of great built in behaviour:</p>
+<ul>
+<li>Everything is brilliantly animated. As you zoom in and out you can logically see which clusters have become which markers.</li>
+<li>It is very fast, so for example <a href="https://leaflet.github.com/Leaflet.markercluster/example/marker-clustering-realworld.50000.html">clustering 50,000 points</a> isn’t a problem. Also, all the heavy calculation happens on initial page load, and after this the map works smoothly.</li>
+<li>Markers that don’t need clustering aren’t and will be visible at the relevant zoom levels.</li>
+<li>When you mouse over a cluster the bounds of the marker within that cluster are shown.</li>
+<li>Clicking a cluster will zoom you in to the bounds of its children.</li>
+<li>At the bottom zoom level if there are still clusters you can click on them to “spiderfy” them, which makes interaction with individual markers within the cluster possible (based on <a href="https://github.com/jawj/OverlappingMarkerSpiderfier-Leaflet">jawj’s Overlapping MarkerSpidifer</a>).</li>
+<li>Cluster and markers that are further than a screen width from the view port are removed from the map to increase performance.</li>
+<li>As with core Leaflet, everything works on both mobile and desktop browsers and is tested all the way back to IE6.</li>
+<li>Supports adding and removing markers after being added to the map (see Best Practices below!).</li>
+<li>It is highly customizable, allowing you to easily change the appearance of clusters, disable certain features and add custom behavior on cluster interaction.</li>
+</ul>
+<h3 id="usage">Usage</h3>
+<p>Using the Marker Clusterer is easy, just replace your existing <a href="../../../examples/layers-control.html">LayerGroup</a> usage with an <code>L.MarkerClusterGroup</code>:</p>
+<pre><code class="language-plaintext">var markers = new L.MarkerClusterGroup();
+
+markers.addLayer(L.marker([175.3107, -37.7784]));
+// add more markers here...
+
+map.addLayer(markers);
+</code></pre>
+<p>You can also use all of the <a href="../../../reference.html#featuregroup">FeatureGroup events</a> (and additionally <code>clusterclick</code>) for both individual markers and clusters.</p>
+<pre><code class="language-plaintext">markers.on('clusterclick', function (a) { alert('Cluster Clicked'); });
+markers.on('click', function (a) { alert('Marker Clicked'); });
+</code></pre>
+<h3 id="best-practices">Best Practices</h3>
+<ul>
+<li>To get the best performance from the clusterer, you should add all of your markers to it before adding it to the map (like we did in the example).</li>
+<li>If you are going to move a marker that is in a L.MarkerClusterGroup you must remove it first, then move it, then re-add it. If you move it while it is in the MarkerClusterGroup we can’t track it and that marker will become lost.</li>
+<li>Although the clusterer supports having markers added and removed from it while it is on the map it does not perform as well as when they are added while it is not on the map. If you need to do a large update to the markers in a <code>MarkerClusterGroup</code> you may want to remove it from the map, change the markers then re-add it.</li>
+</ul>
+<h3 id="get-it">Get It</h3>
+<p>You can download the latest release on the <a href="https://github.com/leaflet/Leaflet.markercluster/downloads">github download page</a>.</p>
+<h3 id="the-technical-bits">The Technical Bits</h3>
+<p>The underlying clustering algorithm (<code>MarkerClusterGroup._cluster</code>) is plain greedy clustering.</p>
+<pre><code class="language-no-highlight">foreach marker
+    if there is a cluster within the clustering distance, join it.
+    else if there is an unclustered marker within the clustering distance, form a cluster with it.
+</code></pre>
+<p>The first clustering step we do for the maximum (bottom most) zoom level, we then cluster all of the resulting markers and clusters to generate the next zoom level up and so on until we have reached the top.
+These clusters are stored in a tree (A cluster contains its child clusters) with good geospatial qualities. We use this tree to optimise identifying what markers and clusters are on screen at any particular zoom level.</p>
+<h4 id="ldistancegrid">L.DistanceGrid</h4>
+<p><code>L.DistanceGrid</code> provides some nice optimization when clustering (contributed by <a href="http://agafonkin.com/en/">Vladimir</a>, Leaflet maintainer).</p>
+<p>To cluster the markers, we need to compare every marker with every other marker to try form a cluster.
+To make this quicker, we need reduce the set of markers we need to compare with. <code>DistanceGrid</code> does this by putting all markers on a grid sized the same as the distance we need to search. Then, when looking for a marker to cluster with, we only need to look at markers in the grid square we are in and its immediate neighbours. This can be quite a big performance win as we only look at markers that we are likely to form a cluster with. (<a href="https://github.com/leaflet/Leaflet.markercluster/pull/29">check out the initial PR for numbers</a>)</p>
+<h3 id="closing-words">Closing Words</h3>
+<p>I hope you enjoy using the clusterer and get everything you want out of it. If you do use it in a public site please <a href="mailto:danzel@localhost.geek.nz">throw me an email</a> so I can check it out and potentially link it on the github site.</p>
+<p>If you have any issues also please log a bug on <a href="https://github.com/leaflet/Leaflet.markercluster">the github page</a>.</p>
+<p>Enjoy!<br />
+Dave Leaver.</p>
+<link rel="stylesheet" href="https://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.Default.css" />
+<!--[if lte IE 8]><link rel="stylesheet" href="https://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.Default.ie.css" /><![endif]-->
+<script src="https://leaflet.github.io/Leaflet.markercluster/dist/leaflet.markercluster-src.js"></script>
+<script src="https://leaflet.github.io/Leaflet.markercluster/example/realworld.388.js"></script>
+<script>
+	var mapbox = new L.TileLayer(MB_URL, {maxZoom: 18, attribution: MB_ATTR, id: 'examples.map-i875mjb7'}),
+		latlng = new L.LatLng(-37.820, 175.217);
+
+	var map = new L.Map('map', {center: latlng, zoom: 15, layers: [mapbox]});
+
+	map.attributionControl.addAttribution("Points &copy 2012 LINZ");
+
+	var markers = new L.MarkerClusterGroup();
+
+	for (var i = 0; i < addressPoints.length; i++) {
+		var a = addressPoints[i];
+		var title = a[2];
+		var marker = new L.Marker(new L.LatLng(a[0], a[1]), { title: title });
+		marker.bindPopup(title);
+		markers.addLayer(marker);
+	}
+
+	map.addLayer(markers);
+</script>
+
+
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/simon04">Simon Legner</a> and <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="../../../docs/js/docs.js"></script>
+
+</body>
+</html>

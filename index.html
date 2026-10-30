@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>Maplair - a JavaScript library for interactive maps</title>
+	
+	
+	<meta charset="utf-8" />
+	
+	<meta property="og:title" content="Maplair — an open-source JavaScript library for interactive maps" />
+	<meta property="og:description" content="Maplair is a modern, lightweight open-source JavaScript library for building powerful interactive maps." />
+	<meta property="og:image" content="docs/images/logo.png" />
+	<meta property="og:image:alt" content="Maplair">
+	<meta itemprop="name" content="Maplair">
+	<meta itemprop="description" content="Maplair — a modern, lightweight open-source JavaScript library for building powerful interactive maps.">
+	<meta itemprop="image" content="docs/images/logo.png">
+	
+
+	
+
+	<meta name="color-scheme" content="light dark">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="docs/css/normalize.css" />
+	<link rel="stylesheet" href="docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body>
+
+<header>
+	<h1><a href="https://maplair.org/"><picture><source srcset="docs/images/logo-dark.png" media="(prefers-color-scheme: dark)" /><img src="docs/images/logo.png" alt="Maplair" width="300" /></picture></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<span>Overview</span>
+			
+		</li>
+		<li>
+			
+				<a href="examples.html">Tutorials</a>
+			
+		</li>
+		<li>
+			
+				<a href="reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<a href="download.html">Download</a>
+			
+		</li>
+		<li>
+			
+				<a href="plugins.html" title="Leaflet plugins, none of which is compatible with Maplair"><s>Plugins</s></a>
+			
+		</li>
+		<li>
+			
+				<a href="blog.html">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		
+<div class="announcement">October 28, 2026 — <a href="https://github.com/maplair/maplair/blob/main/CHANGELOG.md#410-2026-10-28">Maplair 4.1.0</a> has been released, with marker clustering and a time control! 🍁<br>
+October 19, 2026 — <a href="/2026/10/19/maplair-4.0.0.html">Maplair 4.0.0</a>, a fork of Leaflet, has been released! 🍁</div>
+
+<p>Maplair is an open-source JavaScript library for building powerful interactive maps, a fork of <a href="https://leafletjs.com">Leaflet</a>, the leading library for this.
+Since Maplair supports tree-shaking, your bundler shakes off the leaves you don't use 🍁
+A map with just a tile layer weighs about <abbr title="34 KB gzipped — that's 123 KB minified, with 22 KB of CSS (4 KB gzipped) and 3 KB of images.">34 KB of JS</abbr>.
+With everything included, about <abbr title="63 KB gzipped — that's 220 KB minified and 601 KB in the source form.">63 KB of JS</abbr>,
+it&nbsp;has all the mapping <a href="#features">features</a> most developers ever need.</p>
+
+<p>Maplair is designed with <em>simplicity</em>, <em>performance</em> and <em>usability</em> in mind.
+It works efficiently across all major desktop and mobile platforms,
+is easy to <a title="Tutorials on extending Maplair" href="examples/extending-1-classes/">extend</a>,
+has a beautiful, easy to use and <a title="Maplair API reference" href="reference.html">well-documented API</a>
+and a simple, readable&nbsp;<a title="Maplair source code repository on GitHub" href="https://github.com/maplair/maplair">source code</a> that is a&nbsp;joy to
+<a title="A guide to contributing to Maplair" href="https://github.com/maplair/maplair/blob/main/CONTRIBUTING.md">contribute</a> to.</p>
+
+<p>Why “Maplair”? The name is a wordplay: a <em>lair</em> for your <em>maps</em>, where they feel at home —
+and it sounds like <em>maple</em>, whose leaf carries on the leaf of <a href="https://leafletjs.com">Leaflet</a>,
+the library Maplair is a fork of. 🍁</p>
+
+<div id="map" class="map map-home" style="height: 300px; margin-top: 50px"></div>
+
+<p>Here we create a map in the <code>'map'</code> div, add <abbr title="Here we use OpenStreetMap tiles, but Maplair doesn't force you to — use whatever works for you, it's open source!">tiles of our choice</abbr>, and then add a marker with some text in a popup:</p>
+
+<pre class="basic-code javascript"><code>import {MaplairMap, TileLayer, Marker} from 'maplair';
+
+const map = new MaplairMap('map').setView([51.505, -0.09], 13);
+
+new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&amp;copy; &lt;a href="https://www.openstreetmap.org/copyright"&gt;OpenStreetMap&lt;/a&gt; contributors'
+}).addTo(map);
+
+new Marker([51.5, -0.09]).addTo(map)
+    .bindPopup('A pretty CSS popup.&lt;br&gt; Easily customizable.')
+    .openPopup();</code></pre>
+
+<p>Learn more with the <a href="examples/quick-start/">quick start guide</a>, check out <a href="examples.html">other tutorials</a>,
+or head straight to the <a href="reference.html">API documentation</a>.
+If you have any questions, take a look at the <a href="https://github.com/maplair/maplair/blob/main/FAQ.md">FAQ</a> first.</p>
+
+<h2 id="features">Features</h2>
+
+<p>Maplair makes <em>the basic things work perfectly</em>, and brings many features which Leaflet apps used plugins for — all of them dropped by your bundler unless you use them.</p>
+
+<div class="features clearfix">
+    <div class="no-break">
+        <h3>Layers Out of the Box</h3>
+
+        <ul>
+            <li>Tile layers, WMS</li>
+            <li>Markers, Popups</li>
+            <li>Vector layers<span class="quiet">: polylines, polygons, circles, rectangles</span></li>
+            <li>Image and video overlays</li>
+            <li>GeoJSON <span class="quiet">with classification and legends</span></li>
+            <li>Heatmaps</li>
+            <li>Marker clustering</li>
+            <li>SVG markers <span class="quiet">in any color, with a glyph</span></li>
+        </ul>
+    </div>
+
+
+    <div class="no-break">
+        <h3>Interaction Features</h3>
+
+        <ul>
+            <li>Drag panning with inertia</li>
+            <li>Scroll wheel zoom</li>
+            <li>Pinch-zoom on mobile and touchpads</li>
+            <li>Double click zoom, tap and drag zoom</li>
+            <li>Map rotation <span class="quiet">with two fingers or a compass</span></li>
+            <li>Zoom to area <span class="quiet">(shift-drag)</span></li>
+            <li>Keyboard navigation</li>
+            <li>Events<span class="quiet">: click, pointerover, etc.</span></li>
+            <li>Marker dragging and animated movement along routes</li>
+            <li>Context menus</li>
+            <li>The view in the URL <span class="quiet">and synchronized maps</span></li>
+        </ul>
+    </div>
+
+    <div class="no-break">
+        <h3>Visual Features</h3>
+
+        <ul>
+            <li>Zoom and pan animation <span class="quiet">and continuous zoom</span></li>
+            <li>Tile and popup fade animation</li>
+            <li>Very nice default design <span class="quiet">for markers, popups and map controls</span></li>
+            <li>Retina resolution support</li>
+            <li>Arrowheads, text and animated dashes along lines</li>
+        </ul>
+    </div>
+
+
+    <div class="no-break">
+        <h3>Customization Features</h3>
+
+        <ul>
+            <li>Pure CSS popups and controls <span class="quiet">themed with CSS variables</span></li>
+            <li>Translations <span class="quiet">of the built-in texts</span></li>
+            <li>Image- and HTML-based markers</li>
+            <li><span class="quiet">A simple interface for</span> custom map layers and controls</li>
+            <li>Custom map projections <span class="quiet">(with <code>EPSG:3857/4326/3395</code> out of the box)</span></li>
+            <li>Powerful OOP facilities <span class="quiet">for extending existing classes</span></li>
+        </ul>
+    </div>
+
+    <div class="no-break">
+        <h3>Performance Features</h3>
+
+        <ul>
+            <li>Hardware acceleration on mobile <span class="quiet"> makes it feel as smooth as native apps</span></li>
+            <li>Utilizing CSS features <span class="quiet">to make panning and zooming really smooth</span></li>
+            <li>Smart polyline/polygon rendering <span class="quiet">with dynamic clipping and simplification makes it very fast</span></li>
+            <li>Tree-shaking<span class="quiet"> for leaving out features you don't need</span></li>
+            <li>Marker culling <span class="quiet">for many markers</span></li>
+        </ul>
+    </div>
+
+    <div class="no-break">
+        <h3>Map Controls</h3>
+
+        <ul>
+            <li>Zoom buttons</li>
+            <li>Attribution</li>
+            <li>Layer switcher</li>
+            <li>Scale</li>
+            <li>Fullscreen</li>
+            <li>Search <span class="quiet">with Nominatim or your own geocoder</span></li>
+            <li>Minimap</li>
+            <li>Side-by-side comparison</li>
+            <li>Legend</li>
+            <li>Compass</li>
+            <li>Buttons and text</li>
+        </ul>
+    </div>
+
+
+    <div class="no-break">
+        <h3>Browser Support</h3>
+
+        <ul>
+            <li>Chrome</li>
+            <li>Firefox</li>
+            <li>Safari</li>
+            <li>Edge</li>
+            <li class="quiet">All with the web features that are <a href="https://web.dev/baseline">Baseline Widely available</a></li>
+        </ul>
+    </div>
+
+    <div class="no-break">
+        <h3>Misc</h3>
+
+        <ul>
+            <li>Extremely lightweight</li>
+            <li>No external dependencies</li>
+            <li>Accessible <span class="quiet">with the keyboard and screen readers</span></li>
+            <li>TypeScript type declarations</li>
+        </ul>
+    </div>
+</div>
+
+<p>If you find some feature really missing in Maplair, first check if it's been discussed before already on <a href="https://github.com/maplair/maplair/issues">GitHub issues</a>.
+If not, please open a new GitHub issue.</p>
+
+<h2>Getting Involved</h2>
+
+<p>Let's create the best mapping library in the world!
+Maplair is developed by <a href="https://github.com/simon04">Simon Legner</a>,
+based on Leaflet, which <a href="https://agafonkin.com">Volodymyr Agafonkin</a> created
+and a big community of <a href="https://github.com/maplair/maplair/graphs/contributors">contributors</a> developed.
+<a href="https://github.com/maplair/maplair">Pull requests</a> are always welcome.
+However, there are many more ways to get involved with the development of Maplair.</p>
+
+<p>You can help the project tremendously by discovering and <a href="https://github.com/maplair/maplair/blob/main/CONTRIBUTING.md#reporting-bugs">reporting bugs</a>, <a href="https://github.com/maplair/maplair/blob/main/CONTRIBUTING.md#improving-documentation">improving documentation</a>,
+helping others on <a href="https://gis.stackexchange.com/questions/tagged/leaflet">GIS Stack Exchange</a>
+and <a href="https://github.com/maplair/maplair/issues">GitHub issues</a>,
+and spreading the word about Maplair among your colleagues and friends.</p>
+
+<p>Check out the <a href="https://github.com/maplair/maplair/blob/main/CONTRIBUTING.md">contribution guide</a> for more information on getting involved with Maplair development.</p>
+
+<script type="module">
+    import {MaplairMap, TileLayer, Marker} from 'maplair';
+    
+    const map = new MaplairMap('map').setView([51.505, -0.159], 15);
+    
+    new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+    
+    new Marker([51.504, -0.159]).addTo(map)
+        .bindPopup('A pretty CSS popup.<br />Easily customizable.')
+        .openPopup();
+</script>
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/simon04">Simon Legner</a> and <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="docs/js/docs.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>Layer Groups and Layers Control - Maplair</title>
+	
+	
+	<meta charset="utf-8" />
+	
+
+	
+
+	<meta name="color-scheme" content="light dark">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="../../docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="../../docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="../../docs/css/normalize.css" />
+	<link rel="stylesheet" href="../../docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="../../docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="../../docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body>
+
+<header>
+	<h1><a href="https://maplair.org/"><picture><source srcset="../../docs/images/logo-dark.png" media="(prefers-color-scheme: dark)" /><img src="../../docs/images/logo.png" alt="Maplair" width="300" /></picture></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<a href="../../index.html">Overview</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../examples.html" class="active">Tutorials</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../download.html">Download</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../plugins.html" title="Leaflet plugins, none of which is compatible with Maplair"><s>Plugins</s></a>
+			
+		</li>
+		<li>
+			
+				<a href="../../blog.html">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		
+<p class="tutorials-back"><a href="../../examples.html">← Tutorials</a></p>
+
+<h2 id="layer-groups-and-layers-control">Layer Groups and Layers Control</h2>
+<p>This tutorial will show you how to group several layers into one, and how to use the layers control to allow users to easily switch different layers on your map.</p>
+<table role="presentation">
+<tr><td style='text-align: center; border: none; padding: 0;'>
+<iframe src='example.html'
+	width='600'
+	height='400'
+	style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style='text-align: center; border: none'>
+<small><a href='example.html'>See this example stand-alone.</a></small>
+</td></tr></table>
+<h3 id="layer-groups">Layer Groups</h3>
+<p>Let’s suppose you have a bunch of layers you want to combine into a group to handle them as one in your code:</p>
+<pre><code class="language-plaintext">const 	littleton = new Marker([39.61, -105.02]).bindPopup('This is Littleton, CO.'),
+		denver    = new Marker([39.74, -104.99]).bindPopup('This is Denver, CO.'),
+		aurora    = new Marker([39.73, -104.8]).bindPopup('This is Aurora, CO.'),
+    	golden    = new Marker([39.77, -105.23]).bindPopup('This is Golden, CO.');
+</code></pre>
+<p>Instead of adding them directly to the map, you can do the following, using the <a href="/reference.html#layergroup">LayerGroup</a> class:</p>
+<pre><code class="language-plaintext">const cities = new LayerGroup([littleton, denver, aurora, golden]);
+</code></pre>
+<p>Easy enough! Now you have a <code>cities</code> layer that combines your city markers into one layer you can add or remove from the map at once.</p>
+<h3 id="layers-control">Layers Control</h3>
+<p>Maplair has a nice little control that allows your users to control which layers they see on your map. In addition to showing you how to use it, we’ll also show you another handy use for layer groups.</p>
+<p>There are two types of layers: (1) base layers that are mutually exclusive (only one can be visible on your map at a time), e.g. tile layers, and (2) overlays, which are all the other stuff you put over the base layers. In this example, we want to have two base layers (OpenStreetMap ‘osm’ and OpenStreetMap.Hot <code>osmHOT</code> base map) to switch between, and an overlay to switch on and off: the city markers we created earlier.</p>
+<p>Now let’s create those base layers and add the default ones to the map:</p>
+<pre><code>const osm = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	maxZoom: 19,
+	attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+});
+
+const osmHOT = new TileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+	maxZoom: 19,
+	attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'});
+
+const map = new MaplairMap('map', {
+	center: [39.73, -104.99],
+	zoom: 10,
+	layers: [osm, cities]
+});</code></pre>
+<p>Next, we’ll create two objects. One will contain our base layers and one will contain our overlays. These are just simple objects with key/value pairs. The key sets the text for the layer in the control (e.g. “OpenStreetMap”), while the corresponding value is a reference to the layer (e.g. <code>osm</code>).</p>
+<pre><code>const baseMaps = {
+	"OpenStreetMap": osm,
+	"OpenStreetMap.HOT": osmHOT
+};
+
+const overlayMaps = {
+	"Cities": cities
+};</code></pre>
+<p>Now, all that’s left to do is to create a <a href="/reference.html#control-layers">Layers Control</a> and add it to the map. The first argument passed when creating the layers control is the base layers object. The second argument is the overlays object. Both arguments are optional: you can pass just a base layers object by omitting the second argument, or just an overlays objects by passing <code>null</code> as the first argument. In each case, the omitted layer type will not appear for the user to select.</p>
+<pre><code>const layerControl = new LayersControl(baseMaps, overlayMaps).addTo(map);</code></pre>
+<p>Note that we added <code>osm</code> and <code>cities</code> layers to the map but didn’t add <code>osmHOT</code>. The layers control is smart enough to detect what layers we’ve already added and have corresponding checkboxes and radioboxes set.</p>
+<p>Also note that when using multiple base layers, only one of them should be added to the map at instantiation, but all of them should be present in the base layers object when creating the layers control.</p>
+<p>You can also style the keys when you define the objects for the layers. For example, this code will make the label for the OpenStreetMap.HOT map red:</p>
+<pre><code>const baseMaps = {
+	"OpenStreetMap": osm,
+	"&lt;span style='color: red'&gt;OpenStreetMap.HOT&lt;/span&gt;": osmHOT
+};
+</code></pre>
+<p>Finally, you can add or remove base layers or overlays dynamically:</p>
+<pre><code>const crownHill = new Marker([39.75, -105.09]).bindPopup('This is Crown Hill Park.'),
+    rubyHill = new Marker([39.68, -105.00]).bindPopup('This is Ruby Hill Park.');
+    
+const parks = new LayerGroup([crownHill, rubyHill]);
+const openTopoMap = new TileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+	maxZoom: 19,
+	attribution: 'Map data: © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: © <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+});
+
+layerControl.addBaseLayer(openTopoMap, "OpenTopoMap");
+layerControl.addOverlay(parks, "Parks");
+</code></pre>
+<p>Now let’s <a href="example.html">view the result on a separate page →</a></p>
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/simon04">Simon Legner</a> and <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="../../docs/js/docs.js"></script>
+
+</body>
+</html>

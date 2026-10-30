@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>Maplair Quick Start Guide - Maplair</title>
+	
+	
+	<meta charset="utf-8" />
+	
+
+	
+
+	<meta name="color-scheme" content="light dark">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="../../docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="../../docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="../../docs/css/normalize.css" />
+	<link rel="stylesheet" href="../../docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="../../docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="../../docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body>
+
+<header>
+	<h1><a href="https://maplair.org/"><picture><source srcset="../../docs/images/logo-dark.png" media="(prefers-color-scheme: dark)" /><img src="../../docs/images/logo.png" alt="Maplair" width="300" /></picture></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<a href="../../index.html">Overview</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../examples.html" class="active">Tutorials</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../download.html">Download</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../plugins.html" title="Leaflet plugins, none of which is compatible with Maplair"><s>Plugins</s></a>
+			
+		</li>
+		<li>
+			
+				<a href="../../blog.html">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		
+<p class="tutorials-back"><a href="../../examples.html">← Tutorials</a></p>
+
+<h2 id="maplair-quick-start-guide">Maplair Quick Start Guide</h2>
+<p>This step-by-step guide will quickly get you started on Maplair basics, including setting up a Maplair map, working with markers, polylines and popups, and dealing with events.</p>
+<table role="presentation">
+<tr><td style='text-align: center; border: none; padding: 0;'>
+<iframe src='example.html'
+	width='600'
+	height='400'
+	style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style='text-align: center; border: none'>
+<small><a href='example.html'>See this example stand-alone.</a></small>
+</td></tr></table>
+<h3 id="preparing-your-page">Preparing your page</h3>
+<p>Before writing any code for the map, you need to do the following preparation steps on your page:</p>
+<ul>
+<li>
+<p>Include Maplair CSS file in the head section of your document:</p>
+<pre><code class="language-html">&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/maplair@4.1.0/dist/maplair.css&quot;/&gt;
+</code></pre>
+</li>
+<li>
+<p>Include Maplair JavaScript file <strong>after</strong> Maplair’s CSS:</p>
+<pre><code class="language-html">&lt;!-- Make sure you put this AFTER Maplair's CSS --&gt;
+&lt;script type=&quot;importmap&quot;&gt;
+{
+	&quot;imports&quot;: {
+		&quot;maplair&quot;: &quot;https://cdn.jsdelivr.net/npm/maplair@4.1.0/dist/maplair.js&quot;
+	}
+}
+&lt;/script&gt;
+</code></pre>
+<p>A <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script/type/importmap"><strong><code>importmap</code></strong></a> allows defining module specifiers (<code>import</code> paths) in the browser without relying on a bundler. It enables the use of named imports directly from a CDN or local files, making module resolution more flexible and readable.</p>
+</li>
+<li>
+<p>Put a <code>div</code> element with a certain <code>id</code> where you want your map to be:</p>
+<pre><code class="language-html">&lt;div id=&quot;map&quot;&gt;&lt;/div&gt;
+</code></pre>
+</li>
+<li>
+<p>Make sure the map container has a defined height, for example by setting it in CSS:</p>
+ <pre><code class="css">#map { height: 180px; }</code></pre>
+</li>
+</ul>
+<p>Now you’re ready to initialize the map and do some stuff with it.</p>
+<h3 id="setting-up-the-map">Setting up the map</h3>
+<table role="presentation">
+<tr><td style='text-align: center; border: none; padding: 0;'>
+<iframe src='example-basic.html'
+	width='600'
+	height='400'
+	style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style='text-align: center; border: none'>
+<small><a href='example-basic.html'>See this example stand-alone.</a></small>
+</td></tr></table>
+<p>Let’s create a map of the center of London with pretty OpenStreetMap tiles. From here on, we’ll be working in JS. First we’ll initialize the map and set its view to our chosen geographical coordinates and a zoom level:</p>
+<pre><code class="language-javascript">&lt;script type=&quot;module&quot;&gt;
+	import {MaplairMap, TileLayer, Marker, Circle, Polygon, Popup} from 'maplair';
+	const map = new MaplairMap('map').setView([51.505, -0.09], 13);
+
+	// ...
+&lt;/script&gt;
+</code></pre>
+<p>By default (as we didn’t pass any options when creating the map instance), all mouse and touch interactions on the map are enabled, and it has zoom and attribution controls.</p>
+<p>Note that the <code>setView</code> call also returns the map object — most Maplair methods act like this when they don’t return an explicit value, which allows convenient jQuery-like method chaining.</p>
+<p>Next, we’ll add a tile layer to add to our map, in this case it’s a OpenStreetMap tile layer. Creating a tile layer usually involves setting the <a href="/reference.html#tilelayer-example">URL template</a> for the tile images, the attribution text, and the maximum zoom level of the layer. OpenStreetMap tiles are fine for programming your Maplair map, but read the <a href="https://operations.osmfoundation.org/policies/tiles/">Tile Usage Policy</a> of OpenStreetMap if you’re going to use the tiles in production.</p>
+<pre><code class="language-javascript">new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	maxZoom: 19,
+	attribution: '© &lt;a href=&quot;http://www.openstreetmap.org/copyright&quot;&gt;OpenStreetMap&lt;/a&gt;'
+}).addTo(map);
+</code></pre>
+<p>Make sure all the code is called after the <code>div</code> and <code>maplair.js</code> inclusion. That’s it! You have a working Maplair map now.</p>
+<p>It’s worth noting that Maplair is provider-agnostic, meaning that it doesn’t enforce a particular choice of providers for tiles. Also, Maplair doesn’t even contain a single provider-specific line of code, so you’re free to use other providers if you need to.</p>
+<p>Whenever using anything based on OpenStreetMap, an <em>attribution</em> is obligatory as per the <a href="https://www.openstreetmap.org/copyright">copyright notice</a>. Most other tile providers (such as <a href="https://docs.mapbox.com/help/how-mapbox-works/attribution/">Mapbox</a>, <a href="http://maps.stamen.com/">Stamen</a> or <a href="https://www.thunderforest.com/terms/">Thunderforest</a>) require an attribution as well. Make sure to give credit where credit is due.</p>
+<h3 id="markers-circles-and-polygons">Markers, circles, and polygons</h3>
+<table role="presentation">
+<tr><td style='text-align: center; border: none; padding: 0;'>
+<iframe src='example-overlays.html'
+	width='600'
+	height='400'
+	style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style='text-align: center; border: none'>
+<small><a href='example-overlays.html'>See this example stand-alone.</a></small>
+</td></tr></table>
+<p>Besides tile layers, you can easily add other things to your map, including markers, polylines, polygons, circles, and popups. Let’s add a marker:</p>
+<pre><code class="language-javascript">const marker = new Marker([51.5, -0.09]).addTo(map);
+</code></pre>
+<p>Adding a circle is the same (except for specifying the radius in meters as a second argument), but lets you control how it looks by passing options as the last argument when creating the object:</p>
+<pre><code class="language-javascript">const circle = new Circle([51.508, -0.11], {
+	color: 'red',
+	fillColor: '#f03',
+	fillOpacity: 0.5,
+	radius: 500
+}).addTo(map);
+</code></pre>
+<p>Adding a polygon is as easy:</p>
+<pre><code class="language-javascript">const polygon = new Polygon([
+	[51.509, -0.08],
+	[51.503, -0.06],
+	[51.51, -0.047]
+]).addTo(map);
+</code></pre>
+<h3 id="working-with-popups">Working with popups</h3>
+<table role="presentation">
+<tr><td style='text-align: center; border: none; padding: 0;'>
+<iframe src='example.html'
+	width='600'
+	height='400'
+	style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style='text-align: center; border: none'>
+<small><a href='example.html'>See this example stand-alone.</a></small>
+</td></tr></table>
+<p>Popups are usually used when you want to attach some information to a particular object on a map. Maplair has a very handy shortcut for this:</p>
+<pre><code class="language-javascript">marker.bindPopup(&quot;&lt;b&gt;Hello world!&lt;/b&gt;&lt;br&gt;I am a popup.&quot;).openPopup();
+circle.bindPopup(&quot;I am a circle.&quot;);
+polygon.bindPopup(&quot;I am a polygon.&quot;);
+</code></pre>
+<p>Try clicking on our objects. The <code>bindPopup</code> method attaches a popup with the specified HTML content to your marker so the popup appears when you click on the object, and the <code>openPopup</code> method (for markers only) immediately opens the attached popup.</p>
+<p>Note that popup content is rendered as HTML, so don’t pass untrusted user input to it directly.</p>
+<p>You can also use popups as layers (when you need something more than attaching a popup to an object):</p>
+<pre><code class="language-javascript">const popup = new Popup()
+	.setLatLng([51.513, -0.09])
+	.setContent(&quot;I am a standalone popup.&quot;)
+	.openOn(map);
+</code></pre>
+<p>Here we use <code>openOn</code> instead of <code>addTo</code> because it handles automatic closing of a previously opened popup when opening a new one which is good for usability.</p>
+<h3 id="dealing-with-events">Dealing with events</h3>
+<p>Every time something happens in Maplair, e.g. user clicks on a marker or map zoom changes, the corresponding object sends an event which you can subscribe to with a function. It allows you to react to user interaction:</p>
+<pre><code class="language-javascript">function onMapClick(e) {
+	alert(&quot;You clicked the map at &quot; + e.latlng);
+}
+
+map.on('click', onMapClick);
+</code></pre>
+<p>Each object has its own set of events — see <a href="/reference.html">documentation</a> for details. The first argument of the listener function is an event object — it contains useful information about the event that happened. For example, map click event object (<code>e</code> in the example above) has <code>latlng</code> property which is a location at which the click occurred.</p>
+<p>Let’s improve our example by using a popup instead of an alert:</p>
+<pre><code class="language-javascript">const popup = new Popup();
+
+function onMapClick(e) {
+	popup
+		.setLatLng(e.latlng)
+		.setContent(&quot;You clicked the map at &quot; + e.latlng.toString())
+		.openOn(map);
+}
+
+map.on('click', onMapClick);
+</code></pre>
+<p>Try clicking on the map and you will see the coordinates in a popup. <a target="_blank" href="example.html">View the full example →</a></p>
+<p>Now you’ve learned Maplair basics and can start building map apps straight away! Don’t forget to take a look at the detailed <a href="/reference.html">documentation</a> or <a href="../../examples.html">other examples</a>.</p>
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/simon04">Simon Legner</a> and <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="../../docs/js/docs.js"></script>
+
+</body>
+</html>

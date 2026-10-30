@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<base target="_top">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<title>Zoom Level Zero Example - Maplair</title>
+	
+	<link rel="icon" type="image/svg+xml" href="docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+
+	<style>
+		html, body {
+			height: 100%;
+			margin: 0;
+		}
+		.maplair-container {
+			height: 400px;
+			width: 600px;
+			max-width: 100%;
+			max-height: 100%;
+		}
+	</style>
+
+	
+</head>
+<body>
+
+<div id='map'></div>
+
+<script type="module">
+	import {MaplairMap, TileLayer} from 'maplair';
+
+	const map = new MaplairMap('map', {
+		minZoom: 0,
+		maxZoom: 0
+	});
+
+	const osmAttribution = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+
+	const osm = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		attribution: osmAttribution
+	}).addTo(map);
+
+	map.setView([0, 0], 0);
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>Interactive Choropleth Map - Maplair</title>
+	
+	
+	<meta charset="utf-8" />
+	
+
+	
+
+	<meta name="color-scheme" content="light dark">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="../../docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="../../docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="../../docs/css/normalize.css" />
+	<link rel="stylesheet" href="../../docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="../../docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="../../docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body>
+
+<header>
+	<h1><a href="https://maplair.org/"><picture><source srcset="../../docs/images/logo-dark.png" media="(prefers-color-scheme: dark)" /><img src="../../docs/images/logo.png" alt="Maplair" width="300" /></picture></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<a href="../../index.html">Overview</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../examples.html" class="active">Tutorials</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../download.html">Download</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../plugins.html" title="Leaflet plugins, none of which is compatible with Maplair"><s>Plugins</s></a>
+			
+		</li>
+		<li>
+			
+				<a href="../../blog.html">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		
+<p class="tutorials-back"><a href="../../examples.html">← Tutorials</a></p>
+
+<h2 id="interactive-choropleth-map">Interactive Choropleth Map</h2>
+<p>This is a case study of creating a colorful interactive <a href="http://en.wikipedia.org/wiki/Choropleth_map">choropleth map</a> of US States Population Density with the help of <a href="../geojson/">GeoJSON</a> and some <a href="/reference.html#control">custom controls</a> (that will hopefully convince all the remaining major news and government websites that do not use Maplair yet to start doing so).</p>
+<p>The tutorial was inspired by the <a href="http://www.texastribune.org/library/data/us-senate-runoff-results-map/">Texas Tribune US Senate Runoff Results map</a> (also powered by Maplair), created by <a href="http://www.texastribune.org/about/staff/ryan-murphy/">Ryan Murphy</a>.</p>
+<table role="presentation">
+<tr><td style='text-align: center; border: none; padding: 0;'>
+<iframe src='example.html'
+	width='816'
+	height='516'
+	style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style='text-align: center; border: none'>
+<small><a href='example.html'>See this example stand-alone.</a></small>
+</td></tr></table>
+<h3 id="data-source">Data Source</h3>
+<p>We’ll be creating a visualization of population density per US state. As the amount of data (state shapes and the density value for each state) is not very big, the most convenient and simple way to store and then display it is <a href="../geojson/">GeoJSON</a>.</p>
+<p>Each feature of our GeoJSON data (<a href="us-states.js">us-states.js</a>) will look like this:</p>
+<pre><code class="language-plaintext">{
+	&quot;type&quot;: &quot;Feature&quot;,
+	&quot;properties&quot;: {
+		&quot;name&quot;: &quot;Alabama&quot;,
+		&quot;density&quot;: 94.65
+	},
+	&quot;geometry&quot;: ...
+	...
+}
+</code></pre>
+<p>The GeoJSON with state shapes was kindly shared by <a href="http://bost.ocks.org/mike">Mike Bostock</a> of <a href="http://d3js.org/">D3</a> fame, extended with density values from <a href="http://en.wikipedia.org/wiki/List_of_U.S._states_by_population_density">this Wikipedia article</a> based on July 1st 2011 data from <a href="http://www.census.gov/">US Census Bureau</a> and assigned to <code>statesData</code> JS variable.</p>
+<h3 id="basic-states-map">Basic States Map</h3>
+<p>Let’s display our states data on the map:</p>
+<pre><code class="language-plaintext">const map = new MaplairMap('map').setView([37.8, -96], 4);
+
+const tiles = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	maxZoom: 19,
+	attribution: '© &lt;a href=&quot;http://www.openstreetmap.org/copyright&quot;&gt;OpenStreetMap&lt;/a&gt;'
+}).addTo(map);
+
+new GeoJSON(statesData).addTo(map);
+</code></pre>
+<table role="presentation">
+<tr><td style='text-align: center; border: none; padding: 0;'>
+<iframe src='example-basic.html'
+	width='600'
+	height='400'
+	style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style='text-align: center; border: none'>
+<small><a href='example-basic.html'>See this example stand-alone.</a></small>
+</td></tr></table>
+<h3 id="adding-some-color">Adding Some Color</h3>
+<p>Now we need to color the states according to their population density. Choosing nice colors for a map can be tricky, but there’s a great tool that can help with it — <a href="http://colorbrewer2.org/">ColorBrewer</a>. Using the values we got from it, we create a function that returns a color based on population density:</p>
+<pre><code class="language-plaintext">function getColor(d) {
+	return d &gt; 1000 ? '#800026' :
+	       d &gt; 500  ? '#BD0026' :
+	       d &gt; 200  ? '#E31A1C' :
+	       d &gt; 100  ? '#FC4E2A' :
+	       d &gt; 50   ? '#FD8D3C' :
+	       d &gt; 20   ? '#FEB24C' :
+	       d &gt; 10   ? '#FED976' :
+	                  '#FFEDA0';
+}
+</code></pre>
+<p>Next we define a styling function for our GeoJSON layer so that its <code>fillColor</code> depends on <code>feature.properties.density</code> property, also adjusting the appearance a bit and adding a nice touch with dashed stroke.</p>
+<pre><code class="language-plaintext">function style(feature) {
+	return {
+		fillColor: getColor(feature.properties.density),
+		weight: 2,
+		opacity: 1,
+		color: 'white',
+		dashArray: '3',
+		fillOpacity: 0.7
+	};
+}
+
+new GeoJSON(statesData, {style: style}).addTo(map);
+</code></pre>
+<p>Looks much better now!</p>
+<table role="presentation">
+<tr><td style='text-align: center; border: none; padding: 0;'>
+<iframe src='example-color.html'
+	width='600'
+	height='400'
+	style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style='text-align: center; border: none'>
+<small><a href='example-color.html'>See this example stand-alone.</a></small>
+</td></tr></table>
+<h3 id="adding-interaction">Adding Interaction</h3>
+<p>Now let’s make the states highlighted visually in some way when they are hovered with a mouse. First we’ll define an event listener for layer <code>mouseover</code> event:</p>
+<pre><code class="language-plaintext">function highlightFeature(e) {
+	const layer = e.target;
+
+	layer.setStyle({
+		weight: 5,
+		color: '#666',
+		dashArray: '',
+		fillOpacity: 0.7
+	});
+
+	layer.bringToFront();
+}
+</code></pre>
+<p>Here we get access to the layer that was hovered through <code>e.target</code>, set a thick grey border on the layer as our highlight effect, also bringing it to the front so that the border doesn’t clash with nearby states.</p>
+<p>Next we’ll define what happens on <code>pointerout</code>:</p>
+<pre><code class="language-plaintext">function resetHighlight(e) {
+	geojson.resetStyle(e.target);
+}
+</code></pre>
+<p>The handy <code>geojson.resetStyle</code> method will reset the layer style to its default state (defined by our <code>style</code> function). For this to work, make sure our GeoJSON layer is accessible through the <code>geojson</code> variable by defining it before our listeners and assigning the layer to it later:</p>
+<pre><code class="language-plaintext">let geojson;
+// ... our listeners
+geojson = new GeoJSON(...);
+</code></pre>
+<p>As an additional touch, let’s define a <code>click</code> listener that zooms to the state:</p>
+<pre><code class="language-plaintext">function zoomToFeature(e) {
+	map.fitBounds(e.target.getBounds());
+}
+</code></pre>
+<p>Now we’ll use the <code>onEachFeature</code> option to add the listeners on our state layers:</p>
+<pre><code class="language-plaintext">function onEachFeature(feature, layer) {
+	layer.on({
+		pointerover: highlightFeature,
+		pointerout: resetHighlight,
+		click: zoomToFeature
+	});
+}
+
+geojson = new GeoJSON(statesData, {
+	style: style,
+	onEachFeature: onEachFeature
+}).addTo(map);
+</code></pre>
+<p>This makes the states highlight nicely on hover and gives us the ability to add other interactions inside our listeners.</p>
+<h3 id="custom-info-control">Custom Info Control</h3>
+<p>We could use the usual popups on click to show information about different states, but we’ll choose a different route — showing it on state hover inside a <a href="/reference.html#control">custom control</a>.</p>
+<p>Here’s the code for our control:</p>
+<pre><code class="language-plaintext">const info = new Control();
+
+info.onAdd = function (map) {
+	this._div = DomUtil.create('div', 'info'); // create a div with a class &quot;info&quot;
+	this.update();
+	return this._div;
+};
+
+// method that we will use to update the control based on feature properties passed
+info.update = function (props) {
+	this._div.innerHTML = '&lt;h4&gt;US Population Density&lt;/h4&gt;' +  (props ?
+		'&lt;b&gt;' + props.name + '&lt;/b&gt;&lt;br /&gt;' + props.density + ' people / mi&lt;sup&gt;2&lt;/sup&gt;'
+		: 'Hover over a state');
+};
+
+info.addTo(map);
+</code></pre>
+<p>We need to update the control when the user hovers over a state, so we’ll also modify our listeners as follows:</p>
+<pre><code class="language-plaintext">function highlightFeature(e) {
+	...
+	info.update(layer.feature.properties);
+}
+
+function resetHighlight(e) {
+	...
+	info.update();
+}
+</code></pre>
+<p>The control also needs some CSS styles to look nice:</p>
+<pre><code class="language-css">.info {
+	padding: 6px 8px;
+	font: 14px/16px Arial, Helvetica, sans-serif;
+	background: white;
+	background: rgba(255,255,255,0.8);
+	box-shadow: 0 0 15px rgba(0,0,0,0.2);
+	border-radius: 5px;
+}
+.info h4 {
+	margin: 0 0 5px;
+	color: #777;
+}
+</code></pre>
+<h3 id="custom-legend-control">Custom Legend Control</h3>
+<p>Creating a control with a legend is easier, since it is static and doesn’t change on state hover. JavaScript code:</p>
+<pre><code class="language-plaintext">const legend = new Control({position: 'bottomright'});
+
+legend.onAdd = function (map) {
+
+	const div = DomUtil.create('div', 'info legend'),
+		grades = [0, 10, 20, 50, 100, 200, 500, 1000];
+
+	// loop through our density intervals and generate a label with a colored square for each interval
+	for (let i = 0; i &lt; grades.length; i++) {
+		div.innerHTML +=
+			'&lt;i style=&quot;background:' + getColor(grades[i] + 1) + '&quot;&gt;&lt;/i&gt; ' +
+			grades[i] + (grades[i + 1] ? '–' + grades[i + 1] + '&lt;br&gt;' : '+');
+	}
+
+	return div;
+};
+
+legend.addTo(map);
+</code></pre>
+<p>CSS styles for the control (we also reuse the <code>info</code> class defined earlier):</p>
+<pre><code class="language-css">.legend {
+	line-height: 18px;
+	color: #555;
+}
+.legend i {
+	width: 18px;
+	height: 18px;
+	float: left;
+	margin-right: 8px;
+	opacity: 0.7;
+}
+</code></pre>
+<p>Enjoy the result on the top of this page, or on a <a href="example.html">separate page</a>.</p>
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/simon04">Simon Legner</a> and <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="../../docs/js/docs.js"></script>
+
+</body>
+</html>

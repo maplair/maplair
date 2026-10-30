@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>Accessible Maps - Maplair</title>
+	
+	
+	<meta charset="utf-8" />
+	
+
+	
+
+	<meta name="color-scheme" content="light dark">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="../../docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="../../docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="../../docs/css/normalize.css" />
+	<link rel="stylesheet" href="../../docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="../../docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="../../docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body>
+
+<header>
+	<h1><a href="https://maplair.org/"><picture><source srcset="../../docs/images/logo-dark.png" media="(prefers-color-scheme: dark)" /><img src="../../docs/images/logo.png" alt="Maplair" width="300" /></picture></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<a href="../../index.html">Overview</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../examples.html" class="active">Tutorials</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../download.html">Download</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../plugins.html" title="Leaflet plugins, none of which is compatible with Maplair"><s>Plugins</s></a>
+			
+		</li>
+		<li>
+			
+				<a href="../../blog.html">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		
+<p class="tutorials-back"><a href="../../examples.html">← Tutorials</a></p>
+
+<h2 id="accessible-maps">Accessible maps</h2>
+<p><a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility">Web accessibility</a>
+is the inclusive practice of ensuring no barriers exist
+that would prevent interactions or information access.</p>
+<p>This guide to Maplair accessibility can help you create maps that are usable
+to persons of a wide range of abilities.</p>
+<h3 id="preserve-useful-defaults">Preserve useful defaults</h3>
+<p>Maplair comes with a set of useful defaults.</p>
+<p>The map container and markers are keyboard operable by default,
+this enables users who are unable to use a pointing device.
+Consider the effects on your users before changing defaults such as these.</p>
+<h3 id="markers-must-be-labelled">Markers must be labelled</h3>
+<p>When using markers,
+it is vital to ensure each has a unique and descriptive
+<a href="/reference.html#marker-alt"><code>alt</code></a>
+or
+<a href="/reference.html#marker-title"><code>title</code></a>:</p>
+<pre><code class="javascript">const marker = new Marker([50.4501, 30.5234],
+  {alt: 'Kyiv'}).addTo(map) // "Kyiv" is the <a href="https://www.w3.org/TR/accname-1.1/#dfn-accessible-name"><em>accessible name</em></a> of this marker
+  .bindPopup('Kyiv, Ukraine is the birthplace of Leaflet!');</code></pre>
+<p>Resulting in markers that are discernible to
+<a href="https://en.wikipedia.org/wiki/Screen_reader">screen reader</a>
+users:</p>
+<table role="presentation">
+<tr><td style='text-align: center; border: none; padding: 0;'>
+<iframe src='example.html'
+	width='600'
+	height='400'
+	style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style='text-align: center; border: none'>
+<small><a href='example.html'>See this example stand-alone.</a></small>
+</td></tr></table>
+<p>In the case of <code>divIcon</code>s,
+<a href="/reference.html#divicon-html">custom HTML</a>
+can otherwise provide a visual or non-visual label.</p>
+<h3 id="test-your-maps">Test your maps</h3>
+<p>The best way to discover accessibility issues
+is to test your maps using only a keyboard,
+as well as using a screen reader.
+You may already have a screen reader pre-installed,
+for example:</p>
+<ul>
+<li><a href="https://support.microsoft.com/en-us/windows/complete-guide-to-narrator-e4397a0d-ef4f-b386-d8ae-c172f109bdb1">Narrator</a>
+on Windows</li>
+<li><a href="https://help.gnome.org/users/orca/stable/index.html.en">Orca</a>
+on Linux</li>
+<li><a href="https://support.google.com/accessibility/android/answer/6283677?hl=en">TalkBack</a>
+on Android</li>
+<li>VoiceOver on
+<a href="https://support.apple.com/guide/voiceover/welcome/mac">macOS</a>
+and
+<a href="https://support.apple.com/guide/iphone/turn-on-and-practice-voiceover-iph3e2e415f/ios">iOS</a></li>
+</ul>
+<h3 id="purely-decorative-maps">Purely decorative maps</h3>
+<p>Some maps are
+<a href="https://www.w3.org/TR/WCAG21/#dfn-pure-decoration">purely decorative</a>
+and not intended for users to interact with
+(in similar fashion to background-images and -videos).</p>
+<p>Such maps should be hidden from
+assistive technologies (ATs),
+and have no focusable descendants.
+This is to avoid the potential to confuse screen reader users,
+and to remove any unnecessary tab stops for keyboard users.
+A simple way to achieve this is to use the HTML
+<a href="https://github.com/WICG/inert"><code>inert</code> attribute</a>
+polyfill:</p>
+<pre><code class="language-html">&lt;!-- This map is for aesthetic purposes only, and can not be interacted with due to the 'inert' property! --&gt;
+&lt;div id='decorative-map' inert&gt;&lt;/div&gt;
+</code></pre>
+<h3 id="utilizing-plugins">Utilizing plugins</h3>
+<p><a href="/plugins.html">Plugins</a>
+can enhance the experience for your users,
+but can also degrade it in some cases.
+Therefore it is important that you
+<a href="#test-your-maps">test your maps</a>
+whenever a new plugin is added.</p>
+<p>If you find an accessibility issue in a plugin,
+please report it to the plugin’s author.</p>
+<p>An example of a feature that can enhance the experience for your users is the
+<a href="../../reference.html#fullscreencontrol"><code>FullscreenControl</code></a>.
+By allowing users to enter into fullscreen mode,
+they can explore the map in isolation,
+focusing their attention,
+this is especially helpful to keyboard and screen reader users
+(as they are less likely to unintentionally navigate outside the map),
+but also mobile users in general.</p>
+<h3 id="use-an-up-to-date-version-of-maplair">Use an up-to-date version of Maplair</h3>
+<p>Maplair is constantly improving accessibility.
+Use the latest stable
+<a href="/download.html">version</a>
+for the greatest features!</p>
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/simon04">Simon Legner</a> and <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="../../docs/js/docs.js"></script>
+
+</body>
+</html>

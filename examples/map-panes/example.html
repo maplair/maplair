@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<base target="_top">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<title>Custom Pane Example - Maplair</title>
+	
+	<link rel="icon" type="image/svg+xml" href="docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+
+	<style>
+		html, body {
+			height: 100%;
+			margin: 0;
+		}
+		.maplair-container {
+			height: 400px;
+			width: 600px;
+			max-width: 100%;
+			max-height: 100%;
+		}
+	</style>
+
+	
+</head>
+<body>
+
+<div id='map'></div>
+
+<script type="text/javascript" src="eu-countries.js"></script>
+<script type="module">
+	import {MaplairMap, TileLayer, GeoJSON} from 'maplair';
+	const map = new MaplairMap('map');
+
+	map.createPane('labels');
+
+	// This pane is above markers but below popups
+	map.getPane('labels').style.zIndex = 650;
+
+	// Layers in this pane are non-interactive and do not obscure mouse/touch events
+	map.getPane('labels').style.pointerEvents = 'none';
+
+	const cartodbAttribution = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, © <a href="https://carto.com/attribution">CARTO</a>';
+
+	const positron = new TileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png?key=cb1_2i38_1_bb6349bf813f7d7c3fe79a8c', {
+		attribution: cartodbAttribution
+	}).addTo(map);
+
+	const positronLabels = new TileLayer('http://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png', {
+		attribution: cartodbAttribution,
+		pane: 'labels'
+	}).addTo(map);
+
+	/* global euCountries */
+	const geojson = new GeoJSON(euCountries).addTo(map);
+
+	geojson.eachLayer((layer) => {
+		layer.bindPopup(layer.feature.properties.name);
+	});
+
+	map.setView({lat: 47.040182144806664, lng: 9.667968750000002}, 4);
+</script>
+
+
+</body>
+</html>

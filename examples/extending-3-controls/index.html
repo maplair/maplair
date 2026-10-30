@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>Extending Maplair, Handlers and Controls - Maplair</title>
+	
+	
+	<meta charset="utf-8" />
+	
+
+	
+
+	<meta name="color-scheme" content="light dark">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="../../docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="../../docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="../../docs/css/normalize.css" />
+	<link rel="stylesheet" href="../../docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="../../docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="../../docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body>
+
+<header>
+	<h1><a href="https://maplair.org/"><picture><source srcset="../../docs/images/logo-dark.png" media="(prefers-color-scheme: dark)" /><img src="../../docs/images/logo.png" alt="Maplair" width="300" /></picture></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<a href="../../index.html">Overview</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../examples.html" class="active">Tutorials</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../download.html">Download</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../plugins.html" title="Leaflet plugins, none of which is compatible with Maplair"><s>Plugins</s></a>
+			
+		</li>
+		<li>
+			
+				<a href="../../blog.html">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		
+<p class="tutorials-back"><a href="../../examples.html">← Tutorials</a></p>
+
+<br>
+<p>This tutorial assumes you’ve read the <a href="./extending-1-classes.html">theory of Maplair class inheritance</a>.</p>
+<p>In Maplair, a “layer” is anything that moves with the map. In contraposition to that, a “control” is a HTML element that remains static relative to the map container, and a “handler” is a piece of invisible code that changes the map’s behaviour.</p>
+<h2 id="handlers">Handlers</h2>
+<p>Map handlers process DOM events from the browser (like <code>click</code>, <code>dblclick</code> or <code>mousewheel</code>) and change the state of the map.</p>
+<p>Handlers are relatively simple: they just need an <code>addHooks()</code> method (which runs when the handler is enabled in a map) and a <code>removeHooks()</code>, which runs when the handler is disabled. A skeleton for handlers is:</p>
+<pre><code class="language-js">class CustomHandler extends Handler {
+	addHooks() {
+		DomEvent.on(document, 'eventname', this._doSomething, this);
+	}
+
+	removeHooks() {
+		DomEvent.off(document, 'eventname', this._doSomething, this);
+	}
+
+	_doSomething(event) { … }
+}
+</code></pre>
+<p>This can be illustrated with a simple handler to pan the map when a mobile device is tilted, through <a href="https://developer.mozilla.org/en-US/docs/Web/API/Detecting_device_orientation"><code>deviceorientation</code> events</a>:</p>
+<pre><code class="language-js">class TiltHandler extends Handler {
+	addHooks() {
+		DomEvent.on(window, 'deviceorientation', this._tilt, this);
+	}
+
+	removeHooks() {
+		DomEvent.off(window, 'deviceorientation', this._tilt, this);
+	}
+
+	_tilt(ev) {
+		// Treat Gamma angle as horizontal pan (1 degree = 1 pixel) and Beta angle as vertical pan
+		this._map.panBy( new Point( ev.gamma, ev.beta ) );
+	}
+}
+</code></pre>
+<p>The handler can be attached to the map using <code>map.addHandler('tilt', TiltHandler)</code> - this will store an instance of <code>TiltHandler</code> as <code>map.tilt</code>. However, it’s more usual to attach handlers to all maps with the <code>addInitHook</code> syntax:</p>
+<pre><code class="language-plaintext">MaplairMap.addInitHook('addHandler', 'tilt', TiltHandler);
+</code></pre>
+<p>Our handler can now be enabled by running <code>map.tilt.enable()</code> and disabled by <code>map.tilt.disable()</code></p>
+<p>Moreover, if the map has a property named the same as the handler, then that handler will be enabled by default if that options is <code>true</code>, so this will enable our handler by default:</p>
+<pre><code class="language-plaintext">const map = new MaplairMap('mapDiv', { tilt: true });
+</code></pre>
+<p>To see this example, you’ll need a mobile browser that supports the <a href="https://developer.mozilla.org/docs/Web/API/Window/deviceorientation_event"><code>deviceorientation</code> event</a> — support and behavior still vary across devices, so beware.</p>
+<table role="presentation">
+<tr><td style='text-align: center; border: none; padding: 0;'>
+<iframe src='tilt.html'
+	width='600'
+	height='400'
+	style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style='text-align: center; border: none'>
+<small><a href='tilt.html'>See this example stand-alone.</a></small>
+</td></tr></table>
+<p>Depending on the type of event, a map handler can attach event listeners to the <code>document</code>, the <code>window</code>, or the container of the <code>MaplairMap</code> it’s attached to.</p>
+<h2 id="controls">Controls</h2>
+<p>You already know controls - the zoom control in the top left corner, the scale at the bottom left, the layer switcher at the top right. At their core, a <code>Control</code> is an HTML Element that is at a static position in the map container.</p>
+<p>To make a control, simply inherit from <code>Control</code> and implement <code>onAdd()</code> and <code>onRemove()</code>. These methods work in a similar way to their <code>Layer</code> counterparts (they run whenever the control is added to or removed from the map), except that <code>onAdd()</code> must return an instance of <code>HTMLElement</code> representing the control. Adding the element to the map is done automatically, and so is removing it.</p>
+<p>The simplest example of a custom control would be a watermark, which is just an image:</p>
+<pre><code class="language-js">class WatermarkControl extends Control {
+	onAdd(map) {
+		const img = DomUtil.create('img');
+
+		img.src = '../../docs/images/logo.png';
+		img.style.width = '200px';
+
+		return img;
+	}
+
+	onRemove(map) {
+		// Nothing to do here
+	}
+}
+
+new WatermarkControl({ position: 'bottomleft' }).addTo(map);
+</code></pre>
+<table role="presentation">
+<tr><td style='text-align: center; border: none; padding: 0;'>
+<iframe src='watermark.html'
+	width='600'
+	height='400'
+	style="max-width: 100%; max-height: 90vh; box-sizing: border-box;"></iframe>
+</td></tr>
+<tr><td style='text-align: center; border: none'>
+<small><a href='watermark.html'>See this example stand-alone.</a></small>
+</td></tr></table>
+<p>If your custom control has interactive elements such as clickable buttons, remember to use <code>DomEvent.on()</code> inside <code>onAdd()</code> and <code>DomEvent.off()</code> inside <code>onRemove()</code>.</p>
+<p>If your custom control consists of more than one HTML element (like <code>ZoomControl</code>, which has two buttons), you’ll have to create the whole hierarchy of elements and return the topmost container.</p>
+<h2 id="publishing-your-plugin">Publishing Your Plugin</h2>
+<p>If you have understood everything so far, you’re ready to make some Maplair plugins! But make sure to read the <a href="https://github.com/maplair/maplair/blob/main/PLUGIN-GUIDE.md"><code>PLUGIN-GUIDE.md</code> file</a>, as it contains some tips and good practices about naming and publishing your plugin.</p>
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/simon04">Simon Legner</a> and <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="../../docs/js/docs.js"></script>
+
+</body>
+</html>
