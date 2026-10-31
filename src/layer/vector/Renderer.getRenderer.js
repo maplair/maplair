@@ -13,13 +13,14 @@ const mapRendererMethods = {
 	 * are respected, and that the renderers do exist on the map.
 	 * @internal
 	 * @param {Path} layer
-	 * @returns {Renderer}
+	 * @returns {Renderer|undefined}
 	 */
 	getRenderer(layer) {
 		const renderer = layer.options.renderer ?? this._getPaneRenderer(layer) ?? this.options.renderer ??
-			(this._renderer ??= layer._createRenderer());
+			(this._renderer ??= layer._createRenderer?.());
 
-		if (!this.hasLayer(renderer)) {
+		// a non-Path layer (e.g. a marker cluster group of a plugin) has no renderer of its own
+		if (renderer && !this.hasLayer(renderer)) {
 			this.addLayer(renderer);
 		}
 		return renderer;

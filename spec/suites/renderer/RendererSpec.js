@@ -1,5 +1,5 @@
 import {expect, vi} from 'vite-plus/test';
-import {Canvas, Circle, MaplairMap, SVG} from 'maplair';
+import {Canvas, Circle, FeatureGroup, MaplairMap, SVG} from 'maplair';
 import {createContainer, removeMapContainer} from '../SpecHelper.js';
 
 describe('Renderer', () => {
@@ -23,6 +23,18 @@ describe('Renderer', () => {
 			expect(map.getRenderer(circle)).to.be.instanceOf(SVG);
 			expect(container.querySelector('.maplair-pane svg path')).to.be.instanceOf(SVGPathElement);
 			expect(container.querySelector('.maplair-pane canvas')).to.be.null;
+		});
+
+		it('tolerates a non-Path layer, as markercluster passes', () => {
+			map = new MaplairMap(container);
+			map.setView([55.8, 37.6], 6);
+
+			const group = new FeatureGroup().addTo(map);
+
+			expect(map.getRenderer(group)).to.be.undefined;
+
+			const circle = new Circle([55.8, 37.6]).addTo(map);
+			expect(map.getRenderer(group)).to.equal(map.getRenderer(circle));
 		});
 
 		it('uses the map renderer option', () => {
