@@ -3,9 +3,11 @@ Maplair Changelog
 
 (all changes of Leaflet without author notice are by [@mourner](https://github.com/mourner))
 
-## Unreleased
+## 4.2.0 (2026-10-31)
 
-### Leaflet, since the fork
+⚠️ Despite the minor version, this release contains breaking changes ported from Leaflet, see the refactorings below; e.g. the optional module `maplair/marker-rotation` is replaced by the Marker option `rotation`.
+
+### Leaflet, since 4.1.0
 
 Ported from Leaflet (changes without author notice are by [@mourner](https://github.com/mourner))
 
