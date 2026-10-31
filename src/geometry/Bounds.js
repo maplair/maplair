@@ -84,7 +84,7 @@ export class Bounds {
 		let min2, max2;
 		if (!obj) { return this; }
 
-		if (obj instanceof Point || typeof obj[0] === 'number' || 'x' in obj) {
+		if (isPointExpression(obj)) {
 			min2 = max2 = Point.from(obj);
 		} else {
 			({min: min2, max: max2} = Bounds.from(obj));
@@ -162,17 +162,10 @@ export class Bounds {
 	contains(obj) {
 		let min, max;
 
-		if (typeof obj[0] === 'number' || obj instanceof Point) {
-			obj = Point.from(obj);
+		if (isPointExpression(obj)) {
+			min = max = Point.from(obj);
 		} else {
-			obj = Bounds.from(obj);
-		}
-
-		if (obj instanceof Bounds) {
-			min = obj.min;
-			max = obj.max;
-		} else {
-			min = max = obj;
+			({min, max} = Bounds.from(obj));
 		}
 
 		return (min.x >= this.min.x) &&
@@ -261,4 +254,9 @@ export class Bounds {
 		return this.min.equals(bounds.getTopLeft()) &&
 			this.max.equals(bounds.getBottomRight());
 	}
+}
+
+// Whether `obj` is a point (or an array or object literal of one) rather than bounds
+function isPointExpression(obj) {
+	return obj instanceof Point || (Array.isArray(obj) ? typeof obj[0] === 'number' : 'x' in obj);
 }

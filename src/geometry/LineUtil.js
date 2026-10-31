@@ -320,7 +320,7 @@ export function _projectRing(latlngs, crs) {
 
 	if (!isFlat(latlngs)) {
 		console.warn('latlngs are not flat! Only the first ring will be used');
-		latlngs = latlngs[0];
+		return _projectRing(latlngs[0], crs);
 	}
 
 	return latlngs.map(latlng => crs.project(LatLng.from(latlng)));

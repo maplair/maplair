@@ -1909,11 +1909,11 @@ export class MaplairMap extends Evented {
 		};
 
 		if (e.type !== 'keydown' && e.type !== 'keyup') {
-			const isMarker = target.getLatLng && (!target._pxRadius || target._pxRadius <= 10);
-			data.containerPoint = isMarker ?
-				this.latLngToContainerPoint(target.getLatLng()) : this.pointerEventToContainerPoint(e);
+			const latlng = (!target._pxRadius || target._pxRadius <= 10) && target.getLatLng?.();
+			data.containerPoint = latlng ?
+				this.latLngToContainerPoint(latlng) : this.pointerEventToContainerPoint(e);
 			data.layerPoint = this.containerPointToLayerPoint(data.containerPoint);
-			data.latlng = isMarker ? target.getLatLng() : this.layerPointToLatLng(data.layerPoint);
+			data.latlng = latlng || this.layerPointToLatLng(data.layerPoint);
 		}
 
 		for (const t of targets) {

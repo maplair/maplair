@@ -111,6 +111,11 @@ describe('Bounds', () => {
 	});
 
 	describe('#contains', () => {
+		it('accepts a point literal', () => {
+			expect(a.contains({x: 24, y: 25})).to.be.true;
+			expect(a.contains({x: 54, y: 65})).to.be.false;
+		});
+
 		it('contains other bounds or point', () => {
 			a.extend([50, 10]);
 			expect(a.contains(b)).to.be.true;

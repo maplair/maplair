@@ -6,7 +6,7 @@ import {Class} from './Class.js';
  * are used internally to inject interaction features like dragging to classes like
  * `MaplairMap` and `Marker`.
  *
- * Classes inheriting from `Handler` must implement the two following extension methods:
+ * Classes inheriting from `Handler` implement the two following extension methods:
  *
  * * `addHooks()` is called when the handler is enabled, should add event hooks.
  * * `removeHooks()` is called when the handler is disabled, should remove the event
@@ -54,6 +54,16 @@ export class Handler extends Class {
 	enabled() {
 		return !!this._enabled;
 	}
+
+	/**
+	 * Called when the handler is enabled, should add event hooks.
+	 */
+	addHooks() {}
+
+	/**
+	 * Called when the handler is disabled, should remove the event hooks added previously.
+	 */
+	removeHooks() {}
 
 	/**
 	 * Adds a new handler of this class to the given map with the given name, which is

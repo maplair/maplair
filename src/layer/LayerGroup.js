@@ -60,7 +60,7 @@ export class LayerGroup extends Layer {
 	 * @returns {this}
 	 */
 	removeLayer(layer) {
-		const id = layer in this._layers ? layer : this.getLayerId(layer);
+		const id = typeof layer === 'number' ? layer : this.getLayerId(layer);
 
 		if (this._map && this._layers[id]) {
 			this._map.removeLayer(this._layers[id]);
