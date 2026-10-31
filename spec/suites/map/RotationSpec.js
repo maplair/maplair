@@ -246,6 +246,18 @@ describe('Map: rotation', () => {
 			expect(marker.getElement().style.transform).not.to.contain('rotate(30deg)');
 		});
 
+		it('moves draggable markers with the arrow keys in container pixels', () => {
+			const marker = new Marker([11, 21], {draggable: true}).addTo(map);
+			map.setBearing(90);
+			const before = map.latLngToContainerPoint(marker.getLatLng());
+
+			marker.getElement().dispatchEvent(new KeyboardEvent('keydown', {key: 'ArrowRight', bubbles: true, cancelable: true}));
+			marker.getElement().dispatchEvent(new KeyboardEvent('keydown', {key: 'ArrowRight', bubbles: true, cancelable: true}));
+			marker.getElement().dispatchEvent(new KeyboardEvent('keyup', {key: 'ArrowRight', bubbles: true}));
+
+			expectNear(map.latLngToContainerPoint(marker.getLatLng()), before.add([20, 0]));
+		});
+
 		it('keeps marker shadows upright', () => {
 			const marker = new Marker([11, 21]).addTo(map);
 			map.setBearing(30);

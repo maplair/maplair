@@ -1,4 +1,5 @@
 import {Handler} from '../../core/Handler.js';
+import * as DomEvent from '../../dom/DomEvent.js';
 import * as DomUtil from '../../dom/DomUtil.js';
 import {Draggable} from '../../dom/Draggable.js';
 import {Bounds} from '../../geometry/Bounds.js';
@@ -6,6 +7,14 @@ import {Point} from '../../geometry/Point.js';
 
 /** @import {Marker, MarkerMoveEvent} from './Marker.js' */
 /** @import {MaplairEvent, DragEndEvent} from '../../core/Events.js' */
+
+/** @type {Record<string, Point>} */
+const arrows = {
+	ArrowLeft: new Point(-1, 0),
+	ArrowRight: new Point(1, 0),
+	ArrowUp: new Point(0, -1),
+	ArrowDown: new Point(0, 1)
+};
 
 /**
  * The handler of `Marker` which makes the markers draggable, see the
@@ -48,6 +57,8 @@ export class MarkerDrag extends Handler {
 			dragend: this._onDragEnd
 		}, this).enable();
 
+		DomEvent.on(icon, 'keydown keyup blur', this._onKey, this);
+
 		icon.classList.add('maplair-marker-draggable');
 	}
 
@@ -55,12 +66,16 @@ export class MarkerDrag extends Handler {
 	 * Makes the icon of the marker undraggable, called by `disable()`.
 	 */
 	removeHooks() {
+		this._keyOffset = null; // disabling the Draggable below ends a keyboard drag in progress, as it does a pointer drag
+
 		this._draggable.off({
 			dragstart: this._onDragStart,
 			predrag: this._onPreDrag,
 			drag: this._onDrag,
 			dragend: this._onDragEnd
 		}, this).disable();
+
+		DomEvent.off(this._draggable._element, 'keydown keyup blur', this._onKey, this);
 
 		this._marker._icon?.classList.remove('maplair-marker-draggable');
 	}
@@ -151,5 +166,44 @@ export class MarkerDrag extends Handler {
 		this._marker
 			.fire('moveend')
 			.fire('dragend', e);
+	}
+
+	// Arrow keys move a focused marker. Holding a key down is one drag, driven through the Draggable like a pointer
+	// drag (so the two can't overlap), and ends on keyup or blur.
+	/** @param {KeyboardEvent|FocusEvent} e */
+	_onKey(e) {
+		const k = /** @type {KeyboardEvent} */ (e), // all but blur
+		dir = arrows[k.key],
+		draggable = this._draggable,
+		{options, _map: map} = this._marker;
+
+		if (e.type !== 'keydown') {
+			if (this._keyOffset) {
+				this._keyOffset = null;
+				draggable.finishDrag();
+			}
+
+		} else if (dir && k.target === draggable._element && !(k.altKey || k.ctrlKey || k.metaKey)) {
+			e.preventDefault(); // don't scroll the page
+
+			if (!this._keyOffset) {
+				if (Draggable._dragging) { return; }
+				Draggable._dragging = draggable;
+				draggable._startPos = DomUtil.getPosition(draggable._element);
+				draggable._moved = draggable._moving = true;
+				this._keyOffset = new Point(0, 0);
+				draggable.fire('dragstart');
+			}
+
+			// the offset in container pixels, like that of a pointer drag (which the map rotation turns to the pane)
+			this._keyOffset = this._keyOffset.add(dir.multiplyBy(k.shiftKey ? 30 : 10));
+			draggable._newPos = draggable._startPos.add(this._keyOffset);
+			draggable._lastEvent = k;
+			draggable._updatePosition();
+
+			if (options.autoPan) {
+				map.panInside(this._marker._latlng, {padding: options.autoPanPadding, animate: false});
+			}
+		}
 	}
 }

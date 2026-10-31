@@ -56,7 +56,8 @@ import {pointToGeoJSON} from '../GeoJSONUtil.js';
  * marker is focused (via e.g. pressing `tab` on the keyboard) to ensure the marker is
  * visible within the map's bounds.
  * @property {boolean} [draggable=false] Whether the marker is draggable with pointer or
- * not.
+ * not. A focused draggable marker can also be moved with the arrow keys, by 10 pixels
+ * or 30 with Shift.
  * @property {boolean} [autoPan=false] Whether to pan the map when dragging this marker
  * near its edge or not.
  * @property {PointExpression} [autoPanPadding=[50, 50]] Distance (in pixels to the
