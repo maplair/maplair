@@ -2,7 +2,7 @@ import {GridLayer} from './GridLayer.js';
 import * as Util from '../../core/Util.js';
 import * as DomEvent from '../../dom/DomEvent.js';
 import {I18n} from '../../core/I18n.js';
-/** @import {Point} from '../../geometry/Point.js' */
+import {Point} from '../../geometry/Point.js';
 /** @import {GridLayerOptions, TileDoneCallback} from './GridLayer.js' */
 /** @import {TileEvent} from '../../core/Events.js' */
 
@@ -151,7 +151,8 @@ export class TileLayer extends GridLayer {
 
 		if (this.options.detectRetina && this._retina && this.options.maxZoom > 0) {
 
-			this.options.tileSize = Math.floor(this.options.tileSize / 2);
+			const tileSize = this.options.tileSize;
+			this.options.tileSize = tileSize instanceof Point ? tileSize.divideBy(2).floor() : Math.floor(tileSize / 2);
 
 			if (!this.options.zoomReverse) {
 				this.options.zoomOffset++;

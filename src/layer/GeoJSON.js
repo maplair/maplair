@@ -109,33 +109,30 @@ export class GeoJSON extends FeatureGroup {
 	 * @returns {this}
 	 */
 	addData(geojson) {
-		const features = Array.isArray(geojson) ? geojson : geojson.features;
-
-		if (features) {
-			for (const feature of features) {
-				// only add this if geometry or geometries are set and not null
-				if (feature.geometries || feature.geometry || feature.features || feature.coordinates) {
-					this.addData(feature);
-				}
+		if (Array.isArray(geojson) || 'features' in geojson) {
+			for (const data of Array.isArray(geojson) ? geojson : geojson.features) {
+				this.addData(data);
 			}
 			return this;
 		}
 
-		const options = this.options;
+		const options = this.options,
+		feature = GeoJSON.asFeature(geojson);
 
-		if (options.filter && !options.filter(geojson)) { return this; }
+		// skips features without a geometry
+		if (!feature.geometry || (options.filter && !options.filter(feature))) { return this; }
 
-		const layer = GeoJSON.geometryToLayer(geojson, options);
+		const layer = GeoJSON.geometryToLayer(feature, options);
 		if (!layer) {
 			return this;
 		}
-		layer.feature = GeoJSON.asFeature(geojson);
+		layer.feature = feature;
 
 		layer.defaultOptions = layer.options;
 		this.resetStyle(layer);
 
 		if (options.onEachFeature) {
-			options.onEachFeature(geojson, layer);
+			options.onEachFeature(feature, layer);
 		}
 
 		return this.addLayer(layer);

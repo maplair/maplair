@@ -213,6 +213,7 @@ export class LayersControl extends Control {
 		}
 
 		this._map.off('resize', this._expandIfNotCollapsed, this);
+		this._map.off('click', this.collapse, this);
 	}
 
 	/**
@@ -297,27 +298,17 @@ export class LayersControl extends Control {
 
 	/**
 	 * Collapse the control container if expanded.
-	 * @param {Event} [ev] The event causing the collapse, if any (collapsing is skipped
-	 * for `pointerleave` and `pointerout` of touch).
 	 * @returns {this}
 	 */
-	collapse(ev) {
+	collapse() {
 		if (this.options.inline) {
 			return this;
 		}
-		// On touch devices `pointerleave` & `pointerout` is fired while clicking on a checkbox.
-		// The control was collapsed instead of adding the layer to the map.
-		// So we allow collapse only if it is not touch.
-		if (!ev || !((ev.type === 'pointerleave' || ev.type === 'pointerout') && ev.pointerType === 'touch')) {
-			if (this.options.collapseDelay > 0) {
-				// Collapse delayed
-				this._collapseDelayTimeout = setTimeout(() => {
-					this._container.classList.remove('maplair-control-layers-expanded');
-				}, this.options.collapseDelay);
-				return this;
-			}
-
-			// Collapse immediately
+		if (this.options.collapseDelay > 0) {
+			this._collapseDelayTimeout = setTimeout(() => {
+				this._container.classList.remove('maplair-control-layers-expanded');
+			}, this.options.collapseDelay);
+		} else {
 			this._container.classList.remove('maplair-control-layers-expanded');
 		}
 		return this;
@@ -343,7 +334,10 @@ export class LayersControl extends Control {
 
 			DomEvent.on(container, {
 				pointerenter: this._expandSafely,
-				pointerleave: this.collapse
+				// on touch devices, pointerleave fires while clicking a checkbox, which shouldn't collapse the control
+				pointerleave(e) {
+					if (e.pointerType !== 'touch') { this.collapse(); }
+				}
 			}, this);
 		}
 

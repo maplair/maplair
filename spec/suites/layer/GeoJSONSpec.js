@@ -1,4 +1,4 @@
-import {expect} from 'vite-plus/test';
+import {expect, vi} from 'vite-plus/test';
 import {Circle, CircleMarker, FeatureGroup, GeoJSON, LatLng, Layer, LayerGroup, MaplairMap, Marker, Polygon, Polyline, TileLayer} from 'maplair';
 import {createContainer, removeMapContainer} from '../SpecHelper.js';
 
@@ -33,6 +33,18 @@ describe('GeoJSON', () => {
 			const layer = new GeoJSON();
 			layer.addData(geojsonEmpty);
 			expect(layer.getLayers().length).to.eql(0);
+		});
+
+		it('passes features to filter and onEachFeature, skipping null geometries', () => {
+			const filter = vi.fn(() => true);
+			const onEachFeature = vi.fn();
+			const layer = new GeoJSON(null, {filter, onEachFeature});
+			layer.addData([geojson.geometry, geojsonEmpty]);
+
+			expect(filter).toHaveBeenCalledOnce();
+			expect(filter.mock.calls[0][0]).to.eql(geojson);
+			expect(onEachFeature).toHaveBeenCalledOnce();
+			expect(onEachFeature.mock.calls[0][0]).to.equal(layer.getLayers()[0].feature);
 		});
 
 		it('makes default marker inherit group options if explicitly requested', () => {

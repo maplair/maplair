@@ -270,7 +270,7 @@ export class GridLayer extends Layer {
 	 * @returns {boolean}
 	 */
 	isLoading() {
-		return this._loading;
+		return !!this._loading;
 	}
 
 	/**

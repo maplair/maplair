@@ -1,5 +1,5 @@
 import {expect, vi} from 'vite-plus/test';
-import {SimpleCRS, MaplairMap, TileLayer, LatLng} from 'maplair';
+import {SimpleCRS, MaplairMap, TileLayer, LatLng, Point} from 'maplair';
 import {createClock, createContainer, removeMapContainer, restoreClock} from '../../SpecHelper.js';
 
 describe('TileLayer', () => {
@@ -589,6 +589,18 @@ describe('TileLayer', () => {
 			});
 
 			map.addLayer(kittenLayer).setView([0, 0], 1);
+		});
+
+		it('halves a number or Point tileSize with detectRetina', () => {
+			vi.spyOn(window, 'devicePixelRatio', 'get').mockReturnValue(2);
+			expect(new TileLayer('', {detectRetina: true}).options.tileSize).to.equal(128);
+			expect(new TileLayer('', {detectRetina: true, tileSize: new Point(256, 101)}).options.tileSize)
+				.to.eql(new Point(128, 50));
+			vi.restoreAllMocks();
+		});
+
+		it('is not loading before it has tiles to load', () => {
+			expect(new TileLayer('').isLoading()).to.equal(false);
 		});
 
 		it('resets invalid min/maxZoom to allow for tiles to be loaded without detectRetina', (done) => {
