@@ -1,5 +1,5 @@
 import {EarthCRS} from './EarthCRS.js';
-import {SphericalMercator} from '../projection/Projection.SphericalMercator.js';
+import {SphericalMercatorProjection} from '../projection/SphericalMercatorProjection.js';
 import {Transformation} from '../../geometry/Transformation.js';
 /** @import {Projection} from '../projection/index.js' */
 
@@ -12,10 +12,10 @@ export class EPSG3857 extends EarthCRS {
 	/** @type {string} */
 	static code = 'EPSG:3857';
 	/** @type {Projection} */
-	static projection = SphericalMercator;
+	static projection = SphericalMercatorProjection;
 	/** @type {Transformation} */
 	static transformation = /* @__PURE__ */ (() => {
-		const scale = 0.5 / (Math.PI * SphericalMercator.R);
+		const scale = 0.5 / (Math.PI * SphericalMercatorProjection.R);
 		return new Transformation(scale, 0.5, -scale, 0.5);
 	})();
 }

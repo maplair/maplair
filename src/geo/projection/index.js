@@ -6,8 +6,8 @@
  * An object with methods for projecting geographical coordinates of the world onto
  * a flat surface (and back). See [Map projection](https://en.wikipedia.org/wiki/Map_projection).
  *
- * Maplair comes with a set of already defined projections out of the box: `LonLat`,
- * `Mercator` and `SphericalMercator` (in the `Projection` namespace).
+ * Maplair comes with a set of already defined projections out of the box:
+ * `LonLatProjection`, `MercatorProjection` and `SphericalMercatorProjection`.
  *
  * Note that the projection instances do not inherit from Maplair's `Class` object,
  * and can't be instantiated. Also, new classes can't inherit from them,
@@ -23,6 +23,6 @@
  * arrays.
  */
 
-export {LonLat} from './Projection.LonLat.js';
-export {Mercator} from './Projection.Mercator.js';
-export {SphericalMercator} from './Projection.SphericalMercator.js';
+export {LonLatProjection} from './LonLatProjection.js';
+export {MercatorProjection} from './MercatorProjection.js';
+export {SphericalMercatorProjection} from './SphericalMercatorProjection.js';

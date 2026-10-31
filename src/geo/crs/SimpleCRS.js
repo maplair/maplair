@@ -1,5 +1,5 @@
 import {CRS} from './CRS.js';
-import {LonLat} from '../projection/Projection.LonLat.js';
+import {LonLatProjection} from '../projection/LonLatProjection.js';
 import {Transformation} from '../../geometry/Transformation.js';
 /** @import {LatLng} from '../LatLng.js' */
 /** @import {Projection} from '../projection/index.js' */
@@ -12,7 +12,7 @@ import {Transformation} from '../../geometry/Transformation.js';
  */
 export class SimpleCRS extends CRS {
 	/** @type {Projection} */
-	static projection = LonLat;
+	static projection = LonLatProjection;
 	/** @type {Transformation} */
 	static transformation = /* @__PURE__ */ new Transformation(1, 0, -1, 0);
 

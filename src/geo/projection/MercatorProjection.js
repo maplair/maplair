@@ -11,7 +11,7 @@ const earthRadius = 6378137;
  * Earth is an ellipsoid. Used by the EPSG:3395 CRS.
  * @type {Projection & {R: number, R_MINOR: number}}
  */
-export const Mercator = {
+export const MercatorProjection = {
 	R: earthRadius,
 	R_MINOR: 6356752.314245179,
 

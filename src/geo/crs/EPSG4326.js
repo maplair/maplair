@@ -1,5 +1,5 @@
 import {EarthCRS} from './EarthCRS.js';
-import {LonLat} from '../projection/Projection.LonLat.js';
+import {LonLatProjection} from '../projection/LonLatProjection.js';
 import {Transformation} from '../../geometry/Transformation.js';
 /** @import {Projection} from '../projection/index.js' */
 
@@ -17,7 +17,7 @@ export class EPSG4326 extends EarthCRS {
 	/** @type {string} */
 	static code = 'EPSG:4326';
 	/** @type {Projection} */
-	static projection = LonLat;
+	static projection = LonLatProjection;
 	/** @type {Transformation} */
 	static transformation = /* @__PURE__ */ new Transformation(1 / 180, 1, -1 / 180, 0.5);
 }

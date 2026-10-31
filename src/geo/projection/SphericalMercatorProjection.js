@@ -12,7 +12,7 @@ const earthRadius = 6378137;
  * a sphere. Used by the `EPSG:3857` CRS.
  * @type {Projection & {R: number, MAX_LATITUDE: number}}
  */
-export const SphericalMercator = {
+export const SphericalMercatorProjection = {
 
 	R: earthRadius,
 	MAX_LATITUDE: 85.0511287798,

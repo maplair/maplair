@@ -11,7 +11,7 @@ import {Point} from '../../geometry/Point.js';
  * `EPSG4326` and `SimpleCRS` CRS.
  * @type {Projection}
  */
-export const LonLat = {
+export const LonLatProjection = {
 	project(latlng) {
 		latlng = LatLng.from(latlng);
 		return new Point(latlng.lng, latlng.lat);
