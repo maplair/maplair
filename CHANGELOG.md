@@ -9,7 +9,15 @@ Maplair Changelog
 
 Ported from Leaflet (changes without author notice are by [@mourner](https://github.com/mourner))
 
+#### ❇️ New Features
+
+* Move focused draggable markers with the arrow keys, by 10 pixels or 30 with Shift, by [@Enfiladeguide](https://github.com/Enfiladeguide) in https://github.com/Leaflet/Leaflet/pull/10513
+
 #### ✨ Refactorings (⚠️ Breaking Changes)
+
+* Replace the `Projection` namespace with `LonLatProjection`, `MercatorProjection` and `SphericalMercatorProjection` in https://github.com/Leaflet/Leaflet/commit/98dd20eef949b238c7cef74fba5716a18b912fa9
+* `DomEvent` functions no longer return the module for chaining in https://github.com/Leaflet/Leaflet/commit/6806a7b39e730a30fc46f20734f463cf848d68aa
+* GeoJSON passes the feature (not a bare geometry) to `filter` and `onEachFeature`; LayersControl `collapse()` takes no event; Handler has empty default `addHooks()` and `removeHooks()` in https://github.com/Leaflet/Leaflet/commit/1dc1b4ea0ffd779e15f8a5aeeb27dd15e597cd1f and https://github.com/Leaflet/Leaflet/commit/f9b31ae1e89c5f80bfecc862753873b5b72736eb
 
 * Marker: the option `rotation` (in degrees, `null` for none) with `setRotation()` and `getRotation()` rotates the icon around its anchor, rotates the popup and tooltip anchors and hides the shadow; it replaces the optional module `maplair/marker-rotation` with `rotationAngle`, `rotationOrigin`, `setRotationAngle()` and `setRotationOrigin()`, `rotateWithView` is part of `maplair/map-rotation`, in https://github.com/Leaflet/Leaflet/pull/10489
 * `latLngToLayerPoint()` and `latLngToContainerPoint()` keep subpixel precision instead of rounding, so polylines and polygons don't zigzag along whole pixels, in https://github.com/Leaflet/Leaflet/pull/10494
@@ -31,6 +39,11 @@ Ported from Leaflet (changes without author notice are by [@mourner](https://git
 * Close popups on Escape more reliably, e.g. with the focus on a marker in https://github.com/Leaflet/Leaflet/commit/{esc}
 * Isolate the stacking context of the map container in https://github.com/Leaflet/Leaflet/commit/{iso}
 * Accept marker icons without `createShadow()` in https://github.com/Leaflet/Leaflet/pull/10489
+* Make Draggable work outside a map in https://github.com/Leaflet/Leaflet/commit/2e770eb84bafca2368eef611922497cd0b3a81de
+* LayersControl stops listening to map clicks when removed, TileLayer halves a `Point` tileSize with `detectRetina`, `isLoading()` returns a boolean in https://github.com/Leaflet/Leaflet/commit/1dc1b4ea0ffd779e15f8a5aeeb27dd15e597cd1f
+* Tolerate `getRenderer()` for layers without a renderer, e.g. of Leaflet.markercluster, in https://github.com/Leaflet/Leaflet/issues/10515
+* LayerGroup ignores an unknown layer id in `removeLayer()`, Bounds `contains()` accepts a point literal, `LineUtil._projectRing()` handles deeper nested latlngs in https://github.com/Leaflet/Leaflet/commit/4ab4c3a966cfd04e22d330546a357cbdbd15ab09, https://github.com/Leaflet/Leaflet/commit/a54d6d7f954374df5a3486a9e26ca2a60cc01b05 and https://github.com/Leaflet/Leaflet/commit/ac22233103a4fd3351ed82f0e99a8c6b9dfdcc80
+* Simplify and speed up polygon clipping in https://github.com/Leaflet/Leaflet/commit/2c5d1f038fb8d065b18312b2d653fc5e64ce2af0
 
 #### 📝 Docs
 
