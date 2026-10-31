@@ -55,4 +55,17 @@ describe('DefaultIcon', () => {
 		DefaultIcon.defaultOptions.shadowUrl = oldShadowUrl;
 		vi.restoreAllMocks();
 	});
+
+	it('paints the pin in the given color', () => {
+		const icon = new DefaultIcon({iconUrl: 'red.png', color: '#c00'});
+		expect(icon._getIconUrl('icon')).to.contain('stop-color="%23c00"');
+		expect(icon._getIconUrl('icon')).to.contain('<path fill="%23FFF"'); // still the maple leaf
+		expect(icon._getIconUrl('shadow')).to.equal(DefaultIcon.defaultOptions.shadowUrl);
+	});
+
+	it('encodes colors for the data URI', () => {
+		const src = new DefaultIcon({color: 'hsl(280 60% 50%)'})._getIconUrl('icon');
+		expect(src).to.contain('stop-color="hsl(280%2060%25%2050%25)"');
+		expect(() => decodeURIComponent(src)).not.to.throw();
+	});
 });
