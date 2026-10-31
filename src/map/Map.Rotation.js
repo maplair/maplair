@@ -729,8 +729,6 @@ const draggableRotationMethods = {
 	},
 
 	_updatePosition() {
-		// a keyboard drag of a marker doesn't start with a pointerdown
-		this._rotatedMap ??= rotatedMaps.get(this._element.closest?.('.maplair-rotate-pane'));
 		const map = this._rotatedMap;
 		if (map?._bearing) {
 			this._newPos = this._startPos.add(map._rotateToPane(this._newPos.subtract(this._startPos)));

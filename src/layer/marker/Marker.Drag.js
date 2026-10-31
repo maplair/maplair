@@ -8,13 +8,8 @@ import {Point} from '../../geometry/Point.js';
 /** @import {Marker, MarkerMoveEvent} from './Marker.js' */
 /** @import {MaplairEvent, DragEndEvent} from '../../core/Events.js' */
 
-/** @type {Record<string, Point>} */
-const arrows = {
-	ArrowLeft: new Point(-1, 0),
-	ArrowRight: new Point(1, 0),
-	ArrowUp: new Point(0, -1),
-	ArrowDown: new Point(0, 1)
-};
+/** @type {Record<string, [number, number]>} */
+const arrows = {ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1]};
 
 /**
  * The handler of `Marker` which makes the markers draggable, see the
@@ -195,11 +190,13 @@ export class MarkerDrag extends Handler {
 				draggable.fire('dragstart');
 			}
 
-			// the offset in container pixels, like that of a pointer drag (which the map rotation turns to the pane)
-			this._keyOffset = this._keyOffset.add(dir.multiplyBy(k.shiftKey ? 30 : 10));
+			// in container pixels, which the map rotation (if any) turns to the frame of the rotated pane
+			const offset = new Point(...dir).multiplyBy(k.shiftKey ? 30 : 10);
+			this._keyOffset = this._keyOffset.add(map._rotateToPane?.(offset) ?? offset);
+			// not through _updatePosition, whose predrag would start the pointer autoPan loop
 			draggable._newPos = draggable._startPos.add(this._keyOffset);
-			draggable._lastEvent = k;
-			draggable._updatePosition();
+			DomUtil.setPosition(draggable._element, draggable._newPos);
+			draggable.fire('drag', {originalEvent: k});
 
 			if (options.autoPan) {
 				map.panInside(this._marker._latlng, {padding: options.autoPanPadding, animate: false});
