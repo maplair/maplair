@@ -101,7 +101,8 @@ export class Draggable extends Evented {
 
 		if (this._element.classList.contains('maplair-zoom-anim')) { return; }
 
-		if (PointerEvents.getPointers().length !== 1) {
+		const pointers = PointerEvents.getPointers().length;
+		if (pointers > 1) {
 			// Finish dragging to avoid conflict with touchZoom
 			if (Draggable._dragging === this) {
 				this.finishDrag();
@@ -115,6 +116,9 @@ export class Draggable extends Evented {
 		DomUtil.disableImageDrag();
 
 		if (this._moving) { return; }
+
+		// outside a map, nothing tracks pointers or captures them, so capture this one to keep its moves coming
+		if (!pointers && e.isTrusted) { e.target.setPointerCapture(e.pointerId); }
 
 		this.fire('down');
 
