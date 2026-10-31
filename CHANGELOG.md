@@ -11,6 +11,7 @@ Ported from Leaflet (changes without author notice are by [@mourner](https://git
 
 #### ❇️ New Features
 
+* DefaultIcon: the option `color` paints the (maple leaf) pin in any CSS color in https://github.com/Leaflet/Leaflet/pull/10489
 * Move focused draggable markers with the arrow keys, by 10 pixels or 30 with Shift, by [@Enfiladeguide](https://github.com/Enfiladeguide) in https://github.com/Leaflet/Leaflet/pull/10513
 
 #### ✨ Refactorings (⚠️ Breaking Changes)
