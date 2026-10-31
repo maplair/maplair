@@ -291,12 +291,6 @@ describe('DomEvent', () => {
 			expect(listener.mock.calls[0][0].type).to.eql('click');
 			expect(listener.mock.calls[1][0].type).to.eql('keypress');
 		});
-
-		it('is chainable', () => {
-			const res = DomEvent.on(el, 'click', () => {});
-
-			expect(res).to.equal(DomEvent);
-		});
 	});
 
 	describe('#off', () => {
@@ -507,12 +501,6 @@ describe('DomEvent', () => {
 			UIEventSimulator.fire('click', el);
 
 			expect(listener).not.toHaveBeenCalled();
-		});
-
-		it('is chainable', () => {
-			const res = DomEvent.off(el, 'click', () => {});
-
-			expect(res).to.equal(DomEvent);
 		});
 	});
 

@@ -23,7 +23,7 @@ export {PointerEvents};
  * @param {string|Record<string, (ev: any) => void>} types
  * @param {((ev: any) => void)|object} [fn]
  * @param {object} [context]
- * @returns {typeof import('./DomEvent.js')}
+ * @returns {void}
  */
 export function on(obj, types, fn, context) {
 
@@ -36,8 +36,6 @@ export function on(obj, types, fn, context) {
 			addOne(obj, type, fn, context);
 		}
 	}
-
-	return this;
 }
 
 const eventsKey = '_maplair_events';
@@ -53,7 +51,7 @@ const eventsKey = '_maplair_events';
  * @param {string|Record<string, (ev: any) => void>} [types]
  * @param {((ev: any) => void)|object} [fn]
  * @param {object} [context]
- * @returns {typeof import('./DomEvent.js')}
+ * @returns {void}
  */
 export function off(obj, types, fn, context) {
 
@@ -77,8 +75,6 @@ export function off(obj, types, fn, context) {
 			}
 		}
 	}
-
-	return this;
 }
 
 const DIGIT_RE = /\d/;
@@ -95,7 +91,7 @@ function batchRemove(obj, filterFn) {
 function addOne(obj, type, fn, context) {
 	const id = type + Util.stamp(fn) + (context ? `_${Util.stamp(context)}` : '');
 
-	if (obj[eventsKey] && obj[eventsKey][id]) { return this; }
+	if (obj[eventsKey] && obj[eventsKey][id]) { return; }
 
 	let handler = function (e) {
 		return fn.call(context || obj, e);
@@ -115,7 +111,7 @@ function removeOne(obj, type, fn, context, id) {
 	id ??= type + Util.stamp(fn) + (context ? `_${Util.stamp(context)}` : '');
 	const handler = obj[eventsKey] && obj[eventsKey][id];
 
-	if (!handler) { return this; }
+	if (!handler) { return; }
 
 	if (type === 'dblclick') {
 		removeDoubleTapListener(obj, handler);
@@ -134,7 +130,7 @@ function removeOne(obj, type, fn, context, id) {
  * ```
  * Also accepts a Maplair event with an `originalEvent`.
  * @param {Event|{originalEvent: Event}} e
- * @returns {typeof import('./DomEvent.js')}
+ * @returns {void}
  */
 export function stopPropagation(e) {
 
@@ -147,18 +143,15 @@ export function stopPropagation(e) {
 		// custom Maplair event
 		console.debug('Unsupported event', e);
 	}
-
-	return this;
 }
 
 /**
  * Adds `stopPropagation` to the element's `'wheel'` events (plus browser variants).
  * @param {HTMLElement} el
- * @returns {typeof import('./DomEvent.js')}
+ * @returns {void}
  */
 export function disableScrollPropagation(el) {
 	addOne(el, 'wheel', stopPropagation);
-	return this;
 }
 
 /**
@@ -167,12 +160,11 @@ export function disableScrollPropagation(el) {
  * For `'click'` events, prevents the map from handling the click
  * while still allowing the native DOM click event to propagate normally.
  * @param {HTMLElement} el
- * @returns {typeof import('./DomEvent.js')}
+ * @returns {void}
  */
 export function disableClickPropagation(el) {
 	on(el, 'pointerdown dblclick contextmenu', stopPropagation);
 	el['_maplair_disable_click'] = true;
-	return this;
 }
 
 /**
@@ -181,22 +173,20 @@ export function disableClickPropagation(el) {
  * with page reload when a `<form>` is submitted).
  * Use it inside listener functions.
  * @param {Event} e
- * @returns {typeof import('./DomEvent.js')}
+ * @returns {void}
  */
 export function preventDefault(e) {
 	e.preventDefault?.();
-	return this;
 }
 
 /**
  * Does `stopPropagation` and `preventDefault` at the same time.
  * @param {Event} e
- * @returns {typeof import('./DomEvent.js')}
+ * @returns {void}
  */
 export function stop(e) {
 	preventDefault(e);
 	stopPropagation(e);
-	return this;
 }
 
 /**
