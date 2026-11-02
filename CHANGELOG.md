@@ -3,6 +3,23 @@ Maplair Changelog
 
 (all changes of Leaflet without author notice are by [@mourner](https://github.com/mourner))
 
+## Unreleased
+
+### Leaflet, since 4.2.0
+
+Ported from Leaflet (changes without author notice are by [@mourner](https://github.com/mourner))
+
+#### ❇️ New Features
+
+* Aliases for an easier migration from Leaflet 1: propagated events carry the target as `layer` (the 1.x name of `propagatedFrom`), `new Circle(latlng, radius)` throws pointing to the `radius` option, `maplair/dist/maplair.css` is exported in https://github.com/Leaflet/Leaflet/commit/6c769f974dd9cbc2319763c87aa2293ec739454a
+
+#### 📝 Docs
+
+* Polish the tutorials: example frames filling the page width, a complete page and a bundler setup in the quick start, the class tutorial, outdated links and names, a hosted image in the overlays tutorial in https://github.com/Leaflet/Leaflet/commit/6d1f3f9b1f3c3d5586d737d3aaadea0c0ef95e5c, https://github.com/Leaflet/Leaflet/commit/44bc6cddf272aa7c29f5918c0fafdb2b8fe75a4e and https://github.com/Leaflet/Leaflet/commit/92e0bb50e4751536d2b6e022ff81a0976feecc9a
+* Update the tile providers, tools and links in the FAQ in https://github.com/Leaflet/Leaflet/commit/a904a6d02f19d87aaea5a29288f83a65200291fd and https://github.com/Leaflet/Leaflet/commit/c7c073f62cbce65ec364557b44148accad1670f5
+* Update the links and the publishing advice in the plugin guide in https://github.com/Leaflet/Leaflet/commit/381883ce944e6085caef5573954336ce9e3917b1
+* Add location-picker to the plugins list by [@cyphercodes](https://github.com/cyphercodes) in https://github.com/Leaflet/Leaflet/pull/10514
+
 ## 4.2.0 (2026-10-31)
 
 ⚠️ Despite the minor version, this release contains breaking changes ported from Leaflet, see the refactorings below; e.g. the optional module `maplair/marker-rotation` is replaced by the Marker option `rotation`.
