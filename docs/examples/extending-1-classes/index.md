@@ -26,9 +26,7 @@ From a technical point of view, Maplair can be extended in different ways:
 
 ## Extending Maplair Classes
 
-JavaScript is a bit of a weird language. It's not really object-oriented in the traditional sense, but handles inheritance using a [prototype chain](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain). Only at a later point during its lifetime [syntax was added](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes) to allow more 'class-like' inheritance.
-
-Almost all classes in Maplair extend from a base class called `Class`, as well as most classes you'll find in plugins. It adds a few utilities to standard JavaScript classes: default options, mixins and constructor hooks.
+Maplair classes are plain [JavaScript classes](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes). Almost all of them, as well as most classes you'll find in plugins, extend from a base class called `Class`. It adds what plugins need on top of standard classes: default options, mixins and constructor hooks.
 
 ### Creating a subclass
 
@@ -55,7 +53,7 @@ When creating Maplair classes, adhere to these conventions:
 
 ### Setting default options
 
-All classes that extend from `Class` can be provided with default options in a static `defaultOptions` property:
+All classes that extend from `Class` can be provided with default options in a static `defaultOptions` property. `Util.setOptions()` combines the defaults with the options passed to the constructor:
 
 ```js
 class MyBox extends Class {
@@ -78,7 +76,9 @@ console.log(instance.options.width); // Outputs "10"
 console.log(instance.options.height); // Outputs "1", the default
 ```
 
-These options are inherited from parent classes, and merged automatically:
+Many Maplair classes, such as `Marker` and `Control`, take the options as a constructor argument and call `Util.setOptions()` themselves, so for their subclasses passing the options to `super()` is enough, as in the `RotateMarker` example above.
+
+Default options are inherited from parent classes, and merged automatically:
 
 ```js
 class MyCube extends MyBox {
@@ -92,6 +92,12 @@ const cube = new MyCube('Blue');
 console.log(cube.options.width); // Outputs "1", parent class default
 console.log(cube.options.height); // Outputs "1", parent class default
 console.log(cube.options.depth); // Outputs "1"
+```
+
+To change the defaults of an existing class, for example from a plugin, use `mergeOptions()`:
+
+```js
+Marker.mergeOptions({riseOnHover: true});
 ```
 
 ### `Class.include()`
@@ -148,7 +154,7 @@ class MyBox extends Class {
 	}
 }
 
-MyBox.addInitHook(function() {
+MyBox.addInitHook(function () {
 	this._area = this.options.width * this.options.height;
 });
 

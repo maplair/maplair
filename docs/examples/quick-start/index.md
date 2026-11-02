@@ -11,61 +11,69 @@ This step-by-step guide will quickly get you started on Maplair basics, includin
 
 ### Preparing your page
 
-Before writing any code for the map, you need to do the following preparation steps on your page:
+Maplair is an [ES module](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules), and the quickest way to start is to load it from a CDN. Save this page as an HTML file and open it in a browser:
 
- * Include Maplair CSS file in the head section of your document:
-
-	```html
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplair@{{ site.latest_maplair_version}}/dist/maplair.css"/>
-	```
-
- * Include Maplair JavaScript file **after** Maplair's CSS:
-
-	```html
-	<!-- Make sure you put this AFTER Maplair's CSS -->
+```html
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplair@{{ site.latest_maplair_version}}/dist/maplair.css">
 	<script type="importmap">
-	{
-		"imports": {
-			"maplair": "https://cdn.jsdelivr.net/npm/maplair@{{ site.latest_maplair_version}}/dist/maplair.js"
-		}
-	}
+		{"imports": {"maplair": "https://cdn.jsdelivr.net/npm/maplair@{{ site.latest_maplair_version}}/dist/maplair.js"}}
 	</script>
-	```
-	
-	A [**`importmap`**](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script/type/importmap) allows defining module specifiers (`import` paths) in the browser without relying on a bundler. It enables the use of named imports directly from a CDN or local files, making module resolution more flexible and readable.
+</head>
+<body>
+	<div id="map" style="height: 400px"></div>
+	<script type="module">
+		import {MaplairMap, TileLayer} from 'maplair';
+		// the map code goes here
+	</script>
+</body>
+</html>
+```
 
- * Put a `div` element with a certain `id` where you want your map to be:
+Here's what each part does:
 
-	```html
-	<div id="map"></div>
-	```
+ * The `<link>` loads Maplair's CSS.
+ * The [import map](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/script/type/importmap) tells the browser where to load `'maplair'` from when your code imports it.
+ * The `div` is where the map goes. It needs a height.
+ * Your code goes in the script with `type="module"`. Module scripts run after the page is parsed, so the map `div` already exists.
 
- * Make sure the map container has a defined height, for example by setting it in CSS:
+Once your code grows, you may want to move it to its own file, like `<script type="module" src="app.js"></script>`. Browsers don't load module files from pages opened directly from disk, so you'll then need to open the page through a local web server, for example by running `npx serve` or `python3 -m http.server` in its folder.
 
-	<pre><code class="css">#map { height: 180px; }</code></pre>
+#### Using a bundler
 
-Now you're ready to initialize the map and do some stuff with it.
+If you build your app with a bundler such as [Vite](https://vite.dev/), install Maplair from npm instead:
 
+```bash
+npm install maplair@{{ site.latest_maplair_version}}
+```
+
+Then import Maplair's classes and its CSS in your code. You don't need the import map or the `<link>` then, and the bundler only includes the parts of Maplair your app uses:
+
+```javascript
+import {MaplairMap, TileLayer} from 'maplair';
+import 'maplair/styles.css';
+```
+
+The rest of this guide works the same either way. If you can't use modules at all, see the [download page](/download.html) for `maplair-global.js`, a classic script that puts Maplair in the global `L` variable.
 
 ### Setting up the map
 
 
 {% include frame.html url="example-basic.html" %}
 
-Let's create a map of the center of London with pretty OpenStreetMap tiles. From here on, we'll be working in JS. First we'll initialize the map and set its view to our chosen geographical coordinates and a zoom level:
+Let's create a map of the center of London with pretty OpenStreetMap tiles. From here on, the code goes in the module script. First we'll initialize the map and set its view to our chosen geographical coordinates and a zoom level:
 
 ```javascript
-<script type="module">
-	import {MaplairMap, TileLayer, Marker, Circle, Polygon, Popup} from 'maplair';
-	const map = new MaplairMap('map').setView([51.505, -0.09], 13);
-
-	// ...
-</script>
+const map = new MaplairMap('map').setView([51.505, -0.09], 13);
 ```
 
 By default (as we didn't pass any options when creating the map instance), all mouse and touch interactions on the map are enabled, and it has zoom and attribution controls.
 
-Note that the `setView` call also returns the map object --- most Maplair methods act like this when they don't return an explicit value, which allows convenient jQuery-like method chaining.
+Note that the `setView` call also returns the map object --- most Maplair methods act like this when they don't return an explicit value, which allows method chaining.
 
 Next, we'll add a tile layer to add to our map, in this case it's a OpenStreetMap tile layer. Creating a tile layer usually involves setting the [URL template](/reference.html#tilelayer-example) for the tile images, the attribution text, and the maximum zoom level of the layer. OpenStreetMap tiles are fine for programming your Maplair map, but read the [Tile Usage Policy](https://operations.osmfoundation.org/policies/tiles/) of OpenStreetMap if you're going to use the tiles in production.
 
@@ -76,11 +84,11 @@ new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 ```
 
-Make sure all the code is called after the `div` and `maplair.js` inclusion. That's it! You have a working Maplair map now.
+That's it! You have a working Maplair map now.
 
 It's worth noting that Maplair is provider-agnostic, meaning that it doesn't enforce a particular choice of providers for tiles. Also, Maplair doesn't even contain a single provider-specific line of code, so you're free to use other providers if you need to.
 
-Whenever using anything based on OpenStreetMap, an *attribution* is obligatory as per the [copyright notice](https://www.openstreetmap.org/copyright). Most other tile providers (such as [Mapbox](https://docs.mapbox.com/help/how-mapbox-works/attribution/), [Stamen](http://maps.stamen.com/) or [Thunderforest](https://www.thunderforest.com/terms/)) require an attribution as well. Make sure to give credit where credit is due.
+Whenever using anything based on OpenStreetMap, an *attribution* is obligatory as per the [copyright notice](https://www.openstreetmap.org/copyright). Most other tile providers (such as [Mapbox](https://docs.mapbox.com/help/how-mapbox-works/attribution/) or [Thunderforest](https://www.thunderforest.com/terms/)) require an attribution as well. Make sure to give credit where credit is due.
 
 
 ### Markers, circles, and polygons
@@ -88,13 +96,19 @@ Whenever using anything based on OpenStreetMap, an *attribution* is obligatory a
 {% include frame.html url="example-overlays.html" %}
 
 
-Besides tile layers, you can easily add other things to your map, including markers, polylines, polygons, circles, and popups. Let's add a marker:
+Besides tile layers, you can easily add other things to your map, including markers, polylines, polygons, circles, and popups. Add the classes you use to the `import` line at the top of the script:
+
+```javascript
+import {MaplairMap, TileLayer, Marker, Circle, Polygon} from 'maplair';
+```
+
+Let's add a marker:
 
 ```javascript
 const marker = new Marker([51.5, -0.09]).addTo(map);
 ```
 
-Adding a circle is the same (except for specifying the radius in meters as a second argument), but lets you control how it looks by passing options as the last argument when creating the object:
+Adding a circle is similar, except that you set its radius in meters with the `radius` option. Options also control how it looks:
 
 ```javascript
 const circle = new Circle([51.508, -0.11], {
@@ -131,7 +145,7 @@ Try clicking on our objects. The `bindPopup` method attaches a popup with the sp
 
 Note that popup content is rendered as HTML, so don't pass untrusted user input to it directly.
 
-You can also use popups as layers (when you need something more than attaching a popup to an object):
+You can also use popups as layers (when you need something more than attaching a popup to an object). This one needs `Popup` in the imports:
 
 ```javascript
 const popup = new Popup()
