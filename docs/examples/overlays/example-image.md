@@ -9,7 +9,7 @@ title: Image Overlay Tutorial
 
 	const osm = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		maxZoom: 19,
-		attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+		attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 	}).addTo(map);
 
 	const imageUrl = 'newark_nj_1922.jpg';
