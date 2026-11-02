@@ -33,6 +33,9 @@ export class Circle extends CircleMarker {
 	 * @param {CircleOptions} [options]
 	 */
 	constructor(latlng, options) {
+		if (typeof options === 'number') {
+			throw new Error('Circle: the radius is an option in Maplair. Use new Circle(latlng, {radius}).');
+		}
 		super(latlng, options);
 
 		if (isNaN(this.options.radius)) { throw new Error('Circle radius cannot be NaN'); }

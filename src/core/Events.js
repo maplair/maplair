@@ -536,7 +536,9 @@ export class Evented extends Class {
 
 	_propagateEvent(e) {
 		for (const p of Object.values(this._eventParents ?? {})) {
+			// `layer` is the Leaflet 1 name of `propagatedFrom`, left out of the types to steer new code to the new one
 			p.fire(e.type, {
+				layer: e.target,
 				propagatedFrom: e.target,
 				...e
 			}, true);

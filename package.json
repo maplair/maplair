@@ -70,6 +70,7 @@
       "default": "./dist/esm/layer/vector/Path.ZoomStyles.js"
     },
     "./src/": "./src/",
+    "./dist/maplair.css": "./dist/maplair.css",
     "./styles.css": "./dist/maplair.css",
     "./i18n/*.json": "./i18n/*.json"
   },
