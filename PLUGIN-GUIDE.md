@@ -1,7 +1,7 @@
 # Maplair Plugin Authoring Guide
 
 One of the greatest things about Maplair is its powerful plugin ecosystem.
-The [Maplair plugins page](https://maplair.org/plugins.html) lists dozens of awesome plugins, and more are being added every week.
+The [Maplair plugins page](https://maplair.org/plugins.html) lists hundreds of awesome plugins, and more are being added every week.
 
 This guide lists a number of best practices for publishing a Maplair plugin that meets the quality standards of Maplair itself.
 
@@ -25,7 +25,7 @@ This guide lists a number of best practices for publishing a Maplair plugin that
 
 ### Repository
 
-The best place to put your Maplair plugin is a separate [GitHub](http://github.com) repository.
+The best place to put your Maplair plugin is a separate [GitHub](https://github.com) repository.
 If you create a collection of plugins for different uses,
 don't put them in one repo —
 it's usually easier to work with small, self-contained plugins in individual repositories.
@@ -40,9 +40,9 @@ Just make sure to include the word "Maplair" in the name so that it's obvious th
 The most essential thing to do when publishing a plugin is to include a demo that showcases what the plugin does —
 it's usually the first thing people will look for.
 
-The easiest way to put up a demo is using [GitHub Pages](http://pages.github.com/).
-A good [starting point](https://help.github.com/articles/creating-project-pages-manually) is creating a `gh-pages` branch in your repo and adding an `index.html` page to it  —
-after pushing, it'll be published as `http://<user>.github.io/<repo>`.
+The easiest way to put up a demo is using [GitHub Pages](https://pages.github.com/).
+Add an `index.html` page to your repo and [publish it from a branch or folder](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site) —
+it'll be available at `https://<user>.github.io/<repo>`.
 
 ### Readme
 
@@ -64,7 +64,7 @@ At a minimum it should contain the following items:
 
 Every open source repository should include a license.
 If you don't know what open source license to choose for your code,
-[MIT License](http://opensource.org/licenses/MIT) and [BSD 2-Clause License](http://opensource.org/licenses/BSD-2-Clause) are both good choices.
+[MIT License](https://opensource.org/licenses/MIT) and [BSD 2-Clause License](https://opensource.org/licenses/BSD-2-Clause) are both good choices.
 You can either put it in the repo as a `LICENSE` file or just link to the license from the Readme.
 
 ## Code
@@ -88,7 +88,6 @@ An example of a more sophisticated plugin file structure:
 /src        - JS source files
 /dist       - minified plugin JS, CSS, images
 /spec       - test files
-/lib        - any external libraries/plugins if necessary
 /examples   - HTML examples of plugin usage
 README.md
 LICENSE
@@ -213,19 +212,19 @@ trigger a build/minification just before publishing your package with a
 }
 ```
 
-You can then use the [`.gitignore`](https://help.github.com/articles/ignoring-files/)
-file to make sure the minified files are not versioned, and an
-[empty `.npmignore`](https://docs.npmjs.com/misc/developers#keeping-files-out-of-your-package)
-to ensure that they are published to NPM.
+You can then use the [`.gitignore`](https://docs.github.com/en/get-started/git-basics/ignoring-files)
+file to make sure the minified files are not versioned, and the
+[`files` field](https://docs.npmjs.com/cli/configuring-npm/package-json#files) in `package.json`
+to list what gets published to NPM.
 
 ## Adding to the plugins list
 
 Once your plugin is published, it is a good idea to add it to the [Maplair plugins list](https://maplair.org/plugins.html). To do so:
 
-* [Fork](https://help.github.com/articles/fork-a-repo/) the Maplair repo.
-* In the `docs/_plugins/` folder, copy the `template.md` file and add it to a category folder. Then put the information and links about your plugin into the new plugin file.
+* [Fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) the Maplair repo.
+* In the `docs/_plugins/` folder, copy the `template.md` file and add it to a category folder. Then put the information and links about your plugin into the new plugin file, and set `compatible-v1` and `compatible-v2` to the Leaflet versions it works with.
 * Commit the code to your fork.
-* [Open a pull request](https://help.github.com/articles/creating-a-pull-request/) from your fork to Maplair's original repo.
+* [Open a pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request) from your fork to Maplair's original repo.
 
 Once the pull request is done, a Maplair maintainer will have a quick look at your
 plugin and, if everything looks right, your plugin will appear in the list shortly thereafter.
