@@ -3,7 +3,7 @@ Maplair Changelog
 
 (all changes of Leaflet without author notice are by [@mourner](https://github.com/mourner))
 
-## Unreleased
+## 4.3.0 (2026-11-02)
 
 ### Leaflet, since 4.2.0
 
