@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>Announcing Leaflet 1.0-rc1 - Maplair</title>
+	
+	
+	<meta charset="utf-8" />
+	
+
+	
+
+	<meta name="color-scheme" content="light dark">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="../../../docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="../../../docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="../../../docs/css/normalize.css" />
+	<link rel="stylesheet" href="../../../docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="../../../docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="../../../docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body>
+
+<header>
+	<h1><a href="https://maplair.org/"><picture><source srcset="../../../docs/images/logo-dark.png" media="(prefers-color-scheme: dark)" /><img src="../../../docs/images/logo.png" alt="Maplair" width="300" /></picture></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<a href="../../../index.html">Overview</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../examples.html">Tutorials</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../download.html">Download</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../plugins.html" title="Leaflet plugins, none of which is compatible with Maplair"><s>Plugins</s></a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../blog.html" class="active">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		
+<p><a href="../../../blog.html">← Back to the list of blog posts</a></p>
+
+<h2>Announcing Leaflet 1.0-rc1</h2>
+
+<p class="post-meta">Posted on 18 April 2016 by <a href="http://ivan.sanchezortega.es">Iván Sánchez</a></p>
+
+<p>The road to Leaflet 1.0 continues - we’re proud to get the first release candidate for 1.0 into the wild.</p>
+<p>Leaflet 1.0-rc1 closes down on edge cases and API inconsistencies that were present in beta2. The full list of changes is in the <a href="https://github.com/Leaflet/Leaflet/blob/main/CHANGELOG.md#10-rc1-april-18-2016">1.0.0-rc1 changelog</a>) as usual, with about 50 bugfixes and a dozen improvements and minor API changes.</p>
+<h3 id="notable-changes">Notable changes</h3>
+<ul>
+<li>
+<p>Fractional zoom controls: In beta2, developers could set a fractional zoom level only by code, running e.g. <code>map.setZoom(8.5)</code>. Now the map has options (<code>zoomSnap</code> and <code>zoomDelta</code>) to let the user navigate through fractional zoom levels.</p>
+</li>
+<li>
+<p>Better handling of vector layers when using the <code>&lt;canvas&gt;</code> renderer, when layers are non-interactive and lines are dashed.</p>
+</li>
+<li>
+<p>The first ever Microsoft Edge hack (handle inconsistent <code>dblclick</code> behaviour on Win10 touchscreens)</p>
+</li>
+<li>
+<p>Unit tests with <code>prosthetic-hand</code>, letting us be sure that touch interactions behave consistently. This has its <a href="https://leafletjs.com/2016/03/20/debugging-touch-interactions.html">own blog post</a>.</p>
+</li>
+</ul>
+<h3 id="changes-in-the-api-documentation">Changes in the API documentation</h3>
+<p>The API documentation is now generated from docstrings, thanks to a new tool dubbed <a href="https://github.com/Leaflet/Leafdoc">🍂doc</a> (or “leafdoc”).</p>
+<p>Previously, the API documentation was edited manually. This involved a lot of copy-pasting and - over time - bits of code started not to match the documentation.</p>
+<p>Most complex software projects use some form of <a href="https://en.wikipedia.org/wiki/Docstring">docstrings</a> and tools like <a href="https://en.wikipedia.org/wiki/Javadoc">JavaDoc</a>, <a href="http://www.naturaldocs.org/">NaturalDocs</a> or <a href="http://usejsdoc.org/">JSdoc</a> to convert the docstrings into webpages.</p>
+<p>But the documentation for Leaflet requires a few special bits - docstrings cover methods and properties, but they do not cover options nor events, and we wanted to maintain the current look and feel of the documentation. 🍂doc was then born to overcome these limitations.</p>
+<p>Leaflet uses class inheritance quite extensively, and the old documentation was sometimes not clear about it. Some users struggled to find the available methods for some of the classes, and inherited options were sometimes mentioned, sometimes not. 🍂doc fixes this by including the documentation of all inherited methods/options/events/properties, collapsed by default:</p>
+<p><img src="/docs/images/2016-04-18-inheritances.gif" alt="Collapsed inheritances for L.Polygon"></p>
+<p>The <a href="https://github.com/Leaflet/Leaflet/blob/main/CONTRIBUTING.md#setting-up-the-build-system">build system</a> now builds a HTML file with the API docs alongside the minified <code>leaflet.js</code> file. Documentation will be updated on every release based on that file, and pull requests to the <code>gh-pages</code> branch to fix the documentation will be automatically rejected.</p>
+<h3 id="get-the-release-candidate">Get the release candidate</h3>
+<p>As with previous releases, you can use our CDN:</p>
+<pre><code class="language-plaintext">&lt;link rel=&quot;stylesheet&quot; href=&quot;http://cdn.leafletjs.com/leaflet/v1.0.0-rc.1/leaflet.css&quot; /&gt;
+&lt;script src=&quot;http://cdn.leafletjs.com/leaflet/v1.0.0-rc.1/leaflet.js&quot;&gt;&lt;/script&gt;
+</code></pre>
+<p>A non-minified version of the javascript file is also available as:</p>
+<pre><code class="language-plaintext">&lt;script src=&quot;http://cdn.leafletjs.com/leaflet/v1.0.0-rc.1/leaflet-src.js&quot;&gt;&lt;/script&gt;
+</code></pre>
+<p>The release is also available through NPM (<code>npm install leaflet@rc</code>), <a href="https://github.com/Leaflet/Leaflet/archive/v1.0.0-rc.1.zip">GitHub download</a>, and <a href="http://cdn.leafletjs.com/leaflet/v1.0.0-rc.1/leaflet.zip">CDN download</a>. We discourage using Bower.</p>
+<h3 id="the-team-in-person">The team in person</h3>
+<p>This Release Candidate leapt forward when most of the Leaflet team met in Madrid for a weekend to fix bugs and discuss architectural decisions, and whether some big features should make it to 1.0 or be postponed.</p>
+<table class="image">
+<caption align="bottom"><small>This photograph <em>might</em> have been digitally altered to include somebody who couldn't come to Madrid that weekend.</small></caption>
+<tr><td style='text-align:center'><img src="/docs/images/2016-04-18-madrid-leaflet-864px.jpg" alt="The Leaflet team in Madrid"/></td></tr>
+</table>
+<table class="image">
+<caption align="bottom"><small>Iván and Yohan want to extend a special thanks to the roll of toilet paper.</small></caption>
+<tr><td style='text-align:center'><img src="/docs/images/2016-04-18-leaflet-toilet-paper.jpeg" alt="The Leaflet team in Madrid" width="864"/></td></tr>
+</table>
+<p>We enjoyed meeting in person and fighting bugs together. It proved to be a very productive thing to do, as about 20 issues were closed that day. Hopefully another in-person meeting will happen soon, with another release!</p>
+<p>We hope you enjoy Leaflet 1.0-rc1 as much as we did coding it!</p>
+<p>Best,
+Iván &amp; Vladimir &amp; Yohan &amp; Per &amp; Zsolt.</p>
+
+
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/simon04">Simon Legner</a> and <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="../../../docs/js/docs.js"></script>
+
+</body>
+</html>

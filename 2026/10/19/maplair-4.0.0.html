@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>Maplair 4.0 — a fork of Leaflet - Maplair</title>
+	
+	
+	<meta charset="utf-8" />
+	
+
+	
+
+	<meta name="color-scheme" content="light dark">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="../../../docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="../../../docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="../../../docs/css/normalize.css" />
+	<link rel="stylesheet" href="../../../docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="../../../docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="../../../docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body>
+
+<header>
+	<h1><a href="https://maplair.org/"><picture><source srcset="../../../docs/images/logo-dark.png" media="(prefers-color-scheme: dark)" /><img src="../../../docs/images/logo.png" alt="Maplair" width="300" /></picture></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<a href="../../../index.html">Overview</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../examples.html">Tutorials</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../download.html">Download</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../plugins.html" title="Leaflet plugins, none of which is compatible with Maplair"><s>Plugins</s></a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../blog.html" class="active">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		
+<p><a href="../../../blog.html">← Back to the list of blog posts</a></p>
+
+<h2>Maplair 4.0 — a fork of Leaflet</h2>
+
+<p class="post-meta">Posted on 19 October 2026 by <a href="https://github.com/simon04">Simon Legner</a></p>
+
+<p>Today we’re releasing <strong>Maplair 4.0.0</strong>, the first stable release of Maplair: a fork of <a href="https://leafletjs.com">Leaflet</a>, the open-source JavaScript library for interactive maps that Volodymyr Agafonkin created in 2010. It brings many features which Leaflet apps used plugins or workarounds for — map rotation, fullscreen, search, heatmaps, a minimap, legends and more — all of them dropped by bundlers unless you use them.</p>
+<p>Maplair builds on the work that went into Leaflet 2.0 — the move to ES modules, standard JavaScript classes and Pointer Events — and continues it: some changes that were proposed for Leaflet, but didn’t land there, are part of Maplair. Many thanks to Volodymyr Agafonkin and to the hundreds of Leaflet contributors, whose work Maplair is based on.</p>
+<h3 id="why-40">Why 4.0?</h3>
+<p>Maplair’s first version is 4.0, so that it can’t be confused with Leaflet 2.x or 3.x. If you’re coming from Leaflet 1.9.4, read on for everything that changed in between; if you already use the Leaflet 2.0 alpha, most of it will look familiar.</p>
+<h3 id="whats-new">What’s new</h3>
+<ul>
+<li>
+<p><strong>Translations</strong> of the built-in texts (zoom buttons, popups, scale, attribution …) with the new <a href="../../../reference.html#i18n"><code>I18n</code></a> API. German, Spanish, French, Czech, Slovak, Hungarian, Slovenian, Italian and Romansh are included; help translate on <a href="https://app.transifex.com/simon04/maplair/">Transifex</a>.</p>
+<pre><code class="language-js">import {I18n} from 'maplair';
+import de from 'maplair/i18n/de.json' with {type: 'json'};
+
+I18n.registerLocale('de', de);
+I18n.setLocale('de');
+</code></pre>
+</li>
+<li>
+<p><strong>Better performance with many markers:</strong> the new map option <code>markerCulling</code> takes markers far outside of the view off the page, and the new marker option <code>shadow: false</code> drops the marker shadows. Popups open with one layout pass instead of two, adding many layers no longer slows down quadratically, and unchanged positions aren’t written to the page again.</p>
+</li>
+<li>
+<p><strong>Tree-shaking:</strong> bundlers include only what you use — e.g. a map with just a tile layer is about 34 KB of gzipped JS, about half the size of all of Maplair (63 KB).</p>
+</li>
+<li>
+<p><strong>A new look:</strong> a maple leaf logo and marker 🍁.</p>
+</li>
+<li>
+<p><strong>Standard JavaScript classes:</strong> classes use <code>constructor()</code> like any other JavaScript class, and <code>new Point(point)</code> creates a copy like any other constructor.</p>
+</li>
+<li>
+<p><strong>Type declarations and a new API reference:</strong> the doc comments are JSDoc with TypeScript types now. The package ships type declarations (<code>dist/types/</code>) for Maplair and its optional modules, and the <a href="../../../reference.html">API reference</a> is generated from them, with inherited options, events and methods.</p>
+</li>
+</ul>
+<h4 id="new-controls">New controls</h4>
+<ul>
+<li>
+<p><code>FullscreenControl</code> (map option <code>fullscreenControl</code>) with <code>toggleFullscreen()</code>, <code>isFullscreen()</code> and the events <code>enterfullscreen</code>, <code>exitfullscreen</code> and <code>fullscreenchange</code>. Without the Fullscreen API, e.g. on iPhones, the map fills the window instead.</p>
+</li>
+<li>
+<p><code>SearchControl</code>: a search field with results to pick with the pointer or the keyboard, finding coordinates and geo URIs by itself (with the new <code>LatLng.parse()</code>). Bring your own <code>geocoder</code> function, or use <code>SearchControl.nominatim()</code> with your own Nominatim server — or with the public one, if your use complies with the <a href="https://operations.osmfoundation.org/policies/nominatim/">Nominatim usage policy</a>, which you confirm with <code>acceptUsagePolicy: true</code>:</p>
+<pre><code class="language-js">new SearchControl({
+	geocoder: SearchControl.nominatim({acceptUsagePolicy: true})
+}).addTo(map);
+</code></pre>
+</li>
+<li>
+<p><code>ButtonControl</code> and <code>ButtonBarControl</code> for buttons of your own, styled like the zoom buttons, with states, disabling and access keys; <code>TextControl</code> for a title or a status line.</p>
+</li>
+<li>
+<p><code>MiniMapControl</code>: an overview map showing the view of the map, to drag or click.</p>
+</li>
+<li>
+<p><code>SideBySideControl</code>: a draggable divider to compare two layers.</p>
+</li>
+<li>
+<p><code>LegendControl</code> and <code>Classification</code>: classify features by value or by range (like the categorized and graduated renderers of QGIS), style a <code>GeoJSON</code> layer with it, and show the classes in a legend, optionally with the feature count:</p>
+<pre><code class="language-js">const temperature = new Classification([
+	{upper: 0, symbol: {fillColor: '#5bc0de'}, legend: '&lt; 0 °C'},
+	{lower: 0, upper: 10, symbol: {fillColor: '#33ee33'}, legend: '0–10 °C'},
+	{lower: 10, symbol: {fillColor: '#f0a030'}, legend: '≥ 10 °C'}
+], {name: 'Air temperature', value: 'temperature'});
+
+new GeoJSON(stations, {
+	pointToLayer: (feature, latlng) =&gt; new CircleMarker(latlng),
+	style: temperature.style
+}).addTo(map);
+</code></pre>
+</li>
+<li>
+<p><code>ContextMenu</code> for menus on right click or long tap, on the map or on layers.</p>
+</li>
+<li>
+<p>The new control option <code>order</code> sorts the controls of a corner.</p>
+</li>
+</ul>
+<h4 id="map-and-interaction">Map and interaction</h4>
+<ul>
+<li><strong>Rotation:</strong> the map option <code>bearing</code> with <code>setBearing()</code>, rotating with two fingers (<code>pinchRotate</code>) and a compass (<code>RotateControl</code>); <code>Marker</code> options <code>rotationAngle</code> and <code>rotationOrigin</code>, e.g. for the heading of a vehicle.</li>
+<li><strong>Smoother zooming:</strong> <code>continuousZoom: true</code> zooms through fractional zoom levels, also with the scroll wheel. Pinching on a touchpad zooms, and with <code>scrollWheelZoom: 'trackpad'</code>, scrolling on a touchpad pans. Tap once, then touch again and drag up or down to zoom (<code>tapDragZoom</code>, enabled by default).</li>
+<li><code>Hash</code> keeps the view (and optionally the layers) in the URL, as <code>#zoom/lat/lng</code>, as geo URI or in the query string; <code>MapSync</code> keeps the views of several maps in sync.</li>
+<li><code>setCrs()</code> changes the CRS of the map at runtime.</li>
+<li>The new <code>idle</code> event is fired when the view isn’t changing and all layers have loaded, and view changes caused by the user have the DOM event as <code>originalEvent</code>.</li>
+<li>The map follows changes of the <code>devicePixelRatio</code>, e.g. when moving the window to another screen, and a hidden map (e.g. in an inactive tab) keeps its view.</li>
+<li><strong>Accessibility:</strong> the map has an accessible name (option <code>ariaLabel</code>), <kbd>?</kbd> shows the keyboard shortcuts, the controls use <code>&lt;button&gt;</code> elements, and popups opened with the keyboard get the focus.</li>
+<li>Popups and tooltips can extend beyond the map with the <code>overflow</code> option, and tooltips with <code>direction: 'auto'</code> open on the side where they fit.</li>
+</ul>
+<h4 id="layers-and-markers">Layers and markers</h4>
+<ul>
+<li>
+<p><code>SvgIcon</code> draws the default marker in any color, with a character, emoji or SVG path as glyph:</p>
+<pre><code class="language-js">new Marker(latlng, {icon: new SvgIcon({color: 'green', glyph: '🚲'})}).addTo(map);
+</code></pre>
+</li>
+<li>
+<p><code>HeatLayer</code> draws heatmaps of tens of thousands of points.</p>
+</li>
+<li>
+<p><code>DisplaceHandler</code> moves overlapping circle markers apart (opt in with <code>MaplairMap.addInitHook('addHandler', 'displace', DisplaceHandler)</code> and the option <code>displace: true</code>).</p>
+</li>
+<li>
+<p>Tile layers: <code>fetchOptions</code> loads tiles with <code>fetch()</code>, e.g. with an <code>Authorization</code> header, and aborts requests of tiles no longer needed; <code>setUrl()</code> swaps the tiles without flickering; <code>placeholder</code> sets a background while tiles load; <code>WMSTileLayer#getLegendUrl()</code> returns the URL of the legend.</p>
+</li>
+<li>
+<p><code>pixelated: true</code> keeps the pixels of tiles and image overlays crisp when zoomed.</p>
+</li>
+<li>
+<p><code>setInteractive()</code> changes whether a layer is interactive, and <code>setAttribution()</code> changes its attribution, sorted by the new option <code>attributionOrder</code>.</p>
+</li>
+</ul>
+<h4 id="optional-modules">Optional modules</h4>
+<p>These features extend existing classes, so they’re separate modules: import them to use them, e.g. <code>import 'maplair/zoom-styles';</code>. The bundles <code>maplair.js</code> and <code>maplair-global.js</code> contain all of them.</p>
+<ul>
+<li><code>maplair/map-rotation</code> and <code>maplair/marker-rotation</code>: the rotation of the map and of markers.</li>
+<li><code>maplair/marker-movement</code>: <code>Marker#moveTo()</code> and <code>moveAlong()</code> move a marker smoothly along a route.</li>
+<li><code>maplair/dash-animation</code>: the path option <code>dashSpeed</code> animates dashes along a path (“marching ants”).</li>
+<li><code>maplair/path-decorations</code>: the path options <code>arrowheads</code> and <code>text</code>, e.g. for directions and street names along lines.</li>
+<li><code>maplair/geojson-loading</code>: <code>GeoJSON#load()</code> and the option <code>url</code> load GeoJSON from a URL.</li>
+<li><code>maplair/zoom-styles</code>: a path <code>weight</code> and a circle marker <code>radius</code> depending on the zoom, as a function or as zoom stops.</li>
+</ul>
+<h4 id="theming">Theming</h4>
+<p>The colors, borders, shadows, fonts and spacing are CSS variables now, so that you can theme maps by overriding them:</p>
+<pre><code class="language-css">:root {
+	--maplair-background-color-base: #202122;
+	--maplair-color-base: #eaecf0;
+}
+</code></pre>
+<h3 id="migrating-from-leaflet-194">Migrating from Leaflet 1.9.4</h3>
+<p>Maplair targets browsers which support the web features that are <a href="https://web.dev/baseline">Baseline Widely available</a> (supported by all major browsers for at least 30 months); Internet Explorer isn’t supported anymore.</p>
+<h4 id="package-files-and-loading">Package, files and loading</h4>
+<ul>
+<li>
+<p>Install the <code>maplair</code> package (<code>npm install maplair</code>), and import from <code>maplair</code>. Maplair is published as ES modules with named exports only — there’s no default export and no global <code>L</code>:</p>
+<pre><code class="language-js">import {MaplairMap, TileLayer, Marker} from 'maplair';
+
+const map = new MaplairMap('map').setView([51.505, -0.09], 13);
+new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	maxZoom: 19,
+	attribution: '© &lt;a href=&quot;https://www.openstreetmap.org/copyright&quot;&gt;OpenStreetMap&lt;/a&gt;'
+}).addTo(map);
+new Marker([51.5, -0.09]).addTo(map);
+</code></pre>
+<p>Without a bundler, use an <a href="../../../download.html">import map</a>, e.g. pointing <code>maplair</code> to <code>https://cdn.jsdelivr.net/npm/maplair@4.0.0/dist/maplair.js</code>, and <code>&lt;script type=&quot;module&quot;&gt;</code>.</p>
+</li>
+<li>
+<p>For old-style scripts, <code>dist/maplair-global.js</code> still provides a global <code>L</code> (e.g. <code>new L.MaplairMap('map')</code>), including <code>L.noConflict()</code>.</p>
+</li>
+<li>
+<p>The files were renamed: <code>leaflet.js</code> → <code>maplair.js</code>, <code>leaflet-src.js</code> → <code>maplair-src.js</code>, <code>leaflet.css</code> → <code>maplair.css</code> (also importable as <code>maplair/styles.css</code>).</p>
+</li>
+<li>
+<p>All CSS classes were renamed from <code>leaflet-*</code> to <code>maplair-*</code>, e.g. <code>.leaflet-container</code> → <code>.maplair-container</code>, <code>.leaflet-popup</code> → <code>.maplair-popup</code>. Update your stylesheets and any code selecting these classes.</p>
+</li>
+<li>
+<p>The images are SVG files: <code>marker-icon.svg</code>, <code>marker-shadow.svg</code> and <code>layers.svg</code> replace <code>marker-icon.png</code>, <code>marker-icon-2x.png</code>, <code>marker-shadow.png</code>, <code>layers.png</code> and <code>layers-2x.png</code>.</p>
+</li>
+</ul>
+<h4 id="creating-objects">Creating objects</h4>
+<ul>
+<li>
+<p>The factory functions were removed — use constructors instead: <code>L.marker(latlng)</code> → <code>new Marker(latlng)</code>, <code>L.map('map')</code> → <code>new MaplairMap('map')</code>, etc.</p>
+</li>
+<li>
+<p><code>L.Map</code> is now <code>MaplairMap</code> (<code>Map</code> is still exported as an alias, but shadows JavaScript’s built-in <code>Map</code> when imported).</p>
+</li>
+<li>
+<p>Classes that were attached to other classes are separate exports now:</p>
+<table>
+<thead>
+<tr>
+<th>Leaflet 1.9.4</th>
+<th>Maplair 4.0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>L.Control.Zoom</code>, <code>L.Control.Attribution</code>, <code>L.Control.Layers</code>, <code>L.Control.Scale</code></td>
+<td><code>ZoomControl</code>, <code>AttributionControl</code>, <code>LayersControl</code>, <code>ScaleControl</code></td>
+</tr>
+<tr>
+<td><code>L.Map.Drag</code>, <code>L.Map.BoxZoom</code>, <code>L.Map.DoubleClickZoom</code>, <code>L.Map.Keyboard</code>, <code>L.Map.ScrollWheelZoom</code>, <code>L.Map.TapHold</code>, <code>L.Map.TouchZoom</code></td>
+<td><code>DragHandler</code>, <code>BoxZoomHandler</code>, <code>DoubleClickZoomHandler</code>, <code>KeyboardHandler</code>, <code>ScrollWheelZoomHandler</code>, <code>TapHoldHandler</code>, <code>PinchZoomHandler</code></td>
+</tr>
+<tr>
+<td><code>L.TileLayer.WMS</code></td>
+<td><code>WMSTileLayer</code></td>
+</tr>
+<tr>
+<td><code>L.Icon.Default</code></td>
+<td><code>DefaultIcon</code></td>
+</tr>
+<tr>
+<td><code>L.CRS.EPSG3857</code>, <code>L.CRS.EPSG4326</code>, <code>L.CRS.EPSG3395</code>, <code>L.CRS.EPSG900913</code>, <code>L.CRS.Earth</code>, <code>L.CRS.Simple</code></td>
+<td><code>EPSG3857</code>, <code>EPSG4326</code>, <code>EPSG3395</code>, <code>EPSG900913</code>, <code>EarthCRS</code>, <code>SimpleCRS</code></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>The touch zoom handler was renamed: the map option <code>touchZoom</code> and the property <code>map.touchZoom</code> still work, but are deprecated in favour of <code>pinchZoom</code>.</p>
+</li>
+<li>
+<p><code>new LatLng(latlng)</code>, <code>new Point(point)</code>, <code>new LatLngBounds(bounds)</code> and <code>new Bounds(bounds)</code> now always create a new object (Leaflet’s factories returned the given object). To convert without copying, use <code>LatLng.from()</code>, <code>Point.from()</code>, <code>LatLngBounds.from()</code> and <code>Bounds.from()</code>, which return instances as they are, e.g. <code>L.latLng(latlng)</code> → <code>LatLng.from(latlng)</code>. <code>LatLng#clone()</code> and <code>Point#clone()</code> were removed — use the constructors instead. Layers like <code>ImageOverlay</code> keep their own copy of the coordinates passed to them.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Constructor</th>
+<th>Factory</th>
+<th>Copy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Leaflet 1.9.4</td>
+<td><code>new L.LatLng(lat, lng, alt)</code>: numbers only</td>
+<td><code>L.latLng(x)</code>: also arrays and objects, returns <code>LatLng</code> instances as they are</td>
+<td><code>latlng.clone()</code></td>
+</tr>
+<tr>
+<td>Leaflet 2.0 alpha</td>
+<td><code>new LatLng(x)</code>: also arrays and objects, but returns <code>LatLng</code> instances as they are</td>
+<td>removed</td>
+<td><code>latlng.clone()</code></td>
+</tr>
+<tr>
+<td>Maplair 4.0</td>
+<td><code>new LatLng(x)</code>: also arrays and objects, always a new object</td>
+<td><code>LatLng.from(x)</code>: also arrays and objects, returns <code>LatLng</code> instances as they are</td>
+<td><code>new LatLng(latlng)</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>Point</code>, <code>LatLngBounds</code> and <code>Bounds</code> follow the same pattern (in Leaflet, the constructors of the bounds took corner points too, and the bounds had no <code>clone()</code>).</p>
+</li>
+</ul>
+<h4 id="classes-and-plugins">Classes and plugins</h4>
+<ul>
+<li><code>Class.extend()</code> was removed; use JavaScript classes: <code>class MyLayer extends Layer { … }</code>.</li>
+<li><code>initialize()</code> was replaced by the standard <code>constructor()</code>. Call <code>super(…)</code> instead of <code>ParentClass.prototype.initialize.call(this, …)</code>.</li>
+<li><code>include</code> and <code>statics</code> in class definitions are gone; use <code>MyClass.include({…})</code> and <code>static</code> members, and configure default options with <code>setDefaultOptions()</code> in a static block.</li>
+<li>Hooks added with <code>addInitHook()</code> run at the end of the constructor of the class they were added to, which calls <code>this.callInitHooks()</code> — so a hook added to <code>Polyline</code> sees a fully constructed polyline. All Maplair classes support hooks; your own classes do, if they call <code>this.callInitHooks()</code> at the end of their constructor. Hooks of a parent class run before the constructor of a subclass continues. See the <a href="../../../examples/extending-1-classes/">tutorial on extending classes</a>.</li>
+<li>Leaflet plugins import from <code>leaflet</code> and expect <code>leaflet-*</code> CSS classes and the <code>L</code> global, so most won’t work with Maplair unchanged.</li>
+</ul>
+<h4 id="events">Events</h4>
+<ul>
+<li>Maplair uses <a href="https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events">Pointer Events</a> instead of mouse and touch events. Listen to <code>pointerdown</code>, <code>pointermove</code>, <code>pointerup</code>, <code>pointerover</code>, <code>pointerout</code> etc. instead of <code>mousedown</code>, <code>mousemove</code>, <code>mouseup</code>, <code>mouseover</code>, <code>mouseout</code>, <code>touchstart</code> etc. Maplair logs an error when listening to a removed <code>mouse*</code> event.</li>
+<li>The aliases <code>addEventListener</code>, <code>removeEventListener</code>, <code>addOneTimeEventListener</code>, <code>fireEvent</code> and <code>hasEventListeners</code> of <code>Evented</code>, and <code>addListener</code> and <code>removeListener</code> of <code>DomEvent</code>, were removed — use <code>on</code>, <code>off</code>, <code>once</code>, <code>fire</code> and <code>listens</code>.</li>
+<li><code>DomEvent.getMousePosition()</code> was renamed to <code>DomEvent.getPointerPosition()</code>.</li>
+<li>The map listens to window resizes with a <code>ResizeObserver</code>, so it updates its size when its container changes size for any reason.</li>
+</ul>
+<h4 id="utilities-and-options">Utilities and options</h4>
+<ul>
+<li>Helpers that are now part of JavaScript or the DOM were removed — use the standard APIs instead:
+<ul>
+<li><code>Util</code>: <code>bind()</code>, <code>isArray()</code>, <code>create()</code>, <code>trim()</code>, <code>indexOf()</code>, <code>extend()</code>, <code>getParamString()</code>, <code>requestAnimFrame()</code>/<code>cancelAnimFrame()</code>, <code>emptyImageUrl</code> — use <code>Function#bind()</code>, <code>Array.isArray()</code>, <code>Object.create()</code>, <code>String#trim()</code>, <code>Array#indexOf()</code>, <code>Object.assign()</code> or <code>{...}</code>, <code>URLSearchParams</code>, <code>requestAnimationFrame()</code>/<code>cancelAnimationFrame()</code>.</li>
+<li><code>DomUtil</code>: <code>hasClass()</code>, <code>addClass()</code>, <code>removeClass()</code>, <code>setClass()</code>, <code>getClass()</code>, <code>remove()</code>, <code>empty()</code>, <code>setOpacity()</code>, <code>getStyle()</code>, <code>testProp()</code>, <code>TRANSFORM</code>, <code>TRANSITION</code>, <code>TRANSITION_END</code> — use <code>classList</code>, <code>Element#remove()</code>, <code>Element#replaceChildren()</code>, <code>style</code>/<code>getComputedStyle()</code>.</li>
+</ul>
+</li>
+<li>Most <code>Browser</code> detection flags were removed (e.g. <code>ie</code>, <code>edge</code>, <code>webkit</code>, <code>android</code>, <code>gecko</code>, <code>opera</code>, <code>any3d</code>, <code>canvas</code>, <code>svg</code>, <code>vml</code>, <code>passiveEvents</code>), as were <code>L_NO_TOUCH</code>, the VML renderer and <code>LayerGroup#invoke()</code> (use <code>eachLayer()</code>).</li>
+<li>The zoom control options <code>zoomInTitle</code>/<code>zoomOutTitle</code> and the popup option <code>closeButtonLabel</code> were removed; translate these texts with <a href="../../../reference.html#i18n"><code>I18n</code></a> instead.</li>
+<li>The default attribution prefix links to maplair.org with a 🍁 instead of the Ukrainian flag (CSS class <code>maplair-attribution-leaf</code> instead of <code>maplair-attribution-flag</code>), and the OpenStreetMap attribution added for OpenStreetMap tiles now links the whole text “OpenStreetMap contributors”.</li>
+<li>Tile layers default to the <code>strict-origin-when-cross-origin</code> referrer policy.</li>
+<li>The layers control uses <code>&lt;fieldset&gt;</code> instead of <code>&lt;section&gt;</code>.</li>
+<li>The zoom, layers and fullscreen controls and the popup close button are <code>&lt;button&gt;</code> elements instead of <code>&lt;a href=&quot;#&quot;&gt;</code>, and the map container gets <code>role=&quot;region&quot;</code> and an <code>aria-label</code> unless it has them already.</li>
+<li>The styles use CSS variables, which changes some details slightly: e.g. the controls are 8px instead of 10px away from the edge of the map, and font sizes are in <code>rem</code>.</li>
+<li>Tile layers with <code>detectRetina</code> no longer request tiles beyond <code>maxNativeZoom</code>.</li>
+</ul>
+<h3 id="feedback">Feedback</h3>
+<p>Please report problems and share feedback on <a href="https://github.com/maplair/maplair/issues">GitHub</a> — and have fun mapping with Maplair! 🍁</p>
+
+
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/simon04">Simon Legner</a> and <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="../../../docs/js/docs.js"></script>
+
+</body>
+</html>
