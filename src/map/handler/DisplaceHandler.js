@@ -298,6 +298,11 @@ export class DisplaceHandler extends Handler {
 }
 
 /**
+ * Movement in pixels per pass below which `displace` stops early
+ */
+const MIN_MOVE = 0.01;
+
+/**
  * Displaces overlapping points in pixel space until they are at least
  * `minSeparation` apart. Iterative relaxation: every overlapping pair is pushed
  * apart by half of its overlap per pass. Neighbour lookup uses a grid (cell
@@ -305,7 +310,8 @@ export class DisplaceHandler extends Handler {
  *
  * No point ends up further than `maxDisplacement` away from where it started.
  * Points which hit that limit stay overlapping – the limit wins over the
- * separation.
+ * separation. The relaxation stops early once the points are separated or
+ * no point moves by more than a hundredth of a pixel per pass.
  *
  * @param {Point[]} points Pixel coordinates (modified in place)
  * @param {number} minSeparation Minimum distance between centers, in pixels
@@ -400,7 +406,10 @@ export function displace(
 		if (overlaps === 0) {
 			break; // converged – nothing left to do
 		}
+		let maxMoveSq = 0;
 		for (let i = 0; i < n; i++) {
+			const x = points[i].x;
+			const y = points[i].y;
 			points[i].x += dx[i];
 			points[i].y += dy[i];
 
@@ -416,6 +425,14 @@ export function displace(
 				points[i].x = ax[i] + ox * scale;
 				points[i].y = ay[i] + oy * scale;
 			}
+			const mx = points[i].x - x;
+			const my = points[i].y - y;
+			maxMoveSq = Math.max(maxMoveSq, mx * mx + my * my);
+		}
+		// Points held back by `maxDisplacement` keep overlapping, so `overlaps`
+		// never drops to 0: stop once no point moves noticeably any more.
+		if (maxMoveSq < MIN_MOVE * MIN_MOVE) {
+			break;
 		}
 	}
 

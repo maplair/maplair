@@ -9,7 +9,8 @@ describe('displace', () => {
 		displace(points, 10);
 		for (const [i, a] of points.entries()) {
 			for (const b of points.slice(i + 1)) {
-				expect(a.distanceTo(b)).to.be.at.least(10 - 1e-6);
+				// The relaxation stops once the points move less than 0.01 px per pass
+				expect(a.distanceTo(b)).to.be.at.least(10 - 0.05);
 			}
 		}
 	});
@@ -23,6 +24,13 @@ describe('displace', () => {
 		}
 		// The limit wins over the separation, the points still overlap
 		expect(points[0].distanceTo(points[1])).to.be.below(100);
+	});
+
+	it('stops once the limit keeps the points from moving', () => {
+		const points = [new Point(0, 0), new Point(1, 0), new Point(0, 1)];
+		// Without an early stop, the overlapping points would never let this return
+		displace(points, 100, {iterations: Infinity, maxDisplacement: 3});
+		expect(points[0].distanceTo(new Point(0, 0))).to.be.at.most(3 + 1e-6);
 	});
 
 	it('keeps single points untouched', () => {
