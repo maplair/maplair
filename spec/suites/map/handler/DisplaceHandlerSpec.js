@@ -1,4 +1,4 @@
-import {expect} from 'vite-plus/test';
+import {expect, vi} from 'vite-plus/test';
 import {CircleMarker, DisplaceHandler, LatLng, MaplairMap, Point} from 'maplair';
 import {createContainer, removeMapContainer} from '../../SpecHelper.js';
 import {displace} from '../../../../src/map/handler/DisplaceHandler.js';
@@ -144,6 +144,26 @@ describe('DisplaceHandler', () => {
 		});
 		map.displace.relayout();
 		expect(others.map(m => m.getLatLng())).to.eql(first);
+	});
+
+	it('draws markers with a cached displaceId at that position right away', () => {
+		const map = createMap({displace: true});
+		const create = () => [0, 1, 2].map(i => new CircleMarker(trueLatLng, {radius: 6, displace: true, displaceId: `m${i}`}));
+		const markers = create().map(marker => marker.addTo(map));
+		map.displace.relayout();
+		const first = markers.map(m => m.getLatLng());
+		markers.forEach(marker => marker.remove());
+
+		const others = create().map(marker => marker.addTo(map));
+		// at the displaced position before any relayout …
+		expect(others.map(m => m.getLatLng())).to.eql(first);
+		// … so that the relayout has nothing left to redraw
+		const redraws = others.map(marker => vi.spyOn(marker, 'redraw'));
+		map.displace.relayout();
+		redraws.forEach(redraw => expect(redraw).not.toHaveBeenCalled());
+
+		map.displace.disable();
+		expect(others[0].getLatLng()).to.eql(trueLatLng);
 	});
 
 	it('takes moves by the application as new true positions', () => {

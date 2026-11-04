@@ -3,6 +3,7 @@ import * as Util from '../../core/Util.js';
 import {LatLng} from '../../geo/LatLng.js';
 import {Bounds} from '../../geometry/Bounds.js';
 import {pointToGeoJSON} from '../GeoJSONUtil.js';
+/** @import {MaplairMap} from '../../map/Map.js' */
 /** @import {Feature} from 'geojson' */
 /** @import {LatLngExpression} from '../../geo/LatLng.js' */
 /** @import {MaplairEvent} from '../../core/Events.js' */
@@ -52,6 +53,15 @@ export class CircleMarker extends Path {
 		this._radius = this.options.radius;
 
 		this.callInitHooks(CircleMarker);
+	}
+
+	/**
+	 * @param {MaplairMap} map
+	 */
+	beforeAdd(map) {
+		super.beforeAdd(map);
+		// before the marker is drawn, see `DisplaceHandler`
+		map._displaceHandler?._beforeMarkerAdd(this);
 	}
 
 	/**

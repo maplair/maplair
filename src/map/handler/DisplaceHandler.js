@@ -131,6 +131,8 @@ export class DisplaceHandler extends Handler {
 	 * Called when the handler is enabled, adds the event hooks.
 	 */
 	addHooks() {
+		// see `CircleMarker#beforeAdd`
+		this._map._displaceHandler = this;
 		this._map.on('zoomend', this.schedule, this);
 		this._map.on('layeradd', this._onLayerAdd, this);
 		this._map.on('layerremove', this._onLayerRemove, this);
@@ -143,6 +145,7 @@ export class DisplaceHandler extends Handler {
 	 * true positions of the markers.
 	 */
 	removeHooks() {
+		if (this._map._displaceHandler === this) { delete this._map._displaceHandler; }
 		this._map.off('zoomend', this.schedule, this);
 		this._map.off('layeradd', this._onLayerAdd, this);
 		this._map.off('layerremove', this._onLayerRemove, this);
@@ -235,6 +238,8 @@ export class DisplaceHandler extends Handler {
 	 * @param {LatLng} latLng
 	 */
 	_moveTo(marker, latLng) {
+		// e.g. already placed by `_beforeMarkerAdd`: spares redrawing every marker
+		if (marker.getLatLng().equals(latLng)) { return; }
 		this._moving = true;
 		try {
 			marker.setLatLng(latLng);
@@ -253,6 +258,20 @@ export class DisplaceHandler extends Handler {
 		this._trueLatLngs.set(event.target, event.latlng);
 		this._displacedPositions.clear();
 		if (this._enabled && this._map.hasLayer(event.target)) { this.schedule(); }
+	}
+
+	/**
+	 * Called by `CircleMarker#beforeAdd`: puts a marker whose `displaceId` already
+	 * has a displaced position at the current zoom (e.g. the same station on
+	 * another layer) there before it is drawn, instead of drawing it twice.
+	 * @param {CircleMarker} marker
+	 */
+	_beforeMarkerAdd(marker) {
+		if (!displaceable(marker)) { return; }
+		this._track(marker);
+		const {displaceId} = marker.options;
+		const latLng = displaceId && this._displacedPositions.get(this._map.getZoom())?.get(displaceId);
+		if (latLng) { this._moveTo(marker, latLng); }
 	}
 
 	/**
