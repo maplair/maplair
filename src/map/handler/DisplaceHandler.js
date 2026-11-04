@@ -333,16 +333,24 @@ export function displace(
 		dx.fill(0);
 		dy.fill(0);
 
-		// Sort the points into a grid (cell size = separation).
-		/** @type {Map<string, number[]>} */
+		// Sort the points into a grid (cell size = separation), keyed by column and
+		// then row. Numeric keys instead of a string "x,y" per lookup: the relaxation
+		// runs up to `iterations` times over all points and 9 cells each.
+		/** @type {Map<number, Map<number, number[]>>} */
 		const grid = new Map();
 		for (let i = 0; i < n; i++) {
-			const key = `${Math.floor(points[i].x / cell)},${Math.floor(points[i].y / cell)}`;
-			const bucket = grid.get(key);
+			const cx = Math.floor(points[i].x / cell);
+			const cy = Math.floor(points[i].y / cell);
+			let column = grid.get(cx);
+			if (!column) {
+				column = new Map();
+				grid.set(cx, column);
+			}
+			const bucket = column.get(cy);
 			if (bucket) {
 				bucket.push(i);
 			} else {
-				grid.set(key, [i]);
+				column.set(cy, [i]);
 			}
 		}
 
@@ -352,8 +360,10 @@ export function displace(
 			const cy = Math.floor(points[i].y / cell);
 			// Only the 3×3 neighbouring cells can be closer than `sep`.
 			for (let gx = cx - 1; gx <= cx + 1; gx++) {
+				const column = grid.get(gx);
+				if (!column) { continue; }
 				for (let gy = cy - 1; gy <= cy + 1; gy++) {
-					const bucket = grid.get(`${gx},${gy}`);
+					const bucket = column.get(gy);
 					if (!bucket) { continue; }
 					for (const j of bucket) {
 						if (j <= i) { continue; } // visit every pair once
