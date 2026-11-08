@@ -36,8 +36,9 @@ import * as Util from '../../core/Util.js';
  * Applied when the element is created; [`setStyle`](#path-setstyle) does not update it
  * afterwards.
  * @property {Renderer} [renderer] Use this specific instance of `Renderer` for this
- * path. If not set, the path uses the map's [renderer](#maplairmapoptions-renderer),
- * which is `SVG` by default. If set, it overrides the `pane` option.
+ * path. If not set, the path uses the map's [renderer](#maplairmapoptions-renderer)
+ * (`SVG` by default), or in a custom pane, a renderer of the same kind created for
+ * that pane. If set, it overrides the `pane` option.
  * @extends InteractiveLayerOptions
  */
 

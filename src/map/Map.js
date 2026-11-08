@@ -61,7 +61,9 @@ const zoomAnimDuration = 250;
  * user tries to pan outside the view. To set the restriction dynamically, use
  * [`setMaxBounds`](#map-setmaxbounds) method.
  * @property {Renderer} [renderer] The default method for drawing vector layers on the
- * map. `SVG` or `Canvas` by default depending on browser support.
+ * map. A new `SVG` renderer by default; pass `new Canvas()` to draw them on a canvas
+ * instead. Paths in custom panes get their own renderer for that pane, of the same
+ * class and with the same options as this one.
  * @property {boolean} [zoomAnimation=true] Whether the map zoom animation is enabled.
  * @property {number} [zoomAnimationThreshold=4] Won't animate zoom if the zoom
  * difference exceeds this value (or 1 if the user prefers

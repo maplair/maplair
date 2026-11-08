@@ -52,7 +52,8 @@ const mapRendererMethods = {
  * @lends MaplairMapOptions
  * @property {Renderer} [renderer] The default method for drawing vector layers on the
  * map. A new `SVG` renderer by default; pass `new Canvas()` to draw them on a canvas
- * instead.
+ * instead. Paths in custom panes get their own renderer for that pane, of the same
+ * class and with the same options as this one.
  */
 
 /**

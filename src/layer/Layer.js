@@ -315,8 +315,10 @@ export class Layer extends Evented {
 	_updateInteractive() {}
 
 	/**
-	 * Makes `targetEl` a target of pointer events of this layer.
-	 * @internal
+	 * Registers `targetEl`, one of the layer's DOM elements, so that pointer, click and
+	 * keyboard events on it (or its descendants) fire on the layer and bubble through its
+	 * parent groups to the map, the way they do for markers and paths. Custom layers call
+	 * it in [`onAdd`](#layer-onadd), once the layer is on a map.
 	 * @param {HTMLElement} targetEl
 	 * @returns {this}
 	 */
@@ -326,8 +328,8 @@ export class Layer extends Evented {
 	}
 
 	/**
-	 * Stops `targetEl` from being a target of pointer events of this layer.
-	 * @internal
+	 * Undoes [`addInteractiveTarget`](#layer-addinteractivetarget), typically in
+	 * [`onRemove`](#layer-onremove).
 	 * @param {HTMLElement} targetEl
 	 * @returns {this}
 	 */
