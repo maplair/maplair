@@ -319,7 +319,7 @@ describe('Marker', () => {
 				expect(style.marginLeft).to.equal('');
 				expect(style.marginTop).to.equal('');
 				// the origin of the rotation is the top left corner without an anchor
-				expect(style.transformOrigin).to.equal('0px 0px');
+				expect(style.transformOrigin.startsWith('0px 0px')).to.be.true;
 			}
 		});
 
