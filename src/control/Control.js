@@ -181,9 +181,7 @@ export class Control extends Class {
 
 		this._container.remove();
 
-		if (this.onRemove) {
-			this.onRemove(this._map);
-		}
+		this.onRemove?.(this._map);
 
 		this._map.off('unload', this.remove, this);
 		this._map = null;

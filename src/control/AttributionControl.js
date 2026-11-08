@@ -138,10 +138,7 @@ export class AttributionControl extends Control {
 		if (!text) { return this; }
 
 		this._orders[text] = order;
-		if (!this._attributions[text]) {
-			this._attributions[text] = 0;
-		}
-		this._attributions[text]++;
+		this._attributions[text] = (this._attributions[text] || 0) + 1;
 
 		this._update();
 

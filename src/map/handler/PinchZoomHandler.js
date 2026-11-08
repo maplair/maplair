@@ -85,8 +85,8 @@ export class PinchZoomHandler extends Handler {
 
 		map._stop();
 
-		DomEvent.on(this._map._container, 'pointermove', this._onPointerMove, this);
-		DomEvent.on(this._map._container, 'pointerup pointercancel', this._onPointerEnd, this);
+		DomEvent.on(map._container, 'pointermove', this._onPointerMove, this);
+		DomEvent.on(map._container, 'pointerup pointercancel', this._onPointerEnd, this);
 
 		e.preventDefault();
 	}

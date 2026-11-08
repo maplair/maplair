@@ -581,11 +581,9 @@ export class MaplairMap extends Evented {
 		}
 
 		if (!this._panAnim) {
-			this._panAnim = new PosAnimation();
-
-			this._panAnim.on({
-				'step': this._onPanTransitionStep,
-				'end': this._onPanTransitionEnd
+			this._panAnim = new PosAnimation().on({
+				step: this._onPanTransitionStep,
+				end: this._onPanTransitionEnd
 			}, this);
 		}
 
@@ -663,7 +661,7 @@ export class MaplairMap extends Evented {
 
 		const start = Date.now(),
 		S = (r(1) - r0) / rho,
-		duration = options.duration ? 1000 * options.duration : 1000 * S * 0.8;
+		duration = 1000 * (options.duration || S * 0.8);
 
 		const frame = () => {
 			const t = (Date.now() - start) / duration,
@@ -1021,9 +1019,7 @@ export class MaplairMap extends Evented {
 	_handleGeolocationResponse(pos) {
 		if (!this._container._maplair_id) { return; }
 
-		const lat = pos.coords.latitude,
-		lng = pos.coords.longitude,
-		latlng = new LatLng(lat, lng),
+		const latlng = new LatLng(pos.coords.latitude, pos.coords.longitude),
 		bounds = latlng.toBounds(pos.coords.accuracy * 2),
 		options = this._locateOptions;
 
@@ -1076,7 +1072,7 @@ export class MaplairMap extends Evented {
 	remove() {
 
 		this._initEvents(true);
-		if (this.options.maxBounds) { this.off('moveend', this._panInsideMaxBounds); }
+		this.off('moveend', this._panInsideMaxBounds);
 
 		if (this._containerId !== this._container._maplair_id) {
 			throw new Error('Map container is being reused by another instance');

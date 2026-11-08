@@ -537,14 +537,10 @@ export class Marker extends Layer {
 	}
 
 	_updateOpacity() {
-		const opacity = this.options.opacity;
-
-		if (this._icon) {
-			this._icon.style.opacity = `${opacity}`;
-		}
-
-		if (this._shadow) {
-			this._shadow.style.opacity = `${opacity}`;
+		for (const el of [this._icon, this._shadow]) {
+			if (el) {
+				el.style.opacity = `${this.options.opacity}`;
+			}
 		}
 	}
 

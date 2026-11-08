@@ -87,9 +87,9 @@ export function falseFn() { return false; }
  * @param {number|false} [precision]
  * @returns {number}
  */
-export function formatNum(num, precision) {
+export function formatNum(num, precision = 6) {
 	if (precision === false) { return num; }
-	const pow = 10 ** (precision === undefined ? 6 : precision);
+	const pow = 10 ** precision;
 	return Math.round(num * pow) / pow;
 }
 
