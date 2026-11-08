@@ -1,6 +1,5 @@
 import {Point} from '../geometry/Point.js';
 import * as Util from '../core/Util.js';
-import {addDoubleTapListener, removeDoubleTapListener} from './DomEvent.DoubleTap.js';
 import {getScale} from './DomUtil.js';
 
 import * as PointerEvents from './DomEvent.PointerEvents.js';
@@ -93,15 +92,11 @@ function addOne(obj, type, fn, context) {
 
 	if (obj[eventsKey] && obj[eventsKey][id]) { return; }
 
-	let handler = function (e) {
+	const handler = function (e) {
 		return fn.call(context || obj, e);
 	};
 
-	if (type === 'dblclick') {
-		handler = addDoubleTapListener(obj, handler);
-	} else {
-		obj.addEventListener(type, handler, type === 'wheel' ? {passive: false} : false);
-	}
+	obj.addEventListener(type, handler, type === 'wheel' ? {passive: false} : false);
 
 	obj[eventsKey] ??= {};
 	obj[eventsKey][id] = handler;
@@ -113,11 +108,7 @@ function removeOne(obj, type, fn, context, id) {
 
 	if (!handler) { return; }
 
-	if (type === 'dblclick') {
-		removeDoubleTapListener(obj, handler);
-	} else {
-		obj.removeEventListener(type, handler, false);
-	}
+	obj.removeEventListener(type, handler, false);
 
 	obj[eventsKey][id] = null;
 }

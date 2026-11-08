@@ -3,6 +3,8 @@
 
 const activePointers = new Map();
 
+let lastPointerType;
+
 /**
  * Enables pointer detection and capture for the document.
  * @group Pointer detection
@@ -34,6 +36,7 @@ function disablePointerDetection(el) {
 function _onSet(e) {
 	if (e.isTrusted) { e.target.setPointerCapture(e.pointerId); }
 	activePointers.set(e.pointerId, e);
+	lastPointerType = e.pointerType;
 }
 
 function _onUpdate(e) {
@@ -59,9 +62,52 @@ function getPointers() {
 	return [...activePointers.values()];
 }
 
+const dblclickProps = ['bubbles', 'cancelable', 'composed', 'view', 'screenX', 'screenY', 'clientX', 'clientY',
+	'ctrlKey', 'shiftKey', 'altKey', 'metaKey', 'button', 'buttons', 'relatedTarget'];
+
+let lastClickTime = 0,
+lastClick,
+lastClickMap,
+clickCount = 0;
+
+/**
+ * Fires a `dblclick` on double tap where the browser doesn't (like iOS Safari),
+ * which is where it always reports `detail: 1` on clicks (see Leaflet#7012). The
+ * pointer type comes from `pointerdown`, because iOS Safari reports `mouse` on
+ * clicks from touch (WebKit bug 282988). Called by the map for clicks in it.
+ * @internal
+ * @param {MouseEvent} e
+ * @param {HTMLElement} mapContainer The container of the map, two taps make a double
+ * tap only in the same map.
+ * @returns {void}
+ */
+function simulateDblclick(e, mapContainer) {
+	// a click in a nested map (e.g. an overview map) counts for the innermost one only
+	if (e === lastClick) { return; }
+	lastClick = e;
+	const target = e.target;
+
+	// a click on a label is followed by a click on its input, so it would count as a double tap
+	if (e.detail !== 1 || lastPointerType === 'mouse' || target.closest('label')) {
+		clickCount = 0;
+		return;
+	}
+	const now = Date.now();
+	clickCount = now - lastClickTime <= 200 && mapContainer === lastClickMap ? clickCount + 1 : 1;
+	lastClickTime = now;
+	lastClickMap = mapContainer;
+
+	if (clickCount === 2) {
+		const init = {detail: 2};
+		for (const prop of dblclickProps) { init[prop] = e[prop]; }
+		target.dispatchEvent(new MouseEvent('dblclick', init));
+	}
+}
+
 export {
 	enablePointerDetection,
 	disablePointerDetection,
-	getPointers
+	getPointers,
+	simulateDblclick
 };
 

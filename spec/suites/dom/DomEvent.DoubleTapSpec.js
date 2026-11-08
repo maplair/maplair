@@ -1,26 +1,34 @@
 import {expect, vi} from 'vite-plus/test';
-import {Control, DomEvent, DomUtil, MaplairMap} from 'maplair';
+import {Canvas, CircleMarker, Control, DomEvent, DomUtil, MaplairMap} from 'maplair';
 import UIEventSimulator from 'ui-event-simulator';
 import {createContainer, removeMapContainer} from '../SpecHelper.js';
 
 describe('DomEvent.DoubleTapSpec.js', () => {
-	let container, spy;
+	let container, map, spy,
+	now = 0;
+
+	function pointerDown(pointerType, target = container) {
+		target.dispatchEvent(new PointerEvent('pointerdown', {pointerType, bubbles: true}));
+		target.dispatchEvent(new PointerEvent('pointerup', {pointerType, bubbles: true}));
+	}
 
 	beforeEach(() => {
 		container = createContainer();
+		map = new MaplairMap(container).setView([51.505, -0.09], 13);
 
+		// tap state is global, so keep the time moving forward across tests like a real clock
 		vi.useFakeTimers({
-			now: 0,
+			now: now += 10000,
 			toFake: ['setTimeout', 'clearTimeout', 'Date']
 		});
-		vi.advanceTimersByTime(1000);
 		spy = vi.fn();
 		DomEvent.on(container, 'dblclick', spy);
+		pointerDown('touch');
 	});
 
 	afterEach(() => {
 		vi.useRealTimers();
-		removeMapContainer(null, container);
+		removeMapContainer(map, container);
 	});
 
 	it('fires synthetic dblclick after two clicks with delay<200', () => {
@@ -63,7 +71,7 @@ describe('DomEvent.DoubleTapSpec.js', () => {
 	});
 
 	function tap(pointerDownType, clickType) {
-		container.dispatchEvent(new PointerEvent('pointerdown', {pointerType: pointerDownType, bubbles: true}));
+		pointerDown(pointerDownType);
 		container.dispatchEvent(new PointerEvent('click', {pointerType: clickType, detail: 1, bubbles: true}));
 	}
 
@@ -112,7 +120,6 @@ describe('DomEvent.DoubleTapSpec.js', () => {
 
 	it('respects disableClickPropagation', () => {
 		const spyMap = vi.fn();
-		const map = new MaplairMap(container).setView([51.505, -0.09], 13);
 		map.on('dblclick', spyMap);
 
 		const spyCtrl = vi.fn();
@@ -136,7 +143,6 @@ describe('DomEvent.DoubleTapSpec.js', () => {
 
 	it('doesn\'t fire double-click while clicking on a label with `for` attribute', () => {
 		const spyMap = vi.fn();
-		const map = new MaplairMap(container).setView([51.505, -0.09], 13);
 		map.on('dblclick', spyMap);
 
 		let div;
@@ -153,6 +159,18 @@ describe('DomEvent.DoubleTapSpec.js', () => {
 		UIEventSimulator.fire('click', div.children[1], {detail: 1});
 		vi.advanceTimersByTime(100);
 		expect(spyMap).not.toHaveBeenCalled();
-		map.remove();
+	});
+
+	it('fires a single dblclick on a Canvas renderer', () => {
+		const spyMap = vi.fn();
+		map.on('dblclick', spyMap);
+		const renderer = new Canvas().addTo(map);
+		new CircleMarker(map.getCenter(), {renderer}).addTo(map);
+
+		UIEventSimulator.fire('click', renderer._container, {detail: 1, clientX: 0, clientY: 0});
+		vi.advanceTimersByTime(100);
+		UIEventSimulator.fire('click', renderer._container, {detail: 1, clientX: 0, clientY: 0});
+
+		expect(spyMap).toHaveBeenCalledTimes(1);
 	});
 });

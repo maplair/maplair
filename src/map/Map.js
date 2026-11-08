@@ -1884,6 +1884,7 @@ export class MaplairMap extends Evented {
 
 	_handleDOMEvent(e) {
 		const el = e.target;
+		if (e.type === 'click') { PointerEvents.simulateDblclick(e, this._container); }
 		if (!this._loaded || el['_maplair_disable_events'] || e.type === 'click' && this._isClickDisabled(el)) {
 			return;
 		}
