@@ -5,6 +5,7 @@ import {LatLng} from '../../geo/LatLng.js';
 import {Point} from '../../geometry/Point.js';
 import * as DomUtil from '../../dom/DomUtil.js';
 import * as DomEvent from '../../dom/DomEvent.js';
+import {I18n} from '../../core/I18n.js';
 import {MarkerDrag} from './Marker.Drag.js';
 import {pointToGeoJSON} from '../GeoJSONUtil.js';
 /** @import {Feature} from 'geojson' */
@@ -26,7 +27,8 @@ import {pointToGeoJSON} from '../GeoJSONUtil.js';
  * @property {string} [title=''] Text for the browser tooltip that appear on marker hover
  * (no tooltip by default).
  * [Useful for accessibility](https://maplair.org/examples/accessibility/#markers-must-be-labelled).
- * @property {string} [alt='Marker'] Text for the `alt` attribute of the icon image.
+ * @property {string} [alt] Text for the `alt` attribute of the icon image, the
+ * translation of `'Marker'` by default.
  * [Useful for accessibility](https://maplair.org/examples/accessibility/#markers-must-be-labelled).
  * @property {number} [zIndexOffset=0] By default, marker images zIndex is set
  * automatically based on its latitude. Use this option if you want to put the marker on
@@ -99,7 +101,7 @@ export class Marker extends Layer {
 
 		keyboard: true,
 		title: '',
-		alt: 'Marker',
+		alt: undefined,
 		zIndexOffset: 0,
 		opacity: 1,
 		rotation: null,
@@ -286,7 +288,7 @@ export class Marker extends Layer {
 			}
 
 			if (icon instanceof HTMLImageElement) {
-				icon.alt = options.alt ?? '';
+				icon.alt = options.alt ?? I18n.translate('Marker');
 			}
 		}
 
