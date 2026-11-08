@@ -230,11 +230,8 @@ export function getWheelPxFactor() {
  * @returns {number}
  */
 export function getWheelDelta(e) {
-	return (e.deltaY && e.deltaMode === 0) ? -e.deltaY / getWheelPxFactor() : // Pixels
-		(e.deltaY && e.deltaMode === 1) ? -e.deltaY * 20 : // Lines
-		(e.deltaY && e.deltaMode === 2) ? -e.deltaY * 60 : // Pages
-		(e.deltaX || e.deltaZ) ? 0 :	// Skip horizontal/depth wheel events
-		0;
+	// scaled per delta mode: pixels, lines, pages; horizontal and depth scrolling give 0
+	return -e.deltaY * (e.deltaMode ? e.deltaMode === 1 ? 20 : 60 : 1 / getWheelPxFactor()) || 0;
 }
 
 /**

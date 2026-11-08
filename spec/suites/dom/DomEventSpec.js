@@ -513,6 +513,16 @@ describe('DomEvent', () => {
 			expect(DomEvent.getWheelDelta(e)).to.equal(-25);
 			dpr.mockRestore();
 		});
+
+		it('scales line and page deltas', () => {
+			expect(DomEvent.getWheelDelta(new WheelEvent('wheel', {deltaY: 3, deltaMode: 1}))).to.equal(-60);
+			expect(DomEvent.getWheelDelta(new WheelEvent('wheel', {deltaY: -1, deltaMode: 2}))).to.equal(60);
+		});
+
+		it('returns 0 for horizontal and depth scrolling', () => {
+			expect(DomEvent.getWheelDelta(new WheelEvent('wheel', {deltaX: 100, deltaMode: 0}))).to.equal(0);
+			expect(DomEvent.getWheelDelta(new WheelEvent('wheel', {deltaZ: 3, deltaMode: 1}))).to.equal(0);
+		});
 	});
 
 	describe('#stopPropagation', () => {
