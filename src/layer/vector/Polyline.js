@@ -228,7 +228,7 @@ export class Polyline extends Path {
 		const flat = latlngs[0] instanceof LatLng;
 
 		if (flat) {
-			const ring = latlngs.map(latlng => this._map.latLngToLayerPoint(latlng));
+			const ring = latlngs.map(latlng => this._renderer._latLngToLayerPoint(latlng));
 			ring.forEach(r => projectedBounds.extend(r));
 			result.push(ring);
 		} else {
