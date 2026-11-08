@@ -166,7 +166,7 @@ export class TapDragZoomHandler extends Handler {
 		}
 
 		cancelAnimationFrame(this._animRequest);
-		this._animRequest = requestAnimationFrame(() => map._move(this._center, this._zoom, {pinch: true, round: false}));
+		this._animRequest = requestAnimationFrame(() => map._move(this._center, this._zoom, {pinch: true}));
 
 		e.preventDefault();
 	}

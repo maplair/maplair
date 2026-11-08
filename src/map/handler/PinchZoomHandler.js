@@ -126,7 +126,7 @@ export class PinchZoomHandler extends Handler {
 
 		cancelAnimationFrame(this._animRequest);
 
-		const moveFn = map._move.bind(map, this._center, this._zoom, {pinch: true, round: false}, undefined);
+		const moveFn = map._move.bind(map, this._center, this._zoom, {pinch: true}, undefined);
 		this._animRequest = requestAnimationFrame(moveFn.bind(this));
 
 		e.preventDefault();

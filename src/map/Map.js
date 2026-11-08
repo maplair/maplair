@@ -221,7 +221,9 @@ const zoomAnimDuration = 250;
  * pressing a key or clicking a zoom button) have an `originalEvent` property with the
  * DOM event that started the change. It is `undefined` for changes made by code (e.g.
  * `setView()`), which allows to tell them apart, e.g. to avoid feedback loops when
- * synchronizing the view.
+ * synchronizing the view. The `move` and `zoom` events also have `flyTo: true` on each
+ * [`flyTo`](#map-flyto) animation frame, and `pinch: true` while the user pinch-zooms
+ * the map.
  *
  * @example
  * ```js

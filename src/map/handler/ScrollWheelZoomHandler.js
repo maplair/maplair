@@ -139,7 +139,7 @@ export class ScrollWheelZoomHandler extends Handler {
 			const pinch = this._pinch,
 			delta = pinch.zoom - pinch.shown;
 			pinch.shown = eased && Math.abs(delta) > 0.01 ? pinch.shown + delta * 0.3 : pinch.zoom;
-			map._move(this._getPinchCenter(pinch.shown), pinch.shown, {pinch: true, round: false});
+			map._move(this._getPinchCenter(pinch.shown), pinch.shown, {pinch: true});
 			if (pinch.shown !== pinch.zoom) {
 				this._pinchFrame = requestAnimationFrame(frame);
 			}

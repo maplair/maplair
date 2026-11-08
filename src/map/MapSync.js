@@ -203,7 +203,7 @@ export class MapSync {
 			}
 		} else {
 			// zooming frame by frame (pinch, flyTo, continuousZoom) or at the end
-			other._move(center, zoom, during ? {pinch: true, round: false} : undefined);
+			other._move(center, zoom, during ? {pinch: true} : undefined);
 		}
 	}
 
