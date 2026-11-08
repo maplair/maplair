@@ -722,6 +722,12 @@ describe('LayersControl', () => {
 		});
 	});
 
+	it('uses a custom title', () => {
+		new LayersControl(null, null, {title: 'Couches'}).addTo(map);
+		expect(map._container.querySelector('.maplair-control-layers-toggle').title).to.equal('Couches');
+		expect(map._container.querySelector('.maplair-control-layers-list').getAttribute('aria-label')).to.equal('Couches');
+	});
+
 	it('labels the list of layers', () => {
 		const control = new LayersControl(null, null, {inline: true}).addTo(map);
 		const list = control.getContainer().querySelector('.maplair-control-layers-list');

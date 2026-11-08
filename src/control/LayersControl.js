@@ -43,6 +43,8 @@ import {I18n} from '../core/I18n.js';
  * `maplair-control-layers-group-name` element, and each entry shows only its label.
  * Events like `baselayerchange` still carry the full `name`. When combined with
  * `sortLayers`, the entries are sorted first and grouped afterwards.
+ * @property {string} [title] The title of the toggle button and the accessible label
+ * of the layers list, the translation of `'Layers'` by default.
  * @property {string|HTMLElement} [toggleContent] The content of the toggle button of a
  * collapsed control instead of the layers icon: HTML (e.g. an icon or a character) or an
  * element. String content is rendered as HTML; do not pass untrusted input.
@@ -129,6 +131,7 @@ export class LayersControl extends Control {
 		collapsed: true,
 		inline: false,
 		groupBy: undefined,
+		title: undefined,
 		toggleContent: undefined,
 		collapseDelay: 0,
 		position: 'topright',
@@ -314,6 +317,10 @@ export class LayersControl extends Control {
 		return this;
 	}
 
+	_getTitle() {
+		return this.options.title ?? I18n.translate('Layers');
+	}
+
 	_initLayout() {
 		const className = 'maplair-control-layers',
 		container = this._container = DomUtil.create('div', className),
@@ -327,7 +334,7 @@ export class LayersControl extends Control {
 		DomEvent.disableScrollPropagation(container);
 
 		const section = this._section = DomUtil.create('fieldset', `${className}-list`);
-		section.setAttribute('aria-label', I18n.translate('Layers'));
+		section.setAttribute('aria-label', this._getTitle());
 
 		if (collapsed) {
 			this._map.on('click', this.collapse, this);
@@ -344,8 +351,8 @@ export class LayersControl extends Control {
 		if (!this.options.inline) {
 			const link = this._layersLink = DomUtil.create('button', `${className}-toggle`, container);
 			link.type = 'button';
-			link.title = I18n.translate('Layers');
-			link.setAttribute('aria-label', I18n.translate('Layers'));
+			link.title = this._getTitle();
+			link.setAttribute('aria-label', link.title);
 
 			const {toggleContent} = this.options;
 			if (typeof toggleContent === 'string') {
