@@ -338,6 +338,12 @@ export class Layer extends Evented {
 		return this;
 	}
 
+	// Whether clicking the layer again closes its popup, rather than moving it to the
+	// clicked point like on paths, where the popup opens where they were clicked.
+	_togglesPopupOnClick() {
+		return true;
+	}
+
 	/**
 	 * Used by the `attribution control`, returns the [attribution option](#layeroptions-attribution).
 	 * @returns {string|null}

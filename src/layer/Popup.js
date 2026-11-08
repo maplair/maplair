@@ -3,7 +3,6 @@ import * as DomEvent from '../dom/DomEvent.js';
 import * as DomUtil from '../dom/DomUtil.js';
 import {Point} from '../geometry/Point.js';
 import {Layer} from './Layer.js';
-import {Path} from './vector/Path.js';
 import {FeatureGroup} from './FeatureGroup.js';
 import {I18n} from '../core/I18n.js';
 
@@ -241,7 +240,7 @@ const layerPopupMethods = {
 		DomEvent.stopPropagation(e);
 
 		const target = e.propagatedFrom ?? e.target;
-		if (this._popup._source === target && !(target instanceof Path)) {
+		if (this._popup._source === target && target._togglesPopupOnClick()) {
 			// treat it like a marker and figure out
 			// if we should toggle it open/closed
 			if (this._map.hasLayer(this._popup)) {
@@ -384,7 +383,7 @@ export class Popup extends DivOverlay {
 			this._source.fire('popupopen', {popup: this}, true);
 			// For non-path layers, we toggle the popup when clicking
 			// again the layer, so prevent the map to reopen it.
-			if (!(this._source instanceof Path)) {
+			if (this._source._togglesPopupOnClick()) {
 				this._source.on('preclick', DomEvent.stopPropagation);
 			}
 		}
@@ -406,7 +405,7 @@ export class Popup extends DivOverlay {
 
 		if (this._source) {
 			this._source.fire('popupclose', {popup: this}, true);
-			if (!(this._source instanceof Path)) {
+			if (this._source._togglesPopupOnClick()) {
 				this._source.off('preclick', DomEvent.stopPropagation);
 			}
 		}

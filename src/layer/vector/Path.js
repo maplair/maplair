@@ -164,6 +164,10 @@ export class Path extends Layer {
 		this._update();
 	}
 
+	_togglesPopupOnClick() {
+		return false;
+	}
+
 	_clickTolerance() {
 		// used when doing hit detection for Canvas layers
 		return (this.options.stroke ? this.options.weight / 2 : 0) +
