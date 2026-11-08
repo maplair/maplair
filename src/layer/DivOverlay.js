@@ -12,9 +12,13 @@ import * as DomUtil from '../dom/DomUtil.js';
 
 /**
  * The content of a `DivOverlay` (`Popup`, `Tooltip`): a string rendered as HTML, an
- * `HTMLElement`, or a function receiving the source layer and returning one of them.
- * @typedef {string|HTMLElement|((layer: Layer) => string|HTMLElement)} DivOverlayContent
+ * `HTMLElement` or `DocumentFragment`, or a function receiving the source layer and
+ * returning one of them.
+ * @typedef {string|HTMLElement|DocumentFragment|
+ * ((layer: Layer) => string|HTMLElement|DocumentFragment)} DivOverlayContent
  */
+
+const fragmentNodes = new WeakMap();
 
 /**
  * Options of `DivOverlay`.
@@ -31,8 +35,8 @@ import * as DomUtil from '../dom/DomUtil.js';
  * in the DOM (for styling and events).
  * @property {DivOverlayContent} [content=''] Sets the HTML content of the overlay while
  * initializing. If a function is passed the source layer will be passed to the
- * function. The function should return a `String` or `HTMLElement` to be used in the
- * overlay. String content is rendered as HTML; sanitize untrusted input or pass an
+ * function. The function should return a `String`, `HTMLElement` or `DocumentFragment`
+ * to be used in the overlay. String content is rendered as HTML; sanitize untrusted input or pass an
  * `HTMLElement` with safe `textContent` instead.
  * @extends InteractiveLayerOptions
  */
@@ -281,9 +285,10 @@ export class DivOverlay extends Layer {
 	/**
 	 * Sets the HTML content of the overlay. A `String` argument is rendered as
 	 * HTML; if it may contain untrusted input, sanitize it (e.g. with DOMPurify)
-	 * or pass an `HTMLElement` with safe `textContent` instead. If a function is
-	 * passed the source layer will be passed to the function. The function should
-	 * return a `String` or `HTMLElement` to be used in the overlay.
+	 * or pass an `HTMLElement` with safe `textContent` instead. A `DocumentFragment`
+	 * can be passed as well. If a function is passed the source layer will be passed
+	 * to the function. The function should return a `String`, `HTMLElement` or
+	 * `DocumentFragment` to be used in the overlay.
 	 * @param {DivOverlayContent} content
 	 * @returns {this}
 	 */
@@ -422,6 +427,10 @@ export class DivOverlay extends Layer {
 
 		if (typeof content === 'string') {
 			node.innerHTML = content;
+		} else if (content instanceof DocumentFragment) {
+			// inserting a fragment empties it, so keep its nodes to insert them again on later updates
+			if (content.hasChildNodes()) { fragmentNodes.set(content, [...content.childNodes]); }
+			node.replaceChildren(...fragmentNodes.get(content) ?? []);
 		} else {
 			node.replaceChildren(content);
 		}

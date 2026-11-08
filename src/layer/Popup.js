@@ -127,7 +127,7 @@ const layerPopupMethods = {
 	 * may contain untrusted input, sanitize it (e.g. with DOMPurify) or pass an
 	 * `HTMLElement` with safe `textContent` instead. If a `Function` is passed
 	 * it will receive the layer as the first argument and should return a
-	 * `String` or `HTMLElement`.
+	 * `String`, `HTMLElement` or `DocumentFragment`.
 	 * @group Popup methods
 	 * @param {DivOverlayContent|Popup} content
 	 * @param {PopupOptions} [options]
