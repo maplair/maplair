@@ -449,7 +449,7 @@ export class Popup extends DivOverlay {
 			closeButton.type = 'button';
 			closeButton.setAttribute('aria-label', I18n.translate('Close popup'));
 
-			closeButton.innerHTML = '<span aria-hidden="true">&#215;</span>';
+			closeButton.textContent = '\u00D7';
 
 			DomEvent.on(closeButton, 'click', (ev) => {
 				ev.preventDefault();

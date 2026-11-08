@@ -446,7 +446,7 @@ export class Tooltip extends DivOverlay {
 		this._contentNode = this._container = DomUtil.create('div', className);
 
 		this._container.setAttribute('role', 'tooltip');
-		this._container.setAttribute('id', `maplair-tooltip-${Util.stamp(this)}`);
+		this._container.id = `maplair-tooltip-${Util.stamp(this)}`;
 	}
 
 	_updateLayout() {}

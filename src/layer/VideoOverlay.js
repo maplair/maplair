@@ -96,7 +96,7 @@ export class VideoOverlay extends ImageOverlay {
 		if (!Array.isArray(this._url)) { this._url = [this._url]; }
 
 		if (!this.options.keepAspectRatio) {
-			vid.style['objectFit'] = 'fill';
+			vid.style.objectFit = 'fill';
 		}
 		vid.autoplay = !!this.options.autoplay;
 		vid.controls = !!this.options.controls;
