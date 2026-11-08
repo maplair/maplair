@@ -149,16 +149,26 @@ const zoomAnimDuration = 250;
 /**
  * Options of the `MaplairMap` methods which modify the zoom level and the center.
  * @typedef {object} ZoomPanOptions
+ * @property {boolean} [animate] Whether to animate the change: like `ZoomOptions.animate`
+ * if the zoom level changes, and like `PanOptions.animate` otherwise. The `zoom` and
+ * `pan` options can set it for each case separately.
+ * @property {boolean} [reset] If `true`, the view is reset without animation.
+ * @property {ZoomOptions} [zoom] Options for the zoom part of the change, taking
+ * precedence over `animate`.
+ * @property {PanOptions} [pan] Options for the pan part of the change, taking
+ * precedence over `animate`.
  * @extends ZoomOptions, PanOptions
  */
 
 /**
  * Options of `MaplairMap.invalidateSize()`.
  * @typedef {object} InvalidateSizeOptions
+ * @property {boolean} [animate=false] If `true`, the map pans to its new center with
+ * animation.
  * @property {boolean} [pan=true] If `false`, panning will not occur.
  * @property {boolean} [debounceMoveend=false] If `true`, it will delay `moveend` event
  * so that it doesn't happen often even if the method is called many times in a row.
- * @extends ZoomPanOptions
+ * @extends PanOptions
  */
 
 /**
@@ -852,8 +862,8 @@ export class MaplairMap extends Evented {
 
 	/**
 	 * Checks if the map container size changed and updates the map if so —
-	 * call it after you've changed the map size dynamically, also animating
-	 * pan by default. If `options.pan` is `false`, panning will not occur.
+	 * call it after you've changed the map size dynamically, also panning to
+	 * keep the center by default. If `options.pan` is `false`, panning will not occur.
 	 * If `options.debounceMoveend` is `true`, it will delay `moveend` event so
 	 * that it doesn't happen often even if the method is called many
 	 * times in a row. Passing `true` instead of options animates the panning.
