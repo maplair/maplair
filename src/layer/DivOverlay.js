@@ -424,7 +424,7 @@ export class DivOverlay extends Layer {
 	}
 
 	_updateContent() {
-		if (!this._content) { return; }
+		if (this._content == null) { return; }
 
 		const node = this._contentNode;
 		const content = (typeof this._content === 'function') ? this._content(this._source ?? this) : this._content;
