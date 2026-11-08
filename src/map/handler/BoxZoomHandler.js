@@ -51,6 +51,7 @@ export class BoxZoomHandler extends Handler {
 	 */
 	addHooks() {
 		DomEvent.on(this._map._container, 'pointerdown', this._onPointerDown, this);
+		this._map._container.classList.add('maplair-box-zoom');
 	}
 
 	/**
@@ -58,6 +59,7 @@ export class BoxZoomHandler extends Handler {
 	 */
 	removeHooks() {
 		DomEvent.off(this._map._container, 'pointerdown', this._onPointerDown, this);
+		this._map._container.classList.remove('maplair-box-zoom');
 	}
 
 	/**

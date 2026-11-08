@@ -110,7 +110,9 @@ export class Draggable extends Evented {
 			return;
 		}
 
-		if (Draggable._dragging || e.shiftKey || (e.button !== 0 && e.pointerType !== 'touch')) { return; }
+		// Shift-drag draws a box to zoom to, unless box zoom is disabled
+		const boxZoom = e.shiftKey && this._element.closest('.maplair-container')?.classList.contains('maplair-box-zoom');
+		if (Draggable._dragging || boxZoom || (e.button !== 0 && e.pointerType !== 'touch')) { return; }
 		Draggable._dragging = this;  // Prevent dragging multiple objects at once.
 
 		DomUtil.disableImageDrag();
