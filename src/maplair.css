@@ -464,8 +464,9 @@ path.maplair-interactive:focus:not(:focus-visible) {
 .maplair-pseudo-fullscreen {
 	position: fixed !important;
 	inset: 0 !important;
-	width: 100% !important;
-	height: 100% !important;
+	width: auto !important;
+	height: auto !important;
+	margin: 0 !important;
 	z-index: 99999;
 }
 
