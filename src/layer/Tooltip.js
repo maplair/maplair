@@ -6,7 +6,8 @@ import * as DomEvent from '../dom/DomEvent.js';
 import * as Util from '../core/Util.js';
 import {FeatureGroup} from './FeatureGroup.js';
 
-const directions = ['top', 'bottom', 'center', 'right', 'left'];
+// which point of the tooltip (as a fraction of its width and height) sits at the anchor, for each direction
+const directions = {top: [0.5, 1], bottom: [0.5, 0], center: [0.5, 0.5], right: [0, 0.5], left: [1, 0.5]};
 
 // The size of the tooltip tip (see `.maplair-tooltip-top` etc. in maplair.css) and
 // the minimum distance of an `auto` tooltip to the edge of the map.
@@ -487,7 +488,7 @@ export class Tooltip extends DivOverlay {
 		offset = new Point(this.options.offset),
 		anchor = this._getAnchor();
 
-		if (!directions.includes(direction)) {
+		if (!(direction in directions)) {
 			({direction, shift} = this._getAutoPlacement(pos, offset, anchor, tooltipWidth, tooltipHeight));
 			if (direction === 'left') {
 				// mirror the offset and anchor, which are meant for the right side
@@ -496,27 +497,12 @@ export class Tooltip extends DivOverlay {
 			}
 		}
 
-		let subX = tooltipWidth / 2,
-		subY = tooltipHeight / 2;
-		if (direction === 'top') {
-			subY = tooltipHeight;
-		} else if (direction === 'bottom') {
-			subY = 0;
-		} else if (direction === 'right') {
-			subX = 0;
-		} else if (direction === 'left') {
-			subX = tooltipWidth;
+		const [fx, fy] = directions[direction];
+		pos = pos.subtract(new Point(tooltipWidth * fx, tooltipHeight * fy, true)).add(offset).add(anchor).add(shift);
+
+		for (const d in directions) {
+			container.classList.toggle(`maplair-tooltip-${d}`, d === direction);
 		}
-
-		pos = pos.subtract(new Point(subX, subY, true)).add(offset).add(anchor).add(shift);
-
-		container.classList.remove(
-			'maplair-tooltip-right',
-			'maplair-tooltip-left',
-			'maplair-tooltip-top',
-			'maplair-tooltip-bottom'
-		);
-		container.classList.add(`maplair-tooltip-${direction}`);
 
 		// Let the tip point at the source despite the shift
 		const tipShift = direction === 'top' || direction === 'bottom' ?
