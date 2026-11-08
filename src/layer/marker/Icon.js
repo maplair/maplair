@@ -113,6 +113,8 @@ export class Icon extends Class {
 
 		if (this.options.crossOrigin || this.options.crossOrigin === '') {
 			img.crossOrigin = this.options.crossOrigin === true ? '' : this.options.crossOrigin;
+		} else {
+			img.crossOrigin = null;
 		}
 
 		return img;
@@ -133,16 +135,20 @@ export class Icon extends Class {
 
 		img.className = `maplair-marker-${name} ${options.className || ''}`;
 
+		// a marker reuses the element of its previous icon, which may have set any of these
+		const {style} = img;
+		style.marginLeft = style.marginTop = style.width = style.height = '';
+
 		if (anchor) {
-			img.style.marginLeft = `${-anchor.x}px`;
-			img.style.marginTop  = `${-anchor.y}px`;
+			style.marginLeft = `${-anchor.x}px`;
+			style.marginTop  = `${-anchor.y}px`;
 		}
 		// the origin of the marker rotation: the anchor, which is the top left corner without one
-		img.style.transformOrigin = anchor ? `${anchor.x}px ${anchor.y}px` : '0 0';
+		style.transformOrigin = anchor ? `${anchor.x}px ${anchor.y}px` : '0 0';
 
 		if (size) {
-			img.style.width  = `${size.x}px`;
-			img.style.height = `${size.y}px`;
+			style.width  = `${size.x}px`;
+			style.height = `${size.y}px`;
 		}
 	}
 

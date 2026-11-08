@@ -70,10 +70,8 @@ export class DivIcon extends Icon {
 			div.innerHTML = options.html !== false ? options.html : '';
 		}
 
-		if (options.bgPos) {
-			const bgPos = Point.from(options.bgPos);
-			div.style.backgroundPosition = `${-bgPos.x}px ${-bgPos.y}px`;
-		}
+		const bgPos = options.bgPos && Point.from(options.bgPos);
+		div.style.backgroundPosition = bgPos ? `${-bgPos.x}px ${-bgPos.y}px` : '';
 		this._setIconStyles(div, 'icon');
 
 		return div;
