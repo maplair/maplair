@@ -65,10 +65,10 @@ import {LatLngBounds} from '../../geo/LatLngBounds.js';
  */
 
 /**
- * Generic class for handling a tiled grid of HTML elements. This is the base class for
- * all tile layers and replaces `TileLayer.Canvas`. GridLayer can be extended to create
- * a tiled grid of HTML elements like `<canvas>`, `<img>` or `<div>`. GridLayer will
- * handle creating and animating these DOM elements for you.
+ * Generic class for handling a tiled grid of HTML elements, and the base class of all
+ * tile layers. To show map tiles from a URL, use `TileLayer` (or `WMSTileLayer`).
+ * Extend `GridLayer` to create a tiled grid of your own elements like `<canvas>`,
+ * `<img>` or `<div>`; it handles creating and animating them for you.
  *
  * Layers extending `GridLayer` shall reimplement the [`createTile()`](#gridlayer-createtile)
  * method.

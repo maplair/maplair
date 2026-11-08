@@ -75,7 +75,8 @@ const layerDivOverlayMethods = {
 /** @typedef {typeof layerDivOverlayMethods} LayerDivOverlayMethods */
 
 /**
- * Base model for Popup and Tooltip. Inherit from it for custom overlays like plugins.
+ * Base model for `Popup` and `Tooltip`; use those to show content on the map. Inherit
+ * from it for custom overlays like plugins.
  *
  * @fires contentupdate {MaplairEvent} Fired when the content of the overlay is updated.
  */

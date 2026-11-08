@@ -43,8 +43,9 @@ import * as Util from '../../core/Util.js';
  */
 
 /**
- * An abstract class that contains options and constants shared between vector
- * overlays (Polygon, Polyline, Circle). Do not use it directly. Extends `Layer`.
+ * An abstract class that contains options and methods shared between vector overlays
+ * (`Polyline`, `Polygon`, `Rectangle`, `Circle`, `CircleMarker`). Do not use it
+ * directly. Extends `Layer`.
  */
 export class Path extends Layer {
 

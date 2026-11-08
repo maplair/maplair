@@ -77,8 +77,9 @@ const mapControlMethods = {
 const controlOrders = new WeakMap();
 
 /**
- * Control is a base class for implementing map controls. Handles positioning.
- * All other controls extend from this class.
+ * Base class for map controls such as `ZoomControl`, `AttributionControl`,
+ * `LayersControl` and `ScaleControl`, which handles positioning them. Extend it to
+ * create your own controls.
  *
  * Every control should extend from `Control` and (re-)implement the following methods:
  *
