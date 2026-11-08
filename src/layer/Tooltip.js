@@ -194,12 +194,6 @@ const layerTooltipMethods = {
 			if (this._tooltip._prepareOpen(latlng)) {
 				// open the tooltip on the map
 				this._tooltip.openOn(this._map);
-
-				if (this.getElement) {
-					this._setAriaDescribedByOnLayer(this);
-				} else if (this.eachLayer) {
-					this.eachLayer(this._setAriaDescribedByOnLayer, this);
-				}
 			}
 		}
 		return this;
@@ -288,11 +282,6 @@ const layerTooltipMethods = {
 				delete el._maplair_focus_handler;
 			}
 		}
-	},
-
-	_setAriaDescribedByOnLayer(layer) {
-		const el = typeof layer.getElement === 'function' && layer.getElement();
-		el?.setAttribute?.('aria-describedby', this._tooltip._container.id);
 	},
 
 	_openTooltip(e) {
@@ -414,6 +403,7 @@ export class Tooltip extends DivOverlay {
 
 		if (this._source) {
 			this.addEventParent(this._source);
+			this._source.getElement?.()?.setAttribute('aria-describedby', this._container.id);
 
 			this._source.fire('tooltipopen', {tooltip: this}, true);
 		}
