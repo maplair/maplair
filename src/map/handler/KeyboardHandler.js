@@ -174,14 +174,8 @@ export class KeyboardHandler extends Handler {
 		if (e.key !== 'Escape' || e.defaultPrevented || !popup?.isOpen() || !popup.options.closeOnEscapeKey ||
 			map._controlContainer?.contains(e.target)) { return; }
 
-		const inPopup = popup._container.contains(e.target),
-		icon = popup._source?._icon;
-
 		map.closePopup();
 		e.preventDefault();
-
-		// closing removes the focused element, which would send focus back to the start of the page
-		if (inPopup) { (icon?.tabIndex >= 0 ? icon : map._container).focus(); }
 	}
 
 	_onKeyDown(e) {

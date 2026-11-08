@@ -1,6 +1,7 @@
 import {DivOverlay} from './DivOverlay.js';
 import * as DomEvent from '../dom/DomEvent.js';
 import * as DomUtil from '../dom/DomUtil.js';
+import * as Util from '../core/Util.js';
 import {Point} from '../geometry/Point.js';
 import {Layer} from './Layer.js';
 import {FeatureGroup} from './FeatureGroup.js';
@@ -135,6 +136,7 @@ const layerPopupMethods = {
 	bindPopup(content, options) {
 		// eslint-disable-next-line no-use-before-define -- defined below, used when called
 		this._popup = this._initOverlay(Popup, this._popup, content, options);
+		this._popup._updateSourceAria(this._popup.isOpen());
 		this.on({
 			click: this._openPopup,
 			remove: this.closePopup,
@@ -156,6 +158,9 @@ const layerPopupMethods = {
 				remove: this.closePopup,
 				move: this._movePopup
 			});
+			const el = this.getElement?.();
+			el?.removeAttribute('aria-expanded');
+			el?.removeAttribute('aria-controls');
 			this._popup = null;
 		}
 		return this;
@@ -355,7 +360,9 @@ export class Popup extends DivOverlay {
 		}
 		map._popup = this;
 
-		return super.openOn(map);
+		super.openOn(map);
+		this._updateSourceAria(true); // the source may have changed while open, e.g. within a FeatureGroup
+		return this;
 	}
 
 	/**
@@ -378,6 +385,7 @@ export class Popup extends DivOverlay {
 		}
 
 		map.fire('popupopen', {popup: this});
+		this._updateSourceAria(true);
 
 		if (this._source) {
 			this._source.fire('popupopen', {popup: this}, true);
@@ -394,14 +402,19 @@ export class Popup extends DivOverlay {
 	 * @param {MaplairMap} map
 	 */
 	onRemove(map) {
-		if (this._container.contains(document.activeElement) && this._returnFocus?.isConnected) {
-			this._returnFocus.focus({preventScroll: true});
+		// closing removes the focused element, which would send focus back to the start of the page
+		if (this._container.contains(document.activeElement)) {
+			const el = this._source?.getElement?.();
+			const target = this._returnFocus?.isConnected ? this._returnFocus :
+				el?.tabIndex >= 0 ? el : map._container;
+			target.focus({preventScroll: true});
 		}
 		this._returnFocus = null;
 
 		super.onRemove(map);
 
 		map.fire('popupclose', {popup: this});
+		this._updateSourceAria(false);
 
 		if (this._source) {
 			this._source.fire('popupclose', {popup: this}, true);
@@ -429,9 +442,23 @@ export class Popup extends DivOverlay {
 		return events;
 	}
 
+	// Marks a source that acts as a button (e.g. a keyboard-accessible marker) as a
+	// disclosure for the popup.
+	_updateSourceAria(open) {
+		this._ariaSource?.setAttribute('aria-expanded', 'false');
+		this._ariaSource?.removeAttribute('aria-controls');
+
+		const el = this._source?.getElement?.();
+		this._ariaSource = el?.getAttribute('role') === 'button' ? el : null;
+		this._ariaSource?.setAttribute('aria-expanded', String(open));
+		if (open) { this._ariaSource?.setAttribute('aria-controls', this._container.id); }
+	}
+
 	_initLayout() {
 		const prefix = 'maplair-popup',
 		container = this._container = DomUtil.create('div', `${prefix} ${this.options.className || ''} maplair-zoom-animated`);
+
+		container.id = `maplair-popup-${Util.stamp(this)}`;
 
 		const wrapper = this._wrapper = DomUtil.create('div', `${prefix}-content-wrapper`, container);
 		this._contentNode = DomUtil.create('div', `${prefix}-content`, wrapper);

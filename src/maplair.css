@@ -843,6 +843,10 @@ path.maplair-interactive:focus:not(:focus-visible) {
 .maplair-container .maplair-control-attribution {
 	background: var(--maplair-background-color-backdrop-light);
 	margin: 0;
+
+	@media (prefers-contrast: more) {
+		background: var(--maplair-background-color-base);
+	}
 }
 
 /* attribution links are told apart from text by contrast alone (WCAG 1.4.1 via G183): link vs text >= 3:1 and
@@ -859,6 +863,10 @@ path.maplair-interactive:focus:not(:focus-visible) {
 
 	&:hover,
 	&:focus {
+		text-decoration: underline;
+	}
+
+	@media (prefers-contrast: more) {
 		text-decoration: underline;
 	}
 }
@@ -886,6 +894,10 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	box-sizing: border-box;
 	background: var(--maplair-background-color-backdrop-light);
 	text-shadow: 1px 1px var(--maplair-background-color-base);
+
+	@media (prefers-contrast: more) {
+		background: var(--maplair-background-color-base);
+	}
 
 	&:not(:first-child) {
 		border-top: var(--maplair-border-width-thick) solid var(--maplair-border-color-base);

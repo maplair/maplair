@@ -40,9 +40,9 @@ import {pointToGeoJSON} from '../GeoJSONUtil.js';
  * marker, even at 0°, has no shadow, since the shadow of an upright pin looks wrong
  * under a tilted one. `null` means no rotation.
  * @property {boolean} [riseOnHover=false] If `true`, the marker will get on top of
- * others while the pointer is over it or it has keyboard focus.
- * @property {number} [riseOffset=250] The z-index offset used for the `riseOnHover`
- * feature.
+ * others while the pointer is over it. It always does while it has focus.
+ * @property {number} [riseOffset=250] The z-index offset used when the marker gets on
+ * top of others on hover or focus.
  * @property {string} [pane='markerPane'] `Map pane` where the markers icon will be added.
  * @property {string} [shadowPane='shadowPane'] `Map pane` where the markers shadow will
  * be added.
@@ -304,8 +304,13 @@ export class Marker extends Layer {
 
 		this._icon = icon;
 
+		if (this._popup?._source === this) {
+			this._popup._updateSourceAria(this._popup.isOpen());
+		}
+
+		DomEvent.on(icon, 'focusin focusout', this._updateRise, this);
 		if (options.riseOnHover) {
-			DomEvent.on(icon, 'pointerover pointerout focusin focusout', this._updateRise, this);
+			DomEvent.on(icon, 'pointerover pointerout', this._updateRise, this);
 		}
 
 		if (this.options.autoPanOnFocus) {
@@ -342,10 +347,8 @@ export class Marker extends Layer {
 	}
 
 	_removeIcon() {
-		if (this.options.riseOnHover) {
-			DomEvent.off(this._icon, 'pointerover pointerout focusin focusout', this._updateRise, this);
-			this._hovered = false;
-		}
+		DomEvent.off(this._icon, 'pointerover pointerout focusin focusout', this._updateRise, this);
+		this._hovered = this._focused = false;
 
 		if (this.options.autoPanOnFocus) {
 			DomEvent.off(this._icon, 'focus', this._panOnFocus, this);
@@ -548,8 +551,10 @@ export class Marker extends Layer {
 	_updateRise(e) {
 		if (e?.type.startsWith('pointer')) {
 			this._hovered = e.type === 'pointerover';
+		} else if (e) {
+			this._focused = e.type === 'focusin';
 		}
-		if (this.options.riseOnHover && (this._hovered || this._icon?.matches(':focus-within'))) {
+		if (this._hovered || this._focused) {
 			this._bringToFront();
 		} else {
 			this._resetZIndex();
