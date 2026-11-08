@@ -319,16 +319,18 @@ export class TileLayer extends GridLayer {
 	 * @returns {string}
 	 */
 	getTileUrl(coords) {
-		const data = Object.create(this.options);
+		const z = coords.z ?? this._tileZoom,
+		data = Object.create(this.options);
 		Object.assign(data, {
 			r: window.devicePixelRatio > 1 ? '@2x' : '',
 			s: this._getSubdomain(coords),
 			x: coords.x,
 			y: coords.y,
-			z: this._getZoomForUrl()
+			z: this._getZoomForUrl(z)
 		});
-		if (this._map && !this._map.options.crs.infinite) {
-			const invertedY = this._globalTileRange.max.y - coords.y;
+		const worldBounds = this._map?.getPixelWorldBounds(z);
+		if (worldBounds) {
+			const invertedY = this._pxBoundsToTileRange(worldBounds).max.y - coords.y;
 			if (this.options.tms) {
 				data['y'] = invertedY;
 			}
@@ -356,8 +358,7 @@ export class TileLayer extends GridLayer {
 		done(e, tile);
 	}
 
-	_getZoomForUrl() {
-		let zoom = this._tileZoom;
+	_getZoomForUrl(zoom) {
 		const maxZoom = this.options.maxZoom,
 		zoomReverse = this.options.zoomReverse,
 		zoomOffset = this.options.zoomOffset;
