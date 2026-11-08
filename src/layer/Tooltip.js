@@ -267,8 +267,10 @@ const layerTooltipMethods = {
 				// Remove focus listener, if already existing
 				el._maplair_focus_handler && DomEvent.off(el, 'focus', el._maplair_focus_handler, this);
 
+				// open only on keyboard focus: an element clicked with the mouse keeps focus and gets it again whenever
+				// the window is refocused or a popup closes, which would open the tooltip without the pointer over it
 				el._maplair_focus_handler = () => {
-					if (this._tooltip) {
+					if (this._tooltip && el.matches(':focus-visible')) {
 						this._tooltip._source = layer;
 						this.openTooltip();
 					}
