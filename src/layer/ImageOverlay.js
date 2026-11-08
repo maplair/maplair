@@ -94,6 +94,7 @@ export class ImageOverlay extends Layer {
 	onAdd() {
 		if (!this._image) {
 			this._initImage();
+			this._updateZIndex();
 
 			if (this.options.opacity < 1) {
 				this._updateOpacity();
@@ -151,7 +152,7 @@ export class ImageOverlay extends Layer {
 	 * @returns {this}
 	 */
 	setStyle(styleOpts) {
-		if (styleOpts.opacity) {
+		if (styleOpts.opacity != null) {
 			this.setOpacity(styleOpts.opacity);
 		}
 		return this;
@@ -265,10 +266,6 @@ export class ImageOverlay extends Layer {
 
 		img.decoding = this.options.decoding;
 
-		if (this.options.zIndex) {
-			this._updateZIndex();
-		}
-
 		if (wasElementSupplied) {
 			this._url = img.src;
 			return;
@@ -303,7 +300,7 @@ export class ImageOverlay extends Layer {
 	}
 
 	_updateZIndex() {
-		if (this._image && this.options.zIndex !== undefined && this.options.zIndex !== null) {
+		if (this._image && this.options.zIndex != null) {
 			this._image.style.zIndex = `${this.options.zIndex}`;
 		}
 	}
