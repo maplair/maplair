@@ -3,6 +3,65 @@ Maplair Changelog
 
 (all changes of Leaflet without author notice are by [@mourner](https://github.com/mourner))
 
+## Unreleased
+
+### Leaflet, since 4.3.0
+
+Ported from Leaflet (changes without author notice are by [@mourner](https://github.com/mourner))
+
+#### ❇️ New Features
+
+* LayersControl: the option `title` for the toggle button and the label of the list in https://github.com/Leaflet/Leaflet/commit/77387ed1483b5628603b823acd89dc8ec3956403
+* Popups and tooltips accept a `DocumentFragment` as content, which no longer disappears on reopen, by [@A350xt](https://github.com/A350xt) in https://github.com/Leaflet/Leaflet/pull/10540
+
+#### ✨ Improvements
+
+* Make the canvas renderer transparent to pointer events, so that SVG paths, markers, overlays and other canvas renderers below it get clicks and hovers, in https://github.com/Leaflet/Leaflet/pull/10523
+* Stop throttling the hover events of canvas paths in https://github.com/Leaflet/Leaflet/commit/e9bdd59480901136caa1fde3fbbf6f8049eb47a0
+* Draw the plus and minus signs of the zoom control in SVG, crisp and centered with any font, in https://github.com/Leaflet/Leaflet/commit/a203b006477cf9545aa723130a1e6a83f3a58f95
+* Simplify the double tap simulation on iOS, which fires a single `dblclick` on a canvas renderer, in https://github.com/Leaflet/Leaflet/pull/10524
+* Let Shift-drag pan the map when box zoom is disabled in https://github.com/Leaflet/Leaflet/commit/79c68c6429c232fe0a1b19a5061dec9d28b7ef57
+* Use modern DOM APIs, small and mechanical code cleanups in https://github.com/Leaflet/Leaflet/commit/91633ca7a85ad7ab051d57cd8c3006c9a9295d68, https://github.com/Leaflet/Leaflet/commit/77e5f691e6746e7f11cbccadd223851254e4cd42, https://github.com/Leaflet/Leaflet/commit/99d8006ce0ae57ce5d2dfa9c009f23ceffa2e38a and https://github.com/Leaflet/Leaflet/commit/f1b911917ab0b23895883f22a62f7a0395451fe6
+
+#### ♿️ Accessibility
+
+* Markers acting as buttons get `aria-expanded` and `aria-controls` for their popup, closing a popup returns the focus however it is closed, markers rise above others while focused, and increased contrast gets an opaque attribution and scale with underlined links, in https://github.com/Leaflet/Leaflet/pull/10536
+* Improve the contrast of the attribution and the scale for WCAG AA in https://github.com/Leaflet/Leaflet/commit/17729390c752bf0d2bc960836653d4e937af9fcf
+* Rise markers with `riseOnHover` on keyboard focus too in https://github.com/Leaflet/Leaflet/commit/2c28c1a22cf355e663738d8f08e03b2577f1fae4
+* Open tooltips on keyboard focus only, not when the focus comes back to an element clicked with the mouse, in https://github.com/Leaflet/Leaflet/commit/f1fb25604d52afe5c2c433b11ae401fa27b9c140
+* Set `aria-describedby` on a layer whenever its tooltip opens, however it was opened, in https://github.com/Leaflet/Leaflet/commit/dfab29d671bc2135cb3ac761e554d50856020fae
+* Translate the default `alt` text of marker icons by [@nfreear](https://github.com/nfreear) in https://github.com/Leaflet/Leaflet/pull/10542
+* Fix keyboard clicks on markers being ignored after a drag by [@Enfiladeguide](https://github.com/Enfiladeguide) in https://github.com/Leaflet/Leaflet/pull/10529
+* Fix Escape being swallowed by the map after a popup was closed in https://github.com/Leaflet/Leaflet/commit/ee23ede2df59ac0d70007f4eea0e52d896ce817f
+
+#### 🐞 Bugfixes
+
+* Fix paths jumping when they are changed or added during a zoom animation or pinch in https://github.com/Leaflet/Leaflet/commit/ff13df6ae03ff54126fa5126525d50d15c7ddf6f
+* Fix view changes being lost during a zoom animation, they now apply once it ends (with [@yellowman](https://github.com/yellowman)) in https://github.com/Leaflet/Leaflet/commit/e61b254f4e6c29d8a185f3cdc6182887d8e37acc
+* Fix `minNativeZoom` and `maxNativeZoom` with `detectRetina` and `zoomReverse` in https://github.com/Leaflet/Leaflet/commit/10388a5176ab998b2b22f8ddb3fd34b6715552c3
+* Honor `coords.z` in TileLayer `getTileUrl()` (with [@yohanboniface](https://github.com/yohanboniface)) in https://github.com/Leaflet/Leaflet/commit/8f0fe7bfde0e9c6a948d2131e66619f5882c1111
+* Fix `closestLayerPoint()` of polygons missing the segment closing the ring in https://github.com/Leaflet/Leaflet/commit/3c202e89f5cb74bd4e090b4a1a7c2cd97792c0fd
+* Fix a repeated click on image, SVG and video overlays closing their popup instead of moving it in https://github.com/Leaflet/Leaflet/commit/1c7d70533414a4802455723fbe248b12000bd5cb
+* Apply `zIndex` and `opacity` consistently on image, video and SVG overlays, also `zIndex: 0` and `opacity: 0`, by [@b84330808](https://github.com/b84330808) in https://github.com/Leaflet/Leaflet/pull/10533
+* Reset the styles of the previous icon when a marker reuses its element by [@b84330808](https://github.com/b84330808) in https://github.com/Leaflet/Leaflet/pull/10538
+* Fix `setContent('')` leaving the old content in a popup or tooltip by [@Don-Yin](https://github.com/Don-Yin) in https://github.com/Leaflet/Leaflet/pull/10532
+* Fix markers losing their altitude after a drag in https://github.com/Leaflet/Leaflet/commit/310749e71daff3eec62774abe90839c81417719a
+* Fix the autoPan of a dragged marker panning past `maxBounds` by [@A350xt](https://github.com/A350xt) in https://github.com/Leaflet/Leaflet/pull/10539
+* Fix a click firing after a long-press `contextmenu` on iOS in https://github.com/Leaflet/Leaflet/commit/aff4916e019d03f3fa91a81e8da6b38d91f6c12b
+* Fix the expanded list of the layers control hidden under other controls in https://github.com/Leaflet/Leaflet/commit/f4e449b61ba356ab83f712f167477daeec434c09
+* Return the min zoom from `getBoundsZoom()` when the padding is larger than the map by [@jayhemnani9910](https://github.com/jayhemnani9910) in https://github.com/Leaflet/Leaflet/pull/10544
+* Fix `overlaps()` for bounds with zero area by [@xunguangzlj-cloud](https://github.com/xunguangzlj-cloud) in https://github.com/Leaflet/Leaflet/pull/10547
+* Ignore NaN when combining the zoom limits of the layers of a map by [@xunguangzlj-cloud](https://github.com/xunguangzlj-cloud) in https://github.com/Leaflet/Leaflet/pull/10548
+* Don't call event listeners added during a fire of their event until the next fire, found with the specs of https://github.com/Leaflet/Leaflet/pull/10537
+* Tooltip: replace the `center` direction class when the direction changes in https://github.com/Leaflet/Leaflet/commit/8ad17baed7639eea6b515b5f474d87d63325f48f
+* Small fixes from the core `FullscreenControl` of Leaflet: the pseudo-fullscreen map ignores the margins of its container, `aria-keyshortcuts` is set as an attribute, in https://github.com/Leaflet/Leaflet/pull/10531
+
+#### 📝 Docs
+
+* Document the `animate` option of `setView()` and `invalidateSize()`, interactive targets, the renderers of custom panes, the `flyTo` and `pinch` flags of move and zoom events, and point from the base classes to the classes to use, in https://github.com/Leaflet/Leaflet/commit/ad3f0dd0cc0e4fcc77c713ba6b30c61f89438f50, https://github.com/Leaflet/Leaflet/commit/0b1c64a7395f105210e334d145ed51a9f78d9b9d, https://github.com/Leaflet/Leaflet/commit/cd0dbf0ded365094072bf6a55c9aac7de9f67ee7 and https://github.com/Leaflet/Leaflet/commit/b7f53cecf296338ee528ee0fc603ed65981dbc48
+* Rewrite the plugin guide, with a section on a script build for the global `L`, in https://github.com/Leaflet/Leaflet/commit/c2ba3ff6fddb7b83e2e0333526cbe3df1624736d
+* Fix a typo in the ImageOverlay spec by [@ninglinLiu](https://github.com/ninglinLiu) in https://github.com/Leaflet/Leaflet/pull/10543
+
 ## 4.3.0 (2026-11-02)
 
 ### Leaflet, since 4.2.0
