@@ -791,6 +791,78 @@ and legend label; mixed values and ranges; all other values; merging in the
 legend; classes excluded from the count; counts after adding and removing
 layers; legend update in the attribution and the control; toggling classes.
 
+## Round 5: replacing OpenLayers in eaws-bulletin-map
+
+What Maplair is missing to replace OpenLayers, ol-ext and ol-pmtiles in
+[eaws-bulletin-map](https://github.com/simon04/eaws-bulletin-map), with
+[pmtiles](https://github.com/protomaps/PMTiles) as the only third-party library.
+The map code of the app is in `src/main.ts` and `src/weather-stations.ts`.
+Suggested order: 54, 55, 23, then 53 and 52.
+
+Already covered: Nominatim search (`SearchControl.nominatim()` for ol-ext
+`SearchNominatim`), a popup with an `HTMLElement` as content closed by
+<kbd>Escape</kbd> (`closeOnEscapeKey`, for ol-ext `Popup` and the app's
+`ClosePopup` interaction), the date input (a plain `Control`), the weather
+stations (`GeoJSON` with `CircleMarker`s), `Util.throttle()` (for es-toolkit),
+scroll wheel zoom disabled in iframes, `fitBounds()` for the `bbox` parameter,
+attributions, no rotation. Instead of ol-ext's `GeolocationButton`, the locate
+control (23), until then a `ButtonControl` calling `map.locate({setView: true})`.
+
+## 52. Vector tile layer
+
+Effort: large
+
+The danger rating fills and the hovered region outlines come from MVT tiles in
+`https://static.avalanche.report/eaws-regions.pmtiles` (layers `micro-regions`
+and `micro-regions_elevation`, `maxZoom: 10`). `pmtiles` only returns the raw
+(decompressed) tile bytes; OpenLayers decodes and renders them.
+
+- An MVT decoder: a protobuf reader and the geometry commands (MoveTo, LineTo,
+  ClosePath, zig-zag deltas), features with their properties, ~300 lines.
+- A `GridLayer` subclass drawing the features of each tile on a canvas, with a
+  style function per feature (`feature → PathOptions | undefined`, undefined
+  meaning not drawn) and overzooming beyond the archive's `maxZoom`.
+- Restyling without refetching (`redraw()` from the cached decoded features):
+  the outline layer changes its style on every throttled pointer move.
+- No seams at tile boundaries: polygons are clipped to the tile (plus buffer), so
+  strokes (0.5 px outlines) must not be drawn along the clipped edges.
+- A tile source abstraction, e.g. `loadTile(coords, signal) → Promise<ArrayBuffer>`,
+  so the same layer works with PMTiles, plain `{z}/{x}/{y}.mvt` URLs and others
+  (shared with 54).
+
+Vector tiles were left out in round 3 as too large (VectorGrid,
+protomaps-leaflet); this app needs only polygon fills and outlines, no labels or
+style specs.
+
+## 53. All features at a point
+
+Effort: medium
+
+The app needs every feature under the pointer on click and pointer move: the
+overlapping `micro-regions` and `micro-regions_elevation` features, and a
+weather station marker. The map hit-tests its canvas renderers
+(`MaplairMap._canvasLayerAt()`, `Canvas._layerAt()`) and fires for the topmost
+layer only. Something like `map.getLayersAt(containerPoint)`, or a hit test of
+the vector tile layer (52) returning all features of the tile under the point.
+
+## 54. Raster tiles from a custom source
+
+Effort: small
+
+The basemap `https://static.avalanche.report/albina-basemap.pmtiles` is a raster
+archive. `TileLayer` only loads URLs (`src` or `fetchOptions`). An option like
+`loadTile(coords, signal) → Promise<Blob>` reusing the object URL handling and
+aborting of `_fetchTile()`. pmtiles' own `leafletRasterLayer` does not work: it
+needs a global `L` and overrides the private `_removeTile()`.
+
+## 55. Multiply blending
+
+Effort: small (optional)
+
+The danger rating layer is drawn with `globalCompositeOperation = "multiply"` over
+the basemap. Works with CSS `mix-blend-mode: multiply` on the layer's pane; a
+layer option (`blendMode`) would make it explicit.
+
 ## Also implemented
 
 Features done in this fork besides the ideas above:
