@@ -331,7 +331,8 @@
 
 /* cursors */
 
-.maplair-interactive {
+.maplair-interactive,
+.maplair-container.maplair-interactive {
 	cursor: pointer;
 }
 
@@ -342,6 +343,7 @@
 .maplair-crosshair {
 	cursor: crosshair;
 
+	&.maplair-interactive,
 	.maplair-interactive {
 		cursor: crosshair;
 	}
@@ -371,6 +373,7 @@
 .maplair-marker-shadow,
 .maplair-image-layer,
 .maplair-pane > svg path,
+.maplair-pane > canvas,
 .maplair-tile-container {
 	pointer-events: none;
 }

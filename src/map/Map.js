@@ -328,6 +328,8 @@ export class MaplairMap extends Evented {
 		this._handlers = [];
 		this._layers = {};
 		this._zoomBoundLayers = {};
+		// canvas renderers on the map, topmost first
+		this._canvases = [];
 		this._sizeChanged = true;
 
 		this._initContainer(id);
@@ -1887,12 +1889,40 @@ export class MaplairMap extends Evented {
 	_handleDOMEvent(e) {
 		const el = e.target;
 		if (e.type === 'click') { PointerEvents.simulateDblclick(e, this._container); }
-		if (!this._loaded || el['_maplair_disable_events'] || e.type === 'click' && this._isClickDisabled(el)) {
+		if (!this._loaded || e.type === 'click' && this._isClickDisabled(el)) {
 			return;
 		}
 
-		this._fireDOMEvent(e, e.type);
+		// canvas elements don't receive pointer events, so hit-test canvas renderers when the event isn't on
+		// an interactive DOM layer, and track hover (cursor, pointerover/out) for canvas layers here
+		const type = e.type,
+		move = type === 'pointermove',
+		hovered = this._hoveredCanvasLayer,
+		skip = type === 'pointerover' || type === 'pointerout' || type.startsWith('key') ||
+			this._animatingZoom || move && this.dragging?.moving(),
+		layer = skip ? undefined : this._canvasLayerAt(e, type === 'click'),
+		leftMap = type === 'pointerout' && !this._container.contains(e.relatedTarget);
+
+		if (layer !== hovered && (move && !skip || leftMap)) {
+			if (hovered) { this._fireDOMEvent(e, 'pointerout', [hovered]); }
+			this._container.classList.toggle('maplair-interactive', !!layer); // change cursor
+			this._hoveredCanvasLayer = layer;
+			if (layer) { this._fireDOMEvent(e, 'pointerover', [layer]); }
+		}
+
+		this._fireDOMEvent(e, type, layer && [layer]);
 	};
+
+	_canvasLayerAt(e, click) {
+		// skip events on interactive DOM layers and controls
+		for (let el = e.target; el !== this._container; el = el.parentNode) {
+			if (!el || el === this._controlContainer || this._targets[Util.stamp(el)]) { return; }
+		}
+		for (const renderer of this._canvases) {
+			const layer = renderer._layerAt(e, click);
+			if (layer) { return layer; }
+		}
+	}
 
 	static _pointerEvents = ['click', 'dblclick', 'pointerover', 'pointerout', 'contextmenu'];
 
@@ -1903,8 +1933,10 @@ export class MaplairMap extends Evented {
 			this._fireDOMEvent(e, 'preclick', canvasTargets);
 		}
 
-		// Find the layer the event is propagating from and its parents.
-		let targets = this._findEventTargets(e, type);
+		// Find the layer the event is propagating from and its parents
+		// (synthetic canvas hover events don't propagate to DOM layers).
+		const canvasHover = canvasTargets && (type === 'pointerover' || type === 'pointerout');
+		let targets = canvasHover ? [] : this._findEventTargets(e, type);
 
 		if (canvasTargets) {
 			// pick only targets with listeners
