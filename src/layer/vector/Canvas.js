@@ -91,21 +91,12 @@ export class Canvas extends Renderer {
 		this._draw();
 	}
 
-	/**
-	 * Removes the canvas from the map.
-	 */
-	onRemove() {
-		super.onRemove();
-
-		clearTimeout(this._pointerHoverThrottleTimeout);
-	}
-
 	_initContainer() {
 		const container = this._container = document.createElement('canvas');
 
 		DomEvent.on(container, 'pointermove', this._onPointerMove, this);
 		DomEvent.on(container, 'click dblclick pointerdown pointerup contextmenu', this._onClick, this);
-		DomEvent.on(container, 'pointerout', this._handlePointerOut, this);
+		DomEvent.on(container, 'pointerout', this._onPointerOut, this);
 		container['_maplair_disable_events'] = true;
 
 		this._ctx = container.getContext('2d');
@@ -371,74 +362,58 @@ export class Canvas extends Renderer {
 	// Canvas obviously doesn't have pointer events for individual drawn objects,
 	// so we emulate that by calculating what's under the pointer on pointermove/click manually
 
-	_onClick(e) {
+	/**
+	 * Returns the topmost interactive layer under the pointer.
+	 * @param {MouseEvent} e
+	 * @param {boolean} [click] Skip layers that were just dragged, so the drag doesn't end with a click.
+	 * @returns {Path|undefined}
+	 */
+	_layerAt(e, click) {
 		const point = this._map.pointerEventToLayerPoint(e);
-		let layer, clickedLayer;
 
-		for (let order = this._drawFirst; order; order = order.next) {
-			layer = order.layer;
-			if (layer.options.interactive && layer._containsPoint(point)) {
-				if (!(e.type === 'click' || e.type === 'preclick') || !this._map._draggableMoved(layer)) {
-					clickedLayer = layer;
-				}
+		for (let order = this._drawLast; order; order = order.prev) {
+			const layer = order.layer;
+			if (layer.options.interactive && layer._containsPoint(point) && !(click && this._map._draggableMoved(layer))) {
+				return layer;
 			}
 		}
-		this._fireEvent(clickedLayer ? [clickedLayer] : false, e);
+	}
+
+	_onClick(e) {
+		this._fireEvent(this._layerAt(e, e.type === 'click'), e);
 	}
 
 	_onPointerMove(e) {
-		if (!this._map || this._map.dragging.moving() || this._map._animatingZoom) { return; }
+		const map = this._map;
+		if (!map || map.dragging.moving() || map._animatingZoom) { return; }
 
-		const point = this._map.pointerEventToLayerPoint(e);
-		this._handlePointerHover(e, point);
+		const layer = this._layerAt(e);
+
+		if (layer !== this._hoveredLayer) {
+			this._onPointerOut(e);
+
+			if (layer) {
+				this._container.classList.add('maplair-interactive'); // change cursor
+				this._fireEvent(layer, e, 'pointerover');
+				this._hoveredLayer = layer;
+			}
+		}
+
+		this._fireEvent(this._hoveredLayer, e);
 	}
 
-
-	_handlePointerOut(e) {
+	_onPointerOut(e) {
 		const layer = this._hoveredLayer;
 		if (layer) {
 			// if we're leaving the layer, fire pointerout
 			this._container.classList.remove('maplair-interactive');
-			this._fireEvent([layer], e, 'pointerout');
+			this._fireEvent(layer, e, 'pointerout');
 			this._hoveredLayer = null;
-			this._pointerHoverThrottled = false;
 		}
 	}
 
-	_handlePointerHover(e, point) {
-		if (this._pointerHoverThrottled) {
-			return;
-		}
-
-		let layer, candidateHoveredLayer;
-
-		for (let order = this._drawFirst; order; order = order.next) {
-			layer = order.layer;
-			if (layer.options.interactive && layer._containsPoint(point)) {
-				candidateHoveredLayer = layer;
-			}
-		}
-
-		if (candidateHoveredLayer !== this._hoveredLayer) {
-			this._handlePointerOut(e);
-
-			if (candidateHoveredLayer) {
-				this._container.classList.add('maplair-interactive'); // change cursor
-				this._fireEvent([candidateHoveredLayer], e, 'pointerover');
-				this._hoveredLayer = candidateHoveredLayer;
-			}
-		}
-
-		this._fireEvent(this._hoveredLayer ? [this._hoveredLayer] : false, e);
-
-		this._pointerHoverThrottled = true;
-		this._pointerHoverThrottleTimeout = setTimeout((() => {
-			this._pointerHoverThrottled = false;
-		}), 32);
-	}
-
-	_fireEvent(layers, e, type) {
-		this._map._fireDOMEvent(e, type || e.type, layers);
+	_fireEvent(layer, e, type) {
+		this._map._fireDOMEvent(e, type || e.type, layer ? [layer] : false);
 	}
 
 	_bringToFront(layer) {
