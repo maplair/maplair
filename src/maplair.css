@@ -1,9 +1,10 @@
 :root {
 	/* colors */
+	--maplair-color-emphasized: #000000;
 	--maplair-color-base: #333333;
 	--maplair-color-subtle: #757575;
 	--maplair-color-disabled: #aaaaaa;
-	--maplair-color-progressive: #0078a8;
+	--maplair-color-progressive: #006e9d;
 
 	--maplair-background-color-base: #ffffff;
 	--maplair-background-color-neutral: #dddddd;
@@ -11,7 +12,7 @@
 	--maplair-background-color-interactive-subtle--hover: #f4f4f4;
 	--maplair-background-color-interactive--active: rgba(51, 181, 229, 0.4);
 	--maplair-background-color-disabled-subtle: #f4f4f4;
-	--maplair-background-color-backdrop-light: rgba(255, 255, 255, 0.8);
+	--maplair-background-color-backdrop-light: rgba(255, 255, 255, 0.9);
 
 	--maplair-border-color-base: #777777;
 	--maplair-border-color-subtle: #cccccc;
@@ -838,10 +839,12 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	margin: 0;
 }
 
+/* attribution links are told apart from text by contrast alone (WCAG 1.4.1 via G183): link vs text >= 3:1 and
+   link vs background >= 4.5:1 even over black tiles, which only fits with black text and >= 0.85 background alpha */
 .maplair-control-attribution,
 .maplair-control-scale-line {
 	padding: 0 var(--maplair-spacing-25);
-	color: var(--maplair-color-base);
+	color: var(--maplair-color-emphasized);
 	line-height: var(--maplair-line-height-small);
 }
 
