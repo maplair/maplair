@@ -463,40 +463,38 @@ export class Marker extends Layer {
 
 		this.addInteractiveTarget(this._icon);
 
-		if (MarkerDrag) {
-			// When the icon element is reused, the drag handler still refers to it. Keep that handler, because
-			// replacing it ends a drag in progress and forgets that the marker has just been dragged.
-			if (this.dragging?._draggable?._element === this._icon) {
-				// the icon has reset the class names of the element
-				this._icon.classList.toggle('maplair-marker-draggable', this.dragging.enabled());
-				return;
-			}
+		// When the icon element is reused, the drag handler still refers to it. Keep that handler, because
+		// replacing it ends a drag in progress and forgets that the marker has just been dragged.
+		if (this.dragging?._draggable?._element === this._icon) {
+			// the icon has reset the class names of the element
+			this._icon.classList.toggle('maplair-marker-draggable', this.dragging.enabled());
+			return;
+		}
 
-			let draggable = this.options.draggable;
-			if (this.dragging) {
-				draggable = this.dragging.enabled();
-				this.dragging.disable();
-			}
+		let draggable = this.options.draggable;
+		if (this.dragging) {
+			draggable = this.dragging.enabled();
+			this.dragging.disable();
+		}
 
-			/**
-			 * Marker dragging handler, see `Handler`. Only valid when the marker is on the
-			 * map (otherwise set [`marker.options.draggable`](#markeroptions-draggable)).
-			 *
-			 * Interaction handlers are properties of a marker instance that allow you to
-			 * control interaction behavior in runtime, enabling or disabling certain
-			 * features such as dragging (see `Handler` methods). Example:
-			 *
-			 * ```js
-			 * marker.dragging.disable();
-			 * ```
-			 * @group Interaction handlers
-			 * @type {MarkerDrag}
-			 */
-			this.dragging = new MarkerDrag(this);
+		/**
+		 * Marker dragging handler, see `Handler`. Only valid when the marker is on the
+		 * map (otherwise set [`marker.options.draggable`](#markeroptions-draggable)).
+		 *
+		 * Interaction handlers are properties of a marker instance that allow you to
+		 * control interaction behavior in runtime, enabling or disabling certain
+		 * features such as dragging (see `Handler` methods). Example:
+		 *
+		 * ```js
+		 * marker.dragging.disable();
+		 * ```
+		 * @group Interaction handlers
+		 * @type {MarkerDrag}
+		 */
+		this.dragging = new MarkerDrag(this);
 
-			if (draggable) {
-				this.dragging.enable();
-			}
+		if (draggable) {
+			this.dragging.enable();
 		}
 	}
 
