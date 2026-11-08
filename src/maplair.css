@@ -471,7 +471,11 @@ path.maplair-interactive:focus:not(:focus-visible) {
 .maplair-control-zoom-in,
 .maplair-control-zoom-out {
 	font: bold var(--maplair-font-size-x-large) var(--maplair-font-family-monospace);
-	text-indent: 1px;
+}
+
+.maplair-control-zoom button {
+	display: grid;
+	place-items: center;
 }
 
 

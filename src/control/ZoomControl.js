@@ -12,10 +12,10 @@ import {I18n} from '../core/I18n.js';
  * @property {string} [position='topleft'] The position of the control (one of the map
  * corners). Possible values are `'topleft'`, `'topright'`, `'bottomleft'` or
  * `'bottomright'`.
- * @property {string} [zoomInText='<span aria-hidden="true">+</span>'] The text set on
- * the 'zoom in' button.
- * @property {string} [zoomOutText='<span aria-hidden="true">&#x2212;</span>'] The text
- * set on the 'zoom out' button.
+ * @property {string} [zoomInText] The HTML of the 'zoom in' button, a plus sign drawn
+ * in SVG by default.
+ * @property {string} [zoomOutText] The HTML of the 'zoom out' button, a minus sign
+ * drawn in SVG by default.
  * @extends ControlOptions
  */
 
@@ -43,8 +43,8 @@ export class ZoomControl extends Control {
 
 	static defaultOptions = {
 		position: 'topleft',
-		zoomInText: '<span aria-hidden="true">+</span>',
-		zoomOutText: '<span aria-hidden="true">&#x2212;</span>',
+		zoomInText: '<svg width="12" height="12" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M0 6h12M6 0v12"/></svg>',
+		zoomOutText: '<svg width="12" height="12" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M0 6h12"/></svg>',
 	};
 
 	/**
