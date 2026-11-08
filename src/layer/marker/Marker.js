@@ -38,7 +38,7 @@ import {pointToGeoJSON} from '../GeoJSONUtil.js';
  * marker, even at 0°, has no shadow, since the shadow of an upright pin looks wrong
  * under a tilted one. `null` means no rotation.
  * @property {boolean} [riseOnHover=false] If `true`, the marker will get on top of
- * others when you hover the pointer over it.
+ * others while the pointer is over it or it has keyboard focus.
  * @property {number} [riseOffset=250] The z-index offset used for the `riseOnHover`
  * feature.
  * @property {string} [pane='markerPane'] `Map pane` where the markers icon will be added.
@@ -303,10 +303,7 @@ export class Marker extends Layer {
 		this._icon = icon;
 
 		if (options.riseOnHover) {
-			this.on({
-				pointerover: this._bringToFront,
-				pointerout: this._resetZIndex
-			});
+			DomEvent.on(icon, 'pointerover pointerout focusin focusout', this._updateRise, this);
 		}
 
 		if (this.options.autoPanOnFocus) {
@@ -344,10 +341,8 @@ export class Marker extends Layer {
 
 	_removeIcon() {
 		if (this.options.riseOnHover) {
-			this.off({
-				pointerover: this._bringToFront,
-				pointerout: this._resetZIndex
-			});
+			DomEvent.off(this._icon, 'pointerover pointerout focusin focusout', this._updateRise, this);
+			this._hovered = false;
 		}
 
 		if (this.options.autoPanOnFocus) {
@@ -400,7 +395,7 @@ export class Marker extends Layer {
 
 		this._zIndex = pos.y + this.options.zIndexOffset;
 
-		this._resetZIndex();
+		this._updateRise();
 	}
 
 	_positionElements(pos) {
@@ -545,6 +540,17 @@ export class Marker extends Layer {
 
 		if (this._shadow) {
 			this._shadow.style.opacity = `${opacity}`;
+		}
+	}
+
+	_updateRise(e) {
+		if (e?.type.startsWith('pointer')) {
+			this._hovered = e.type === 'pointerover';
+		}
+		if (this.options.riseOnHover && (this._hovered || this._icon?.matches(':focus-within'))) {
+			this._bringToFront();
+		} else {
+			this._resetZIndex();
 		}
 	}
 
