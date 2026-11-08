@@ -237,6 +237,12 @@
 	pointer-events: none;
 }
 
+/* an expanded layers list overlaps the controls of the other corners */
+.maplair-top:has(.maplair-control-layers-expanded),
+.maplair-bottom:has(.maplair-control-layers-expanded) {
+	z-index: 1001;
+}
+
 .maplair-top {
 	top: 0;
 	.maplair-control {
