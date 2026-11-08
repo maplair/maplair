@@ -173,8 +173,8 @@ const mapRotationMethods = {
 			// the map pane is wrapped in a pane rotated around the center of the container
 			const rotatePane = this._rotatePane = DomUtil.create('div', 'maplair-rotate-pane');
 			rotatedMaps.set(rotatePane, this);
-			this._container.insertBefore(rotatePane, this._mapPane);
-			rotatePane.appendChild(this._mapPane);
+			this._mapPane.before(rotatePane);
+			rotatePane.append(this._mapPane);
 		}
 		if (bearing === this.getBearing()) { return; }
 

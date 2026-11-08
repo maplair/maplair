@@ -18,7 +18,7 @@ function svgElement(name, attributes, parent) {
 	for (const [key, value] of Object.entries(attributes)) {
 		el.setAttribute(key, value);
 	}
-	parent?.appendChild(el);
+	parent?.append(el);
 	return el;
 }
 

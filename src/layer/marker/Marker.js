@@ -334,11 +334,11 @@ export class Marker extends Layer {
 
 
 		if (addIcon) {
-			this.getPane().appendChild(this._icon);
+			this.getPane().append(this._icon);
 		}
 		this._initInteraction();
 		if (newShadow && addShadow) {
-			this.getPane(options.shadowPane).appendChild(this._shadow);
+			this.getPane(options.shadowPane).append(this._shadow);
 		}
 	}
 
@@ -379,9 +379,9 @@ export class Marker extends Layer {
 		this._culled = !visible;
 
 		if (visible) {
-			this.getPane().appendChild(this._icon);
+			this.getPane().append(this._icon);
 			if (this._shadow) {
-				this.getPane(this.options.shadowPane).appendChild(this._shadow);
+				this.getPane(this.options.shadowPane).append(this._shadow);
 			}
 			this.update();
 		} else {

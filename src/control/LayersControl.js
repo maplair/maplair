@@ -376,7 +376,7 @@ export class LayersControl extends Control {
 		this._separator = DomUtil.create('div', `${className}-separator`, section);
 		this._overlaysList = DomUtil.create('div', `${className}-overlays`, section);
 
-		container.appendChild(section);
+		container.append(section);
 	}
 
 	_addLayer(layer, name, overlay) {
@@ -472,13 +472,12 @@ export class LayersControl extends Control {
 		// https://github.com/Leaflet/Leaflet/issues/2771
 		const holder = document.createElement('span');
 
-		label.appendChild(holder);
-		holder.appendChild(input);
-		holder.appendChild(name);
+		label.append(holder);
+		holder.append(input, name);
 
 		const list = obj.overlay ? this._overlaysList : this._baseLayersList;
 		const container = group ? this._getGroupContainer(list, group.group) : list;
-		container.appendChild(label);
+		container.append(label);
 
 		this._checkDisabledLayers();
 		return label;

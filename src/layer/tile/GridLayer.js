@@ -387,7 +387,7 @@ export class GridLayer extends Layer {
 			this._updateOpacity();
 		}
 
-		this.getPane().appendChild(this._container);
+		this.getPane().append(this._container);
 	}
 
 	// Keeps the loaded tiles of the current level visible below the tiles loaded
@@ -784,7 +784,7 @@ export class GridLayer extends Layer {
 				this._addTile(q, fragment);
 			}
 
-			this._level.el.appendChild(fragment);
+			this._level.el.append(fragment);
 		}
 	}
 
@@ -882,7 +882,7 @@ export class GridLayer extends Layer {
 			current: true
 		};
 
-		container.appendChild(tile);
+		container.append(tile);
 		this.fire('tileloadstart', {
 			tile,
 			coords

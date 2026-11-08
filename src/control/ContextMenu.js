@@ -148,7 +148,7 @@ export class ContextMenu extends Class {
 	_createMenu(parent) {
 		const container = this._container ??= DomUtil.create('div', `maplair-contextmenu ${this.options.className}`);
 		if (container.parentNode !== parent) {
-			parent.appendChild(container);
+			parent.append(container);
 		}
 		container.popover = 'auto';
 		container.setAttribute('role', 'menu');

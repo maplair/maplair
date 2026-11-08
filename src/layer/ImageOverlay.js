@@ -106,7 +106,7 @@ export class ImageOverlay extends Layer {
 		}
 		this._image.classList.toggle('maplair-pixelated', !!this.options.pixelated);
 
-		this.getPane().appendChild(this._image);
+		this.getPane().append(this._image);
 		this._reset();
 	}
 

@@ -48,7 +48,7 @@ export class SVG extends Renderer {
 		this._container.setAttribute('pointer-events', 'none');
 
 		this._rootGroup = SVG.create('g');
-		this._container.appendChild(this._rootGroup);
+		this._container.append(this._rootGroup);
 	}
 
 	_destroyContainer() {
@@ -110,7 +110,7 @@ export class SVG extends Renderer {
 
 	_addPath(layer) {
 		if (!this._rootGroup) { this._initContainer(); }
-		this._rootGroup.appendChild(layer._path);
+		this._rootGroup.append(layer._path);
 		layer.addInteractiveTarget(layer._path);
 	}
 

@@ -188,7 +188,7 @@ export class DivOverlay extends Layer {
 		}
 
 		clearTimeout(this._removeTimeout);
-		this.getPane().appendChild(this._container);
+		this.getPane().append(this._container);
 		if (this.options.overflow) {
 			this._container.classList.add('maplair-overflow');
 			this._container.popover = 'manual';
@@ -431,10 +431,7 @@ export class DivOverlay extends Layer {
 		if (typeof content === 'string') {
 			node.innerHTML = content;
 		} else {
-			while (node.hasChildNodes()) {
-				node.removeChild(node.firstChild);
-			}
-			node.appendChild(content);
+			node.replaceChildren(content);
 		}
 
 		this.fire('contentupdate');

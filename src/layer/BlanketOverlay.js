@@ -72,7 +72,7 @@ export class BlanketOverlay extends Layer {
 			this._container.classList.add('maplair-zoom-animated');
 		}
 
-		this.getPane().appendChild(this._container);
+		this.getPane().append(this._container);
 		this._resizeContainer();
 		this._onMoveEnd();
 	}

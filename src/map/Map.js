@@ -2085,7 +2085,7 @@ export class MaplairMap extends Evented {
 
 	_createAnimProxy() {
 		this._proxy = DomUtil.create('div', 'maplair-proxy maplair-zoom-animated');
-		this._panes.mapPane.appendChild(this._proxy);
+		this._panes.mapPane.append(this._proxy);
 
 		this.on('zoomanim', this._animateProxyZoom, this);
 		this.on('load moveend', this._animMoveEnd, this);
