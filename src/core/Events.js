@@ -310,8 +310,12 @@ export class Evented extends Class {
 
 		this._events ??= {};
 		// a Set keeps the listeners in order, and allows removing them in constant time
-		this._events[type] ??= new Set();
-		this._events[type].add(newListener);
+		let listeners = this._events[type] ??= new Set();
+		if (this._firingCount) {
+			// copy the listeners being fired, so that the new one is called from the next fire on
+			this._events[type] = listeners = new Set(listeners);
+		}
+		listeners.add(newListener);
 
 		if (contexts) {
 			contexts.set(context, newListener);
