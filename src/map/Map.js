@@ -1853,10 +1853,12 @@ export class MaplairMap extends Evented {
 		src = e.target,
 		dragging = false;
 		const isHover = type === 'pointerout' || type === 'pointerover';
+		// clicks with `detail` 0 come from `element.click()` or the keyboard, so they can't end a drag
+		const canEndDrag = (type === 'click' || type === 'preclick') && e.detail > 0;
 
 		while (src) {
 			target = this._targets[Util.stamp(src)];
-			if (target && (type === 'click' || type === 'preclick') && this._draggableMoved(target)) {
+			if (target && canEndDrag && this._draggableMoved(target)) {
 				// Prevent firing click after you just dragged an object.
 				dragging = true;
 				break;

@@ -209,7 +209,7 @@ describe('DragHandler', () => {
 
 			// A real user scenario would trigger a click on pointerup.
 			// We want to be sure we are cancelling it after a drag.
-			UIEventSimulator.fire('click', container);
+			UIEventSimulator.fire('click', container, {detail: 1});
 			expect(dragSpy).toHaveBeenCalled();
 			expect(clickSpy).not.toHaveBeenCalled();
 			expect(preclickSpy).not.toHaveBeenCalled();
@@ -242,11 +242,30 @@ describe('DragHandler', () => {
 
 			// A real user scenario would trigger a click on pointerup.
 			// We want to be sure we are cancelling it after a drag.
-			UIEventSimulator.fire('click', container);
+			UIEventSimulator.fire('click', container, {detail: 1});
 			expect(mapDragSpy).toHaveBeenCalled();
 			expect(markerDragSpy).not.toHaveBeenCalled();
 			expect(clickSpy).not.toHaveBeenCalled();
 			expect(preclickSpy).not.toHaveBeenCalled();
+		});
+
+		it('triggers click on Enter on a static marker after dragging', async () => {
+			container.style.width = container.style.height = '600px';
+			map = new MaplairMap(container, {
+				dragging: true,
+				inertia: false
+			});
+			map.setView([0, 0], 1);
+			const marker = new Marker(map.getCenter()).addTo(map);
+			const clickSpy = vi.fn();
+			marker.on('click', clickSpy);
+
+			await new Finger().moveTo(100, 100)
+				.down().moveBy(5, 0).moveBy(20, 20).up();
+
+			marker._icon.dispatchEvent(new KeyboardEvent('keydown', {key: 'Enter', bubbles: true}));
+			expect(map.dragging.moved()).to.be.true;
+			expect(clickSpy).toHaveBeenCalledOnce();
 		});
 
 		it('does not trigger preclick nor click when dragging a marker', async () => {
@@ -276,7 +295,7 @@ describe('DragHandler', () => {
 
 			// A real user scenario would trigger a click on pointerup.
 			// We want to be sure we are cancelling it after a drag.
-			UIEventSimulator.fire('click', marker._icon);
+			UIEventSimulator.fire('click', marker._icon, {detail: 1});
 			expect(markerDragSpy).toHaveBeenCalled();
 			expect(mapDragSpy).not.toHaveBeenCalled();
 			expect(clickSpy).not.toHaveBeenCalled();
