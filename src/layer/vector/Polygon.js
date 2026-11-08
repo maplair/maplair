@@ -152,6 +152,10 @@ export class Polygon extends Polyline {
 		this._renderer._updatePoly(this, true);
 	}
 
+	_isClosed() {
+		return true;
+	}
+
 	// Needed by the `Canvas` renderer for interactivity
 	_containsPoint(p) {
 		let inside = false,

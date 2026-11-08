@@ -114,11 +114,12 @@ export class Polyline extends Path {
 		let minDistance = Infinity,
 		minPoint = null,
 		p1, p2;
-		const closest = LineUtil._sqClosestPointOnSegment;
+		const closest = LineUtil._sqClosestPointOnSegment,
+		closed = this._isClosed();
 
 		for (const points of this._parts) {
-			for (let i = 1, len = points.length; i < len; i++) {
-				p1 = points[i - 1];
+			for (let i = closed ? 0 : 1, len = points.length; i < len; i++) {
+				p1 = points[(i || len) - 1];
 				p2 = points[i];
 
 				const sqDist = closest(p, p1, p2, true);
@@ -293,6 +294,11 @@ export class Polyline extends Path {
 
 	_updatePath() {
 		this._renderer._updatePoly(this);
+	}
+
+	// polygon rings also have a segment from the last point back to the first
+	_isClosed() {
+		return false;
 	}
 
 	// Needed by the `Canvas` renderer for interactivity
