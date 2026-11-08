@@ -164,14 +164,7 @@ export class Canvas extends Renderer {
 		this._updateDashArray(layer);
 		this._layers[Util.stamp(layer)] = layer;
 
-		const order = layer._order = {
-			layer,
-			prev: this._drawLast,
-			next: null
-		};
-		if (this._drawLast) { this._drawLast.next = order; }
-		this._drawLast = order;
-		this._drawFirst ??= this._drawLast;
+		this._append(layer._order = {layer});
 	}
 
 	_addPath(layer) {
@@ -179,21 +172,7 @@ export class Canvas extends Renderer {
 	}
 
 	_removePath(layer) {
-		const order = layer._order;
-		const next = order.next;
-		const prev = order.prev;
-
-		if (next) {
-			next.prev = prev;
-		} else {
-			this._drawLast = prev;
-		}
-		if (prev) {
-			prev.next = next;
-		} else {
-			this._drawFirst = next;
-		}
-
+		this._unlink(layer._order);
 		delete layer._order;
 
 		delete this._layers[Util.stamp(layer)];
@@ -388,63 +367,43 @@ export class Canvas extends Renderer {
 
 	_bringToFront(layer) {
 		const order = layer._order;
-
-		if (!order) { return; }
-
-		const next = order.next;
-		const prev = order.prev;
-
-		if (next) {
-			next.prev = prev;
-		} else {
-			// Already last
-			return;
+		if (order?.next) { // unless already last
+			this._unlink(order);
+			this._append(order);
+			this._requestRedraw(layer);
 		}
-		if (prev) {
-			prev.next = next;
-		} else if (next) {
-			// Update first entry unless this is the
-			// single entry
-			this._drawFirst = next;
-		}
-
-		order.prev = this._drawLast;
-		this._drawLast.next = order;
-
-		order.next = null;
-		this._drawLast = order;
-
-		this._requestRedraw(layer);
 	}
 
 	_bringToBack(layer) {
 		const order = layer._order;
+		if (order?.prev) { // unless already first
+			this._unlink(order);
+			order.prev = null;
+			order.next = this._drawFirst;
+			this._drawFirst.prev = order;
+			this._drawFirst = order;
+			this._requestRedraw(layer);
+		}
+	}
 
-		if (!order) { return; }
+	_append(order) {
+		order.prev = this._drawLast;
+		order.next = null;
+		if (this._drawLast) { this._drawLast.next = order; }
+		this._drawLast = order;
+		this._drawFirst ??= order;
+	}
 
-		const next = order.next;
-		const prev = order.prev;
-
+	_unlink({prev, next}) {
+		if (next) {
+			next.prev = prev;
+		} else {
+			this._drawLast = prev;
+		}
 		if (prev) {
 			prev.next = next;
 		} else {
-			// Already first
-			return;
+			this._drawFirst = next;
 		}
-		if (next) {
-			next.prev = prev;
-		} else if (prev) {
-			// Update last entry unless this is the
-			// single entry
-			this._drawLast = prev;
-		}
-
-		order.prev = null;
-
-		order.next = this._drawFirst;
-		this._drawFirst.prev = order;
-		this._drawFirst = order;
-
-		this._requestRedraw(layer);
 	}
 }

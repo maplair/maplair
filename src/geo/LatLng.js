@@ -67,14 +67,10 @@ export class LatLng {
 			_lng = lat.lng;
 			_alt = lat.alt;
 		} else if (Array.isArray(lat) && typeof lat[0] !== 'object') {
-			if (lat.length === 3) {
-				_lat = lat[0];
-				_lng = lat[1];
-				_alt = lat[2];
-			} else if (lat.length === 2) {
-				_lat = lat[0];
-				_lng = lat[1];
-			}
+			// validated to have 2 or 3 elements
+			_lat = lat[0];
+			_lng = lat[1];
+			_alt = lat[2];
 		} else if (typeof lat === 'object' && 'lat' in lat) {
 			_lat = lat.lat;
 			_lng = 'lng' in lat ? lat.lng : lat.lon;

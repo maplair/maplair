@@ -402,17 +402,8 @@ export class DivOverlay extends Layer {
 			this._source = source;
 		}
 
-		if (!latlng) {
-			if (source.getCenter) {
-				latlng = source.getCenter();
-			} else if (source.getLatLng) {
-				latlng = source.getLatLng();
-			} else if (source.getBounds) {
-				latlng = source.getBounds().getCenter();
-			} else {
-				throw new Error('Unable to get source layer LatLng.');
-			}
-		}
+		latlng ??= source.getCenter?.() ?? source.getLatLng?.() ?? source.getBounds?.().getCenter();
+		if (!latlng) { throw new Error('Unable to get source layer LatLng.'); }
 		this.setLatLng(latlng);
 
 		if (this._map) {
