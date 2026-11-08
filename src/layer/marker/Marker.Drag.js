@@ -133,7 +133,10 @@ export class MarkerDrag extends Handler {
 	_onDrag(e) {
 		const marker = this._marker,
 		iconPos = DomUtil.getPosition(marker._icon),
-		latlng = marker._map.layerPointToLatLng(iconPos);
+		latlng = marker._map.layerPointToLatLng(iconPos),
+		{alt} = this._oldLatLng;
+
+		if (alt !== undefined) { latlng.alt = alt; }
 
 		// Draggable only moved the icon and dropped its rotation
 		marker._positionElements(iconPos);
@@ -150,7 +153,6 @@ export class MarkerDrag extends Handler {
 	_onDragEnd(e) {
 		cancelAnimationFrame(this._panRequest);
 
-		delete this._oldLatLng;
 		this._marker
 			.fire('moveend')
 			.fire('dragend', e);
