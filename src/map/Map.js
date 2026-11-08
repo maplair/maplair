@@ -396,7 +396,7 @@ export class MaplairMap extends Evented {
 
 			// try animating pan or zoom
 			const moved = (this._zoom !== zoom) ?
-				this._tryAnimatedZoom && this._tryAnimatedZoom(center, zoom, options.zoom) :
+				this._tryAnimatedZoom?.(center, zoom, options.zoom) :
 				this._tryAnimatedPan(center, options.pan);
 
 			if (moved) {
@@ -1861,7 +1861,7 @@ export class MaplairMap extends Evented {
 				dragging = true;
 				break;
 			}
-			if (target && target.listens(type, true)) {
+			if (target?.listens(type, true)) {
 				if (isHover && !DomEvent.isExternalTarget(src, e)) { break; }
 				targets.push(target);
 				if (isHover) { break; }

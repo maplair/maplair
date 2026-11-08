@@ -341,7 +341,7 @@ export class DivOverlay extends Layer {
 	 * @returns {boolean}
 	 */
 	isOpen() {
-		return !!this._map && this._map.hasLayer(this);
+		return !!this._map?.hasLayer(this);
 	}
 
 	/**

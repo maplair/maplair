@@ -134,7 +134,7 @@ const layerTooltipMethods = {
 		this._tooltip = this._initOverlay(Tooltip, old, content, options);
 		this._initTooltipInteractions();
 
-		if (this._tooltip.options.permanent && this._map && this._map.hasLayer(this)) {
+		if (this._tooltip.options.permanent && this._map?.hasLayer(this)) {
 			this.openTooltip();
 		}
 
@@ -318,13 +318,8 @@ const layerTooltipMethods = {
 	},
 
 	_moveTooltip(e) {
-		let latlng = e.latlng, containerPoint, layerPoint;
-		if (this._tooltip.options.sticky && e.originalEvent) {
-			containerPoint = this._map.pointerEventToContainerPoint(e.originalEvent);
-			layerPoint = this._map.containerPointToLayerPoint(containerPoint);
-			latlng = this._map.layerPointToLatLng(layerPoint);
-		}
-		this._tooltip.setLatLng(latlng);
+		this._tooltip.setLatLng(this._tooltip.options.sticky && e.originalEvent ?
+			this._map.pointerEventToLatLng(e.originalEvent) : e.latlng);
 	}
 };
 /** @typedef {typeof layerTooltipMethods} LayerTooltipMethods */
