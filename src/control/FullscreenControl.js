@@ -163,7 +163,6 @@ export class FullscreenControl extends Control {
 		DomEvent.disableClickPropagation(button);
 		DomEvent.on(button, 'click', DomEvent.stop);
 		DomEvent.on(button, 'click', this._toggleFullscreen, this);
-		DomEvent.on(button, 'click', this._refocusOnMap, this);
 
 		this._update();
 		map.on('fullscreenchange', this._update, this);

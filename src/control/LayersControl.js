@@ -555,8 +555,6 @@ export class LayersControl extends Control {
 				break;
 			}
 		}
-
-		this._refocusOnMap(e);
 	}
 
 	_checkDisabledLayers() {

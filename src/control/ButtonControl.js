@@ -107,7 +107,6 @@ export class ButtonControl extends Control {
 		DomEvent.disableClickPropagation(button);
 		DomEvent.on(button, 'click', DomEvent.stop);
 		DomEvent.on(button, 'click', this._onClick, this);
-		DomEvent.on(button, 'click', this._refocusOnMap, this);
 
 		this._update();
 		return button;

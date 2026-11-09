@@ -124,7 +124,6 @@ export class ZoomControl extends Control {
 		DomEvent.on(link, 'click', (e) => {
 			DomEvent.stop(e);
 			fn.call(this, e);
-			this._refocusOnMap(e);
 		});
 
 		return link;

@@ -189,14 +189,6 @@ export class Control extends Class {
 		return this;
 	}
 
-	_refocusOnMap(e) {
-		// We exclude keyboard-click event to keep the focus on the control for accessibility.
-		// The position of keyboard-click events are x=0 and y=0.
-		if (this._map && e && !(e.screenX === 0 && e.screenY === 0)) {
-			this._map.getContainer().focus({preventScroll: true, focusVisible: false});
-		}
-	}
-
 	/**
 	 * Registers this default feature on the map class, called by `MaplairMap` itself.
 	 * @internal

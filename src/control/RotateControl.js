@@ -74,7 +74,6 @@ export class RotateControl extends Control {
 		DomEvent.disableClickPropagation(button);
 		DomEvent.on(button, 'click', DomEvent.stop);
 		DomEvent.on(button, 'click', this._resetNorth, this);
-		DomEvent.on(button, 'click', this._refocusOnMap, this);
 
 		this._update();
 		map.on('rotate', this._update, this);
