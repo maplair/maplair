@@ -24,6 +24,7 @@ Ported from Leaflet (changes without author notice are by [@mourner](https://git
 * Let Shift-drag pan the map when box zoom is disabled in https://github.com/Leaflet/Leaflet/commit/79c68c6429c232fe0a1b19a5061dec9d28b7ef57
 * Use modern DOM APIs, small and mechanical code cleanups in https://github.com/Leaflet/Leaflet/commit/91633ca7a85ad7ab051d57cd8c3006c9a9295d68, https://github.com/Leaflet/Leaflet/commit/77e5f691e6746e7f11cbccadd223851254e4cd42, https://github.com/Leaflet/Leaflet/commit/99d8006ce0ae57ce5d2dfa9c009f23ceffa2e38a and https://github.com/Leaflet/Leaflet/commit/f1b911917ab0b23895883f22a62f7a0395451fe6
 * Allow dragging the map during a zoom animation in https://github.com/Leaflet/Leaflet/commit/01eb901fd8c8b2c371ddb60e544f5cf11f5225e2
+* Make view changes compose regardless of call order: `setView()` then `setZoom()`, repeated `zoomIn()` and `panTo()` then `panBy()` build on where an animation is heading; `panBy()` goes through `setView()` and is limited by `maxBounds`, in https://github.com/Leaflet/Leaflet/pull/10549
 
 #### ♿️ Accessibility
 
@@ -63,6 +64,8 @@ Ported from Leaflet (changes without author notice are by [@mourner](https://git
 * Fix tiles flickering at fractional zoom past `maxZoom` (with [@sbquinlan](https://github.com/sbquinlan)) in https://github.com/Leaflet/Leaflet/commit/32d950de72dc508789509423d165e6eb0242e8dd
 * Fix polygons disappearing with a string `weight` (with [@Falke-Design](https://github.com/Falke-Design)) in https://github.com/Leaflet/Leaflet/commit/08d2dd24157201b6706d9df40a0cc1e96c6cccf0
 * Don't throw when toggling a popup or tooltip of a layer that isn't on the map by [@Enesuygurs](https://github.com/Enesuygurs) in https://github.com/Leaflet/Leaflet/pull/10551
+* Validate `Point` and `LatLng` coordinates: numeric strings are converted, anything else that is not a number throws, in https://github.com/Leaflet/Leaflet/pull/10550
+* Keep the exact center for `invalidateSize()` without a size change, handle a missing `weight` of polygons, in https://github.com/Leaflet/Leaflet/commit/f998a71de529184495bc42ff82767a2f6ce5b7dc
 
 #### 📝 Docs
 
