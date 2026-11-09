@@ -292,12 +292,13 @@ const mapRotationMethods = {
 
 	_tryAnimatedPan(center, options) {
 		// difference between the new and current centers in pixels
-		const offset = this._rotateToContainer(this._getCenterOffset(center)._trunc());
+		// difference in the frame of the map pane, which `_panBy()` moves
+		const offset = this.latLngToLayerPoint(center)._subtract(this._getCenterLayerPoint())._round();
 
 		// don't animate too far unless animate: true specified in options
-		if (options?.animate !== true && !this.getSize().contains(offset)) { return false; }
+		if (options?.animate !== true && !this.getSize().contains(this._rotateToContainer(offset))) { return false; }
 
-		this.panBy(offset, options);
+		this._panBy(offset, options);
 
 		return true;
 	},

@@ -385,11 +385,15 @@ export class MaplairMap extends Evented {
 	 */
 	setView(center, zoom, options) {
 
-		zoom = zoom === undefined ? this._zoom : this._limitZoom(zoom);
+		zoom = zoom === undefined ? this._targetZoom() : this._limitZoom(zoom);
+		const targetCenter = center;
 		center = this._limitCenter(new LatLng(center), zoom, this.options.maxBounds);
 		options ??= {};
 
 		this._stop();
+
+		// cleared by the moveend that completes this view, so set it before anything can fire one
+		this._targetView = {center: targetCenter, zoom};
 
 		// the end of a running zoom animation would override the new view, so apply it afterwards
 		if (this._animatingZoom) {
@@ -417,7 +421,7 @@ export class MaplairMap extends Evented {
 		}
 
 		// animation didn't start, just reset the map view
-		this._resetView(center, zoom, options.pan?.noMoveStart);
+		this._resetView(this.options.worldCopyJump ? this.wrapLatLng(center) : center, zoom, options.pan?.noMoveStart);
 
 		return this;
 	}
@@ -434,7 +438,8 @@ export class MaplairMap extends Evented {
 			this._zoom = zoom;
 			return this;
 		}
-		return this.setView(this.getCenter(), zoom, {zoom: options});
+		// zoom around where a running animation is heading, so that setView(c) then setZoom(z) ends at c
+		return this.setView(this._targetView?.center ?? this.getCenter(), zoom, {zoom: options});
 	}
 
 	/**
@@ -446,7 +451,7 @@ export class MaplairMap extends Evented {
 	 */
 	zoomIn(delta, options) {
 		delta ??= this.options.zoomDelta;
-		return this.setZoom(this._zoom + delta, options);
+		return this.setZoom(this._targetZoom() + delta, options);
 	}
 
 	/**
@@ -458,7 +463,7 @@ export class MaplairMap extends Evented {
 	 */
 	zoomOut(delta, options) {
 		delta ??= this.options.zoomDelta;
-		return this.setZoom(this._zoom - delta, options);
+		return this.setZoom(this._targetZoom() - delta, options);
 	}
 
 	/**
@@ -555,7 +560,7 @@ export class MaplairMap extends Evented {
 	 * @returns {this}
 	 */
 	panTo(center, options) {
-		return this.setView(center, this._zoom, {pan: options});
+		return this.setView(center, undefined, {pan: options});
 	}
 	/**
 	 * Pans the map by a given number of pixels (animated unless `animate: false` is passed,
@@ -567,19 +572,19 @@ export class MaplairMap extends Evented {
 	 * @returns {this}
 	 */
 	panBy(offset, options) {
-		offset = Point.from(offset).round();
+		// pan from where a running animation is heading, so that panTo(c) then panBy(o) ends at c + o
+		const {center = this.getCenter(), zoom = this._zoom} = this._targetView ?? {},
+		newCenter = this.unproject(this.project(center, zoom).add(Point.from(offset).round()), zoom);
+
+		return this.setView(newCenter, zoom, {pan: options});
+	}
+
+	// Pans the map pane by `offset` pixels, see `_tryAnimatedPan()`.
+	_panBy(offset, options) {
 		options ??= {};
 
 		if (!offset.x && !offset.y) {
-			return this.fire('moveend');
-		}
-		// If we pan too far, Chrome gets issues with tiles
-		// and makes them disappear or appear in the wrong place (slightly offset) #2602
-		const size = this.getSize();
-		if (options.animate !== true && !size.contains(offset)) {
-			const center = this.unproject(this.project(this.getCenter()).add(offset));
-			this._resetView(this.options.worldCopyJump ? this.wrapLatLng(center) : center, this.getZoom());
-			return this;
+			return this._moveStart(false, true)._moveEnd(false);
 		}
 
 		if (!this._panAnim) {
@@ -595,7 +600,7 @@ export class MaplairMap extends Evented {
 		}
 
 		// with reduced motion, only short pans are animated unless animate: true is specified
-		const tooFarForReducedMotion = this._prefersReducedMotion() && !size.divideBy(2).contains(offset);
+		const tooFarForReducedMotion = this._prefersReducedMotion() && !this.getSize().divideBy(2).contains(offset);
 		if (options.animate === true || (options.animate !== false && !tooFarForReducedMotion)) {
 			this._mapPane.classList.add('maplair-pan-anim');
 
@@ -604,7 +609,7 @@ export class MaplairMap extends Evented {
 		} else {
 			this._rawPanBy(offset);
 			this._wrapWorldCopy();
-			this.fire('move').fire('moveend');
+			this.fire('move')._moveEnd(false);
 		}
 
 		return this;
@@ -630,10 +635,12 @@ export class MaplairMap extends Evented {
 			return this.setView(targetCenter, targetZoom, options);
 		}
 
-		this._stop();
-
-		targetZoom = targetZoom === undefined ? this._zoom : this._limitZoom(targetZoom);
+		targetZoom = targetZoom === undefined ? this._targetZoom() : this._limitZoom(targetZoom);
+		const requestedCenter = targetCenter;
 		targetCenter = this._limitCenter(new LatLng(targetCenter), targetZoom, this.options.maxBounds);
+
+		this._stop();
+		this._targetView = {center: requestedCenter, zoom: targetZoom};
 
 		const from = this.project(this.getCenter()),
 		to = this.project(targetCenter),
@@ -892,10 +899,14 @@ export class MaplairMap extends Evented {
 
 		const oldSize = this.getSize();
 		this._sizeChanged = true;
-		this._lastCenter = null;
 
-		const newSize = this.getSize(),
-		oldCenter = oldSize.divideBy(2).round(),
+		const newSize = this.getSize();
+
+		// keep the exact center for a no-op call (e.g. the initial resize observer callback), since recomputing
+		// it from the pane snaps it to whole pixels
+		if (!newSize.equals(oldSize)) { this._lastCenter = null; }
+
+		const oldCenter = oldSize.divideBy(2).round(),
 		newCenter = newSize.divideBy(2).round(),
 		offset = oldCenter.subtract(newCenter);
 
@@ -1750,6 +1761,9 @@ export class MaplairMap extends Evented {
 	}
 
 	_moveEnd(zoomChanged) {
+		// a zoom animation ending with a queued view isn't where the map is heading yet
+		if (!this._pendingView) { this._targetView = null; }
+
 		if (zoomChanged) {
 			this.fire('zoomend');
 		}
@@ -1759,6 +1773,7 @@ export class MaplairMap extends Evented {
 
 	_stop() {
 		this._pendingView = null;
+		this._targetView = null;
 		cancelAnimationFrame(this._flyToFrame);
 		cancelAnimationFrame(this._zoomAnimFrame);
 		this._panAnim?.stop();
@@ -2109,17 +2124,18 @@ export class MaplairMap extends Evented {
 	_onPanTransitionEnd() {
 		this._mapPane.classList.remove('maplair-pan-anim');
 		this._wrapWorldCopy();
-		this.fire('moveend');
+		this._moveEnd(false);
 	}
 
 	_tryAnimatedPan(center, options) {
 		// difference between the new and current centers in pixels
-		const offset = this._getCenterOffset(center)._trunc();
+		// rounding the difference keeps a pan exact on maps whose center is between pixels
+		const offset = this.latLngToLayerPoint(center)._subtract(this._getCenterLayerPoint())._round();
 
 		// don't animate too far unless animate: true specified in options
 		if (options?.animate !== true && !this.getSize().contains(offset)) { return false; }
 
-		this.panBy(offset, options);
+		this._panBy(offset, options);
 
 		return true;
 	}
@@ -2196,6 +2212,10 @@ export class MaplairMap extends Evented {
 			}
 		};
 		this._flyToFrame = requestAnimationFrame(frame);
+	}
+
+	_targetZoom() {
+		return this._targetView?.zoom ?? this._zoom;
 	}
 
 	// an animated zoom drops zooms from input until it ends, so hold them as long after an instant zoom too,

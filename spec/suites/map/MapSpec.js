@@ -159,8 +159,16 @@ describe('Map', () => {
 		it('returns correct center after invalidateSize (#1919)', () => {
 			const center = new LatLng(10, 10);
 			map.setView(center, 1);
+			container.style.width = '300px';
+			map.invalidateSize({pan: false});
+			expect(map.getCenter().equals(center)).to.be.false;
+		});
+
+		it('keeps a precise center after invalidateSize without a size change', () => {
+			const center = new LatLng(10.0001, 10.0001);
+			map.setView(center, 1);
 			map.invalidateSize();
-			expect(map.getCenter()).not.to.eql(center);
+			expect(map.getCenter()).to.eql(center);
 		});
 
 		it('returns a new object that can be mutated without affecting the map', () => {
@@ -243,13 +251,13 @@ describe('Map', () => {
 			expect(zoom).to.equal(13);
 		});
 
-		it('passes duration option to panBy', () => {
+		it('passes duration option to the pan animation', () => {
 			const map = new MaplairMap(document.createElement('div'), {zoom: 13, center: [0, 0]});
-			map.panBy = vi.fn();
+			map._panBy = vi.fn();
 			map.setView([51.605, -0.11], 13, {animate: true, duration: 13});
 			map.remove(); // clean up
-			expect(map.panBy).toHaveBeenCalledTimes(1);
-			expect(map.panBy.mock.calls[0][1].duration).to.eql(13);
+			expect(map._panBy).toHaveBeenCalledTimes(1);
+			expect(map._panBy.mock.calls[0][1].duration).to.eql(13);
 		});
 
 		it('prevents firing movestart noMoveStart', (done) => {
@@ -300,6 +308,76 @@ describe('Map', () => {
 	});
 
 	describe('#setZoom', () => {
+
+		describe('combined with setView', () => {
+			const settle = () => new Promise((resolve) => {
+				const check = () => (map._animatingZoom || map._zoomAnimFrame || map._panAnim?._inProgress ?
+					setTimeout(check, 20) : resolve());
+				setTimeout(check, 20);
+			});
+
+			beforeEach(() => {
+				map.setView([0, 0], 10, {animate: false});
+			});
+
+			it('ends at the same view after setView then setZoom', async () => {
+				map.setView([0.1, 0.1]);
+				map.setZoom(11);
+				await settle();
+				expect(map.getZoom()).to.equal(11);
+				expect(map.getCenter()).to.be.nearLatLng([0.1, 0.1]);
+			});
+
+			it('ends at the same view after setZoom then setView', async () => {
+				map.setZoom(11);
+				map.setView([0.1, 0.1]);
+				await settle();
+				expect(map.getZoom()).to.equal(11);
+				expect(map.getCenter()).to.be.nearLatLng([0.1, 0.1]);
+			});
+
+			it('adds up zoomIn calls made before the animation starts', async () => {
+				map.zoomIn();
+				map.zoomIn();
+				await settle();
+				expect(map.getZoom()).to.equal(12);
+			});
+
+			it('keeps the zoom after setZoom then panTo', async () => {
+				map.setZoom(11);
+				map.panTo([0.1, 0.1]);
+				await settle();
+				expect(map.getZoom()).to.equal(11);
+				expect(map.getCenter()).to.be.nearLatLng([0.1, 0.1]);
+			});
+
+			it('pans from the target after panTo then panBy', async () => {
+				const expected = map.unproject(map.project([0.1, 0.1]).add([100, 0]));
+				map.panTo([0.1, 0.1]);
+				map.panBy([100, 0]);
+				await settle();
+				expect(map.getCenter()).to.be.nearLatLng(expected, 2e-3); // pans snap to whole pixels
+			});
+
+			it('adds up chained panBy calls', async () => {
+				const expected = map.unproject(map.project(map.getCenter()).add([200, 0]));
+				map.panBy([100, 0]);
+				map.panBy([100, 0]);
+				await settle();
+				expect(map.getCenter()).to.be.nearLatLng(expected, 2e-3); // pans snap to whole pixels
+			});
+
+			it('keeps a panBy made between setView and setZoom', async () => {
+				const expected = map.unproject(map.project([0.1, 0.1]).add([100, 0]));
+				map.setView([0.1, 0.1]);
+				map.panBy([100, 0]);
+				map.setZoom(11);
+				await settle();
+				expect(map.getZoom()).to.equal(11);
+				expect(map.getCenter()).to.be.nearLatLng(expected, 2e-3); // pans snap to whole pixels
+			});
+		});
+
 		describe('when the map has not yet been loaded', () => {
 			it('set zoom level is not limited by max zoom', () => {
 				map.options.maxZoom = 10;
