@@ -98,7 +98,7 @@ export class LatLngBounds {
 			if (!sw2) { return this; }
 		} else if (!obj) {
 			return this;
-		} else if (LatLng.validate(obj)) {
+		} else if (isLatLngExpression(obj)) {
 			sw2 = ne2 = LatLng.from(obj);
 		} else {
 			return this.extend(LatLngBounds.from(obj));
@@ -215,7 +215,7 @@ export class LatLngBounds {
 	 * @returns {boolean}
 	 */
 	contains(obj) { // (LatLngBounds) or (LatLng) -> Boolean
-		if (LatLng.validate(obj)) {
+		if (isLatLngExpression(obj)) {
 			obj = LatLng.from(obj);
 		} else {
 			obj = LatLngBounds.from(obj);
@@ -310,4 +310,10 @@ export class LatLngBounds {
 	isValid() {
 		return !!(this._southWest && this._northEast);
 	}
+}
+
+// Whether `obj` has the shape of a `LatLngExpression` rather than of bounds.
+function isLatLngExpression(obj) {
+	return obj instanceof LatLng || (Array.isArray(obj) ? typeof obj[0] !== 'object' :
+		typeof obj === 'object' && obj !== null && 'lat' in obj);
 }

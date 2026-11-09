@@ -1,5 +1,5 @@
 import {Class} from '../../core/Class.js';
-import {setOptions} from '../../core/Util.js';
+import {setOptions, toNumber} from '../../core/Util.js';
 import {Point} from '../../geometry/Point.js';
 
 /** @import {PointExpression} from '../../geometry/Point.js' */
@@ -122,16 +122,15 @@ export class Icon extends Class {
 
 	_setIconStyles(img, name) {
 		const options = this.options;
-		let sizeOption = options[`${name}Size`];
+		const sizeOption = options[`${name}Size`];
 
-		if (typeof sizeOption === 'number') {
-			sizeOption = [sizeOption, sizeOption];
-		}
+		// a side that isn't a number, like 'auto' in [100, 'auto'], is left to CSS
+		const [width, height] = (typeof sizeOption === 'number' ? [sizeOption, sizeOption] :
+			Array.isArray(sizeOption) ? sizeOption : [sizeOption?.x, sizeOption?.y]).map(toNumber);
 
-		const size = Point.validate(sizeOption) && Point.from(sizeOption);
-
-		const anchorPosition = name === 'shadow' && options.shadowAnchor || options.iconAnchor || size && size.divideBy(2, true);
-		const anchor = Point.validate(anchorPosition) && Point.from(anchorPosition);
+		const anchorOption = name === 'shadow' && options.shadowAnchor || options.iconAnchor;
+		const anchor = Point.validate(anchorOption) ? Point.from(anchorOption) :
+			{x: Math.round(width / 2), y: Math.round(height / 2)};
 
 		img.className = `maplair-marker-${name} ${options.className || ''}`;
 
@@ -139,17 +138,13 @@ export class Icon extends Class {
 		const {style} = img;
 		style.marginLeft = style.marginTop = style.width = style.height = '';
 
-		if (anchor) {
-			style.marginLeft = `${-anchor.x}px`;
-			style.marginTop  = `${-anchor.y}px`;
-		}
+		if (!isNaN(anchor.x)) { style.marginLeft = `${-anchor.x}px`; }
+		if (!isNaN(anchor.y)) { style.marginTop = `${-anchor.y}px`; }
 		// the origin of the marker rotation: the anchor, which is the top left corner without one
-		style.transformOrigin = anchor ? `${anchor.x}px ${anchor.y}px` : '0 0';
+		style.transformOrigin = !isNaN(anchor.x) && !isNaN(anchor.y) ? `${anchor.x}px ${anchor.y}px` : '0 0';
 
-		if (size) {
-			style.width  = `${size.x}px`;
-			style.height = `${size.y}px`;
-		}
+		if (!isNaN(width)) { style.width = `${width}px`; }
+		if (!isNaN(height)) { style.height = `${height}px`; }
 	}
 
 	_createImg(src, el) {
