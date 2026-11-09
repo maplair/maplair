@@ -58,10 +58,9 @@ export class ZoomControl extends Control {
 
 	/**
 	 * @internal
-	 * @param {MaplairMap} map
 	 * @returns {HTMLElement}
 	 */
-	onAdd(map) {
+	onAdd() {
 		const zoomName = 'maplair-control-zoom',
 		container = DomUtil.create('div', `${zoomName} maplair-bar`),
 		options = this.options;
@@ -72,17 +71,16 @@ export class ZoomControl extends Control {
 			`${zoomName}-out`, container, e => this._zoom(e, -1));
 
 		this._updateDisabled();
-		map.on('zoomend zoomlevelschange', this._updateDisabled, this);
 
 		return container;
 	}
 
 	/**
 	 * @internal
-	 * @param {MaplairMap} map
+	 * @returns {Record<string, Function>}
 	 */
-	onRemove(map) {
-		map.off('zoomend zoomlevelschange', this._updateDisabled, this);
+	getEvents() {
+		return {zoomend: this._updateDisabled, zoomlevelschange: this._updateDisabled};
 	}
 
 	/**

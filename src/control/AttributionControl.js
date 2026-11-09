@@ -85,18 +85,21 @@ export class AttributionControl extends Control {
 
 		this._update();
 
-		map.on({layeradd: this._addLayer, layerremove: this._removeLayer}, this);
-
 		return this._container;
 	}
 
 	/**
 	 * @internal
-	 * @param {MaplairMap} map
+	 * @returns {Record<string, Function>}
 	 */
-	onRemove(map) {
-		map.off({layeradd: this._addLayer, layerremove: this._removeLayer}, this);
+	getEvents() {
+		return {layeradd: this._addLayer, layerremove: this._removeLayer};
+	}
 
+	/**
+	 * @internal
+	 */
+	onRemove() {
 		for (const layer of this._layerAttributions.keys()) {
 			this._removeLayer({layer});
 		}

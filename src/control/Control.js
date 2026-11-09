@@ -70,6 +70,9 @@ const mapControlMethods = {
  * @property {(map: MaplairMap) => void} [onRemove] Should contain all clean up code that
  * removes the listeners previously added in `onAdd`. Called on
  * [`control.remove()`](#control-remove).
+ * @property {() => Record<string, Function>} [getEvents] Should return an object like
+ * `{zoomend: this._update}` for [`on`](#evented-on). The event handlers in this object
+ * will be automatically added and removed from the map with your control.
  * @lends Control
  */
 
@@ -89,6 +92,9 @@ const controlOrders = new WeakMap();
  * * `onRemove(map: MaplairMap)` (optional) should contain all clean up code that removes
  *   the listeners previously added in [`onAdd`](#control-onadd). Called on
  *   [`control.remove()`](#control-remove).
+ * * `getEvents(): Object` (optional) should return an object like
+ *   `{zoomend: this._update}` for [`on`](#evented-on). The event handlers in this
+ *   object will be automatically added and removed from the map with your control.
  */
 export class Control extends Class {
 
@@ -165,7 +171,8 @@ export class Control extends Class {
 			(controlOrders.get(el) ?? 0) <= order :
 			(controlOrders.get(el) ?? 0) > order) ?? null);
 
-		this._map.on('unload', this.remove, this);
+		this._mapEvents = {...this.getEvents?.(), unload: this.remove};
+		map.on(this._mapEvents, this);
 
 		return this;
 	}
@@ -180,10 +187,9 @@ export class Control extends Class {
 		}
 
 		this._container.remove();
-
+		this._map.off(this._mapEvents, this);
 		this.onRemove?.(this._map);
 
-		this._map.off('unload', this.remove, this);
 		this._map = null;
 
 		return this;

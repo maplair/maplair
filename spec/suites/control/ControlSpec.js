@@ -88,4 +88,35 @@ describe('Control', () => {
 			expect(names(corner, {a, b, c, d, e})).to.equal('bdeac');
 		});
 	});
+
+	describe('#getEvents', () => {
+		it('adds the returned map listeners with the control and removes them with it', () => {
+			const onZoom = vi.fn();
+			const control = new Control();
+			control.onAdd = onAdd;
+			control.getEvents = () => ({zoomend: onZoom});
+
+			control.addTo(map);
+			map.setZoom(2, {animate: false});
+			expect(onZoom).toHaveBeenCalledOnce();
+			expect(onZoom.mock.contexts[0]).to.equal(control);
+
+			control.remove();
+			map.setZoom(3, {animate: false});
+			expect(onZoom).toHaveBeenCalledOnce();
+		});
+
+		it('removes the listeners it added even if getEvents changes', () => {
+			const onZoom = vi.fn();
+			const control = new Control();
+			control.onAdd = onAdd;
+			control.getEvents = () => ({zoomend: onZoom});
+
+			control.addTo(map);
+			control.getEvents = () => ({});
+			control.remove();
+			map.setZoom(2, {animate: false});
+			expect(onZoom).not.toHaveBeenCalled();
+		});
+	});
 });

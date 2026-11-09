@@ -62,7 +62,6 @@ export class ScaleControl extends Control {
 
 		this._addScales(options, `${className}-line`, container);
 
-		map.on(options.updateWhenIdle ? 'moveend' : 'move', this._update, this);
 		map.whenReady(this._update, this);
 
 		return container;
@@ -70,10 +69,10 @@ export class ScaleControl extends Control {
 
 	/**
 	 * @internal
-	 * @param {MaplairMap} map
+	 * @returns {Record<string, Function>}
 	 */
-	onRemove(map) {
-		map.off(this.options.updateWhenIdle ? 'moveend' : 'move', this._update, this);
+	getEvents() {
+		return {[this.options.updateWhenIdle ? 'moveend' : 'move']: this._update};
 	}
 
 	_addScales(options, className, container) {

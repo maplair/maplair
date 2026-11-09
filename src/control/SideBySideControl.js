@@ -73,7 +73,9 @@ export class SideBySideControl extends Control {
 		this._map = map;
 		this._container = this.onAdd(map);
 		map._container.append(this._container);
-		map.on('unload', this.remove, this);
+		// removed by `remove()` of `Control`
+		this._mapEvents = {unload: this.remove};
+		map.on(this._mapEvents, this);
 		return this;
 	}
 
