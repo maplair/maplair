@@ -3,7 +3,7 @@ Maplair Changelog
 
 (all changes of Leaflet without author notice are by [@mourner](https://github.com/mourner))
 
-## Unreleased
+## 4.4.0 (2026-11-09)
 
 ⚠️ Despite the minor version, this release contains breaking changes ported from Leaflet, see the refactorings below; e.g. canvas renderers no longer receive pointer events, `panBy()` is limited by `maxBounds`, and `Point` and `LatLng` throw on coordinates that are not numbers.
 
