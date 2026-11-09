@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>Announcing Leaflet 1.0 beta 1 - Maplair</title>
+	
+	
+	<meta charset="utf-8" />
+	
+
+	
+
+	<meta name="color-scheme" content="light dark">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="../../../docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="../../../docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="../../../docs/css/normalize.css" />
+	<link rel="stylesheet" href="../../../docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="../../../docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="../../../docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body>
+
+<header>
+	<h1><a href="https://maplair.org/"><picture><source srcset="../../../docs/images/logo-dark.png" media="(prefers-color-scheme: dark)" /><img src="../../../docs/images/logo.png" alt="Maplair" width="300" /></picture></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<a href="../../../index.html">Overview</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../examples.html">Tutorials</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../download.html">Download</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../plugins.html" title="Leaflet plugins, none of which is compatible with Maplair"><s>Plugins</s></a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../blog.html" class="active">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		
+<p><a href="../../../blog.html">← Back to the list of blog posts</a></p>
+
+<h2>Announcing Leaflet 1.0 beta 1</h2>
+
+<p class="post-meta">Posted on 15 July 2015 by <a href="http://agafonkin.com/en">Vladimir Agafonkin</a></p>
+
+<p>Over the past year, we set out on an ambitious quest to implement pretty much all the features Leaflet users have been asking for years, while heavily focusing on performance, code cleanup and stabilizing the API. It was an extremely challenging road with many bumps, but now we’re finally approaching the finish line.</p>
+<p>Today, I’m happy and proud to announce the release of <em>Leaflet 1.0 beta 1</em>, our first formal release after more than a year of work and a thousand commits by 36 contributors.</p>
+<h3 id="whats-new">What’s new</h3>
+<p>1.0 will be the best Leaflet release ever, bringing a <em>huge</em> amount of improvements and bugfixes. Highlights of the release include:</p>
+<ul>
+<li><em>huge</em> performance improvements, especially for vector layers</li>
+<li>flyover animations (zooming and panning in a curve with <code>map.flyTo</code>)</li>
+<li>fractional zoom level support (<code>map.setZoom(12.34)</code>)</li>
+<li>much nicer tile loading with less flickering</li>
+<li>custom pane management (including multiple vector layer panes)</li>
+<li>better support for non-standard projections</li>
+<li>more accessibility features</li>
+<li>lots of bugfixes and stability improvements</li>
+</ul>
+<p>A much more detailed list of changes can be found <a href="https://github.com/Leaflet/Leaflet/blob/main/CHANGELOG.md">in the changelog</a> (beware, it’s a long read).</p>
+<p><img src="https://camo.githubusercontent.com/07c492b230f1a3762118eaf457f0cc182fb0a98d/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f32353339352f313936353934392f32613934343166342d383263312d313165332d393836372d6230343033663266643966372e676966" alt=""></p>
+<h3 id="beta-cycle-and-upgrading">Beta cycle and upgrading</h3>
+<p>The release sports a number of minor breaking API changes, and some of the plugins will have to be updated. To make the upgrade less painful, we’re doing a short beta cycle before the final 1.0 to allow users and plugin developers to catch up to the changes while we find and fix remaining issues.</p>
+<p>A lot of effort since the last stable release has been put into refactoring. Many changes that we made are not visible to users, but make the source code much simpler and easier to understand and also open up many new possibilities for our wonderful community of plugin developers. Basically, half of Leaflet code was fully rewritten under the hood, and now the codebase is ready for some pretty extreme extensions (who just said “rotation” and “WebGL”?).</p>
+<p>We plan to write a comprehensive 1.0 upgrade guide before the release. Meanwhile, if something breaks after you upgrade to 1.0-beta, please look through the changelog. If you can’t find the corresponding breaking change, please file a GitHub issue.</p>
+<p>The API reference for 1.0 is temporarily <a href="http://mourner.github.io/Leaflet/reference.html">available here</a>. It’s built from Leaflet <code>gh-pages-master</code> branch — fixes and additions are welcome!</p>
+<h3 id="get-the-new-release">Get the new release</h3>
+<p>Test out the new release on your app, and help us catch remaining issues to bring the final 1.0 close to perfection!</p>
+<p>You can use our CDN:</p>
+<pre><code class="language-plaintext">&lt;link rel=&quot;stylesheet&quot; href=&quot;http://cdn.leafletjs.com/leaflet-1.0.0-b1/leaflet.css&quot; /&gt;
+&lt;script src=&quot;http://cdn.leafletjs.com/leaflet-1.0.0-b1/leaflet.js&quot;&gt;&lt;/script&gt;
+</code></pre>
+<p>The release is also available through NPM, Bower, and <a href="https://github.com/Leaflet/Leaflet/archive/v1.0.0-beta.1.zip">GitHub download</a>.</p>
+<h3 id="thank-you">Thank you</h3>
+<p>I’m incredibly thankful to everyone who made this release possible — by using the library, spreading the word about it, reporting issues and sending your contributions. Your help is invaluable!</p>
+<p>Special thanks to <a href="https://github.com/IvanSanchez">Iván Sánchez</a>, <a href="https://github.com/yohanboniface">Yohan Boniface</a>, <a href="https://github.com/jfirebaugh">John Firebaugh</a>, <a href="https://github.com/danzel">Dave Leaver</a>, <a href="https://github.com/patrickarlt">Patrick Arlt</a>, <a href="https://github.com/perliedman">Per Liedman</a>, <a href="https://github.com/Jakobud">Jake Wilson</a> and <a href="https://github.com/snkashis">Steve Kashishian</a> for lots of amazing contributions and support throughout the last year. All these people are now a part of the core Leaflet team. Keep’em coming!</p>
+<p><img src="https://www.reactiongifs.com/r/msy.gif" alt=""></p>
+<p>Love,<br />
+Vladimir.</p>
+
+
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/simon04">Simon Legner</a> and <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="../../../docs/js/docs.js"></script>
+
+</body>
+</html>
