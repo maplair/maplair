@@ -338,5 +338,14 @@ describe('KeyboardHandler', () => {
 			expect(document.activeElement).to.equal(container);
 			expect(container.matches(':focus-visible')).to.be.false;
 		});
+
+		it('leaves focus on a marker on a pointerdown without a mousedown, like a screen reader click', () => {
+			const marker = new Marker([0, 0]).addTo(map);
+			map.keyboard._onBlur();
+			marker._icon.focus();
+			UIEventSimulator.fire('pointerdown', container);
+
+			expect(document.activeElement).to.equal(marker._icon);
+		});
 	});
 });
