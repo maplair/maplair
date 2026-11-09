@@ -99,7 +99,6 @@ export class Draggable extends Evented {
 	_onDown(e) {
 		this._moved = false;
 
-		if (this._element.classList.contains('maplair-zoom-anim')) { return; }
 
 		const pointers = PointerEvents.getPointers().length;
 		if (pointers > 1) {

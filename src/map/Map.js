@@ -2280,7 +2280,8 @@ export class MaplairMap extends Evented {
 
 		this._animatingZoom = false;
 
-		this._move(this._animateToCenter, this._animateToZoom, undefined, true);
+		// a drag during the animation moves the map pane, so the center is read from the pane rather than restored
+		this._move(this.getCenter(), this._animateToZoom, undefined, true);
 
 		if (this._tempFireZoomEvent) {
 			this.fire('zoom');
