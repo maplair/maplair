@@ -171,10 +171,10 @@ export class DivOverlay extends Layer {
 			} else {
 				layer = this._source;
 			}
-			this._prepareOpen();
-
-			// open the overlay on the map
-			this.openOn(layer._map);
+			if (this._prepareOpen()) {
+				// open the overlay on the map
+				this.openOn(layer._map);
+			}
 		}
 		return this;
 	}
