@@ -13,6 +13,7 @@ Ported from Leaflet (changes without author notice are by [@mourner](https://git
 
 * LayersControl: the option `title` for the toggle button and the label of the list in https://github.com/Leaflet/Leaflet/commit/77387ed1483b5628603b823acd89dc8ec3956403
 * Popups and tooltips accept a `DocumentFragment` as content, which no longer disappears on reopen, by [@A350xt](https://github.com/A350xt) in https://github.com/Leaflet/Leaflet/pull/10540
+* Control: `getEvents()` for map listeners added and removed with the control in https://github.com/Leaflet/Leaflet/commit/80618956304ce64674e585025d4f1143fd62f664
 
 #### ✨ Improvements
 
@@ -22,6 +23,7 @@ Ported from Leaflet (changes without author notice are by [@mourner](https://git
 * Simplify the double tap simulation on iOS, which fires a single `dblclick` on a canvas renderer, in https://github.com/Leaflet/Leaflet/pull/10524
 * Let Shift-drag pan the map when box zoom is disabled in https://github.com/Leaflet/Leaflet/commit/79c68c6429c232fe0a1b19a5061dec9d28b7ef57
 * Use modern DOM APIs, small and mechanical code cleanups in https://github.com/Leaflet/Leaflet/commit/91633ca7a85ad7ab051d57cd8c3006c9a9295d68, https://github.com/Leaflet/Leaflet/commit/77e5f691e6746e7f11cbccadd223851254e4cd42, https://github.com/Leaflet/Leaflet/commit/99d8006ce0ae57ce5d2dfa9c009f23ceffa2e38a and https://github.com/Leaflet/Leaflet/commit/f1b911917ab0b23895883f22a62f7a0395451fe6
+* Allow dragging the map during a zoom animation in https://github.com/Leaflet/Leaflet/commit/01eb901fd8c8b2c371ddb60e544f5cf11f5225e2
 
 #### ♿️ Accessibility
 
@@ -33,6 +35,8 @@ Ported from Leaflet (changes without author notice are by [@mourner](https://git
 * Translate the default `alt` text of marker icons by [@nfreear](https://github.com/nfreear) in https://github.com/Leaflet/Leaflet/pull/10542
 * Fix keyboard clicks on markers being ignored after a drag by [@Enfiladeguide](https://github.com/Enfiladeguide) in https://github.com/Leaflet/Leaflet/pull/10529
 * Fix Escape being swallowed by the map after a popup was closed in https://github.com/Leaflet/Leaflet/commit/ee23ede2df59ac0d70007f4eea0e52d896ce817f
+* Stop refocusing the map after clicks on controls in https://github.com/Leaflet/Leaflet/commit/92e961262393a1acb697de148d43278a9e505a1b
+* Keep the focus on a marker clicked by a screen reader in https://github.com/Leaflet/Leaflet/commit/68c14509db2d12c2a2cec6df5705ae1ac6f7b464
 
 #### 🐞 Bugfixes
 
@@ -55,6 +59,10 @@ Ported from Leaflet (changes without author notice are by [@mourner](https://git
 * Don't call event listeners added during a fire of their event until the next fire, found with the specs of https://github.com/Leaflet/Leaflet/pull/10537
 * Tooltip: replace the `center` direction class when the direction changes in https://github.com/Leaflet/Leaflet/commit/8ad17baed7639eea6b515b5f474d87d63325f48f
 * Small fixes from the core `FullscreenControl` of Leaflet: the pseudo-fullscreen map ignores the margins of its container, `aria-keyshortcuts` is set as an attribute, in https://github.com/Leaflet/Leaflet/pull/10531
+* Fix the position of tooltips in right-to-left containers in https://github.com/Leaflet/Leaflet/commit/a3f5687828c83a5fe9c446f8dfe827c725c0b34d
+* Fix tiles flickering at fractional zoom past `maxZoom` (with [@sbquinlan](https://github.com/sbquinlan)) in https://github.com/Leaflet/Leaflet/commit/32d950de72dc508789509423d165e6eb0242e8dd
+* Fix polygons disappearing with a string `weight` (with [@Falke-Design](https://github.com/Falke-Design)) in https://github.com/Leaflet/Leaflet/commit/08d2dd24157201b6706d9df40a0cc1e96c6cccf0
+* Don't throw when toggling a popup or tooltip of a layer that isn't on the map by [@Enesuygurs](https://github.com/Enesuygurs) in https://github.com/Leaflet/Leaflet/pull/10551
 
 #### 📝 Docs
 
