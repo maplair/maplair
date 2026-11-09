@@ -64,7 +64,8 @@
 .maplair-pane > canvas,
 .maplair-zoom-box,
 .maplair-image-layer,
-.maplair-layer {
+.maplair-layer,
+.maplair-tooltip {
 	position: absolute;
 	left: 0;
 	top: 0;
@@ -1199,7 +1200,6 @@ path.maplair-interactive:focus:not(:focus-visible) {
 /* Tooltip */
 /* Base styles for the element that has a tooltip */
 .maplair-tooltip {
-	position: absolute;
 	padding: var(--maplair-spacing-50);
 	background-color: var(--maplair-background-color-base);
 	border: var(--maplair-border-width-base) solid var(--maplair-background-color-base);
