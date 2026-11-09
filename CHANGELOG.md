@@ -5,6 +5,8 @@ Maplair Changelog
 
 ## Unreleased
 
+⚠️ Despite the minor version, this release contains breaking changes ported from Leaflet, see the refactorings below; e.g. canvas renderers no longer receive pointer events, `panBy()` is limited by `maxBounds`, and `Point` and `LatLng` throw on coordinates that are not numbers.
+
 ### Leaflet, since 4.3.0
 
 Ported from Leaflet (changes without author notice are by [@mourner](https://github.com/mourner))
@@ -15,6 +17,15 @@ Ported from Leaflet (changes without author notice are by [@mourner](https://git
 * Popups and tooltips accept a `DocumentFragment` as content, which no longer disappears on reopen, by [@A350xt](https://github.com/A350xt) in https://github.com/Leaflet/Leaflet/pull/10540
 * Control: `getEvents()` for map listeners added and removed with the control in https://github.com/Leaflet/Leaflet/commit/80618956304ce64674e585025d4f1143fd62f664
 
+#### ✨ Refactorings (⚠️ Breaking Changes)
+
+* The `<canvas>` element of a canvas renderer no longer receives pointer events, so DOM listeners added to it don't fire; listen on the layers or the map instead. The private `Canvas` methods `_onClick()`, `_onPointerMove()`, `_handlePointerOut()` and `_fireEvent()` are gone; the map calls `_layerAt()`, in https://github.com/Leaflet/Leaflet/pull/10523
+* `panBy()` goes through `setView()`: it is limited by `maxBounds`, stops running animations and is applied after a running zoom animation; the pan animation itself is the private `_panBy()`, in https://github.com/Leaflet/Leaflet/pull/10549
+* `Point` and `LatLng` convert numeric strings and throw on coordinates that are not numbers, e.g. `new LatLng(50, '')` or `new Point(5, 'auto')`, which became `0` or a string before; `validate()` matches the constructors, in https://github.com/Leaflet/Leaflet/pull/10550
+* `DomEvent.on(el, 'dblclick', …)` no longer simulates double taps on iOS for elements outside a map, in https://github.com/Leaflet/Leaflet/pull/10524
+* The Marker option `alt` defaults to `undefined`, which is the translation of `'Marker'`, in https://github.com/Leaflet/Leaflet/pull/10542
+* Controls no longer refocus the map after a click, and the private `Control._refocusOnMap()` is gone, in https://github.com/Leaflet/Leaflet/commit/92e961262393a1acb697de148d43278a9e505a1b
+
 #### ✨ Improvements
 
 * Make the canvas renderer transparent to pointer events, so that SVG paths, markers, overlays and other canvas renderers below it get clicks and hovers, in https://github.com/Leaflet/Leaflet/pull/10523
@@ -24,7 +35,7 @@ Ported from Leaflet (changes without author notice are by [@mourner](https://git
 * Let Shift-drag pan the map when box zoom is disabled in https://github.com/Leaflet/Leaflet/commit/79c68c6429c232fe0a1b19a5061dec9d28b7ef57
 * Use modern DOM APIs, small and mechanical code cleanups in https://github.com/Leaflet/Leaflet/commit/91633ca7a85ad7ab051d57cd8c3006c9a9295d68, https://github.com/Leaflet/Leaflet/commit/77e5f691e6746e7f11cbccadd223851254e4cd42, https://github.com/Leaflet/Leaflet/commit/99d8006ce0ae57ce5d2dfa9c009f23ceffa2e38a and https://github.com/Leaflet/Leaflet/commit/f1b911917ab0b23895883f22a62f7a0395451fe6
 * Allow dragging the map during a zoom animation in https://github.com/Leaflet/Leaflet/commit/01eb901fd8c8b2c371ddb60e544f5cf11f5225e2
-* Make view changes compose regardless of call order: `setView()` then `setZoom()`, repeated `zoomIn()` and `panTo()` then `panBy()` build on where an animation is heading; `panBy()` goes through `setView()` and is limited by `maxBounds`, in https://github.com/Leaflet/Leaflet/pull/10549
+* Make view changes compose regardless of call order: `setView()` then `setZoom()`, repeated `zoomIn()` and `panTo()` then `panBy()` build on where an animation is heading, in https://github.com/Leaflet/Leaflet/pull/10549
 
 #### ♿️ Accessibility
 
@@ -112,7 +123,7 @@ Ported from Leaflet (changes without author notice are by [@mourner](https://git
 * Marker: the option `rotation` (in degrees, `null` for none) with `setRotation()` and `getRotation()` rotates the icon around its anchor, rotates the popup and tooltip anchors and hides the shadow; it replaces the optional module `maplair/marker-rotation` with `rotationAngle`, `rotationOrigin`, `setRotationAngle()` and `setRotationOrigin()`, `rotateWithView` is part of `maplair/map-rotation`, in https://github.com/Leaflet/Leaflet/pull/10489
 * `latLngToLayerPoint()` and `latLngToContainerPoint()` keep subpixel precision instead of rounding, so polylines and polygons don't zigzag along whole pixels, in https://github.com/Leaflet/Leaflet/pull/10494
 * Various small cleanups, e.g. KeyboardHandler reads `keyboardPanDelta` and `zoomDelta` on each key, Canvas draws ellipses with `ellipse()`, in https://github.com/Leaflet/Leaflet/pull/10490
-* Only stop the propagation of clicks opening a popup in https://github.com/Leaflet/Leaflet/commit/{prop}
+* Only stop the propagation of clicks opening a popup in https://github.com/Leaflet/Leaflet/commit/d10454a56bab4b6df1f8eba729c4d818a71c118f
 
 #### 🐞 Bugfixes
 
@@ -123,11 +134,11 @@ Ported from Leaflet (changes without author notice are by [@mourner](https://git
 * Fix Circle `getBounds()` throwing when not added to a map (with [@Schleuse](https://github.com/Schleuse)) in https://github.com/Leaflet/Leaflet/commit/4c7958990cfe586dfc05eede518694b81fe9f32c
 * Fix FeatureGroup `getBounds()` throwing for layers without a position, include nested layer groups (with [@rafaelgallani](https://github.com/rafaelgallani)) in https://github.com/Leaflet/Leaflet/commit/ee37d374222822139af43580906a966186bccebf
 * Fix an error when removing the map or a GridLayer on tile load (with [@pierreeurope](https://github.com/pierreeurope)) in https://github.com/Leaflet/Leaflet/commit/62c5f52791c5055ef4c94e508525b554ab158d15
-* Fix an error with empty `subdomains` in https://github.com/Leaflet/Leaflet/commit/{sub}
+* Fix an error with empty `subdomains` in https://github.com/Leaflet/Leaflet/commit/8861b5e4faac7243590017a7248f34f2c3d7762c
 * Switch the tooltip handlers when rebinding a tooltip with different options, open it on focus after the layer is added again, don't fire `tileerror` for tiles pruned with `errorTileUrl` in https://github.com/Leaflet/Leaflet/pull/10490
-* Fix the map drifting under the cursor on zoom in https://github.com/Leaflet/Leaflet/commit/{drift}
-* Close popups on Escape more reliably, e.g. with the focus on a marker in https://github.com/Leaflet/Leaflet/commit/{esc}
-* Isolate the stacking context of the map container in https://github.com/Leaflet/Leaflet/commit/{iso}
+* Fix the map drifting under the cursor on zoom in https://github.com/Leaflet/Leaflet/commit/de0be695f714e3c0cef3097b27761a16283c3de7
+* Close popups on Escape more reliably, e.g. with the focus on a marker in https://github.com/Leaflet/Leaflet/commit/aee4d5c907ae57ea83c3b2e9d6ed9f170c6fe174
+* Isolate the stacking context of the map container in https://github.com/Leaflet/Leaflet/commit/611c300542de053bd9335204a4357677cbd76250
 * Accept marker icons without `createShadow()` in https://github.com/Leaflet/Leaflet/pull/10489
 * Make Draggable work outside a map in https://github.com/Leaflet/Leaflet/commit/2e770eb84bafca2368eef611922497cd0b3a81de
 * LayersControl stops listening to map clicks when removed, TileLayer halves a `Point` tileSize with `detectRetina`, `isLoading()` returns a boolean in https://github.com/Leaflet/Leaflet/commit/1dc1b4ea0ffd779e15f8a5aeeb27dd15e597cd1f
@@ -139,16 +150,16 @@ Ported from Leaflet (changes without author notice are by [@mourner](https://git
 
 * Fix doc typos and outdated links (with [@Kumar007-7](https://github.com/Kumar007-7)) in https://github.com/Leaflet/Leaflet/commit/ff2715f95cd8542eaf8706b9459620bedb3baec7
 * Use viewport units in the mobile example by [@pierreeurope](https://github.com/pierreeurope) in https://github.com/Leaflet/Leaflet/pull/10120
-* Fix a few stale things in the plugin guide in https://github.com/Leaflet/Leaflet/commit/{guide}
+* Fix a few stale things in the plugin guide in https://github.com/Leaflet/Leaflet/commit/2869685c537efcaebad72723a907d7c01c226f56
 
 #### 🔧 Workflow
 
 * Minify `maplair.css` with lightningcss in https://github.com/Leaflet/Leaflet/pull/10493
-* Reduce Dependabot noise with a better config in https://github.com/Leaflet/Leaflet/commit/{dep}
+* Reduce Dependabot noise with a better config in https://github.com/Leaflet/Leaflet/commit/8dc45a82932d8c5682ee1a00a62ed54eb6533b50
 
 #### 🧪 Tests
 
-* Fix test flakiness on slow runners in https://github.com/Leaflet/Leaflet/commit/{flaky}
+* Fix test flakiness on slow runners in https://github.com/Leaflet/Leaflet/commit/d958d3ced7208e4e8bfa3ad80e2b7432317a0e84
 
 ## 4.1.0 (2026-10-28)
 
