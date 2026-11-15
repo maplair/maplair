@@ -1,5 +1,5 @@
 import {expect, vi} from 'vite-plus/test';
-import {DomUtil, GridLayer, LatLng, MaplairMap, Marker, Point} from 'maplair';
+import {DomUtil, GridLayer, LatLng, LatLngBounds, MaplairMap, Marker, Point, SimpleCRS} from 'maplair';
 import UIEventSimulator from 'ui-event-simulator';
 import {createContainer, removeMapContainer, Finger} from '../../SpecHelper.js';
 
@@ -521,6 +521,28 @@ describe('DragHandler', () => {
 			await new Finger('touch').moveTo(220, 220).moveBy(200, 0);
 			expect(map.getCenter()).to.eql(center);
 			expect(map.getZoom()).to.eql(zoom);
+		});
+	});
+
+	describe('maxBoundsViscosity', () => {
+		it('limits the drag by all four corners when the projection rotates the axes', () => {
+			// SimpleCRS with the axes rotated by 30°
+			const cos = Math.cos(Math.PI / 6), sin = Math.sin(Math.PI / 6);
+			class RotatedCRS extends SimpleCRS {
+				static projection = {
+					project: ll => new Point(cos * ll.lng - sin * ll.lat, sin * ll.lng + cos * ll.lat),
+					unproject: p => new LatLng(cos * p.y - sin * p.x, cos * p.x + sin * p.y)
+				};
+			}
+			const bounds = new LatLngBounds([0, 0], [10, 2]);
+			map = new MaplairMap(container, {crs: RotatedCRS, maxBounds: bounds, maxBoundsViscosity: 1});
+			map.setView([5, 1], 7);
+
+			map.dragging._onDragStart({originalEvent: new PointerEvent('pointermove')});
+			// each corner can be dragged to the top left of the map
+			for (const corner of [bounds.getNorthWest(), bounds.getNorthEast(), bounds.getSouthEast(), bounds.getSouthWest()]) {
+				expect(map.dragging._offsetLimit.contains(map.latLngToContainerPoint(corner).multiplyBy(-1))).to.be.true;
+			}
 		});
 	});
 

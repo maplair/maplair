@@ -116,12 +116,12 @@ export class DragHandler extends Handler {
 		map._stop();
 		map._setUserEvent(e.originalEvent);
 		if (this._map.options.maxBounds && this._map.options.maxBoundsViscosity) {
-			const bounds = LatLngBounds.from(this._map.options.maxBounds);
+			const bounds = LatLngBounds.from(this._map.options.maxBounds),
+			// any corner can be an extreme when the projection rotates the axes
+			corners = [bounds.getNorthWest(), bounds.getNorthEast(), bounds.getSouthEast(), bounds.getSouthWest()],
+			{min, max} = new Bounds(corners.map(c => this._map.latLngToContainerPoint(c)));
 
-			this._offsetLimit = new Bounds(
-				this._map.latLngToContainerPoint(bounds.getNorthWest()).multiplyBy(-1),
-				this._map.latLngToContainerPoint(bounds.getSouthEast()).multiplyBy(-1)
-					.add(this._map.getSize()));
+			this._offsetLimit = new Bounds(max.multiplyBy(-1), min.multiplyBy(-1).add(this._map.getSize()));
 
 			this._viscosity = Math.min(1.0, Math.max(0.0, this._map.options.maxBoundsViscosity));
 		} else {

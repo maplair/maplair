@@ -2109,10 +2109,9 @@ export class MaplairMap extends Evented {
 
 	// returns offset needed for pxBounds to get inside maxBounds at a specified zoom
 	_getBoundsOffset(pxBounds, maxBounds, zoom) {
-		const projectedMaxBounds = new Bounds(
-			this.project(maxBounds.getNorthEast(), zoom),
-			this.project(maxBounds.getSouthWest(), zoom)
-		),
+		// any corner can be an extreme when the projection rotates the axes
+		const corners = [maxBounds.getNorthWest(), maxBounds.getNorthEast(), maxBounds.getSouthEast(), maxBounds.getSouthWest()],
+		projectedMaxBounds = new Bounds(corners.map(c => this.project(c, zoom))),
 		minOffset = projectedMaxBounds.min.subtract(pxBounds.min),
 		maxOffset = projectedMaxBounds.max.subtract(pxBounds.max),
 
