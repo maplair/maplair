@@ -73,6 +73,21 @@ describe('Renderer', () => {
 			expect(map.getPane('custom').querySelector('svg')).to.be.instanceOf(SVGElement);
 		});
 
+		it('keeps a custom pane SVG renderer full size despite a max-width on svg in the page', () => {
+			const style = document.createElement('style');
+			style.textContent = 'svg { max-width: 10px; max-height: 10px; }';
+			document.head.append(style);
+			map = new MaplairMap(container);
+			map.setView([55.8, 37.6], 6);
+			map.createPane('custom');
+
+			new Circle([55.8, 37.6], {pane: 'custom'}).addTo(map);
+			const {maxWidth, maxHeight} = getComputedStyle(map.getPane('custom').querySelector('svg'));
+			style.remove();
+
+			expect([maxWidth, maxHeight]).to.eql(['none', 'none']);
+		});
+
 		it('logs an error for the removed preferCanvas option', () => {
 			const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
 			try {
