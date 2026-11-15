@@ -254,6 +254,35 @@ describe('Canvas', () => {
 			expect(preclickSpy).not.toHaveBeenCalled();
 		});
 
+		it('fires click on a layer pressed and released on', async () => {
+			const spy = vi.fn();
+			layer.on('click', spy);
+			map.dragging.disable();
+			await new Finger().moveTo(50, 50).down().moveBy(2, 2).up();
+			expect(spy).toHaveBeenCalledOnce();
+		});
+
+		it('does not fire click on a layer the press started outside of', async () => {
+			const layerSpy = vi.fn();
+			const otherSpy = vi.fn();
+			const mapSpy = vi.fn();
+			const other = new Polygon([p2ll(200, 0), p2ll(200, 100), p2ll(300, 100), p2ll(300, 0)]).addTo(map);
+			layer.on('click', layerSpy);
+			other.on('click', otherSpy);
+			map.on('click', mapSpy);
+			map.dragging.disable();
+
+			// Finger doesn't click after a drag, but browsers click on the map, so simulate it
+			await new Finger().moveTo(150, 150).down().moveTo(50, 50).up();
+			UIEventSimulator.fireAt('click', 50, 50, {detail: 1});
+			await new Finger().moveTo(250, 50).down().moveTo(50, 50).up();
+			UIEventSimulator.fireAt('click', 50, 50, {detail: 1});
+
+			expect(layerSpy).not.toHaveBeenCalled();
+			expect(otherSpy).not.toHaveBeenCalled();
+			expect(mapSpy).toHaveBeenCalledTimes(2);
+		});
+
 		it('does fire pointerdown on layer after dragging map', async () => { // #7775
 			const spy = vi.fn();
 			const center = p2ll(300, 300);

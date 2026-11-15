@@ -1935,8 +1935,17 @@ export class MaplairMap extends Evented {
 		hovered = this._hoveredCanvasLayer,
 		skip = type === 'pointerover' || type === 'pointerout' || type.startsWith('key') ||
 			this._animatingZoom || move && this.dragging?.moving(),
-		layer = skip ? undefined : this._canvasLayerAt(e, type === 'click'),
 		leftMap = type === 'pointerout' && !this._container.contains(e.relatedTarget);
+		let layer = skip ? undefined : this._canvasLayerAt(e, type === 'click');
+
+		// a click is fired on what both the press and the release were on, but for canvas layers the browser only sees
+		// the map, so a pointer click goes to a canvas layer only if the press was on that layer too
+		if (type === 'pointerdown') {
+			this._pressedCanvasLayer = skip ? undefined : layer ?? null;
+		} else if (type === 'click' && e.detail > 0 && this._pressedCanvasLayer !== undefined) {
+			if (layer !== this._pressedCanvasLayer) { layer = undefined; }
+			this._pressedCanvasLayer = undefined;
+		}
 
 		if (layer !== hovered && (move && !skip || leftMap)) {
 			if (hovered) { this._fireDOMEvent(e, 'pointerout', [hovered]); }
