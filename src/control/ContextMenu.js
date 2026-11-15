@@ -158,7 +158,8 @@ export class ContextMenu extends Class {
 
 		for (const item of this._items) {
 			if (item === '-') {
-				DomUtil.create('div', 'maplair-contextmenu-separator', container).setAttribute('role', 'separator');
+				// with the implicit role separator
+				DomUtil.create('hr', 'maplair-contextmenu-separator', container);
 				continue;
 			}
 			const button = DomUtil.create('button', 'maplair-contextmenu-item', container);

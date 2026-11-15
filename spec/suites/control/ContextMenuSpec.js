@@ -44,7 +44,7 @@ describe('ContextMenu', () => {
 		expect(items().map(i => i.textContent)).to.eql(['A', 'B']);
 		expect(items()[0].getAttribute('role')).to.equal('menuitem');
 		expect(items()[1].disabled).to.be.true;
-		expect(menu().querySelector('[role=separator]')).to.be.ok;
+		expect(menu().querySelector('hr.maplair-contextmenu-separator')).to.be.ok;
 		expect(document.activeElement).to.equal(items()[0]);
 	});
 
