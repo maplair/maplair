@@ -5,7 +5,7 @@ import {I18n} from '../core/I18n.js';
 /** @import {ControlOptions} from './Control.js' */
 /** @import {MaplairMap} from '../map/Map.js' */
 
-const compass = '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16"><path d="M8 1 11 8H5z" fill="#d22"/><path d="M8 15 5 8h6z" fill="#999"/></svg>';
+const compass = '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16"><path d="M8 1 11 8H5z" fill="#d22"/><path d="M8 15 5 8h6z" fill="currentColor"/></svg>';
 
 /**
  * Options of `RotateControl`.
