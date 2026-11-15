@@ -1,6 +1,7 @@
 import {expect, vi} from 'vite-plus/test';
 import {LayersControl, MaplairMap, Marker, TileLayer, Util} from 'maplair';
 import UIEventSimulator from 'ui-event-simulator';
+import {userEvent} from 'vite-plus/test/browser';
 import {createContainer, removeMapContainer} from '../SpecHelper.js';
 
 const groupPattern = /^([^<>()]+) \((.+)\)$/;
@@ -251,10 +252,11 @@ describe('LayersControl', () => {
 	});
 
 	describe('collapse when collapsed: true', () => {
-		it('expands on "Enter" keydown when toggle is focused', () => {
+		it('expands on "Enter" keydown when toggle is focused', async () => {
 			const layersCtrl = new LayersControl(null, null, {collapsed: true}).addTo(map);
 			const toggle = layersCtrl._container.querySelector('.maplair-control-layers-toggle');
-			UIEventSimulator.fire('keydown', toggle, {code: 'Enter'});
+			toggle.focus();
+			await userEvent.keyboard('{Enter}');
 			expect(map._container.querySelector('.maplair-control-layers-expanded')).to.be.ok;
 		});
 
@@ -321,6 +323,105 @@ describe('LayersControl', () => {
 				expect(map._container.querySelector('.maplair-control-layers-expanded')).to.be.null;
 				done();
 			}, 10);
+		});
+	});
+
+	describe('keyboard', () => {
+		const isExpanded = control => control._container.classList.contains('maplair-control-layers-expanded');
+		const toggleOf = control => control._container.querySelector('.maplair-control-layers-toggle');
+		const escape = (el) => {
+			const e = new KeyboardEvent('keydown', {key: 'Escape', bubbles: true, cancelable: true});
+			el.dispatchEvent(e);
+			return e;
+		};
+		const wait = ms => new Promise((resolve) => { setTimeout(resolve, ms); });
+
+		it('moves focus to the list when the focused toggle is activated with Enter or Space', async () => {
+			const overlay = new Marker([0, 0]);
+			const control = new LayersControl(null, {'Marker': overlay}).addTo(map);
+			const toggle = toggleOf(control);
+
+			toggle.focus();
+			await userEvent.keyboard('{Enter}');
+			expect(isExpanded(control)).to.be.true;
+			expect(document.activeElement).to.equal(control._section);
+
+			escape(control._section);
+			expect(document.activeElement).to.equal(toggle);
+
+			await userEvent.keyboard(' ');
+			expect(isExpanded(control)).to.be.true;
+			expect(document.activeElement).to.equal(control._section);
+			expect(map.hasLayer(overlay)).to.be.false;
+		});
+
+		it('does not move focus when the toggle is activated without focus', () => {
+			const control = new LayersControl({'Layer 1': new TileLayer('')}).addTo(map);
+			map._container.focus();
+
+			toggleOf(control).click();
+
+			expect(isExpanded(control)).to.be.true;
+			expect(document.activeElement).to.equal(map._container);
+		});
+
+		it('collapses on Escape and moves focus to the toggle', () => {
+			const control = new LayersControl({'Layer 1': new TileLayer(''), 'Layer 2': new TileLayer('')}).addTo(map).expand();
+			const toggle = toggleOf(control);
+			const input = control._baseLayersList.getElementsByTagName('input')[1];
+
+			input.focus();
+			expect(escape(input).defaultPrevented).to.be.true;
+			expect(isExpanded(control)).to.be.false;
+			expect(document.activeElement).to.equal(toggle);
+
+			// nothing to close, so Escape is left to others
+			expect(escape(toggle).defaultPrevented).to.be.false;
+			expect(isExpanded(control)).to.be.false;
+		});
+
+		it('collapses on Escape without closing an open popup', () => {
+			const control = new LayersControl({'Layer 1': new TileLayer('')}).addTo(map).expand();
+			const input = control._baseLayersList.getElementsByTagName('input')[0];
+			map.openPopup('Popup', map.getCenter());
+
+			input.focus();
+			escape(input);
+
+			expect(isExpanded(control)).to.be.false;
+			expect(map._popup.isOpen()).to.be.true;
+		});
+
+		it('collapses on Escape without waiting for collapseDelay', () => {
+			const control = new LayersControl({'Layer 1': new TileLayer('')}, null, {collapseDelay: 1000}).addTo(map).expand();
+			const input = control._baseLayersList.getElementsByTagName('input')[0];
+
+			input.focus();
+			escape(input);
+
+			expect(isExpanded(control)).to.be.false;
+			expect(document.activeElement).to.equal(toggleOf(control));
+		});
+
+		it('keeps a single delayed collapse, so that expanding cancels it', async () => {
+			const control = new LayersControl({'Layer 1': new TileLayer('')}, null, {collapseDelay: 20}).addTo(map);
+
+			UIEventSimulator.fire('pointerenter', control._container, {pointerType: 'mouse'});
+			UIEventSimulator.fire('pointerleave', control._container, {pointerType: 'mouse'});
+			UIEventSimulator.fire('click', map._container);
+			UIEventSimulator.fire('pointerenter', control._container, {pointerType: 'mouse'});
+			await wait(40);
+			expect(isExpanded(control)).to.be.true;
+		});
+
+		it('does not collapse on Escape when collapsed: false', () => {
+			const control = new LayersControl({'Layer 1': new TileLayer('')}, null, {collapsed: false}).addTo(map);
+			const input = control._baseLayersList.getElementsByTagName('input')[0];
+
+			input.focus();
+			expect(escape(input).defaultPrevented).to.be.false;
+			expect(isExpanded(control)).to.be.true;
+			expect(document.activeElement).to.equal(input);
 		});
 	});
 

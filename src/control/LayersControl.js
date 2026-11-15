@@ -307,6 +307,7 @@ export class LayersControl extends Control {
 		if (this.options.inline) {
 			return this;
 		}
+		clearTimeout(this._collapseDelayTimeout);
 		if (this.options.collapseDelay > 0) {
 			this._collapseDelayTimeout = setTimeout(() => {
 				this._container.classList.remove('maplair-control-layers-expanded');
@@ -335,21 +336,11 @@ export class LayersControl extends Control {
 
 		const section = this._section = DomUtil.create('fieldset', `${className}-list`);
 		section.setAttribute('aria-label', this._getTitle());
+		section.tabIndex = -1;
 
-		if (collapsed) {
-			this._map.on('click', this.collapse, this);
-
-			DomEvent.on(container, {
-				pointerenter: this._expandSafely,
-				// on touch devices, pointerleave fires while clicking a checkbox, which shouldn't collapse the control
-				pointerleave(e) {
-					if (e.pointerType !== 'touch') { this.collapse(); }
-				}
-			}, this);
-		}
-
+		let link;
 		if (!this.options.inline) {
-			const link = this._layersLink = DomUtil.create('button', `${className}-toggle`, container);
+			link = this._layersLink = DomUtil.create('button', `${className}-toggle`, container);
 			link.type = 'button';
 			link.title = this._getTitle();
 			link.setAttribute('aria-label', link.title);
@@ -361,21 +352,36 @@ export class LayersControl extends Control {
 				link.replaceChildren(toggleContent);
 			}
 
-			DomEvent.on(link, {
-				keydown(e) {
-					if (e.code === 'Enter') {
-						this._expandSafely();
-					}
-				},
-				// Certain screen readers intercept the key event and instead send a click event
-				click(e) {
-					e.preventDefault();
-					this._expandSafely();
-				}
-			}, this);
+			// also for Enter and Space, and for screen readers that send a click instead of the key event
+			DomEvent.on(link, 'click', (e) => {
+				e.preventDefault();
+				const focused = document.activeElement === link;
+				this._expandSafely();
+				if (focused) { section.focus(); }
+			});
 		}
 
-		if (!collapsed) {
+		if (collapsed) {
+			this._map.on('click', this.collapse, this);
+
+			DomEvent.on(container, {
+				pointerenter: this._expandSafely,
+				// on touch devices, pointerleave fires while clicking a checkbox, which shouldn't collapse the control
+				pointerleave(e) {
+					if (e.pointerType !== 'touch') { this.collapse(); }
+				}
+			}, this);
+
+			// the list only takes focus while expanded; skip `collapseDelay`, as the toggle is hidden until then
+			DomEvent.on(section, 'keydown', (e) => {
+				if (e.key === 'Escape') {
+					clearTimeout(this._collapseDelayTimeout);
+					container.classList.remove(`${className}-expanded`);
+					link.focus();
+					e.preventDefault();
+				}
+			});
+		} else {
 			this.expand();
 		}
 
