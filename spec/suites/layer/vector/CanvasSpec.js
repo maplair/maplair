@@ -360,6 +360,18 @@ describe('Canvas', () => {
 		});
 	});
 
+	describe('#_fillStroke', () => {
+		it('skips the stroke for a string weight of 0', () => {
+			const ctx = {stroke: vi.fn(), setLineDash() {}};
+			const renderer = map.getRenderer(new Polyline([]));
+			renderer._fillStroke(ctx, new Polyline([], {weight: 0}));
+			renderer._fillStroke(ctx, new Polyline([], {weight: '0'}));
+			expect(ctx.stroke).not.toHaveBeenCalled();
+			renderer._fillStroke(ctx, new Polyline([], {weight: '2'}));
+			expect(ctx.stroke).toHaveBeenCalledOnce();
+		});
+	});
+
 	describe('#bringToBack', () => {
 		it('is a no-op for layers not on a map', () => {
 			const path = new Polyline([[1, 2], [3, 4], [5, 6]]);
