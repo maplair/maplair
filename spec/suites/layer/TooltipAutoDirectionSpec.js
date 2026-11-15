@@ -68,6 +68,19 @@ describe('Tooltip direction: auto', () => {
 			expect(rect.right).to.be.closeTo(container.getBoundingClientRect().left + 300 - anchorX - 6, 1);
 		});
 
+		it('attaches a tooltip above a marker to the top of its icon', () => {
+			const latlng = map.containerPointToLatLng([190, 200]);
+			const marker = new Marker(latlng).addTo(map)
+				.bindTooltip('A rather long tooltip text that needs space', {permanent: true});
+			const tooltip = marker.getTooltip();
+			expect(directionOf(tooltip)).to.equal('top');
+			const rect = tooltip.getElement().getBoundingClientRect(),
+			mapRect = container.getBoundingClientRect();
+			// the default icon is 41px high with the anchor at the bottom
+			expect(rect.bottom).to.be.closeTo(mapRect.top + 200 - 41 - 6, 1);
+			expect((rect.left + rect.right) / 2).to.be.closeTo(mapRect.left + 190, 1);
+		});
+
 		it('opens above a tooltip too wide for both sides', () => {
 			const tooltip = openTooltip([190, 200], {content: 'A rather long tooltip text that needs space'});
 			expect(directionOf(tooltip)).to.equal('top');

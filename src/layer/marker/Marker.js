@@ -595,8 +595,8 @@ export class Marker extends Layer {
 		return this._rotateAnchor(this.options.icon.options.popupAnchor);
 	}
 
-	_getTooltipAnchor() {
-		return this._rotateAnchor(this.options.icon.options.tooltipAnchor);
+	_getTooltipAnchor(direction) {
+		return this._rotateAnchor(this.options.icon._getTooltipAnchor(direction));
 	}
 
 	// anchors are offsets from the icon anchor, which is also the rotation origin

@@ -19,8 +19,11 @@ import {Point} from '../../geometry/Point.js';
  * can be set in CSS with negative margins.
  * @property {PointExpression} [popupAnchor=[0, 0]] The coordinates of the point from
  * which popups will "open", relative to the icon anchor.
- * @property {PointExpression} [tooltipAnchor=[0, 0]] The coordinates of the point from
- * which tooltips will "open", relative to the icon anchor.
+ * @property {PointExpression} [tooltipAnchor=[0, 0]] Where tooltips opening to the side
+ * attach, relative to the icon anchor: `x` is how far to the right (mirrored for tooltips
+ * opening to the left) and `y` how far down. Tooltips opening to the top or bottom attach
+ * to the middle of the icon's top or bottom edge, and `center` ones to the middle of the
+ * icon at the `y` height.
  * @property {string} [shadowUrl] The URL to the icon shadow image. If not specified, no
  * shadow image will be created.
  * @property {string} [shadowRetinaUrl] The URL to a retina sized version of the shadow
@@ -120,17 +123,34 @@ export class Icon extends Class {
 		return img;
 	}
 
-	_setIconStyles(img, name) {
+	// The size and anchor of the icon or shadow in pixels; a side that isn't a number, like
+	// 'auto' in [100, 'auto'], is left to CSS and comes out as NaN.
+	_getBox(name) {
 		const options = this.options;
 		const sizeOption = options[`${name}Size`];
-
-		// a side that isn't a number, like 'auto' in [100, 'auto'], is left to CSS
 		const [width, height] = (typeof sizeOption === 'number' ? [sizeOption, sizeOption] :
 			Array.isArray(sizeOption) ? sizeOption : [sizeOption?.x, sizeOption?.y]).map(toNumber);
 
 		const anchorOption = name === 'shadow' && options.shadowAnchor || options.iconAnchor;
 		const anchor = Point.validate(anchorOption) ? Point.from(anchorOption) :
 			{x: Math.round(width / 2), y: Math.round(height / 2)};
+		return {width, height, anchor};
+	}
+
+	// Where a tooltip opening in the given direction attaches, relative to the icon anchor.
+	_getTooltipAnchor(direction) {
+		const {x, y} = Point.from(this.options.tooltipAnchor);
+		if (direction === 'left') { return new Point(-x, y); }
+		if (direction === 'center') { return new Point(0, y); }
+		if (direction !== 'top' && direction !== 'bottom') { return new Point(x, y); }
+
+		const {height, anchor} = this._getBox('icon');
+		return new Point(0, (direction === 'top' ? -anchor.y : height - anchor.y) || 0);
+	}
+
+	_setIconStyles(img, name) {
+		const options = this.options;
+		const {width, height, anchor} = this._getBox(name);
 
 		img.className = `maplair-marker-${name} ${options.className || ''}`;
 

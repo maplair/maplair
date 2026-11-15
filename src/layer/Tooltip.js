@@ -35,7 +35,8 @@ function clampTip(tipShift, size) {
  * Options of `Tooltip`.
  * @typedef {object} TooltipOptions
  * @property {string} [pane='tooltipPane'] `Map pane` where the tooltip will be added.
- * @property {PointExpression} [offset=[0, 0]] Optional offset of the tooltip position.
+ * @property {PointExpression} [offset=[0, 0]] Optional offset of the tooltip position, in
+ * pixels. Mirrored horizontally when an `auto` tooltip opens to the left.
  * @property {'right'|'left'|'top'|'bottom'|'center'|'auto'} [direction='auto']
  * Direction where to open the tooltip. Possible values are: `right`, `left`, `top`,
  * `bottom`, `center`, `auto`. `auto` chooses the direction with enough space when
@@ -472,17 +473,14 @@ export class Tooltip extends DivOverlay {
 		const container = this._container,
 		tooltipWidth = container.offsetWidth,
 		tooltipHeight = container.offsetHeight,
-		offset = new Point(this.options.offset),
-		anchor = this._getAnchor();
+		offset = new Point(this.options.offset);
 
 		if (!(direction in directions)) {
-			({direction, shift} = this._getAutoPlacement(pos, offset, anchor, tooltipWidth, tooltipHeight));
-			if (direction === 'left') {
-				// mirror the offset and anchor, which are meant for the right side
-				offset.x = -offset.x;
-				anchor.x = -anchor.x;
-			}
+			({direction, shift} = this._getAutoPlacement(pos, offset, tooltipWidth, tooltipHeight));
+			// mirror the offset, which is meant for the right side
+			if (direction === 'left') { offset.x = -offset.x; }
 		}
+		const anchor = this._getAnchor(direction);
 
 		const [fx, fy] = directions[direction];
 		pos = pos.subtract(new Point(tooltipWidth * fx, tooltipHeight * fy, true)).add(offset).add(anchor).add(shift);
@@ -507,17 +505,20 @@ export class Tooltip extends DivOverlay {
 	// Chooses the direction of an `auto` tooltip by the available space:
 	// preferably the side towards the center, otherwise the opposite side,
 	// above or below. The tooltip is shifted along that side to stay in view.
-	_getAutoPlacement(pos, offset, anchor, width, height) {
+	_getAutoPlacement(pos, offset, width, height) {
 		const area = this._getAutoArea(),
 		point = this._map.layerPointToContainerPoint(pos),
-		x = point.x + offset.x + anchor.x,
-		y = point.y + offset.y + anchor.y,
-		// the space for each direction, see `direction` for the mirrored left side
-		space = {
-			right: area.max.x - x - width - tipSize,
-			left: point.x - offset.x - anchor.x - area.min.x - width - tipSize,
-			top: y - area.min.y - height - tipSize,
-			bottom: area.max.y - y - height - tipSize
+		// where the tooltip attaches for each direction, with the offset mirrored on the left side
+		at = {};
+		for (const d of ['right', 'left', 'top', 'bottom']) {
+			at[d] = point.add(this._getAnchor(d)).add(d === 'left' ? [-offset.x, offset.y] : offset);
+		}
+		// the space for each direction
+		const space = {
+			right: area.max.x - at.right.x - width - tipSize,
+			left: at.left.x - area.min.x - width - tipSize,
+			top: at.top.y - area.min.y - height - tipSize,
+			bottom: area.max.y - at.bottom.y - height - tipSize
 		};
 
 		if (!this._autoDirection) {
@@ -529,6 +530,7 @@ export class Tooltip extends DivOverlay {
 		}
 
 		const direction = this._autoDirection,
+		{x, y} = at[direction],
 		shift = direction === 'top' || direction === 'bottom' ?
 			new Point(shiftInto(x - width / 2, width, area.min.x, area.max.x), 0) :
 			new Point(0, shiftInto(y - height / 2, height, area.min.y, area.max.y));
@@ -577,9 +579,9 @@ export class Tooltip extends DivOverlay {
 		this._setPosition(pos);
 	}
 
-	_getAnchor() {
-		// Where should we anchor the tooltip on the source layer?
-		return new Point(this._source?._getTooltipAnchor && !this.options.sticky ? this._source._getTooltipAnchor() : [0, 0]);
+	// Where the tooltip opening in the given direction attaches on the source layer
+	_getAnchor(direction) {
+		return new Point(this._source?._getTooltipAnchor && !this.options.sticky ? this._source._getTooltipAnchor(direction) : [0, 0]);
 	}
 
 	/**

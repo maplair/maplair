@@ -489,6 +489,21 @@ describe('Marker', () => {
 			expect(marker._getPopupAnchor()).to.eql([1, -34]);
 		});
 
+		it('places the tooltip anchor according to the tooltip direction', () => {
+			const marker = new Marker([0, 0]).addTo(map);
+			const anchor = direction => marker._getTooltipAnchor(direction);
+
+			// the default icon is 41px high with the anchor at the bottom, and tooltipAnchor [16, -28]
+			expect(anchor('right')).to.eql({x: 16, y: -28});
+			expect(anchor('left')).to.eql({x: -16, y: -28});
+			expect(anchor('top')).to.eql({x: 0, y: -41});
+			expect(anchor('bottom')).to.eql({x: 0, y: 0});
+			expect(anchor('center')).to.eql({x: 0, y: -28});
+
+			marker.setRotation(90);
+			expect(anchor('top').distanceTo([41, 0])).to.be.below(1e-9);
+		});
+
 		it('moves an open popup on setRotation', () => {
 			const marker = new Marker([0, 0]).addTo(map).bindPopup('Hi').openPopup();
 			const container = marker.getPopup()._container;
