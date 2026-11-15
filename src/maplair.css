@@ -449,8 +449,15 @@ path.maplair-interactive:focus:not(:focus-visible) {
 		color: var(--maplair-color-base);
 		background-position: 50% 50%;
 		background-repeat: no-repeat;
-		&:hover,
-		&:focus {
+
+		/* not after a tap on touch screens, where it would stick */
+		@media (hover: hover) {
+			&:hover {
+				background-color: var(--maplair-background-color-interactive-subtle--hover);
+			}
+		}
+
+		&:focus-visible {
 			background-color: var(--maplair-background-color-interactive-subtle--hover);
 		}
 
@@ -726,8 +733,10 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	line-height: var(--maplair-line-height-small);
 	cursor: pointer;
 
-	&:hover {
-		background-color: var(--maplair-background-color-interactive-subtle--hover);
+	@media (hover: hover) {
+		&:hover {
+			background-color: var(--maplair-background-color-interactive-subtle--hover);
+		}
 	}
 
 	&[aria-selected="true"] {
@@ -872,7 +881,12 @@ path.maplair-interactive:focus:not(:focus-visible) {
 .maplair-control-attribution a {
 	text-decoration: none;
 
-	&:hover,
+	@media (hover: hover) {
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+
 	&:focus {
 		text-decoration: underline;
 	}
@@ -1167,7 +1181,12 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	padding: 0;
 	cursor: pointer;
 
-	&:hover,
+	@media (hover: hover) {
+		&:hover {
+			color: var(--maplair-color-base);
+		}
+	}
+
 	&:focus {
 		color: var(--maplair-color-base);
 	}
