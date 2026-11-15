@@ -171,7 +171,10 @@ export class ContextMenu extends Class {
 			});
 		}
 
-		DomEvent.on(container, 'keydown', this._onKeyDown, this);
+		DomEvent.on(container, {
+			keydown: this._onKeyDown,
+			focusout: this._onFocusOut
+		}, this);
 		DomEvent.disableClickPropagation(container);
 		DomEvent.disableScrollPropagation(container);
 		DomEvent.on(container, 'contextmenu', DomEvent.stop);
@@ -186,6 +189,11 @@ export class ContextMenu extends Class {
 		y = Math.min(e.clientY, viewport.clientHeight - container.offsetHeight);
 		container.style.left = `${Math.max(0, x)}px`;
 		container.style.top = `${Math.max(0, y)}px`;
+	}
+
+	// Closes the menu when the focus leaves it, e.g. by tabbing out of it
+	_onFocusOut(e) {
+		if (!this._container.contains(e.relatedTarget)) { this.close(); }
 	}
 
 	// Arrow keys move the focus to the next or previous item (wrapping around), Home and End to the first or last

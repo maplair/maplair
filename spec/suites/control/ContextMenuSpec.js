@@ -99,9 +99,34 @@ describe('ContextMenu', () => {
 	it('moves the focus to the last item with ArrowUp when no item has it', () => {
 		new ContextMenu([{text: 'A'}, {text: 'B'}, {text: 'C'}]).addTo(map);
 		contextmenu(container, 10, 10);
-		document.activeElement.blur();
+		// the focus on the menu itself, not on an item
+		menu().tabIndex = -1;
+		menu().focus();
 		UIEventSimulator.fire('keydown', menu(), {key: 'ArrowUp'});
 		expect(document.activeElement).to.equal(items()[2]);
+	});
+
+	it('returns the focus to where it was when it closes', async () => {
+		const outside = document.createElement('button');
+		container.append(outside);
+		outside.focus();
+		const contextMenu = new ContextMenu([{text: 'A'}, {text: 'B'}]).addTo(map);
+		contextmenu(container, 10, 10);
+		expect(document.activeElement).to.equal(items()[0]);
+
+		UIEventSimulator.fire('click', items()[1]);
+		await vi.waitFor(() => expect(document.activeElement).to.equal(outside));
+		expect(contextMenu.isOpen()).to.be.false;
+	});
+
+	it('closes when the focus leaves it', () => {
+		const outside = document.createElement('button');
+		container.append(outside);
+		const contextMenu = new ContextMenu([{text: 'A'}]).addTo(map);
+		contextmenu(container, 10, 10);
+		outside.focus();
+		expect(contextMenu.isOpen()).to.be.false;
+		expect(document.activeElement).to.equal(outside);
 	});
 
 	it('stays within the viewport', () => {
