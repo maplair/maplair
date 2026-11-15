@@ -203,4 +203,22 @@ describe('BoxZoomHandler', () => {
 		expect(map.getCenter()).to.be.nearLatLng([50, 100]);
 	});
 
+	it('cancels a box being drawn when disabled', async () => {
+		const boxEndSpy = vi.fn();
+		map.on('boxzoomend', boxEndSpy);
+
+		finger.moveTo(100, 100).down(shift);
+		await finger.moveBy(100, 100, shift);
+		expect(map.getContainer().querySelectorAll('.maplair-zoom-box').length).to.equal(1);
+
+		map.boxZoom.disable();
+		expect(map.getContainer().querySelectorAll('.maplair-zoom-box').length).to.equal(0);
+		expect(map.getContainer().classList.contains('maplair-crosshair')).to.be.false;
+		expect(map.boxZoom.moved()).to.be.false;
+
+		await finger.up();
+		expect(boxEndSpy).not.toHaveBeenCalled();
+		expect(map.getZoom()).to.equal(3);
+	});
+
 });

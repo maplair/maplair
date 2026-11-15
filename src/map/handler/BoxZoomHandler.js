@@ -60,6 +60,9 @@ export class BoxZoomHandler extends Handler {
 	removeHooks() {
 		DomEvent.off(this._map._container, 'pointerdown', this._onPointerDown, this);
 		this._map._container.classList.remove('maplair-box-zoom');
+		// cancel a box being drawn, as Escape does
+		this._finish();
+		this._resetState();
 	}
 
 	/**
