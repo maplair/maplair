@@ -14,8 +14,8 @@ const arrows = {ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowD
  * The handler of `Marker` which makes the markers draggable, see the
  * [`dragging`](#marker-dragging) property of markers and its `draggable` option.
  *
- * @fires Marker#dragstart {MaplairEvent} Fired when the user starts dragging the marker.
- * @fires Marker#movestart {MaplairEvent} Fired when the marker starts moving (because of
+ * @fires Marker#dragstart {DraggableEvent} Fired when the user starts dragging the marker.
+ * @fires Marker#movestart {DraggableEvent} Fired when the marker starts moving (because of
  * dragging).
  * @fires Marker#drag {MarkerMoveEvent} Fired repeatedly while the user drags the marker.
  * @fires Marker#dragend {DragEndEvent} Fired when the user stops dragging the marker.
@@ -115,15 +115,15 @@ export class MarkerDrag extends Handler {
 		}
 	}
 
-	_onDragStart() {
+	_onDragStart({originalEvent}) {
 		this._oldLatLng = this._marker.getLatLng();
 
 		// When using ES6 imports it could not be set when `Popup` was not imported as well
 		this._marker.closePopup?.();
 
 		this._marker
-			.fire('movestart')
-			.fire('dragstart');
+			.fire('movestart', {originalEvent})
+			.fire('dragstart', {originalEvent});
 	}
 
 	_onPreDrag(e) {
@@ -185,7 +185,7 @@ export class MarkerDrag extends Handler {
 				draggable._startPos = DomUtil.getPosition(draggable._element);
 				draggable._moved = draggable._moving = true;
 				this._keyOffset = new Point(0, 0);
-				draggable.fire('dragstart');
+				draggable.fire('dragstart', {originalEvent: k});
 			}
 
 			// in container pixels, which the map rotation (if any) turns to the frame of the rotated pane

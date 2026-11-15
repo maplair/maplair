@@ -15,9 +15,13 @@ import * as PointerEvents from './DomEvent.PointerEvents.js';
  */
 
 /**
- * The event object of `dragstart`, `predrag` and `drag` of `Draggable`.
+ * The event object of `dragstart`, `predrag` and `drag` of `Draggable`, and of
+ * `movestart` and `dragstart` of draggable markers.
  * @typedef {object} DraggableEvent
- * @property {PointerEvent} originalEvent The DOM event of the pointer which drags.
+ * @property {PointerEvent|KeyboardEvent} originalEvent The DOM event of the pointer which
+ * drags: for `dragstart`, the `pointermove` that moved the pointer past `clickTolerance`
+ * (not the `pointerdown`), or the `keydown` of an arrow key that moves a focused
+ * draggable marker.
  * @extends MaplairEvent
  */
 
