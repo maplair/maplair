@@ -188,8 +188,8 @@ export class FullscreenControl extends Control {
 
 		this._button.innerHTML = fullscreen ? this.options.exitText : this.options.enterText;
 		this._button.title = title;
+		// an action named by what it does next, without aria-pressed, which would contradict the changing label
 		this._button.setAttribute('aria-label', title);
-		this._button.setAttribute('aria-pressed', fullscreen);
 	}
 
 	/**

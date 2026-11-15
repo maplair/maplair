@@ -49,7 +49,7 @@ describe('FullscreenControl', () => {
 		expect(map.fullscreenControl).to.be.instanceOf(FullscreenControl);
 		expect(button()).not.to.equal(null);
 		expect(button().title).to.equal('View fullscreen');
-		expect(button().getAttribute('aria-pressed')).to.equal('false');
+		expect(button().hasAttribute('aria-pressed')).to.be.false;
 	});
 
 	it('enters and exits fullscreen using the Fullscreen API', () => {
@@ -65,8 +65,7 @@ describe('FullscreenControl', () => {
 		expect(container.classList.contains('maplair-fullscreen')).to.be.true;
 		expect(container.classList.contains('maplair-pseudo-fullscreen')).to.be.false;
 		expect(enter).toHaveBeenCalledOnce();
-		expect(button().title).to.equal('Exit fullscreen');
-		expect(button().getAttribute('aria-pressed')).to.equal('true');
+		expect(button().getAttribute('aria-label')).to.equal('Exit fullscreen');
 
 		UIEventSimulator.fire('click', button());
 		expect(document.exitFullscreen).toHaveBeenCalledOnce();
