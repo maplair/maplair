@@ -165,7 +165,7 @@ export class ScrollWheelZoomHandler extends Handler {
 		this._pinch = null;
 
 		if (map.options.zoomAnimation && Math.abs(zoom - map.getZoom()) > 1e-9) {
-			map._animateZoom(center, zoom, true, map.options.zoomSnap);
+			map._animateZoom(center, zoom, map.options.zoomSnap);
 		} else {
 			// `_moveStart()` has already been called on the first event
 			map._move(center, zoom)._moveEnd(true);

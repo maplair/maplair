@@ -379,7 +379,7 @@ export class GridLayer extends Layer {
 	_initContainer() {
 		if (this._container) { return; }
 
-		this._container = DomUtil.create('div', `maplair-layer ${this.options.className ?? ''}`);
+		this._container = DomUtil.create('div', `maplair-layer maplair-zoom-animated ${this.options.className ?? ''}`);
 		this._container.classList.toggle('maplair-pixelated', !!this.options.pixelated);
 		this._updateZIndex();
 
@@ -475,9 +475,6 @@ export class GridLayer extends Layer {
 			level.zoom = zoom;
 
 			this._setZoomTransform(level, map.getCenter(), map.getZoom());
-
-			// force reading offsetWidth so the browser considers the newly added element for transition
-			Util.falseFn(level.el.offsetWidth);
 
 			this._onCreateLevel(level);
 		}
@@ -585,7 +582,15 @@ export class GridLayer extends Layer {
 	}
 
 	_animateZoom(e) {
+		const map = this._map, center = map.getCenter(), zoom = map.getZoom(), scale = map.getZoomScale(e.zoom, zoom);
+
 		this._setView(e.center, e.zoom, true, e.noUpdate);
+
+		// the levels stay put and the container zooms as a whole, since a level created just now would only
+		// transition after a forced style recalc, which covers every pending style change on the page
+		this._setZoomTransforms(center, zoom);
+		DomUtil.setTransform(this._container, map._getNewPixelOrigin(center, zoom).multiplyBy(scale)
+			.subtract(map._getNewPixelOrigin(e.center, e.zoom)), scale);
 	}
 
 	// The zoom of the tiles for the map zoom `zoom`, or undefined outside of the
@@ -641,6 +646,7 @@ export class GridLayer extends Layer {
 	}
 
 	_setZoomTransforms(center, zoom) {
+		if (this._container.style.transform) { this._container.style.transform = ''; }
 		for (const level of Object.values(this._levels)) {
 			this._setZoomTransform(level, center, zoom);
 		}
@@ -679,7 +685,11 @@ export class GridLayer extends Layer {
 	}
 
 	_onMoveEnd() {
-		if (!this._map || this._map._animatingZoom) { return; }
+		const map = this._map;
+		if (!map || map._animatingZoom) { return; }
+
+		// a zoom animation that ends at the same zoom (e.g. a pinch snapping back) fires no zoom event
+		if (this._container.style.transform) { this._setZoomTransforms(map.getCenter(), map.getZoom()); }
 
 		this._update();
 	}

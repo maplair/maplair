@@ -201,7 +201,7 @@ describe('Map', () => {
 			map.on('zoomend', zoomend);
 			for (const zoom of [13, 12, 11, 10, 9, 8, 7, 6, 7, 8, 9, 10, 11, 12, 13, 14]) {
 				map.setZoom(zoom, {animate: true});
-				vi.advanceTimersByTime(300);
+				vi.advanceTimersByTime(1100);
 			}
 			vi.useRealTimers();
 
@@ -286,7 +286,7 @@ describe('Map', () => {
 			beforeEach(() => {
 				map.setView([0, 0], 13);
 				vi.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
-				map._animateZoom(new LatLng(0.0005, 0.0005), 14, true);
+				map._animateZoom(new LatLng(0.0005, 0.0005), 14);
 			});
 
 			afterEach(() => {
@@ -296,14 +296,14 @@ describe('Map', () => {
 			it('applies the latest view after the animation', () => {
 				map.setView([0.001, 0.001], 15, {animate: false});
 				map.setView([0.002, 0.002], 16, {animate: false});
-				vi.advanceTimersByTime(250);
+				vi.advanceTimersByTime(1000);
 				expect(map.getZoom()).to.equal(16);
 				expect(map.getCenter()).to.be.nearLatLng([0.002, 0.002]);
 			});
 
 			it('applies a new center after the animation', () => {
 				map.setView([0.001, 0.001], undefined, {animate: false});
-				vi.advanceTimersByTime(250);
+				vi.advanceTimersByTime(1000);
 				expect(map.getZoom()).to.equal(14);
 				expect(map.getCenter()).to.be.nearLatLng([0.001, 0.001]);
 			});

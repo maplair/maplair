@@ -234,6 +234,39 @@ describe('GridLayer', () => {
 		});
 	});
 
+	describe('zoom animation', () => {
+		beforeEach(createClock);
+		afterEach(restoreClock);
+
+		it('zooms the container as a whole and resets it when the animation ends', () => {
+			const grid = new GridLayer().addTo(map.setView([0, 0], 10));
+			const oldTransform = grid._levels[10].el.style.transform;
+
+			map._moveStart(true, false);
+			map._animateZoom(map.getCenter(), 11);
+			expect(grid._container.style.transform).to.contain('scale(2)');
+			expect(grid._levels[10].el.style.transform).to.equal(oldTransform);
+			expect(grid._levels[11].el.style.transform).to.contain('scale(0.5)');
+
+			vi.advanceTimersByTime(1000);
+			expect(grid._container.style.transform).to.equal('');
+			expect(grid._levels[10].el.style.transform).to.contain('scale(2)');
+			expect(grid._levels[11].el.style.transform).to.contain('scale(1)');
+		});
+
+		it('resets the container when the animation ends at the same zoom', () => {
+			const grid = new GridLayer().addTo(map.setView([0, 0], 10));
+
+			map._moveStart(true, false);
+			map._animateZoom(map.containerPointToLatLng([500, 400]), 10, true);
+			expect(grid._container.style.transform).to.contain('translate3d(-100px, -100px, 0px)');
+
+			vi.advanceTimersByTime(1000);
+			expect(grid._container.style.transform).to.equal('');
+			expect(grid._levels[10].el.style.transform).to.contain('translate3d(-100px, -100px, 0px)');
+		});
+	});
+
 	describe('#getMaxZoom, #getMinZoom', () => {
 		beforeEach(() => {
 			map.setView([0, 0], 1);
@@ -732,19 +765,18 @@ describe('GridLayer', () => {
 						// No tile should be unloaded yet.
 						expect(counts.tileunload).to.equal(0);
 
-						// Wait > 250msec for the zoom animation to complete,
-						// which triggers the tile pruning
-						// Animated zoom takes 1 frame + 250ms before firing "zoom" event
+						// Wait for the zoom animation to end, which triggers the tile pruning. Without 'transitionend' under fake timers,
+						// it ends on the map's 1s fallback timer and fires "zoom"
 						// => GridLayer._resetView => GridLayer._setView => _pruneTiles
 						// However, this "load" event callback executes synchronously,
 						// i.e. _tileReady still did not have a chance to prepare the
 						// setTimeout(250) for pruning after the end of the fade-in animation.
-						vi.advanceTimersByTime(300);
+						vi.advanceTimersByTime(1000);
 						// At 501ms, the fade-in of the z11 tiles finishes and flags them as "active" (without
-						// pruning during the zoom animation). At 551ms, the pruneTile from the end of the zoom
+						// pruning during the zoom animation). At ~1300ms, the pruneTile from the end of the zoom
 						// animation executes and unloads all 16 tiles from z10, since z11 tiles now cover them.
 						expect(counts.tileunload).to.equal(16);
-						// Date.now() is 601.
+						// Date.now() is 1301.
 						done();
 					});
 
@@ -814,11 +846,11 @@ describe('GridLayer', () => {
 						// No tile should be unloaded yet.
 						expect(counts.tileunload).to.equal(0);
 
-						// Wait > 250msec for the zoom animation to complete,
+						// Wait for the zoom animation to end on the map's 1s fallback timer,
 						// which triggers the tile pruning, but there are no
 						// tiles to prune yet (z11 tiles are all in bounds).
-						vi.advanceTimersByTime(300);
-						// Date.now() is 601.
+						vi.advanceTimersByTime(1000);
+						// Date.now() is 1301.
 
 						// At the end of the animation, all 16 tiles from z10
 						// are loading.

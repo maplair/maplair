@@ -1518,7 +1518,16 @@ export class MaplairMap extends Evented {
 	 * @returns {Point}
 	 */
 	pointerEventToContainerPoint(e) {
-		return DomEvent.getPointerPosition(e, this._container);
+		if (!this._animatingZoom) { return DomEvent.getPointerPosition(e, this._container); }
+
+		// reading the container's layout recalcs styles, which a zoom animation keeps changing for every animated
+		// element; the container doesn't move during one, so read it once per animation
+		if (!this._containerRect) {
+			const el = this._container, {x, y, boundingClientRect: r} = DomUtil.getScale(el);
+			this._containerRect = {x, y, left: r.left + el.clientLeft * x, top: r.top + el.clientTop * y};
+		}
+		const c = this._containerRect;
+		return new Point((e.clientX - c.left) / c.x, (e.clientY - c.top) / c.y);
 	}
 
 	/**
@@ -2277,24 +2286,22 @@ export class MaplairMap extends Evented {
 			}
 			this
 				._moveStart(true, options.noMoveStart ?? false)
-				._animateZoom(center, zoom, true);
+				._animateZoom(center, zoom);
 		});
 
 		return true;
 	}
 
-	_animateZoom(center, zoom, startAnim, noUpdate) {
+	_animateZoom(center, zoom, noUpdate) {
 		if (!this._mapPane) { return; }
 
-		if (startAnim) {
-			this._animatingZoom = true;
+		this._animatingZoom = true;
 
-			// remember what center/zoom to set after animation
-			this._animateToCenter = center;
-			this._animateToZoom = zoom;
+		// remember what center/zoom to set after animation
+		this._animateToCenter = center;
+		this._animateToZoom = zoom;
 
-			this._mapPane.classList.add('maplair-zoom-anim');
-		}
+		this._mapPane.classList.add('maplair-zoom-anim');
 
 		this.fire('zoomanim', {
 			center,
@@ -2308,13 +2315,17 @@ export class MaplairMap extends Evented {
 
 		this._move(this._animateToCenter, this._animateToZoom, undefined, true);
 
-		// Work around webkit not firing 'transitionend', see https://github.com/Leaflet/Leaflet/issues/3689, 2693
-		this._transitionEndTimer = setTimeout(this._onZoomTransitionEnd.bind(this), zoomAnimDuration);
+		// in case 'transitionend' never comes (Leaflet #3689, #2693); the transition only starts once the browser
+		// renders the next frame, which takes ~200 ms with 5k markers, so a timer of the transition's length cuts it short
+		clearTimeout(this._transitionEndTimer);
+		this._transitionEndTimer = setTimeout(this._onZoomTransitionEnd.bind(this), 1000);
 	}
 
 	_onZoomTransitionEnd() {
 		if (!this._animatingZoom) { return; }
 
+		clearTimeout(this._transitionEndTimer);
+		this._containerRect = null;
 		this._mapPane?.classList.remove('maplair-zoom-anim');
 
 		this._animatingZoom = false;

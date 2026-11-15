@@ -187,7 +187,7 @@ export class TapDragZoomHandler extends Handler {
 		const map = this._map,
 		zoom = map._limitZoom(this._zoom);
 		if (map.options.zoomAnimation) {
-			map._animateZoom(this._center, zoom, true, map.options.zoomSnap);
+			map._animateZoom(this._center, zoom, map.options.zoomSnap);
 		} else {
 			// `_moveStart()` has already been called on the first move
 			map._move(this._center, zoom)._moveEnd(true);

@@ -153,7 +153,7 @@ export class MapSync {
 		for (const other of this._followers(map)) {
 			if (other._zoomAnimated) {
 				this._animating.add(other);
-				other._animateZoom(e.center, this._zoomFor(other, map, e.zoom), true, e.noUpdate);
+				other._animateZoom(e.center, this._zoomFor(other, map, e.zoom), e.noUpdate);
 			}
 		}
 	}
