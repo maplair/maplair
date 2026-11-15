@@ -181,6 +181,24 @@ describe('Canvas', () => {
 			expect(bottomSpy).toHaveBeenCalledOnce();
 		});
 
+		it('hit-tests canvas renderers at the same z-index in DOM order, topmost first', () => {
+			const samePane = new Polygon(latLngs, {renderer: new Canvas()}).addTo(map);
+			map.createPane('custom'); // same z-index as the overlay pane, later in the DOM
+			const customPane = new Polygon(latLngs, {renderer: new Canvas({pane: 'custom'})}).addTo(map);
+			const spies = [layer, samePane, customPane].map((l) => {
+				const spy = vi.fn();
+				l.on('click', spy);
+				return spy;
+			});
+
+			UIEventSimulator.fireAt('click', 50, 50);
+			expect(spies.map(spy => spy.mock.calls.length)).to.eql([0, 0, 1]);
+
+			customPane.remove();
+			UIEventSimulator.fireAt('click', 50, 50);
+			expect(spies.map(spy => spy.mock.calls.length)).to.eql([0, 1, 1]);
+		});
+
 		it('changes the cursor and fires pointerout when moving onto a marker', () => {
 			const marker = new Marker(p2ll(150, 150)).addTo(map);
 			const outSpy = vi.fn();
