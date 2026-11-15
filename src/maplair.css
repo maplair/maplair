@@ -1325,3 +1325,33 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	top: 0;
 	left: 0;
 }
+
+/* Forced Colors Mode (e.g. Windows contrast themes) replaces backgrounds and drops box shadows, so edges and states
+   that rely on them get system colors instead; the colors of map data carry meaning and are kept */
+
+@media (forced-colors: active) {
+	.maplair-control-text,
+	.maplair-control-legend,
+	.maplair-control-minimap,
+	.maplair-contextmenu,
+	.maplair-keyboard-help,
+	.maplair-popup-content-wrapper,
+	.maplair-control-layers-toggle {
+		border: var(--maplair-border-width-base) solid CanvasText;
+	}
+
+	.maplair-control-search-result[aria-selected="true"] {
+		background-color: Highlight;
+		color: HighlightText;
+	}
+
+	.maplair-bar button.maplair-disabled {
+		color: GrayText;
+	}
+
+	.maplair-pane > svg,
+	.maplair-control-legend-patch,
+	.maplair-control-legend-bar {
+		forced-color-adjust: none;
+	}
+}
