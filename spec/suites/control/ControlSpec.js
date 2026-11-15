@@ -1,5 +1,5 @@
 import {expect, vi} from 'vite-plus/test';
-import {Control, DomUtil, MaplairMap} from 'maplair';
+import {Control, DomUtil, MaplairMap, ZoomControl} from 'maplair';
 import {createContainer, removeMapContainer} from '../SpecHelper.js';
 
 describe('Control', () => {
@@ -118,5 +118,19 @@ describe('Control', () => {
 			map.setZoom(2, {animate: false});
 			expect(onZoom).not.toHaveBeenCalled();
 		});
+	});
+
+	it('zoom control can be disabled and enabled while not on a map', () => {
+		expect(() => new ZoomControl().disable().enable()).to.not.throw();
+
+		const zoom = map.zoomControl.remove();
+		zoom.disable();
+		zoom.addTo(map);
+		expect(zoom._zoomInButton.classList.contains('maplair-disabled')).to.be.true;
+
+		zoom.remove();
+		zoom.enable();
+		zoom.addTo(map);
+		expect(zoom._zoomInButton.classList.contains('maplair-disabled')).to.be.false;
 	});
 });

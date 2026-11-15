@@ -129,6 +129,7 @@ export class ZoomControl extends Control {
 
 	_updateDisabled() {
 		const map = this._map;
+		if (!map) { return; } // `onAdd` applies the state
 		for (const [button, limit] of [[this._zoomInButton, map.getMaxZoom()], [this._zoomOutButton, map.getMinZoom()]]) {
 			const disabled = this._disabled || map._zoom === limit;
 			button.classList.toggle('maplair-disabled', disabled);
