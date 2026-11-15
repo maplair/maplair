@@ -120,6 +120,15 @@ describe('ContextMenu', () => {
 		expect(contextMenu.isOpen()).to.be.false;
 	});
 
+	it('moves the focus to the item under the pointer', () => {
+		new ContextMenu([{text: 'A'}, {text: 'B', disabled: true}, {text: 'C'}]).addTo(map);
+		contextmenu(container, 10, 10);
+		UIEventSimulator.fire('pointermove', items()[2]);
+		expect(document.activeElement).to.equal(items()[2]);
+		UIEventSimulator.fire('pointermove', items()[1]);
+		expect(document.activeElement).to.equal(items()[2]);
+	});
+
 	it('closes when the focus leaves it', () => {
 		const outside = document.createElement('button');
 		container.append(outside);
