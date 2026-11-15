@@ -301,10 +301,9 @@
 
 /* animated dashes of paths, see the dashSpeed option */
 .maplair-dash-animated {
-	animation: maplair-dash var(--maplair-dash-duration) linear infinite;
-
-	@media (prefers-reduced-motion: reduce) {
-		animation: none;
+	/* only animated for users who don't prefer reduced motion */
+	@media (prefers-reduced-motion: no-preference) {
+		animation: maplair-dash var(--maplair-dash-duration) linear infinite;
 	}
 }
 
