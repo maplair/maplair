@@ -296,6 +296,19 @@ const layerPopupMethods = {
  * el.textContent = untrustedString;
  * marker.bindPopup(el);
  * ```
+ *
+ * Browsers with the [Sanitizer API](https://developer.mozilla.org/docs/Web/API/HTML_Sanitizer_API)
+ * can keep the safe markup of untrusted HTML instead:
+ *
+ * ```js
+ * const el = document.createElement('div');
+ * if ('setHTML' in el) {
+ * 	el.setHTML(untrustedHTML); // removes scripts, event handlers and other unsafe markup
+ * } else {
+ * 	el.textContent = untrustedHTML;
+ * }
+ * marker.bindPopup(el);
+ * ```
  */
 export class Popup extends DivOverlay {
 

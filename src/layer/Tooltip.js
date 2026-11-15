@@ -351,6 +351,19 @@ const layerTooltipMethods = {
  * marker.bindTooltip(el);
  * ```
  *
+ * Browsers with the [Sanitizer API](https://developer.mozilla.org/docs/Web/API/HTML_Sanitizer_API)
+ * can keep the safe markup of untrusted HTML instead:
+ *
+ * ```js
+ * const el = document.createElement('div');
+ * if ('setHTML' in el) {
+ * 	el.setHTML(untrustedHTML); // removes scripts, event handlers and other unsafe markup
+ * } else {
+ * 	el.textContent = untrustedHTML;
+ * }
+ * marker.bindTooltip(el);
+ * ```
+ *
  * Note about tooltip offset. Maplair takes two options in consideration
  * for computing tooltip offsetting:
  * - the `offset` Tooltip option: it defaults to [0, 0], and it's specific to one tooltip.
