@@ -73,6 +73,17 @@ describe('Map: devicePixelRatio changes', () => {
 		expect(tileUrls(layer).every(url => url.startsWith('3/') && !url.endsWith('@2x'))).to.be.true;
 	});
 
+	it('switches a tile layer with detectRetina to retina tiles from a ratio of 1.5', () => {
+		const layer = new TileLayer(tileUrl, {detectRetina: true, maxZoom: 18}).addTo(map);
+		changePixelRatio(1.25);
+		expect(layer.getTileSize().x).to.equal(256);
+		expect(tileUrls(layer).every(url => url.startsWith('3/') && url.endsWith('@2x'))).to.be.true;
+
+		changePixelRatio(1.5);
+		expect(layer.getTileSize().x).to.equal(128);
+		expect(tileUrls(layer).every(url => url.startsWith('4/'))).to.be.true;
+	});
+
 	it('loads {r} tiles of a tile layer without detectRetina', () => {
 		const layer = new TileLayer(tileUrl).addTo(map);
 		changePixelRatio(2);

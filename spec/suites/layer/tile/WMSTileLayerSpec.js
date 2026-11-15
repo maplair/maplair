@@ -1,4 +1,4 @@
-import {expect} from 'vite-plus/test';
+import {expect, vi} from 'vite-plus/test';
 import {EPSG4326, MaplairMap, Point, WMSTileLayer} from 'maplair';
 import {createContainer, removeMapContainer} from '../../SpecHelper.js';
 
@@ -11,6 +11,14 @@ describe('WMSTileLayer', () => {
 				width: 256,
 				height: 256
 			});
+		});
+
+		it('keeps the image size in sync with the detectRetina tile size', () => {
+			const dpr = vi.spyOn(window, 'devicePixelRatio', 'get').mockReturnValue(1.25);
+			expect(new WMSTileLayer('/wms', {detectRetina: true}).wmsParams.width).to.equal(256);
+			dpr.mockReturnValue(2);
+			expect(new WMSTileLayer('/wms', {detectRetina: true}).wmsParams.width).to.equal(256);
+			dpr.mockRestore();
 		});
 	});
 

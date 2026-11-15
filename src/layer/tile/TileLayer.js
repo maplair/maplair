@@ -18,6 +18,12 @@ function isOSMUrl(url) {
 // OSM tiles are upgraded to HTTPS so that the referrer policy works
 const upgradeOSMUrl = url => (isOSMUrl(url) ? url.replace(httpRe, 'https:') : url);
 
+// 0 at a pixel ratio of 1, 1 above it (the `{r}` of tile URLs), 2 from 1.5 on (`detectRetina`)
+function retinaLevel() {
+	const dpr = window.devicePixelRatio;
+	return dpr >= 1.5 ? 2 : dpr > 1 ? 1 : 0;
+}
+
 /**
  * Options of `TileLayer`.
  * @typedef {object} TileLayerOptions
@@ -36,9 +42,9 @@ const upgradeOSMUrl = url => (isOSMUrl(url) ? url.replace(httpRe, 'https:') : ur
  * this on for [TMS](https://en.wikipedia.org/wiki/Tile_Map_Service) services).
  * @property {boolean} [zoomReverse=false] If set to true, the zoom number used in tile
  * URLs will be reversed (`maxZoom - zoom` instead of `zoom`).
- * @property {boolean} [detectRetina=false] If `true` and user is on a retina display, it
- * will request four tiles of half the specified size and a bigger zoom level in place
- * of one to utilize the high resolution.
+ * @property {boolean} [detectRetina=false] If `true` and the device pixel ratio is 1.5 or
+ * higher, it will request four tiles of half the specified size and a bigger zoom level
+ * in place of one to utilize the high resolution.
  * @property {boolean|string} [crossOrigin=false] Whether the crossOrigin attribute will
  * be added to the tiles. If a String is provided, all tiles will have their crossOrigin
  * attribute set to the String provided. This is needed if you want to access tile pixel
@@ -144,12 +150,13 @@ export class TileLayer extends GridLayer {
 		this.callInitHooks(TileLayer);
 	}
 
-	// Detects retina displays (if `detectRetina` is set), adjusting tileSize and zoom levels.
+	// Detects retina displays (if `detectRetina` is set), adjusting tileSize and zoom levels. Below a
+	// pixel ratio of 1.5 (e.g. 125% scaling), half-size tiles of the next zoom make labels too small to read.
 	_applyRetina() {
 		Object.assign(this.options, this._nonRetinaOptions);
-		this._retina = window.devicePixelRatio > 1;
+		this._retina = retinaLevel();
 
-		if (this.options.detectRetina && this._retina && this.options.maxZoom > 0) {
+		if (this.options.detectRetina && this._retina === 2 && this.options.maxZoom > 0) {
 
 			const tileSize = this.options.tileSize;
 			this.options.tileSize = tileSize instanceof Point ? tileSize.divideBy(2).floor() : Math.floor(tileSize / 2);
@@ -193,7 +200,7 @@ export class TileLayer extends GridLayer {
 
 	// Loads the tiles for the new resolution, see the map's `pixelratiochange` event.
 	_onPixelRatioChange() {
-		if ((window.devicePixelRatio > 1) === this._retina) { return; }
+		if (retinaLevel() === this._retina) { return; }
 		const map = this._map;
 		this._applyRetina();
 		if (this.options.detectRetina) {

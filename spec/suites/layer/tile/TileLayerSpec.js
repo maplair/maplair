@@ -619,6 +619,14 @@ describe('TileLayer', () => {
 			vi.restoreAllMocks();
 		});
 
+		it('ignores detectRetina below a pixel ratio of 1.5', () => {
+			const dpr = vi.spyOn(window, 'devicePixelRatio', 'get').mockReturnValue(1.25);
+			expect(new TileLayer('', {detectRetina: true}).options.tileSize).to.equal(256);
+			dpr.mockReturnValue(1.5);
+			expect(new TileLayer('', {detectRetina: true}).options.tileSize).to.equal(128);
+			dpr.mockRestore();
+		});
+
 		it('is not loading before it has tiles to load', () => {
 			expect(new TileLayer('').isLoading()).to.equal(false);
 		});
