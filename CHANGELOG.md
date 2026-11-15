@@ -3,7 +3,7 @@ Maplair Changelog
 
 (all changes of Leaflet without author notice are by [@mourner](https://github.com/mourner))
 
-## Unreleased
+## 4.5.0 (2026-11-16)
 
 ⚠️ Despite the minor version, this release contains breaking changes ported from Leaflet, see the refactorings below; e.g. the list of a collapsed layers control is only built when it expands, and circle markers throw on a radius that is not a number.
 
