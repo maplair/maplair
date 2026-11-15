@@ -141,6 +141,13 @@
 		}
 	}
 
+	/* A print snapshot taken mid-fade (e.g. right after fitBounds) would catch tiles partly transparent. */
+	@media print {
+		.maplair-tile-fading {
+			opacity: 1 !important;
+		}
+	}
+
 	&.maplair-touch-zoom {
 		touch-action: pan-x pan-y;
 	}
