@@ -82,10 +82,12 @@ Canvas.include({
 	_destroyContainer() {
 		cancelAnimationFrame(this._dashFrame);
 		this._dashFrame = null;
+		this._dashObserver?.disconnect();
+		this._dashObserver = null;
 		destroyCanvasContainer.call(this);
 	},
 
-	// The shift of the dashes of an animated path, and keeps redrawing it
+	// The shift of the dashes of an animated path, and keeps redrawing it while the map is on the screen
 	_getDashShift(layer) {
 		const speed = layer.options.dashSpeed,
 		length = speed && !this._map._prefersReducedMotion() && layer._getDashLength();
@@ -93,6 +95,13 @@ Canvas.include({
 
 		this._animatedDashes ??= new Set();
 		this._animatedDashes.add(layer);
+		this._observeDashVisibility();
+		this._requestDashFrame();
+		return (performance.now() / 1000 * speed) % length;
+	},
+
+	_requestDashFrame() {
+		if (this._dashHidden) { return; }
 		this._dashFrame ??= requestAnimationFrame(() => {
 			this._dashFrame = null;
 			for (const animated of this._animatedDashes) {
@@ -102,6 +111,21 @@ Canvas.include({
 			}
 			this._animatedDashes.clear();
 		});
-		return (performance.now() / 1000 * speed) % length;
+	},
+
+	// Pauses the animation while the map is scrolled out of view (requestAnimationFrame only stops in hidden
+	// tabs), and resumes it with the dash shift of the time then.
+	_observeDashVisibility() {
+		if (this._dashObserver || typeof IntersectionObserver === 'undefined') { return; }
+		this._dashObserver = new IntersectionObserver((entries) => {
+			this._dashHidden = !entries.at(-1).isIntersecting;
+			if (this._dashHidden) {
+				cancelAnimationFrame(this._dashFrame);
+				this._dashFrame = null;
+			} else if (this._animatedDashes.size) {
+				this._requestDashFrame();
+			}
+		}, {rootMargin: '200px'});
+		this._dashObserver.observe(this._map._container);
 	}
 });

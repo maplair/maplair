@@ -164,5 +164,22 @@ describe('Animated markers and paths', () => {
 			});
 			expect(offsets.length).to.equal(count);
 		});
+
+		it('pauses the dashes of canvas paths while the map is out of view', async () => {
+			const renderer = new Canvas();
+			new Polyline([[0, 0], [0, 10]], {renderer, dashArray: '10, 5', dashSpeed: 30}).addTo(map);
+			const redraw = vi.spyOn(renderer, '_requestRedraw');
+			await vi.waitFor(() => expect(renderer._dashObserver).to.be.ok);
+
+			container.style.position = 'absolute';
+			container.style.top = '-10000px';
+			await vi.waitFor(() => expect(renderer._dashHidden).to.be.true, {timeout: 2000});
+			redraw.mockClear();
+			await new Promise((resolve) => { setTimeout(resolve, 100); });
+			expect(redraw).not.toHaveBeenCalled();
+
+			container.style.top = '0';
+			await vi.waitFor(() => expect(redraw).toHaveBeenCalled(), {timeout: 2000});
+		});
 	});
 });
