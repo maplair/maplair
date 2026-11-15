@@ -3,6 +3,39 @@ Maplair Changelog
 
 (all changes of Leaflet without author notice are by [@mourner](https://github.com/mourner))
 
+## Unreleased
+
+### Maplair
+
+(changes without author notice are by [@simon04](https://github.com/simon04)), following [Modern Web Guidance](https://github.com/GoogleChrome/modern-web-guidance)
+
+#### ❇️ New Features
+
+* ImageOverlay: new option `fetchPriority`, e.g. `'high'` for a large overlay that is the main content of the page
+
+#### ✨ Improvements
+
+* Pause the dash animation of canvas paths while the map is scrolled out of view
+* Apply hover styles only on devices that can hover, so that tapped buttons, search results and links no longer stay highlighted on touch screens
+* Declare the dash animation of paths only without a preference for reduced motion, instead of canceling it with `animation: none`
+
+#### ♿️ Accessibility
+
+* Close tooltips opened on hover or focus with Escape (WCAG 1.4.13), before an open popup; permanent tooltips stay open
+* Support Forced Colors Mode: popups, the context menu, the text, legend and minimap controls and the keyboard help keep their edges, the selected search result and disabled zoom buttons their state, and vector layers and legend swatches the colors of the map data
+* ContextMenu: Home and End move the focus to the first and last item, the menu closes when the focus leaves it, is named for screen readers, uses `<hr>` for separators, and the pointer moves the focus so that only one item is highlighted
+* FullscreenControl: drop `aria-pressed`, which contradicted the changing label of the button
+* RotateControl: draw the south needle of the compass in the text color, with enough contrast
+
+#### 🐞 Bugfixes
+
+* ContextMenu: ArrowUp without a focused item moves the focus to the last item instead of the second-to-last
+
+#### 📝 Docs
+
+* Show the Sanitizer API (`setHTML()`) in the security notes of popups and tooltips
+* Declare `color-scheme` for the dark mode of the API reference
+
 ## 4.5.0 (2026-11-16)
 
 ⚠️ Despite the minor version, this release contains breaking changes ported from Leaflet, see the refactorings below; e.g. the list of a collapsed layers control is only built when it expands, and circle markers throw on a radius that is not a number.
