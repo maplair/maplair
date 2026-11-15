@@ -188,12 +188,18 @@ export class ContextMenu extends Class {
 		container.style.top = `${Math.max(0, y)}px`;
 	}
 
+	// Arrow keys move the focus to the next or previous item (wrapping around), Home and End to the first or last
 	_onKeyDown(e) {
-		if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') { return; }
-		DomEvent.stop(e);
 		const buttons = [...this._container.querySelectorAll('button:not([disabled])')],
 		index = buttons.indexOf(document.activeElement),
-		next = e.key === 'ArrowDown' ? index + 1 : index - 1;
+		next = {
+			ArrowDown: index + 1,
+			ArrowUp: index < 0 ? -1 : index - 1,
+			Home: 0,
+			End: -1
+		}[e.key];
+		if (next === undefined) { return; }
+		DomEvent.stop(e);
 		buttons.at(next % buttons.length)?.focus();
 	}
 }

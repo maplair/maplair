@@ -87,6 +87,23 @@ describe('ContextMenu', () => {
 		expect(document.activeElement).to.equal(items()[2]);
 	});
 
+	it('moves the focus to the first and last item with Home and End', () => {
+		new ContextMenu([{text: 'A'}, {text: 'B'}, {text: 'C', disabled: true}]).addTo(map);
+		contextmenu(container, 10, 10);
+		UIEventSimulator.fire('keydown', items()[0], {key: 'End'});
+		expect(document.activeElement).to.equal(items()[1]);
+		UIEventSimulator.fire('keydown', items()[1], {key: 'Home'});
+		expect(document.activeElement).to.equal(items()[0]);
+	});
+
+	it('moves the focus to the last item with ArrowUp when no item has it', () => {
+		new ContextMenu([{text: 'A'}, {text: 'B'}, {text: 'C'}]).addTo(map);
+		contextmenu(container, 10, 10);
+		document.activeElement.blur();
+		UIEventSimulator.fire('keydown', menu(), {key: 'ArrowUp'});
+		expect(document.activeElement).to.equal(items()[2]);
+	});
+
 	it('stays within the viewport', () => {
 		new ContextMenu([{text: 'A'}]).addTo(map);
 		container.style.left = `${document.documentElement.clientWidth - 400}px`;
