@@ -92,9 +92,11 @@ Path.include({
 CircleMarker.include({
 	setRadius(radius) {
 		this._takeZoomStyles({radius});
-		return this._zoomStyles?.radius && this._map ?
-			setRadius.call(this, evaluate(radius, this._map.getZoom())) :
-			setRadius.call(this, radius);
+		if (!this._zoomStyles?.radius) { return setRadius.call(this, radius); }
+		if (this._map) { return setRadius.call(this, evaluate(radius, this._map.getZoom())); }
+		// evaluated when the circle marker is added to a map
+		this.options.radius = this._radius = radius;
+		return this;
 	}
 });
 

@@ -50,7 +50,7 @@ export class CircleMarker extends Path {
 		super();
 		Util.setOptions(this, options);
 		this._latlng = new LatLng(latlng);
-		this._radius = this.options.radius;
+		this.setRadius(this.options.radius);
 
 		this.callInitHooks(CircleMarker);
 	}
@@ -91,7 +91,10 @@ export class CircleMarker extends Path {
 	 * @returns {this}
 	 */
 	setRadius(radius) {
-		this.options.radius = this._radius = radius;
+		const r = Util.toNumber(radius);
+		if (isNaN(r)) { throw new Error(`Invalid radius: ${radius}`); }
+		/** @type {number} */
+		this._radius = this.options.radius = r;
 		return this.redraw();
 	}
 
