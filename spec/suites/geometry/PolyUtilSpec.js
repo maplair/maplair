@@ -66,6 +66,19 @@ describe('PolyUtil', () => {
 			expect(layer.getCenter()).to.be.nearLatLng([0, 0]);
 		});
 
+		it('computes the middle of a polygon with zero area', () => {
+			const latlngs = [[0, 0], [0, 10], [0, 4]];
+			const center = PolyUtil.polygonCenter(latlngs, crs);
+			expect(center).to.be.nearLatLng([0, 5]);
+		});
+
+		it('keeps the center of a zero-area polygon on the ring when the ring goes back over its edges', () => {
+			// an L traced out and back: the middle of its extent is off the shape, closest to the bottom edge
+			const latlngs = [[0, 0], [0, 20], [10, 20], [0, 20]];
+			const center = PolyUtil.polygonCenter(latlngs, crs);
+			expect(center).to.be.nearLatLng([0, 10]);
+		});
+
 		it('throws error if latlngs not passed', () => {
 			expect(() => {
 				PolyUtil.polygonCenter(null,  crs);
