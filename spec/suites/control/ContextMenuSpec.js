@@ -35,6 +35,7 @@ describe('ContextMenu', () => {
 
 		expect(menu().matches(':popover-open')).to.be.true;
 		expect(menu().getAttribute('role')).to.equal('menu');
+		expect(menu().getAttribute('aria-label')).to.equal('Context menu');
 		const rect = menu().getBoundingClientRect(),
 		origin = container.getBoundingClientRect();
 		expect(rect.left - origin.left).to.be.closeTo(100, 1);

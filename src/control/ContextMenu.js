@@ -1,5 +1,6 @@
 import {Class} from '../core/Class.js';
 import * as Util from '../core/Util.js';
+import {I18n} from '../core/I18n.js';
 import * as DomUtil from '../dom/DomUtil.js';
 import * as DomEvent from '../dom/DomEvent.js';
 import {Layer} from '../layer/Layer.js';
@@ -152,6 +153,7 @@ export class ContextMenu extends Class {
 		}
 		container.popover = 'auto';
 		container.setAttribute('role', 'menu');
+		container.setAttribute('aria-label', I18n.translate('Context menu'));
 		container.replaceChildren();
 
 		for (const item of this._items) {
