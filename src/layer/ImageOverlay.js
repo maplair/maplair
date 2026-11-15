@@ -40,6 +40,10 @@ import * as DomUtil from '../dom/DomUtil.js';
  * [`decoding` HTML attribute](https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/decoding).
  * If the image overlay is flickering when being added/removed, set this option to
  * `'sync'`.
+ * @property {'high'|'low'|'auto'} [fetchPriority='auto'] The priority of loading the
+ * image relative to other images of the page, as per the
+ * [`fetchpriority` HTML attribute](https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/fetchPriority),
+ * e.g. `'high'` for a large overlay that is the main content of the page.
  * @extends InteractiveLayerOptions
  */
 
@@ -67,7 +71,8 @@ export class ImageOverlay extends Layer {
 		zIndex: 1,
 		className: '',
 		pixelated: false,
-		decoding: 'auto'
+		decoding: 'auto',
+		fetchPriority: 'auto'
 	};
 
 	/**
@@ -265,6 +270,7 @@ export class ImageOverlay extends Layer {
 		}
 
 		img.decoding = this.options.decoding;
+		if (this.options.fetchPriority !== 'auto') { img.fetchPriority = this.options.fetchPriority; }
 
 		if (wasElementSupplied) {
 			this._url = img.src;

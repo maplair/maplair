@@ -103,6 +103,14 @@ describe('ImageOverlay', () => {
 			});
 		});
 
+		describe('fetchPriority', () => {
+			it('sets the fetch priority of the image', () => {
+				const overlay = new ImageOverlay(blankUrl, imageBounds, {fetchPriority: 'high'}).addTo(map);
+				expect(overlay.getElement().fetchPriority).to.equal('high');
+				expect(new ImageOverlay(blankUrl, imageBounds).addTo(map).getElement().hasAttribute('fetchpriority')).to.be.false;
+			});
+		});
+
 		describe('className', () => {
 			it('should set image\'s class', () => {
 				expect(overlay._image.classList.contains('my-custom-image-class')).to.be.true;
