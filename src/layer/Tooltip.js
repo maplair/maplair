@@ -408,8 +408,21 @@ export class Tooltip extends DivOverlay {
 			this._ariaSource = this._source.getElement?.();
 			this._ariaSource?.setAttribute('aria-describedby', this._container.id);
 
+			if (!this.options.permanent) {
+				// before the map's Escape, which closes a popup
+				this._onEscape ??= this._closeOnEscape.bind(this);
+				document.addEventListener('keydown', this._onEscape, {capture: true});
+			}
+
 			this._source.fire('tooltipopen', {tooltip: this}, true);
 		}
+	}
+
+	// Lets users dismiss a tooltip opened on hover or focus without moving the pointer or the focus (WCAG 1.4.13)
+	_closeOnEscape(e) {
+		if (e.key !== 'Escape' || e.defaultPrevented) { return; }
+		this.close();
+		e.preventDefault();
 	}
 
 	/**
@@ -420,6 +433,10 @@ export class Tooltip extends DivOverlay {
 		super.onRemove(map);
 
 		map.fire('tooltipclose', {tooltip: this});
+
+		if (this._onEscape) {
+			document.removeEventListener('keydown', this._onEscape, {capture: true});
+		}
 
 		if (this._source) {
 			this.removeEventParent(this._source);

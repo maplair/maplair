@@ -140,6 +140,29 @@ describe('Tooltip', () => {
 		expect(layer.getElement().getAttribute('aria-describedby')).to.equal(layer.getTooltip()._container.id);
 	});
 
+	it('closes on Escape before an open popup does', () => {
+		const layer = new Marker(center).bindTooltip('Tooltip').bindPopup('Popup').addTo(map);
+		layer.openPopup();
+		layer.openTooltip();
+		const escape = () => document.activeElement.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true, cancelable: true}));
+
+		escape();
+		expect(layer.isTooltipOpen()).to.be.false;
+		expect(layer.isPopupOpen()).to.be.true;
+		// focusing the marker may open its tooltip again, which the next Escape closes first
+		layer.getElement().focus();
+		if (layer.isTooltipOpen()) { escape(); }
+		expect(layer.isTooltipOpen()).to.be.false;
+		escape();
+		expect(layer.isPopupOpen()).to.be.false;
+	});
+
+	it('stays open on Escape when permanent', () => {
+		const layer = new Marker(center).bindTooltip('Tooltip', {permanent: true}).addTo(map);
+		document.body.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true, cancelable: true}));
+		expect(layer.isTooltipOpen()).to.be.true;
+	});
+
 	it('is removed from aria-describedby when it closes or is unbound', () => {
 		const layer = new Marker(center).addTo(map);
 		const element = layer.getElement();
