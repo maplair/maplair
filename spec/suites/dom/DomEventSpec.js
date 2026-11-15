@@ -1,6 +1,7 @@
 import {expect, vi} from 'vite-plus/test';
 import {DomEvent, MaplairMap, Util} from 'maplair';
 import UIEventSimulator from 'ui-event-simulator';
+import {userEvent} from 'vite-plus/test/browser';
 
 describe('DomEvent', () => {
 	let el, listener;
@@ -501,6 +502,60 @@ describe('DomEvent', () => {
 			UIEventSimulator.fire('click', el);
 
 			expect(listener).not.toHaveBeenCalled();
+		});
+	});
+
+	describe('pointer capture', () => {
+		let map;
+
+		beforeEach(() => {
+			el.style.width = el.style.height = '200px';
+			map = new MaplairMap(el).setView([0, 0], 0);
+		});
+
+		afterEach(() => {
+			map.remove();
+		});
+
+		// the pointer is released again on pointerup, so the capture has to be read while handling pointerdown
+		function trackPointerdown(target) {
+			const state = {};
+			DomEvent.on(target, 'pointerdown', (e) => {
+				state.captured = e.target.hasPointerCapture(e.pointerId);
+			});
+			return state;
+		}
+
+		it('captures the pointer on the map container', async () => {
+			const state = trackPointerdown(el);
+
+			await userEvent.click(el, {position: {x: 5, y: 5}});
+
+			expect(state.captured).to.be.true;
+		});
+
+		it('does not capture the pointer on a search input in a control', async () => {
+			const control = document.createElement('div');
+			const input = Object.assign(document.createElement('input'), {type: 'search', value: 'abc'});
+			control.appendChild(input);
+			el.appendChild(control);
+			DomEvent.disableClickPropagation(control);
+			const state = trackPointerdown(input);
+
+			await userEvent.click(input);
+
+			expect(state.captured).to.be.false;
+		});
+
+		it('does not capture the pointer on popup content', async () => {
+			const content = document.createElement('div');
+			content.style.width = content.style.height = '30px';
+			map.openPopup(content, [0, 0]);
+			const state = trackPointerdown(content);
+
+			await userEvent.click(content);
+
+			expect(state.captured).to.be.false;
 		});
 	});
 

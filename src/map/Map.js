@@ -1921,17 +1921,10 @@ export class MaplairMap extends Evented {
 		return targets;
 	}
 
-	_isClickDisabled(el) {
-		while (el && el !== this._container) {
-			if (el['_maplair_disable_click'] || !el.parentNode) { return true; }
-			el = el.parentNode;
-		}
-	}
-
 	_handleDOMEvent(e) {
 		const el = e.target;
 		if (e.type === 'click') { PointerEvents.simulateDblclick(e, this._container); }
-		if (!this._loaded || e.type === 'click' && this._isClickDisabled(el)) {
+		if (!this._loaded || e.type === 'click' && PointerEvents.isClickDisabled(el, this._container)) {
 			return;
 		}
 

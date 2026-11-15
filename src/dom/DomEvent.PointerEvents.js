@@ -32,11 +32,30 @@ function disablePointerDetection(el) {
 	el.removeEventListener('pointercancel', _onDelete, {capture: true});
 }
 
-// capturing throws for synthetic pointers the browser doesn't know about, so only capture real ones
+/**
+ * Whether `el` is inside an element that `DomEvent.disableClickPropagation` was called
+ * on (before reaching `container`), or detached from the DOM.
+ * @internal
+ * @param {Node|null} el
+ * @param {EventTarget|null} container
+ * @returns {boolean}
+ */
+function isClickDisabled(el, container) {
+	while (el && el !== container) {
+		if (el['_maplair_disable_click'] || !el.parentNode) { return true; }
+		el = el.parentNode;
+	}
+	return false;
+}
+
 function _onSet(e) {
+	lastPointerType = e.pointerType;
+	// pointers in controls and popups can't start map interactions, and capturing them breaks native widgets there
+	// (like the clear button of a search input), so leave them to the browser
+	if (isClickDisabled(e.target, e.currentTarget)) { return; }
+	// capturing throws for synthetic pointers the browser doesn't know about, so only capture real ones
 	if (e.isTrusted) { e.target.setPointerCapture(e.pointerId); }
 	activePointers.set(e.pointerId, e);
-	lastPointerType = e.pointerType;
 }
 
 function _onUpdate(e) {
@@ -108,6 +127,7 @@ export {
 	enablePointerDetection,
 	disablePointerDetection,
 	getPointers,
+	isClickDisabled,
 	simulateDblclick
 };
 
