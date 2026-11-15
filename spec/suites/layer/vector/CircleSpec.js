@@ -1,5 +1,5 @@
 import {expect} from 'vite-plus/test';
-import {Circle, MaplairMap, SimpleCRS, Transformation} from 'maplair';
+import {Circle, EPSG4326, LatLng, MaplairMap, Point, SimpleCRS, Transformation} from 'maplair';
 import {createContainer, removeMapContainer} from '../../SpecHelper.js';
 
 describe('Circle', () => {
@@ -74,6 +74,29 @@ describe('Circle', () => {
 
 			expect(circle._radius).to.eql(200);
 			expect(circle._pxRadius).to.eql(3200);
+		});
+	});
+
+	describe('with a CRS that rotates the axes', () => {
+		it('keeps the radius of the unrotated CRS', () => {
+			const a = Math.PI / 6, cos = Math.cos(a), sin = Math.sin(a);
+			class RotatedCRS extends EPSG4326 {
+				static projection = {
+					project: ll => new Point(cos * ll.lng - sin * ll.lat, sin * ll.lng + cos * ll.lat),
+					unproject: p => new LatLng(cos * p.y - sin * p.x, cos * p.x + sin * p.y)
+				};
+			}
+
+			map.remove();
+			map = new MaplairMap(container, {crs: EPSG4326}).setView([0, 0], 4);
+			const plain = new Circle([0, 0], {radius: 100000}).addTo(map);
+
+			map.remove();
+			map = new MaplairMap(container, {crs: RotatedCRS}).setView([0, 0], 4);
+			const rotated = new Circle([0, 0], {radius: 100000}).addTo(map);
+
+			expect(rotated._pxRadius).to.be.closeTo(plain._pxRadius, 1e-6);
+			expect(rotated._pxRadiusY).to.be.closeTo(plain._pxRadiusY, 1e-6);
 		});
 	});
 

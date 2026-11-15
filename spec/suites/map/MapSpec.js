@@ -1,7 +1,16 @@
 import {expect, vi} from 'vite-plus/test';
-import {Bounds, Canvas, CircleMarker, DivIcon, DomEvent, DomUtil, GridLayer, Handler, LatLngBounds, Layer, MaplairMap, Marker, Point, Polygon, Popup, TileLayer, Util, LayersControl, LatLng} from 'maplair';
+import {Bounds, Canvas, CircleMarker, DivIcon, DomEvent, DomUtil, GridLayer, Handler, LatLngBounds, Layer, MaplairMap, Marker, Point, Polygon, Popup, SimpleCRS, TileLayer, Util, LayersControl, LatLng} from 'maplair';
 import UIEventSimulator from 'ui-event-simulator';
 import {createContainer, removeMapContainer} from '../SpecHelper.js';
+
+// SimpleCRS with the axes rotated by 30°
+const cos = Math.cos(Math.PI / 6), sin = Math.sin(Math.PI / 6);
+class RotatedCRS extends SimpleCRS {
+	static projection = {
+		project: ll => new Point(cos * ll.lng - sin * ll.lat, sin * ll.lng + cos * ll.lat),
+		unproject: p => new LatLng(cos * p.y - sin * p.x, cos * p.x + sin * p.y)
+	};
+}
 
 const translateRe = /translate3d\(([-\d.e]+)px, *([-\d.e]+)px/;
 
@@ -595,13 +604,14 @@ describe('Map', () => {
 			// test case: EPSG:25833 (mocked, for simplicity)
 			// The following coordinates are bounds projected with proj4maplair crs = EPSG:25833', '+proj=utm +zone=33 +ellps=GRS80 +units=m +no_defs
 			const nw = bounds.getNorthWest(), se = bounds.getSouthEast();
-			const latLngToPoint = vi.spyOn(map.options.crs, 'latLngToPoint').mockImplementation(latlng => (latlng.equals(nw) ?
-				new Point(7800503.059925064, 6440062.353052008) :
-				new Point(7801987.203481699, 6425186.447901004)));
+			// the other two corners stay inside the box of these two
+			const latLngToPoint = vi.spyOn(map.options.crs, 'latLngToPoint').mockImplementation(latlng => new Point(
+				latlng.lng === nw.lng ? 7800503.059925064 : 7801987.203481699,
+				latlng.lat === nw.lat ? 6440062.353052008 : 6425186.447901004));
 			boundsZoom = map.getBoundsZoom(bounds, false, padding);
 
 			// ensure that latLngToPoint was called with expected args
-			expect(latLngToPoint.mock.calls).to.have.deep.members([[nw, 16], [se, 16]]);
+			expect(latLngToPoint.mock.calls).to.have.deep.members([[nw, 16], [bounds.getNorthEast(), 16], [se, 16], [bounds.getSouthWest(), 16]]);
 			latLngToPoint.mockRestore();
 			expect(boundsZoom).to.eql(7); // result expected for EPSG:25833
 		});
@@ -618,6 +628,14 @@ describe('Map', () => {
 			container.style.width = '1024px'; // Make sure the width is defined
 			expect(map.getBoundsZoom(wideBounds, false, padding)).to.be.equal(17);
 			expect(map.getBoundsZoom(wideBounds, true, padding)).to.be.equal(20);
+		});
+
+		it('fits all four corners when the projection rotates the axes', () => {
+			map.remove();
+			container.style.width = container.style.height = '400px';
+			map = new MaplairMap(container, {crs: RotatedCRS, zoomSnap: 0});
+			// the height of a rotated 10x2 rectangle spans from its sw to its ne corner
+			expect(map.getBoundsZoom([[0, 0], [10, 2]])).to.be.closeTo(Math.log2(400 / (10 * cos + 2 * sin)), 1e-9);
 		});
 	});
 

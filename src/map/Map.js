@@ -1239,10 +1239,10 @@ export class MaplairMap extends Evented {
 		let zoom = this.getZoom() ?? 0;
 		const min = this.getMinZoom(),
 		max = this.getMaxZoom(),
-		nw = bounds.getNorthWest(),
-		se = bounds.getSouthEast(),
 		size = this.getSize().subtract(padding),
-		boundsSize = new Bounds(this.project(se, zoom), this.project(nw, zoom)).getSize(),
+		// any corner can be an extreme when the projection rotates the axes
+		corners = [bounds.getNorthWest(), bounds.getNorthEast(), bounds.getSouthEast(), bounds.getSouthWest()],
+		boundsSize = new Bounds(corners.map(c => this.project(c, zoom))).getSize(),
 		snap = this.options.zoomSnap,
 		// padding larger than the map leaves no room: zoom out, not in
 		scalex = Math.max(size.x, 0) / boundsSize.x,
