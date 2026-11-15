@@ -64,6 +64,7 @@ export class AttributionControl extends Control {
 		this._attributions = {};
 		this._orders = {};
 		this._layerAttributions = new Map();
+		this._shownLayers = new Set();
 
 		this.callInitHooks(AttributionControl);
 	}
@@ -93,7 +94,7 @@ export class AttributionControl extends Control {
 	 * @returns {Record<string, Function>}
 	 */
 	getEvents() {
-		return {layeradd: this._addLayer, layerremove: this._removeLayer};
+		return {layeradd: this._addLayer, layerremove: this._removeLayer, zoomend: this._onZoomEnd};
 	}
 
 	/**
@@ -110,12 +111,37 @@ export class AttributionControl extends Control {
 		if (!text || this._layerAttributions.has(layer)) { return; }
 
 		this._layerAttributions.set(layer, text);
-		this.addAttribution(text, layer.options?.attributionOrder);
+		this._updateLayer(layer);
 	}
 
 	_removeLayer({layer}) {
-		this.removeAttribution(this._layerAttributions.get(layer));
+		if (this._shownLayers.delete(layer)) {
+			this.removeAttribution(this._layerAttributions.get(layer));
+		}
 		this._layerAttributions.delete(layer);
+	}
+
+	_onZoomEnd() {
+		for (const layer of this._layerAttributions.keys()) {
+			this._updateLayer(layer);
+		}
+	}
+
+	// Layers with `minZoom`/`maxZoom` options (e.g. tile layers) aren't displayed outside that range.
+	_updateLayer(layer) {
+		const {minZoom = -Infinity, maxZoom = Infinity} = layer.options ?? {},
+		zoom = this._map.getZoom(),
+		show = zoom >= minZoom && zoom <= maxZoom;
+		if (show === this._shownLayers.has(layer)) { return; }
+
+		const text = this._layerAttributions.get(layer);
+		if (show) {
+			this._shownLayers.add(layer);
+			this.addAttribution(text, layer.options?.attributionOrder);
+		} else {
+			this._shownLayers.delete(layer);
+			this.removeAttribution(text);
+		}
 	}
 
 	/**
