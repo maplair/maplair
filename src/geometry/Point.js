@@ -167,20 +167,22 @@ export class Point {
 	 * `scale`. In linear algebra terms, multiply the point by the
 	 * [scaling matrix](https://en.wikipedia.org/wiki/Scaling_%28geometry%29#Matrix_representation)
 	 * defined by `scale`.
-	 * @param {Point} point The scale.
+	 * @param {PointExpression} point The scale.
 	 * @returns {Point}
 	 */
 	scaleBy(point) {
+		point = Point.from(point);
 		return new Point(this.x * point.x, this.y * point.y);
 	}
 
 	/**
 	 * Inverse of `scaleBy`. Divide each coordinate of the current point by
 	 * each coordinate of `scale`.
-	 * @param {Point} point The scale.
+	 * @param {PointExpression} point The scale.
 	 * @returns {Point}
 	 */
 	unscaleBy(point) {
+		point = Point.from(point);
 		return new Point(this.x / point.x, this.y / point.y);
 	}
 
