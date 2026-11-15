@@ -314,6 +314,6 @@ export class LatLngBounds {
 
 // Whether `obj` has the shape of a `LatLngExpression` rather than of bounds.
 function isLatLngExpression(obj) {
-	return obj instanceof LatLng || (Array.isArray(obj) ? typeof obj[0] !== 'object' :
+	return obj instanceof LatLng || (Array.isArray(obj) ? obj.length > 0 && typeof obj[0] !== 'object' :
 		typeof obj === 'object' && obj !== null && 'lat' in obj);
 }
