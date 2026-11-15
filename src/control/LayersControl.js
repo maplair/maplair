@@ -160,6 +160,7 @@ export class LayersControl extends Control {
 		this._lastZIndex = 0;
 		this._handlingClick = false;
 		this._preventClick = false;
+		this._needsUpdate = false;
 
 		for (const [name, layer] of Object.entries(baseLayers ?? {})) {
 			this._addLayer(layer, name);
@@ -271,6 +272,8 @@ export class LayersControl extends Control {
 	 * @returns {this}
 	 */
 	selectLayer(layer) {
+		// the list isn't rebuilt while collapsed
+		if (this._needsUpdate) { this._update(true); }
 		const input = this._layerControlInputs.find(input => input._layer === layer);
 		if (input && !input.checked) {
 			input.checked = true;
@@ -287,6 +290,7 @@ export class LayersControl extends Control {
 		clearTimeout(this._collapseDelayTimeout);
 
 		this._container.classList.add('maplair-control-layers-expanded');
+		if (this._needsUpdate) { this._update(); }
 		this._section.style.height = '';
 		const acceptableHeight = this._map.getSize().y - (this._container.offsetTop + 50);
 		if (acceptableHeight < this._section.clientHeight) {
@@ -415,8 +419,16 @@ export class LayersControl extends Control {
 		this._expandIfNotCollapsed();
 	}
 
-	_update() {
+	_update(force) {
 		if (!this._container) { return this; }
+
+		// Rebuilding on every layer change makes adding n layers O(n²). The list is hidden
+		// while collapsed, so leave it until `expand()` shows it.
+		if (!force && !this._container.classList.contains('maplair-control-layers-expanded')) {
+			this._needsUpdate = true;
+			return this;
+		}
+		this._needsUpdate = false;
 
 		this._baseLayersList.replaceChildren();
 		this._overlaysList.replaceChildren();
@@ -439,6 +451,9 @@ export class LayersControl extends Control {
 		}
 
 		this._separator.style.display = overlaysPresent && baseLayersPresent ? '' : 'none';
+
+		// once for the whole list, as it loops over every input
+		this._checkDisabledLayers();
 
 		return this;
 	}
@@ -492,7 +507,6 @@ export class LayersControl extends Control {
 		const container = group ? this._getGroupContainer(list, group.group) : list;
 		container.append(label);
 
-		this._checkDisabledLayers();
 		return label;
 	}
 

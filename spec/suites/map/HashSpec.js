@@ -190,7 +190,7 @@ describe('Hash', () => {
 		});
 
 		it('restores the layers from the hash, with a layers control', async () => {
-			const control = new LayersControl({OSM: osm, Topo: topo}, {'Bike, routes': bikes, Labels: labels}).addTo(map);
+			const control = new LayersControl({OSM: osm, Topo: topo}, {'Bike, routes': bikes, Labels: labels}).addTo(map).expand();
 			map.setView([1, 2], 4);
 			osm.addTo(map);
 			labels.addTo(map);
