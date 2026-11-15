@@ -415,8 +415,11 @@ const blanketOverlayRotationMethods = {
 		viewHalf = this._map._getViewSize().multiplyBy(0.5 + this.options.padding),
 		currentCenterPoint = this._map.project(this._center, zoom),
 		topLeftOffset = viewHalf.multiplyBy(-scale)._add(currentCenterPoint)
-			._subtract(this._map._getNewPixelOrigin(center, zoom))
-			._round();
+			._subtract(this._map._getNewPixelOrigin(center, zoom));
+
+		// a scaled container is resampled anyway, and rounding where its corner lands would make its content away
+		// from the corner jitter against the zoom motion
+		if (scale === 1) { this._map._snapLayerPoint(topLeftOffset); }
 
 		DomUtil.setTransform(this._container, topLeftOffset, scale);
 	},
@@ -471,7 +474,7 @@ const divOverlayRotationMethods = {
 		if (!this._map) { return; }
 
 		const map = this._map,
-		pos = map.latLngToLayerPoint(this._latlng)._round(),
+		pos = map._snapLayerPoint(map.latLngToLayerPoint(this._latlng)),
 		// on a rotated map, the anchor is relative to the upright overlay
 		anchor = map._rotateToPane(new Point(this._getAnchor()));
 		let offset = Point.from(this.options.offset);

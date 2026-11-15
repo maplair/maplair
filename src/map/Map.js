@@ -642,6 +642,11 @@ export class MaplairMap extends Evented {
 		this._stop();
 		this._targetView = {center: requestedCenter, zoom: targetZoom};
 
+		// layers round their positions against the pixel origin, and while zoom changes, projected coordinates move
+		// fast in absolute terms even when the view barely moves on screen, so rounding the origin too would make
+		// everything jitter by up to a pixel against the motion; the last frame rounds it again
+		this._subpixelOrigin = true;
+
 		const from = this.project(this.getCenter()),
 		to = this.project(targetCenter),
 		size = this.getSize(),
@@ -688,6 +693,7 @@ export class MaplairMap extends Evented {
 				// the last step shifts the pixel origin even at the same zoom, and layers like GridLayer only
 				// re-anchor on 'zoom' (#9438)
 				const zoomChanged = this._zoom !== targetZoom;
+				this._subpixelOrigin = false;
 				this._move(targetCenter, targetZoom);
 				if (!zoomChanged) { this.fire('zoom'); }
 				this._moveEnd(true);
@@ -1749,7 +1755,8 @@ export class MaplairMap extends Evented {
 		this._pixelOrigin = this._getNewPixelOrigin(center);
 
 		if (!suppressEvent) {
-			if (zoomChanged || (data?.pinch)) {	// Always fire 'zoom' if pinching because #3530
+			// always fire 'zoom' if pinching (#3530) or flying, where layers must follow the subpixel origin
+			if (zoomChanged || data?.pinch || data?.flyTo) {
 				this.fire('zoom', data);
 			}
 
@@ -1776,6 +1783,11 @@ export class MaplairMap extends Evented {
 		this._targetView = null;
 		cancelAnimationFrame(this._flyToFrame);
 		cancelAnimationFrame(this._zoomAnimFrame);
+		if (this._subpixelOrigin) {
+			// an interrupted flight would leave layers between pixels, so snap them where it stopped
+			this._subpixelOrigin = false;
+			this._move(this._lastCenter, this._zoom, {flyTo: true});
+		}
 		this._panAnim?.stop();
 		return this;
 	}
@@ -2033,7 +2045,14 @@ export class MaplairMap extends Evented {
 
 	_getNewPixelOrigin(center, zoom) {
 		const viewHalf = this.getSize()._divideBy(2);
-		return this.project(center, zoom)._subtract(viewHalf)._add(this._getMapPanePos())._round();
+		const origin = this.project(center, zoom)._subtract(viewHalf)._add(this._getMapPanePos());
+		return this._subpixelOrigin ? origin : origin._round();
+	}
+
+	// Snaps a layer point to whole pixels for crisp rendering, except during flyTo frames, where snapped layers
+	// would step against the smoothly moving tiles. Modifies the point in place.
+	_snapLayerPoint(point) {
+		return this._subpixelOrigin ? point : point._round();
 	}
 
 	_latLngToNewLayerPoint(latlng, zoom, center) {
