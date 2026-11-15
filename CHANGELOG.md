@@ -3,6 +3,68 @@ Maplair Changelog
 
 (all changes of Leaflet without author notice are by [@mourner](https://github.com/mourner))
 
+## Unreleased
+
+⚠️ Despite the minor version, this release contains breaking changes ported from Leaflet, see the refactorings below; e.g. the list of a collapsed layers control is only built when it expands, and circle markers throw on a radius that is not a number.
+
+### Leaflet, since 4.4.0
+
+Ported from Leaflet (changes without author notice are by [@mourner](https://github.com/mourner))
+
+#### ❇️ New Features
+
+* Marker: `originalEvent` in the `dragstart` and `movestart` events, also for keyboard drags, by [@ogchicken](https://github.com/ogchicken) in https://github.com/Leaflet/Leaflet/pull/10574
+* `Point#scaleBy()` and `#unscaleBy()` accept arrays and plain objects by [@Kernel-Hunter](https://github.com/Kernel-Hunter) in https://github.com/Leaflet/Leaflet/pull/10573
+* WMSTileLayer: params set to `undefined` or `null` are left out of the requests, so `setParams()` can clear them, by [@ogchicken](https://github.com/ogchicken) in https://github.com/Leaflet/Leaflet/pull/10590
+
+#### ✨ Refactorings (⚠️ Breaking Changes)
+
+* LayersControl: the list of a collapsed control is only rebuilt when it expands (or by `selectLayer()`), which made adding n layers O(n²); code reading the inputs of a collapsed control should call `expand()` first, by [@TheNetherWatcher](https://github.com/TheNetherWatcher) in https://github.com/Leaflet/Leaflet/pull/10585
+* `CircleMarker` and `Circle` convert a numeric string radius and throw on a radius that is not a number, also in `setRadius()` and `setStyle()`, in https://github.com/Leaflet/Leaflet/commit/25f1739cbff60934e6e5786a9d34fc40958e8a6a
+* TileLayer: `detectRetina` only requests retina tiles from a device pixel ratio of 1.5, as half-size tiles made labels too small to read at 125% scaling (with [@vpithart](https://github.com/vpithart)) in https://github.com/Leaflet/Leaflet/commit/91854082d36c4d7863ec4a2855fff87a329eb3a2
+* The attribution of a layer with `minZoom` or `maxZoom` is only shown within that zoom range, in https://github.com/Leaflet/Leaflet/commit/77b4e97e695a76335ab4c1c1b17a7651f64851d1
+* Pointers pressed in controls and popups are no longer captured by the map nor listed by `DomEvent.PointerEvents.getPointers()`, by [@Misyuk-T](https://github.com/Misyuk-T) in https://github.com/Leaflet/Leaflet/pull/10567
+* Tile layers zoom their container as a whole during zoom animations, and the private `_animateZoom()` of the map lost its `startAnim` argument, in https://github.com/Leaflet/Leaflet/commit/2ec3814a5e80fd5422a4b75ac2652c61cc083222 and https://github.com/Leaflet/Leaflet/commit/dcd87ddd37c10d1921c9b460f7d8e29df810067f
+
+#### ✨ Improvements
+
+* Fix the jitter of tiles, markers and overlays during `flyTo()` in https://github.com/Leaflet/Leaflet/commit/40f80ef8250de07d4c96915ca704fc2d0940c7d7
+* Fix zoom animations getting cut short and stuttering on pages with many markers in https://github.com/Leaflet/Leaflet/commit/2ec3814a5e80fd5422a4b75ac2652c61cc083222 and https://github.com/Leaflet/Leaflet/commit/dcd87ddd37c10d1921c9b460f7d8e29df810067f
+* Fix slow `flyTo()` with many image or round markers in https://github.com/Leaflet/Leaflet/commit/582b88c96567d46333500340848945f5201327f0
+* Attach marker tooltips per direction: to the top or bottom of the icon, and `center` ones at the height of `tooltipAnchor`, in https://github.com/Leaflet/Leaflet/commit/fcfca4a1675f29cdc7ebd47107ddc6c0fa0d662a
+* Disable the fading of tiles when printing in https://github.com/Leaflet/Leaflet/commit/42ad4bf593d18776267155a36d135564623e75ec
+
+#### ♿️ Accessibility
+
+* LayersControl: Enter or Space on the toggle moves the focus into the list, and Escape collapses it and returns the focus to the toggle, by [@ogchicken](https://github.com/ogchicken) in https://github.com/Leaflet/Leaflet/pull/10560
+* Tooltip: remove it from `aria-describedby` when it closes by [@ogchicken](https://github.com/ogchicken) in https://github.com/Leaflet/Leaflet/pull/10578
+
+#### 🐞 Bugfixes
+
+* Fix circle radii and `getBoundsZoom()` for projections that rotate the axes in https://github.com/Leaflet/Leaflet/commit/0d82a025285fc154d7728a0262192768007799ae
+* Use all four corners of `maxBounds` when the projection rotates the axes by [@ogchicken](https://github.com/ogchicken) in https://github.com/Leaflet/Leaflet/pull/10584
+* Use the middle of a zero-area polygon as its center by [@kevin9327](https://github.com/kevin9327) in https://github.com/Leaflet/Leaflet/pull/10555 and https://github.com/Leaflet/Leaflet/commit/3d14b24bb19abdb406029e22cbc072cbd2a1afc9
+* Fix the NaN distance between antipodal points by [@SwastikTripathi](https://github.com/SwastikTripathi) in https://github.com/Leaflet/Leaflet/pull/10561
+* Ignore a space before the closing brace in template placeholders by [@Kernel-Hunter](https://github.com/Kernel-Hunter) in https://github.com/Leaflet/Leaflet/pull/10562
+* Ignore empty arrays when extending bounds by [@ogchicken](https://github.com/ogchicken) in https://github.com/Leaflet/Leaflet/pull/10569
+* Don't capture pointers on form controls inside the map, which broke native widgets like the clear button of a search input, by [@Misyuk-T](https://github.com/Misyuk-T) in https://github.com/Leaflet/Leaflet/pull/10567
+* Hit-test canvas renderers at the same z-index topmost first by [@ogchicken](https://github.com/ogchicken) in https://github.com/Leaflet/Leaflet/pull/10570
+* Only click a canvas layer that the press started on by [@b84330808](https://github.com/b84330808) in https://github.com/Leaflet/Leaflet/pull/10588
+* Apply `setMinZoom()` and `setMaxZoom()` to the zoom the map is heading to by [@ogchicken](https://github.com/ogchicken) in https://github.com/Leaflet/Leaflet/pull/10571
+* Zoom out to a layer maximum zoom of 0 by [@ogchicken](https://github.com/ogchicken) in https://github.com/Leaflet/Leaflet/pull/10572
+* Skip the canvas stroke for a string `weight` of 0 by [@ogchicken](https://github.com/ogchicken) in https://github.com/Leaflet/Leaflet/pull/10581
+* Don't throw when disabling a zoom control that isn't on a map by [@ogchicken](https://github.com/ogchicken) in https://github.com/Leaflet/Leaflet/pull/10582
+* ScaleControl: round distances under 1 m down instead of up to 1 m by [@SwastikTripathi](https://github.com/SwastikTripathi) in https://github.com/Leaflet/Leaflet/pull/10583
+* Cancel a box zoom in progress when box zoom is disabled by [@ogchicken](https://github.com/ogchicken) in https://github.com/Leaflet/Leaflet/pull/10587
+* Protect the SVG renderers of custom panes and all overlays from host `max-width` resets by [@ogchicken](https://github.com/ogchicken) in https://github.com/Leaflet/Leaflet/pull/10589
+
+#### 📝 Docs
+
+* Explain stopping control events from reaching the map in https://github.com/Leaflet/Leaflet/commit/99e4fa4f937c6a10faf27221da7eed3fa391f355
+* Drop DOMPurify from the security notes in https://github.com/Leaflet/Leaflet/commit/f5bc2297333c83f7c8018039112a05a087b25e4d
+* Assert the GeoJSON coordinate conversions in the specs, and fix nine swapped expectations, by [@dylanpulver](https://github.com/dylanpulver) in https://github.com/Leaflet/Leaflet/pull/10564
+* Fix a debug page broken by the v2 API changes by [@ogchicken](https://github.com/ogchicken) in https://github.com/Leaflet/Leaflet/pull/10586
+
 ## 4.4.0 (2026-11-09)
 
 ⚠️ Despite the minor version, this release contains breaking changes ported from Leaflet, see the refactorings below; e.g. canvas renderers no longer receive pointer events, `panBy()` is limited by `maxBounds`, and `Point` and `LatLng` throw on coordinates that are not numbers.
