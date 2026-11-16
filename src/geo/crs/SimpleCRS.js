@@ -31,7 +31,7 @@ export class SimpleCRS extends CRS {
 	 * @returns {number}
 	 */
 	static zoom(scale) {
-		return Math.log(scale) / Math.LN2;
+		return Math.log2(scale);
 	}
 
 	/**

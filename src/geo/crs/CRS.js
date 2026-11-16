@@ -114,7 +114,7 @@ export class CRS {
 	 * @returns {number}
 	 */
 	static zoom(scale) {
-		return Math.log(scale / 256) / Math.LN2;
+		return Math.log2(scale / 256);
 	}
 
 	/**

@@ -237,6 +237,12 @@ describe('CRS', () => {
 			const zoom2 = crs.zoom(scale);
 			expect(Util.formatNum(zoom2)).to.eql(zoom);
 		});
+
+		it('returns the exact zoom of the scale of a whole zoom', () => {
+			for (let zoom = -10; zoom <= 40; zoom++) {
+				expect(crs.zoom(crs.scale(zoom))).to.equal(zoom);
+			}
+		});
 	});
 });
 
