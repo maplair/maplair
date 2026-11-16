@@ -85,6 +85,21 @@ describe('TileLayer: flicker-free setUrl and placeholder', () => {
 			expect(tileImages(layer).length).to.equal(oldTiles.length);
 		});
 
+		it('keeps the current tiles on refresh() until the new tiles have loaded', async () => {
+			const layer = await loadedLayer('https://a.example.com/{z}/{x}/{y}.png');
+			const oldTiles = tileImages(layer);
+
+			expect(layer.refresh()).to.equal(layer);
+			expect(pending.length).to.equal(oldTiles.length);
+			expect(oldTiles.every(tile => tile.isConnected)).to.be.true;
+
+			const load = nextEvent(layer, 'load');
+			respondAll();
+			await load;
+			expect(oldTiles.some(tile => tile.isConnected)).to.be.false;
+			expect(tileImages(layer).length).to.equal(oldTiles.length);
+		});
+
 		it('keeps the first tiles when changing the URL again before loading', async () => {
 			const layer = await loadedLayer('https://a.example.com/{z}/{x}/{y}.png');
 			const oldTiles = tileImages(layer);

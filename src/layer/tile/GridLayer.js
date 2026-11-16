@@ -274,6 +274,17 @@ export class GridLayer extends Layer {
 	}
 
 	/**
+	 * Requests all the tiles again, e.g. of live data, keeping the current tiles visible
+	 * until the new ones have loaded, unlike [`redraw`](#gridlayer-redraw). Note that
+	 * the browser may answer requests of the same URL from its cache.
+	 * @returns {this}
+	 */
+	refresh() {
+		this._keepCurrentTiles();
+		return this.redraw();
+	}
+
+	/**
 	 * Causes the layer to clear all the tiles and request them again.
 	 * @returns {this}
 	 */
