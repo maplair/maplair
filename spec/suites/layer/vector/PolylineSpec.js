@@ -275,6 +275,38 @@ describe('Polyline', () => {
 		});
 	});
 
+	describe('#setClassName', () => {
+		it('adds multiple classes', () => {
+			const polyline = new Polyline([]).addTo(map);
+			polyline.setClassName('added-class-one added-class-two');
+
+			expect(polyline.options.className).to.equal('added-class-one added-class-two');
+			expect([...polyline._path.classList]).to.include.members(['added-class-one', 'added-class-two']);
+		});
+
+		it('replaces the classes and keeps those of Maplair', () => {
+			const polyline = new Polyline([], {className: 'removed-class'}).addTo(map);
+			polyline.setClassName('added-class');
+
+			expect([...polyline._path.classList]).not.to.include('removed-class');
+			expect([...polyline._path.classList]).to.include.members(['added-class', 'maplair-interactive']);
+		});
+
+		it('removes the classes with undefined or an empty string', () => {
+			const polyline = new Polyline([], {className: 'one two'}).addTo(map);
+			polyline.setClassName();
+			expect([...polyline._path.classList]).not.to.include.members(['one', 'two']);
+
+			polyline.setClassName('three').setClassName('');
+			expect([...polyline._path.classList]).not.to.include('three');
+		});
+
+		it('applies a class set before the path is added', () => {
+			const polyline = new Polyline([]).setClassName('later').addTo(map);
+			expect([...polyline._path.classList]).to.include('later');
+		});
+	});
+
 	describe('#distance', () => {
 		it('calculates closestLayerPoint', () => {
 			const p1 = map.latLngToLayerPoint([55.8, 37.6]);

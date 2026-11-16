@@ -112,7 +112,7 @@ export class Path extends Layer {
 	 * Changes the appearance of a Path based on the options in the `PathOptions` object.
 	 * Note that [`className`](#pathoptions-classname) is an exception: it is applied only
 	 * when the path element is created, so passing it here updates the option but leaves
-	 * the element's class unchanged.
+	 * the element's class unchanged; use [`setClassName`](#path-setclassname) instead.
 	 * @param {PathOptions} style
 	 * @returns {this}
 	 */
@@ -123,6 +123,23 @@ export class Path extends Layer {
 			if (this.options.stroke && style && Object.hasOwn(style, 'weight')) {
 				this._updateBounds();
 			}
+		}
+		return this;
+	}
+
+	/**
+	 * Replaces the custom class names of the path element (the `className` option, only
+	 * for the SVG renderer), keeping the classes set by Maplair.
+	 * @param {string} [className]
+	 * @returns {this}
+	 */
+	setClassName(className) {
+		const classList = this._path?.classList,
+		old = this.options.className;
+		this.options.className = className;
+		if (classList) {
+			if (old) { classList.remove(...Util.splitWords(old)); }
+			if (className) { classList.add(...Util.splitWords(className)); }
 		}
 		return this;
 	}
