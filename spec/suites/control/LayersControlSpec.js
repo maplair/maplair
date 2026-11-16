@@ -1,5 +1,5 @@
 import {expect, vi} from 'vite-plus/test';
-import {LayersControl, MaplairMap, Marker, TileLayer, Util} from 'maplair';
+import {LayerGroup, LayersControl, MaplairMap, Marker, Polyline, TileLayer, Util} from 'maplair';
 import UIEventSimulator from 'ui-event-simulator';
 import {userEvent} from 'vite-plus/test/browser';
 import {createContainer, removeMapContainer} from '../SpecHelper.js';
@@ -32,6 +32,54 @@ describe('LayersControl', () => {
 
 	afterEach(() => {
 		removeMapContainer(map, container);
+	});
+
+	describe('autoZIndex', () => {
+		it('keeps tile layers in control order when they are switched on in another order', () => {
+			const lower = new TileLayer('');
+			const upper = new TileLayer('');
+
+			new LayersControl(null, {Lower: lower, Upper: upper}).addTo(map);
+
+			map.addLayer(upper);
+			map.addLayer(lower);
+
+			expect(+lower._container.style.zIndex).to.be.lessThan(+upper._container.style.zIndex);
+		});
+
+		it('assigns zIndexes to layers inside a layer group', () => {
+			const tileLayer = new TileLayer('');
+			const group = new LayerGroup([new TileLayer('')]);
+
+			new LayersControl(null, {Tiles: tileLayer, Group: group}).addTo(map);
+
+			expect(tileLayer.options.zIndex).to.equal(1);
+			expect(group.getLayers()[0].options.zIndex).to.equal(2);
+		});
+
+		it('leaves the stacking of vector layers to the order they are added to the map', () => {
+			const lower = new Polyline([[0, 0], [1, 1]]);
+			const upper = new Polyline([[0, 1], [1, 0]]);
+
+			new LayersControl(null, {Lower: lower, Upper: upper}).addTo(map);
+
+			map.addLayer(upper);
+			map.addLayer(lower);
+
+			const paths = map.getPane('overlayPane').querySelectorAll('path');
+			expect(paths[0]).to.equal(upper._path);
+			expect(paths[1]).to.equal(lower._path);
+		});
+
+		it('does not assign zIndexes when it is false', () => {
+			const first = new TileLayer('');
+			const second = new TileLayer('');
+
+			new LayersControl(null, {First: first, Second: second}, {autoZIndex: false}).addTo(map);
+
+			expect(first.options.zIndex).to.equal(1);
+			expect(second.options.zIndex).to.equal(1);
+		});
 	});
 
 	describe('baselayerchange event', () => {

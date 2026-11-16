@@ -55,12 +55,17 @@ import {I18n} from '../core/I18n.js';
  * corners). Possible values are `'topleft'`, `'topright'`, `'bottomleft'` or
  * `'bottomright'`.
  * @property {boolean} [autoZIndex=true] If `true`, the control will assign zIndexes in
- * increasing order to all of its layers so that the order is preserved when switching
- * them on/off.
+ * increasing order to its layers that have a `setZIndex` method (such as tile layers and
+ * image overlays, including those inside a layer group), so that their order is preserved
+ * when switching them on/off. Other layers, such as markers and vector layers, are not
+ * affected: they are stacked in the order they are added to the map. Put them in
+ * [custom map panes](https://maplair.org/examples/map-panes/) to control their order.
  * @property {boolean} [hideSingleBase=false] If `true`, the base layers in the control
  * will be hidden when there is only one.
- * @property {boolean} [sortLayers=false] Whether to sort the layers. When `false`, layers
- * will keep the order in which they were added to the control.
+ * @property {boolean} [sortLayers=false] Whether to sort the layers in the control's list.
+ * When `false`, layers will keep the order in which they were added to the control. This
+ * only changes the list, not the order in which the layers are stacked on the map (see
+ * `autoZIndex`).
  * @property {(layerA: Layer, layerB: Layer, nameA: string, nameB: string) => number} [sortFunction]
  * A [compare function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array/sort)
  * that will be used for sorting the layers, when `sortLayers` is `true`. The function
