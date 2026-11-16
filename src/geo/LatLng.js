@@ -233,7 +233,8 @@ export class LatLng {
 	 */
 	toBounds(sizeInMeters) {
 		const latAccuracy = 180 * sizeInMeters / 40075017,
-		lngAccuracy = latAccuracy / Math.cos((Math.PI / 180) * this.lat);
+		// at most around the world, which the division by the cosine of the latitude exceeds near the poles
+		lngAccuracy = Math.min(latAccuracy / Math.cos((Math.PI / 180) * this.lat), 180);
 
 		return new LatLngBounds(
 			[this.lat - latAccuracy, this.lng - lngAccuracy],

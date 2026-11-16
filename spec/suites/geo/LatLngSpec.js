@@ -161,6 +161,20 @@ describe('LatLng', () => {
 		});
 	});
 
+	describe('#toBounds', () => {
+		it('returns bounds of the given size', () => {
+			const bounds = new LatLng(0, 0).toBounds(222639);
+			expect(bounds.getSouthWest()).nearLatLng([-1, -1]);
+			expect(bounds.getNorthEast()).nearLatLng([1, 1]);
+		});
+
+		it('spans at most around the world at the poles', () => {
+			const bounds = new LatLng(90, 10).toBounds(100);
+			expect(bounds.getWest()).to.equal(-170);
+			expect(bounds.getEast()).to.equal(190);
+		});
+	});
+
 	describe('#distanceTo', () => {
 		it('calculates distance in meters', () => {
 			const a = new LatLng(50.5, 30.5);
