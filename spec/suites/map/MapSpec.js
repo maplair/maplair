@@ -1935,6 +1935,14 @@ describe('Map', () => {
 			map.fitBounds(bounds, {animate: false});
 		});
 
+		it('adds zoomOffset to the zoom, within maxZoom', () => {
+			map.fitBounds(bounds, {animate: false, zoomOffset: -1});
+			expect(map.getZoom()).to.equal(1);
+			expect(map.getCenter().equals(boundsCenter, 0.05)).to.be.true;
+			map.fitBounds(bounds, {animate: false, zoomOffset: 100, maxZoom: 10});
+			expect(map.getZoom()).to.equal(10);
+		});
+
 		it('Snaps zoom to zoomSnap', (done) => {
 			map.options.zoomSnap = 0.25;
 			map.once('zoomend', () => {

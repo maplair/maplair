@@ -190,6 +190,8 @@ const zoomAnimDuration = 250;
  * Options of `MaplairMap.fitBounds()` and similar methods.
  * @typedef {object} FitBoundsOptions
  * @property {number|null} [maxZoom=null] The maximum possible zoom to use.
+ * @property {number} [zoomOffset=0] Added to the zoom that fits the bounds (within
+ * `maxZoom`), e.g. `-1` to zoom out one level more, leaving room around the bounds.
  * @extends ZoomPanOptions, PaddingOptions
  */
 
@@ -500,7 +502,7 @@ export class MaplairMap extends Evented {
 
 		let zoom = this.getBoundsZoom(bounds, false, paddingTL.add(paddingBR));
 
-		zoom = Math.min(options.maxZoom ?? Infinity, zoom);
+		zoom = Math.min(options.maxZoom ?? Infinity, zoom + (options.zoomOffset ?? 0));
 
 		if (zoom === Infinity) {
 			return {
