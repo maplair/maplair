@@ -41,6 +41,9 @@ import {LatLngBounds} from '../../geo/LatLngBounds.js';
  * @property {number} [minNativeZoom] Minimum zoom number the tile source has available.
  * If it is specified, the tiles on all zoom levels lower than `minNativeZoom` will be
  * loaded from `minNativeZoom` level and auto-scaled.
+ * @property {boolean} [ceilZoom=false] Whether to load the tiles of the next zoom level
+ * at fractional zooms (e.g. 3 at zoom 2.2) instead of the nearest one, so that tiles are
+ * never scaled up, which keeps them sharp but loads up to four times as many.
  * @property {boolean} [noWrap=false] Whether the layer is wrapped around the
  * antimeridian. If `true`, the GridLayer will only be displayed once at low zoom
  * levels. Has no effect when the [map CRS](#maplairmapoptions-crs) doesn't wrap around.
@@ -153,6 +156,7 @@ export class GridLayer extends Layer {
 		maxZoom: undefined,
 		maxNativeZoom: undefined,
 		minNativeZoom: undefined,
+		ceilZoom: false,
 		noWrap: false,
 		pane: 'tilePane',
 		className: '',
@@ -609,7 +613,7 @@ export class GridLayer extends Layer {
 	_getTileZoom(zoom) {
 		const {minZoom, maxZoom = Infinity} = this.options;
 		if (zoom < minZoom || zoom > maxZoom) { return undefined; }
-		return this._clampZoom(Math.round(zoom));
+		return this._clampZoom(this.options.ceilZoom ? Math.ceil(zoom) : Math.round(zoom));
 	}
 
 	_clampZoom(zoom) {

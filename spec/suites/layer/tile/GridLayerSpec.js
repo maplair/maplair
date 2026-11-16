@@ -30,6 +30,15 @@ describe('GridLayer', () => {
 			grid.redraw();
 			expect(grid._tileZoom).to.equal(2);
 		});
+
+		it('uses the next tile zoom with ceilZoom', () => {
+			map.options.zoomSnap = 0.1;
+			map.setView([0, 0], 2.2);
+			const grid = new GridLayer({ceilZoom: true}).addTo(map);
+			expect(grid._tileZoom).to.equal(3);
+			map.setZoom(3, {animate: false});
+			expect(grid._tileZoom).to.equal(3);
+		});
 	});
 
 	describe('#setOpacity', () => {
