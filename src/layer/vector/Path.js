@@ -138,7 +138,7 @@ export class Path extends Layer {
 	setClassName(className) {
 		const classList = this._path?.classList,
 		old = this.options.className;
-		this.options.className = className;
+		Util.setOptions(this, {className});
 		if (classList) {
 			if (old) { classList.remove(...Util.splitWords(old)); }
 			if (className) { classList.add(...Util.splitWords(className)); }
