@@ -81,7 +81,7 @@ export class LatLng {
 		 */
 		this.lng = Util.toNumber(_lng);
 
-		if (isNaN(this.lat) || isNaN(this.lng)) {
+		if (Number.isNaN(this.lat) || Number.isNaN(this.lng)) {
 			throw new Error(`Invalid LatLng object: (${_lat}, ${_lng})`);
 		}
 
@@ -92,7 +92,7 @@ export class LatLng {
 			 */
 			this.alt = Util.toNumber(_alt);
 
-			if (isNaN(this.alt)) {
+			if (Number.isNaN(this.alt)) {
 				throw new Error(`Invalid LatLng altitude: ${_alt}`);
 			}
 		}
@@ -125,7 +125,6 @@ export class LatLng {
 	 * @param {any} [alt]
 	 * @returns {boolean}
 	 */
-	// eslint-disable-next-line no-unused-vars
 	static validate(lat, lng, alt) {
 		try {
 			return !!new LatLng(lat, lng, alt);
@@ -240,8 +239,7 @@ export class LatLng {
 			[this.lat - latAccuracy, this.lng - lngAccuracy],
 			[this.lat + latAccuracy, this.lng + lngAccuracy]);
 	}
-
-};
+}
 
 /**
  * The great-circle distance on a sphere of radius `R`, shared with `EarthCRS.distance()`.
