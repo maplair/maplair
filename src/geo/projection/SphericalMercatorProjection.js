@@ -26,7 +26,7 @@ export const SphericalMercatorProjection = {
 
 		return new Point(
 			this.R * latlng.lng * d,
-			this.R * Math.log((1 + sin) / (1 - sin)) / 2);
+			this.R * Math.atanh(sin));
 	},
 
 	unproject(point) {
