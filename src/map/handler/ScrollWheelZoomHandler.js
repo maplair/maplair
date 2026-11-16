@@ -14,11 +14,13 @@ const gestureEndDelay = 150;
  * Map options of `ScrollWheelZoomHandler`, the mouse wheel options.
  * @typedef {object} ScrollWheelZoomHandlerMapOptions
  * @lends MaplairMapOptions
- * @property {boolean|'center'|'trackpad'} [scrollWheelZoom=true] Whether the map can
- * be zoomed by using the mouse wheel and by pinching on a touchpad (or using the mouse
- * wheel with the Ctrl key). If passed `'center'`, it will zoom to the center of the
- * view regardless of where the pointer was. If passed `'trackpad'`, scrolling (e.g.
- * with two fingers on a touchpad) pans the map instead, while pinching still zooms.
+ * @property {boolean|'center'|'trackpad'|'ctrl'} [scrollWheelZoom=true] Whether the map
+ * can be zoomed by using the mouse wheel and by pinching on a touchpad (or using the
+ * mouse wheel with the Ctrl key). If passed `'center'`, it will zoom to the center of
+ * the view regardless of where the pointer was. If passed `'trackpad'`, scrolling (e.g.
+ * with two fingers on a touchpad) pans the map instead, while pinching still zooms. If
+ * passed `'ctrl'`, only the wheel with the Ctrl key and pinching zoom, while scrolling
+ * over the map scrolls the page, e.g. for maps embedded in long pages.
  * @property {number} [wheelDebounceTime=40] Limits the rate at which a wheel can fire
  * (in milliseconds). By default, the user can't zoom via wheel more often than once
  * per 40 ms.
@@ -84,10 +86,13 @@ export class ScrollWheelZoomHandler extends Handler {
 			this._pinchTimer = setTimeout(this._endPinch.bind(this), gestureEndDelay);
 			return;
 		}
-		if (this._map.options.scrollWheelZoom === 'trackpad') {
+		const mode = this._map.options.scrollWheelZoom;
+		if (mode === 'trackpad') {
 			this._panBy(e);
 			return;
 		}
+		// left to the page
+		if (mode === 'ctrl') { return; }
 		this._onWheelZoom(e);
 	}
 

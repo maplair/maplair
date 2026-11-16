@@ -68,6 +68,22 @@ describe('ScrollWheelZoomHandler', () => {
 		});
 	});
 
+	it('scrollWheelZoom: \'ctrl\' leaves the wheel without Ctrl to the page', () => {
+		vi.useFakeTimers();
+		map.options.scrollWheelZoom = 'ctrl';
+		const zoom = map.getZoom();
+
+		const e = new WheelEvent('wheel', {...scrollIn, bubbles: true, cancelable: true});
+		container.dispatchEvent(e);
+		vi.advanceTimersByTime(500);
+		expect(map.getZoom()).to.equal(zoom);
+		expect(e.defaultPrevented).to.be.false;
+
+		UIEventSimulator.fire(wheel, container, {...scrollIn, ctrlKey: true});
+		vi.advanceTimersByTime(500);
+		expect(map.getZoom()).to.be.greaterThan(zoom);
+	});
+
 	it('changes the option \'wheelDebounceTime\'', (done) => {
 		const wheelDebounceTimeBefore = map.options.wheelDebounceTime;
 		map.options.wheelDebounceTime = 100;
