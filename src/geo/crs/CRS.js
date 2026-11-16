@@ -50,6 +50,12 @@ export class CRS {
 	static transformation = undefined;
 
 	/**
+	 * If true, the coordinate space will be unbounded (infinite in both axes).
+	 * @type {boolean}
+	 */
+	static infinite = false;
+
+	/**
 	 * Projects geographical coordinates into pixel coordinates for a given zoom.
 	 * @param {LatLngExpression} latlng
 	 * @param {number} zoom
@@ -133,12 +139,6 @@ export class CRS {
 
 		return new Bounds(min, max);
 	}
-
-	/**
-	 * If true, the coordinate space will be unbounded (infinite in both axes).
-	 * @type {boolean}
-	 */
-	static infinite = false;
 
 	/**
 	 * Returns a `LatLng` where lat and lng has been wrapped according to the
