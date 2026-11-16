@@ -33,6 +33,14 @@ describe('Transformation', () => {
 		});
 	});
 
+	describe('point expressions', () => {
+		it('transforms and untransforms arrays and plain objects', () => {
+			expect(t.transform([10, 20])).to.eql(new Point(12, 64));
+			expect(t.untransform([12, 64])).to.eql(p);
+			expect(t.untransform({x: 12, y: 64})).to.eql(p);
+		});
+	});
+
 	describe('#constructor', () => {
 		it('allows an array property for a', () => {
 			const t2 = new Transformation([1, 2, 3, 4]);

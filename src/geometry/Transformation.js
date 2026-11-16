@@ -1,4 +1,5 @@
 import {Point} from './Point.js';
+/** @import {PointExpression} from './Point.js' */
 
 /**
  * Represents an affine transformation: a set of coefficients `a`, `b`, `c`, `d`
@@ -32,8 +33,7 @@ export class Transformation {
 
 	/**
 	 * Returns a transformed point, optionally multiplied by the given scale.
-	 * Only accepts actual `Point` instances, not arrays.
-	 * @param {Point} point
+	 * @param {PointExpression} point
 	 * @param {number} [scale]
 	 * @returns {Point}
 	 */
@@ -51,12 +51,13 @@ export class Transformation {
 
 	/**
 	 * Returns the reverse transformation of the given point, optionally divided
-	 * by the given scale. Only accepts actual `Point` instances, not arrays.
-	 * @param {Point} point
+	 * by the given scale.
+	 * @param {PointExpression} point
 	 * @param {number} [scale]
 	 * @returns {Point}
 	 */
 	untransform(point, scale) {
+		point = Point.from(point);
 		scale ||= 1;
 		return new Point(
 			(point.x / scale - this._b) / this._a,
