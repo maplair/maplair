@@ -299,6 +299,22 @@ export class Layer extends Evented {
 	}
 
 	/**
+	 * Moves the layer to the map pane with the given name (the `pane` option). A layer
+	 * on a map is removed from it and added again in the new pane, which fires `remove`
+	 * and `add`.
+	 * @param {string} pane
+	 * @returns {this}
+	 */
+	setPane(pane) {
+		if (this.options.pane === pane) { return this; }
+		const map = this._map;
+		map?.removeLayer(this);
+		Util.setOptions(this, {pane});
+		map?.addLayer(this);
+		return this;
+	}
+
+	/**
 	 * Changes the [`interactive`](#interactivelayeroptions-interactive) option of the
 	 * layer, e.g. to stop a layer from emitting pointer events while it is being edited.
 	 * @param {boolean} interactive

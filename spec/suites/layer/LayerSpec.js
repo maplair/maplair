@@ -90,6 +90,27 @@ describe('Layer', () => {
 		});
 	});
 
+	describe('#setPane', () => {
+		it('moves a marker and a polygon to another pane', () => {
+			const draw = map.createPane('draw'),
+			marker = new Marker([0, 0]).addTo(map),
+			polygon = new Polygon([[0, 0], [1, 1], [1, 0]]).addTo(map);
+
+			marker.setPane('draw');
+			polygon.setPane('draw');
+			expect(marker.getElement().parentNode).to.equal(draw);
+			expect(polygon._renderer._container.parentNode).to.equal(draw);
+			expect(map.hasLayer(marker) && map.hasLayer(polygon)).to.be.true;
+		});
+
+		it('sets the pane of a layer that is not on a map', () => {
+			const marker = new Marker([0, 0]).setPane('draw');
+			map.createPane('draw');
+			marker.addTo(map);
+			expect(marker.getElement().parentNode).to.equal(map.getPane('draw'));
+		});
+	});
+
 	describe('popups and tooltips', () => {
 		it('still share the layer lifecycle', () => {
 			const popup = new Popup([0, 0], {content: 'Hi'});
