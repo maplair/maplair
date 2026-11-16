@@ -195,6 +195,20 @@ describe('Tooltip', () => {
 		expect(layer.getElement().getAttribute('aria-describedby')).to.equal('my-help');
 	});
 
+	it('opens at the pointer on a layer whose center is out of view', () => {
+		const polygon = new Polygon([[-60, -100], [60, -100], [60, 100], [-60, 100]]).bindTooltip('Tooltip').addTo(map);
+		map.setView([0, 0], 3, {animate: false});
+		const inView = map.containerPointToLatLng([50, 50]);
+		polygon.fire('pointerover', {latlng: inView});
+		expect(polygon.getTooltip().getLatLng()).nearLatLng(polygon.getCenter());
+
+		polygon.closeTooltip();
+		map.setView([50, 90], 6, {animate: false});
+		const visible = map.getCenter();
+		polygon.fire('pointerover', {latlng: visible});
+		expect(polygon.getTooltip().getLatLng()).nearLatLng(visible);
+	});
+
 	it('stays open on marker when permanent', () => {
 		const layer = new Marker(center).addTo(map);
 

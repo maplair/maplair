@@ -304,9 +304,14 @@ const layerTooltipMethods = {
 			return;
 		}
 
-		this._tooltip._source = e.propagatedFrom ?? e.target;
+		const source = this._tooltip._source = e.propagatedFrom ?? e.target;
 
-		this.openTooltip(this._tooltip.options.sticky ? e.latlng : undefined);
+		let latlng = this._tooltip.options.sticky ? e.latlng : undefined;
+		// the center of a large layer may be out of view, where its tooltip wouldn't be seen
+		if (!latlng && e.latlng && source.getCenter && !this._map.getBounds().contains(source.getCenter())) {
+			latlng = e.latlng;
+		}
+		this.openTooltip(latlng);
 	},
 
 	_moveTooltip(e) {
