@@ -29,6 +29,9 @@ import * as Util from '../core/Util.js';
  * @property {boolean} [bubblingPointerEvents=true] When `true`, a pointer event on this
  * layer will trigger the same event on the map (unless
  * [`DomEvent.stopPropagation`](#domevent-stoppropagation) is used).
+ * @property {boolean} [togglePopupOnClick] Whether clicking the layer again closes its
+ * open popup. By default, it does for markers, while the popup of a path or an image
+ * overlay moves to the clicked point.
  * @extends LayerOptions
  * @fires Layer#click {MaplairPointerEvent} Fired when the user clicks (or taps) the
  * layer, if it is interactive.

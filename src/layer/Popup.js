@@ -66,6 +66,11 @@ import {I18n} from '../core/I18n.js';
  * @fires MaplairMap#autopanstart {MaplairEvent} Fired when the map starts autopanning
  * when opening a popup.
  */
+// Whether clicking the layer again closes its popup, see the layer option `togglePopupOnClick`
+function togglesPopupOnClick(layer) {
+	return layer.options.togglePopupOnClick ?? layer._togglesPopupOnClick();
+}
+
 const mapPopupMethods = {
 	/**
 	 * Opens the specified popup while closing the previously opened (to make sure only
@@ -246,7 +251,7 @@ const layerPopupMethods = {
 
 		const target = e.propagatedFrom ?? e.target;
 		// clicking a marker-like source again toggles its popup closed
-		if (this._popup._source === target && target._togglesPopupOnClick() && this._map.hasLayer(this._popup)) {
+		if (this._popup._source === target && togglesPopupOnClick(target) && this._map.hasLayer(this._popup)) {
 			this.closePopup();
 			return;
 		}
@@ -398,7 +403,7 @@ export class Popup extends DivOverlay {
 			this._source.fire('popupopen', {popup: this}, true);
 			// For non-path layers, we toggle the popup when clicking
 			// again the layer, so prevent the map to reopen it.
-			if (this._source._togglesPopupOnClick()) {
+			if (togglesPopupOnClick(this._source)) {
 				this._source.on('preclick', DomEvent.stopPropagation);
 			}
 		}
@@ -425,7 +430,7 @@ export class Popup extends DivOverlay {
 
 		if (this._source) {
 			this._source.fire('popupclose', {popup: this}, true);
-			if (this._source._togglesPopupOnClick()) {
+			if (togglesPopupOnClick(this._source)) {
 				this._source.off('preclick', DomEvent.stopPropagation);
 			}
 		}

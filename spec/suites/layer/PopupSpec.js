@@ -117,6 +117,13 @@ describe('Popup', () => {
 		expect(map.hasLayer(marker._popup)).to.be.false;
 	});
 
+	it('stays open when its marker is clicked again with togglePopupOnClick: false', () => {
+		const marker = new Marker(center, {togglePopupOnClick: false}).addTo(map).bindPopup('Popup1');
+		UIEventSimulator.fire('click', marker._icon);
+		UIEventSimulator.fire('click', marker._icon);
+		expect(map.hasLayer(marker._popup)).to.be.true;
+	});
+
 	it('it should use a popup with a function as content with a FeatureGroup', () => {
 		const marker1 = new Marker(center);
 		const marker2 = new Marker([54.6, 38.2]);
