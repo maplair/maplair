@@ -87,6 +87,19 @@ describe('Control', () => {
 			e = addControl('bottomright');
 			expect(names(corner, {a, b, c, d, e})).to.equal('bdeac');
 		});
+
+		it('centers the controls at the middle of the top and bottom edges', () => {
+			container.style.width = '400px';
+			for (const position of ['topcenter', 'bottomcenter']) {
+				const control = addControl(position);
+				control.getContainer().style.width = '100px';
+				addControl(position).getContainer().style.width = '200px';
+				const rect = control.getContainer().getBoundingClientRect(),
+				mapRect = container.getBoundingClientRect();
+				expect(control.getContainer().parentNode).to.equal(map._controlCorners[position]);
+				expect((rect.left + rect.right) / 2).to.be.closeTo((mapRect.left + mapRect.right) / 2, 1);
+			}
+		});
 	});
 
 	describe('#getEvents', () => {

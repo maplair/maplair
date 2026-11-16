@@ -284,6 +284,16 @@
 	}
 }
 
+.maplair-center {
+	left: 50%;
+	transform: translateX(-50%);
+	.maplair-control {
+		float: none;
+		width: fit-content;
+		margin-inline: auto;
+	}
+}
+
 
 /* nearest-neighbour scaling, see the `pixelated` option */
 .maplair-pixelated {

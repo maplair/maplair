@@ -7,8 +7,8 @@ import * as DomUtil from '../dom/DomUtil.js';
  * Options of `Control`, inherited by all controls.
  * @typedef {object} ControlOptions
  * @property {string} [position='topright'] The position of the control (one of the map
- * corners). Possible values are `'topleft'`, `'topright'`, `'bottomleft'` or
- * `'bottomright'`.
+ * corners or the middle of the top or bottom edge). Possible values are `'topleft'`,
+ * `'topcenter'`, `'topright'`, `'bottomleft'`, `'bottomcenter'` or `'bottomright'`.
  * @property {number} [order=0] The position of the control within its corner: controls
  * with a lower order are closer to the corner of the map, those with the same order in
  * the order of adding.
@@ -47,7 +47,7 @@ const mapControlMethods = {
 		container = this._controlContainer = DomUtil.create('div', `${l}control-container`, this._container);
 
 		for (const v of ['top', 'bottom']) {
-			for (const h of ['left', 'right']) {
+			for (const h of ['left', 'center', 'right']) {
 				corners[v + h] = DomUtil.create('div', `${l + v} ${l}${h}`, container);
 			}
 		}
