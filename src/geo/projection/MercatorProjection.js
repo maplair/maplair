@@ -41,7 +41,8 @@ export const MercatorProjection = {
 		ts = Math.exp(-point.y / r);
 		let phi = Math.PI / 2 - 2 * Math.atan(ts);
 
-		for (let i = 0, dphi = 0.1, con; i < 15 && Math.abs(dphi) > 1e-7; i++) {
+		// a tolerance of 1e-7 rad left the latitude up to 4 mm off; this converges in a few more steps
+		for (let i = 0, dphi = 0.1, con; i < 15 && Math.abs(dphi) > 1e-12; i++) {
 			con = e * Math.sin(phi);
 			con = ((1 - con) / (1 + con)) ** (e / 2);
 			dphi = Math.PI / 2 - 2 * Math.atan(ts * con) - phi;

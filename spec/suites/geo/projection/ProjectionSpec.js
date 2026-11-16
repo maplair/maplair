@@ -47,6 +47,13 @@ describe('MercatorProjection', () => {
 			// from https://github.com/Leaflet/Leaflet/issues/1578
 			expect(pr(new Point(8918060.964088084, 6755099.410887127)));
 		});
+
+		it('unprojects the latitudes it projects to within a micrometer', () => {
+			for (let lat = -84; lat <= 84; lat += 0.37) {
+				// a degree of latitude is about 111 km
+				expect(Math.abs(p.unproject(p.project(new LatLng(lat, 10))).lat - lat) * 111320).to.be.below(1e-6);
+			}
+		});
 	});
 });
 
