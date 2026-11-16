@@ -377,6 +377,14 @@ describe('Polygon', () => {
 				expect(poly.options[prop]).to.equal(expectedValue);
 			}
 		});
+
+		it('sets the interactive option like setInteractive()', () => {
+			const poly = new Polygon([[0, 0], [0, 10], [10, 10]]).addTo(map);
+			poly.setStyle({interactive: false});
+			expect(poly._path.classList.contains('maplair-interactive')).to.be.false;
+			poly.setStyle({interactive: true, weight: 2});
+			expect(poly._path.classList.contains('maplair-interactive')).to.be.true;
+		});
 	});
 
 	describe('#_clipPoints', () => {

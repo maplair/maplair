@@ -117,6 +117,8 @@ export class Path extends Layer {
 	 * @returns {this}
 	 */
 	setStyle(style) {
+		// before the option is set, which setInteractive() compares with
+		if (style && Object.hasOwn(style, 'interactive')) { this.setInteractive(style.interactive); }
 		Util.setOptions(this, style);
 		if (this._renderer) {
 			this._renderer._updateStyle(this);
