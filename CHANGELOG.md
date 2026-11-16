@@ -7,7 +7,9 @@ Maplair Changelog
 
 ### Maplair
 
-(changes without author notice are by [@simon04](https://github.com/simon04)), following [Modern Web Guidance](https://github.com/GoogleChrome/modern-web-guidance)
+(changes without author notice are by [@simon04](https://github.com/simon04))
+
+Most of the accessibility, CSS and performance improvements follow [Modern Web Guidance](https://github.com/GoogleChrome/modern-web-guidance).
 
 #### ❇️ New Features
 
@@ -16,6 +18,8 @@ Maplair Changelog
 #### ✨ Improvements
 
 * Pause the dash animation of canvas paths while the map is scrolled out of view
+* Point: copy points from their coordinates, which makes `add()` and the other copying methods ~20% faster
+* Transformation: `untransform()` accepts arrays and plain objects like `transform()`
 * Apply hover styles only on devices that can hover, so that tapped buttons, search results and links no longer stay highlighted on touch screens
 * Declare the dash animation of paths only without a preference for reduced motion, instead of canceling it with `animation: none`
 
@@ -30,6 +34,9 @@ Maplair Changelog
 #### 🐞 Bugfixes
 
 * ContextMenu: ArrowUp without a focused item moves the focus to the last item instead of the second-to-last
+* MercatorProjection (EPSG:3395): unproject latitudes precisely, which were up to 4 mm off after a round trip
+* CRS: compute the zoom of a scale with `Math.log2()`, exact for whole zooms (e.g. not `29.000000000000004`)
+* LatLng: limit the longitudes of `toBounds()` near the poles to 360°
 
 #### 📝 Docs
 
