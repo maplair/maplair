@@ -12,7 +12,6 @@ import * as Util from '../core/Util.js';
  * * Events are propagated to the `FeatureGroup`, so if the group has an event
  *   handler, it will handle events from any of the layers. This includes pointer
  *   events and custom events.
- * * Has `layeradd` and `layerremove` events
  *
  * @example
  * ```js
@@ -21,9 +20,6 @@ import * as Util from '../core/Util.js';
  * 	.on('click', function() { alert('Clicked on a member of the group!'); })
  * 	.addTo(map);
  * ```
- *
- * @fires layeradd {LayerEvent} Fired when a layer is added to this `FeatureGroup`.
- * @fires layerremove {LayerEvent} Fired when a layer is removed from this `FeatureGroup`.
  */
 export class FeatureGroup extends LayerGroup {
 	/**
@@ -53,9 +49,7 @@ export class FeatureGroup extends LayerGroup {
 
 		layer.addEventParent(this);
 
-		super.addLayer(layer);
-
-		return this.fire('layeradd', {layer});
+		return super.addLayer(layer);
 	}
 
 	/**
@@ -73,9 +67,7 @@ export class FeatureGroup extends LayerGroup {
 
 		layer.removeEventParent(this);
 
-		super.removeLayer(layer);
-
-		return this.fire('layerremove', {layer});
+		return super.removeLayer(layer);
 	}
 
 	/**

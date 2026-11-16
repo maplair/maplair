@@ -11,6 +11,9 @@ import {getFeature, asFeature} from './GeoJSONUtil.js';
  * any layers added or removed from the group will be added/removed on the map as
  * well. Extends `Layer`.
  *
+ * @fires layeradd {LayerEvent} Fired when a layer is added to this group.
+ * @fires layerremove {LayerEvent} Fired when a layer is removed from this group.
+ *
  * @example
  * ```js
  * new LayerGroup([marker1, marker2])
@@ -45,13 +48,14 @@ export class LayerGroup extends Layer {
 	 * @returns {this}
 	 */
 	addLayer(layer) {
-		const id = this.getLayerId(layer);
+		const id = this.getLayerId(layer),
+		added = !this._layers[id];
 
 		this._layers[id] = layer;
 
 		this._map?.addLayer(layer);
 
-		return this;
+		return added ? this.fire('layeradd', {layer}) : this;
 	}
 
 	/**
@@ -60,15 +64,16 @@ export class LayerGroup extends Layer {
 	 * @returns {this}
 	 */
 	removeLayer(layer) {
-		const id = typeof layer === 'number' ? layer : this.getLayerId(layer);
+		const id = typeof layer === 'number' ? layer : this.getLayerId(layer),
+		removed = this._layers[id];
 
-		if (this._map && this._layers[id]) {
-			this._map.removeLayer(this._layers[id]);
+		if (this._map && removed) {
+			this._map.removeLayer(removed);
 		}
 
 		delete this._layers[id];
 
-		return this;
+		return removed ? this.fire('layerremove', {layer: removed}) : this;
 	}
 
 	/**

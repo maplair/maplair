@@ -1,4 +1,4 @@
-﻿import {expect} from 'vite-plus/test';
+﻿import {expect, vi} from 'vite-plus/test';
 import {GeoJSON, Layer, Marker, LayerGroup} from 'maplair';
 
 describe('LayerGroup', () => {
@@ -23,6 +23,33 @@ describe('LayerGroup', () => {
 			expect(lg.addLayer(marker)).to.eql(lg);
 
 			expect(lg.hasLayer(marker)).to.be.true;
+		});
+	});
+
+	describe('layeradd and layerremove events', () => {
+		it('fires layeradd when a layer is added, once', () => {
+			const lg = new LayerGroup(),
+			marker = new Marker([0, 0]),
+			spy = vi.fn();
+			lg.on('layeradd', spy);
+
+			expect(lg.addLayer(marker)).to.equal(lg);
+			lg.addLayer(marker);
+			expect(spy).toHaveBeenCalledOnce();
+			expect(spy.mock.calls[0][0].layer).to.equal(marker);
+			expect(spy.mock.calls[0][0].target).to.equal(lg);
+		});
+
+		it('fires layerremove when a layer is removed, also by its id', () => {
+			const lg = new LayerGroup(),
+			marker = new Marker([0, 0]),
+			spy = vi.fn();
+			lg.addLayer(marker).on('layerremove', spy);
+
+			expect(lg.removeLayer(lg.getLayerId(marker))).to.equal(lg);
+			lg.removeLayer(marker);
+			expect(spy).toHaveBeenCalledOnce();
+			expect(spy.mock.calls[0][0].layer).to.equal(marker);
 		});
 	});
 
