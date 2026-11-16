@@ -10,8 +10,8 @@ import {haversineDistance} from '../LatLng.js';
  */
 export class EarthCRS extends CRS {
 	/**
-	 * The range around which the longitude axis wraps.
-	 * @type {[number, number]}
+	 * The range around which the longitude axis wraps (none if `undefined`).
+	 * @type {[number, number]|undefined}
 	 */
 	static wrapLng = [-180, 180];
 

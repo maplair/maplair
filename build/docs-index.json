@@ -12,7 +12,7 @@
 		{"title": "Utility", "items": [{"name": "Util", "module": "core/Util"}, "Transformation", {"name": "LineUtil", "module": "geometry/LineUtil"}, {"name": "PolyUtil", "module": "geometry/PolyUtil"}, "I18n"]},
 		{"title": "DOM utility", "items": [{"name": "DomEvent", "module": "dom/DomEvent"}, {"name": "DomUtil", "module": "dom/DomUtil"}, "Draggable"]},
 		{"title": "Base classes", "items": ["Class", "Evented", "Layer", "InteractiveLayerOptions", "Control", "Handler", {"name": "Projection", "module": "geo/projection/index"}, "BlanketOverlay", "Renderer"]},
-		{"title": "CRS", "items": ["CRS", "EarthCRS", "EPSG3857", "EPSG900913", "EPSG3395", "EPSG4326", "SimpleCRS"]},
+		{"title": "CRS", "items": ["CRS", "EarthCRS", "EPSG3857", "EPSG900913", "EPSG3395", "EPSG4326", "ProjectedCRS", "SimpleCRS"]},
 		{"title": "Event objects", "items": ["MaplairEvent", "EventListener", "MaplairPointerEvent", "MaplairKeyboardEvent", "LocationEvent", "MaplairErrorEvent", "LayerEvent", "LayersControlEvent", "SearchResultEvent", "TileEvent", "TileErrorEvent", "ResizeEvent", "CrsChangeEvent", "GeoJSONEvent", "PopupEvent", "TooltipEvent", "DragEndEvent", "ZoomAnimEvent"]},
 		{"title": "Types", "items": ["LatLngExpression", "LatLngBoundsExpression", "PointExpression", "BoundsExpression", "ZoomOptions", "PanOptions", "ZoomPanOptions", "FitBoundsOptions", "InvalidateSizeOptions", "LocateOptions", "PaddingOptions", "SearchResult", "Geocoder"]},
 		{"title": "Misc", "items": [{"name": "version", "module": "Maplair"}]}
