@@ -79,6 +79,13 @@ describe('SearchControl', () => {
 		expect(control._input.getAttribute('aria-expanded')).to.equal('true');
 	});
 
+	it('turns off text correction of the input', () => {
+		const input = new SearchControl({geocoder: geocoder()}).addTo(map)._input;
+		expect(input.spellcheck).to.be.false;
+		expect(input.getAttribute('autocapitalize')).to.equal('none');
+		expect(input.getAttribute('autocorrect')).to.equal('off');
+	});
+
 	it('leaves the keys of an input method (IME) to it', async () => {
 		const control = new SearchControl({geocoder: geocoder()}).addTo(map).expand();
 		await control.search('Innsbruck');

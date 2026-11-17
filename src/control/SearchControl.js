@@ -335,6 +335,10 @@ export class SearchControl extends Control {
 		input.placeholder = this.options.placeholder ?? title;
 		input.autocomplete = 'off';
 		input.enterKeyHint = 'search';
+		// place names aren't words to correct
+		input.spellcheck = false;
+		input.setAttribute('autocapitalize', 'none');
+		input.setAttribute('autocorrect', 'off');
 		input.role = 'combobox';
 		input.setAttribute('aria-label', title);
 		input.setAttribute('aria-autocomplete', 'list');
