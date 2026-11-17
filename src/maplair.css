@@ -1232,7 +1232,9 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	border-radius: 50%;
 	background: var(--maplair-cluster-color);
 	box-shadow: 0 0 0 5px color-mix(in srgb, var(--maplair-cluster-color) 40%, transparent);
+	/* black or white, whichever is readable on a custom --maplair-cluster-color; black on the default ones */
 	color: #000;
+	color: contrast-color(var(--maplair-cluster-color));
 	font: bold var(--maplair-font-size-x-small) / 1 var(--maplair-font-family-base);
 }
 .maplair-cluster-medium {

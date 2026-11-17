@@ -43,6 +43,17 @@ describe('MarkerClusterGroup', () => {
 		expect(cluster.getElement().classList.contains('maplair-cluster-small')).to.be.true;
 	});
 
+	it('draws the count readable on the cluster color', () => {
+		const group = new MarkerClusterGroup([new Marker([0, 0]), new Marker([0, 0.01])]).addTo(map);
+		const el = clusterMarkers(group)[0].getElement();
+		expect(getComputedStyle(el).color).to.equal('rgb(0, 0, 0)');
+
+		el.style.setProperty('--maplair-cluster-color', '#123');
+		if (CSS.supports('color', 'contrast-color(red)')) {
+			expect(getComputedStyle(el).color).to.equal('rgb(255, 255, 255)');
+		}
+	});
+
 	it('splits the clusters when zooming in and merges them when zooming out', () => {
 		const a = new Marker([0, 0]), b = new Marker([0, 0.05]);
 		const group = new MarkerClusterGroup([a, b]).addTo(map);
