@@ -1,4 +1,4 @@
-import {expect} from 'vite-plus/test';
+import {expect, vi} from 'vite-plus/test';
 import {LatLngBounds, MaplairMap, Point, VideoOverlay} from 'maplair';
 import {createContainer, removeMapContainer, Finger} from '../SpecHelper.js';
 
@@ -30,6 +30,20 @@ describe('VideoOverlay', () => {
 		style.remove();
 
 		expect([maxWidth, maxHeight]).to.eql(['none', 'none']);
+	});
+
+	it('autoplays the video, or shows its controls with reduced motion', () => {
+		const video = new VideoOverlay(videoUrls, videoBounds).addTo(map).getElement();
+		expect(video.autoplay).to.be.true;
+		expect(video.controls).to.be.false;
+
+		const matchMedia = window.matchMedia.bind(window);
+		const reduced = query => (query === '(prefers-reduced-motion: reduce)' ? {matches: true} : matchMedia(query));
+		vi.spyOn(window, 'matchMedia').mockImplementation(reduced);
+		const reducedVideo = new VideoOverlay(videoUrls, videoBounds).addTo(map).getElement();
+		vi.restoreAllMocks();
+		expect(reducedVideo.autoplay).to.be.false;
+		expect(reducedVideo.controls).to.be.true;
 	});
 
 	it('create VideoOverlay', () => {

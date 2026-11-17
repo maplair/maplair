@@ -11,7 +11,9 @@ import * as Util from '../core/Util.js';
  * Options of `VideoOverlay`.
  * @typedef {object} VideoOverlayOptions
  * @property {boolean} [autoplay=true] Whether the video starts playing automatically
- * when loaded. On some browsers autoplay will only work with `muted: true`.
+ * when loaded. On some browsers autoplay will only work with `muted: true`. If the user
+ * prefers [reduced motion](https://developer.mozilla.org/docs/Web/CSS/@media/prefers-reduced-motion),
+ * the video doesn't start by itself, but shows its controls to start it.
  * @property {boolean} [controls=false] Whether the browser will offer controls to
  * allow the user to control video playback, including volume, seeking, and
  * pause/resume playback.
@@ -98,8 +100,10 @@ export class VideoOverlay extends ImageOverlay {
 		if (!this.options.keepAspectRatio) {
 			vid.style.objectFit = 'fill';
 		}
-		vid.autoplay = !!this.options.autoplay;
-		vid.controls = !!this.options.controls;
+		// with reduced motion, the user starts the video
+		const reducedMotion = !!this.options.autoplay && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		vid.autoplay = !!this.options.autoplay && !reducedMotion;
+		vid.controls = !!this.options.controls || reducedMotion;
 		vid.loop = !!this.options.loop;
 		vid.muted = !!this.options.muted;
 		vid.playsInline = !!this.options.playsInline;
