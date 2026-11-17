@@ -124,6 +124,25 @@ describe('Popup', () => {
 		expect(map.hasLayer(marker._popup)).to.be.true;
 	});
 
+	it('is removed once it has faded out, however long the transition in the CSS takes', async () => {
+		const style = document.createElement('style');
+		style.textContent = '.maplair-fade-anim .maplair-popup { transition-duration: 0.4s; }';
+		document.head.append(style);
+		try {
+			map.setView(center, 13);
+			const popup = new Popup().setLatLng(center).setContent('Popup').openOn(map);
+			const el = popup.getElement();
+			// after the fade-in, which a close would reverse in the time it ran
+			await new Promise((resolve) => { setTimeout(resolve, 500); });
+			map.closePopup();
+			await new Promise((resolve) => { setTimeout(resolve, 250); });
+			expect(el.isConnected).to.be.true;
+			await vi.waitFor(() => expect(el.isConnected).to.be.false, {timeout: 1000});
+		} finally {
+			style.remove();
+		}
+	});
+
 	it('closes the open popup when rebinding with options', () => {
 		const marker = new Marker(center).addTo(map).bindPopup('Popup1').openPopup();
 		const popup = marker.getPopup();

@@ -193,6 +193,7 @@ export class DivOverlay extends Layer {
 		}
 
 		clearTimeout(this._removeTimeout);
+		this._removal = null;
 		this.getPane().append(this._container);
 		if (this.options.overflow) {
 			this._container.classList.add('maplair-overflow');
@@ -231,8 +232,22 @@ export class DivOverlay extends Layer {
 		}
 
 		if (map._fadeAnimated) {
-			this._container.style.opacity = '0';
-			this._removeTimeout = setTimeout(() => this._container.remove(), 200);
+			// removed once faded out, after the transition of the opacity in the CSS, however long it takes
+			const container = this._container,
+			removal = this._removal = {},
+			remove = () => {
+				if (this._removal === removal) { container.remove(); }
+			};
+			container.style.opacity = '0';
+			const transitions = container.getAnimations().filter(a => a.transitionProperty === 'opacity');
+			if (transitions.length) {
+				// rejected when reopened before, which keeps the overlay as well
+				Promise.all(transitions.map(a => a.finished)).then(remove, () => {});
+				// in case the transition never ends, e.g. in a hidden tab
+				this._removeTimeout = setTimeout(remove, 1000);
+			} else {
+				remove();
+			}
 		} else {
 			this._container.remove();
 		}
