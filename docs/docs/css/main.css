@@ -94,6 +94,8 @@ body {
 
 p {
 	margin: 24px 0;
+	/* avoids single words on the last line, where supported */
+	text-wrap: pretty;
 }
 
 a, a span.hljs-string {
@@ -191,6 +193,10 @@ video {
 }
 
 /* headings */
+
+h2, h3, h4 {
+	text-wrap: balance;
+}
 
 h2 {
 	font-weight: 400;
@@ -360,7 +366,7 @@ p.tagline {
 	-webkit-font-smoothing: subpixel-antialiased;
 }
 .container pre code {
-	font-size: 14px;
+	font-size: 0.875rem;
 	padding: .75em 1em;
 	border-radius: var(--border-radius);
 	white-space: pre;
@@ -426,7 +432,7 @@ p.tagline {
 	width: 130px;
 	line-height: 1.6;
 	color: var(--text-faint);
-	font-size: 18px;
+	font-size: 1.125rem;
 }
 .post-info {
 	overflow: hidden;
@@ -770,7 +776,7 @@ table.plugins td:first-child a {
 }
 .api-page table td,
 .api-page table th {
-	font-size: 14px;
+	font-size: 0.875rem;
 }
 
 main .api-page p {

@@ -33,7 +33,7 @@
 
 body {
 	margin: 0;
-	font: 15px/1.5 var(--font);
+	font: 0.9375rem/1.5 var(--font);
 	color: var(--text);
 	background: var(--background);
 }
@@ -45,6 +45,10 @@ a {
 	&:hover {
 		text-decoration: underline;
 	}
+}
+
+h1, h2, h3, h4 {
+	text-wrap: balance;
 }
 
 code, pre {

@@ -85,7 +85,7 @@ div.accordion.expanded > label > span.expander {
 div.accordion > label > span.expander {
     transition: transform 0.4s ease-out 0s;
     display: inline-block;
-    font-size: 12px;
+    font-size: 0.75rem;
 }
 
 
