@@ -61,7 +61,13 @@ const mapFullscreenMethods = {
 		if (this._fullscreen === 'pseudo') {
 			this._setFullscreen(false);
 		} else if (this._fullscreen) {
-			document.exitFullscreen();
+			if (document.fullscreenElement === container) {
+				document.exitFullscreen();
+			} else {
+				// already exited without a fullscreenchange: WebKit fires none when a map in an iframe is detached
+				DomEvent.off(document, 'fullscreenchange', this._onFullscreenChange, this);
+				this._setFullscreen(false);
+			}
 		} else if (document.fullscreenEnabled && container.requestFullscreen) {
 			DomEvent.on(document, 'fullscreenchange', this._onFullscreenChange, this);
 			container.requestFullscreen().catch(() => {
@@ -208,7 +214,7 @@ export class FullscreenControl extends Control {
 			this.on('unload', function () {
 				if (this._fullscreen === 'native') {
 					DomEvent.off(document, 'fullscreenchange', this._onFullscreenChange, this);
-					document.exitFullscreen();
+					if (document.fullscreenElement === this._container) { document.exitFullscreen(); }
 				}
 				this._container.classList.remove('maplair-fullscreen', 'maplair-pseudo-fullscreen');
 				DomEvent.off(document, 'keydown', this._onFullscreenKeyDown, this);

@@ -157,6 +157,19 @@ describe('FullscreenControl', () => {
 		map = null;
 	});
 
+	it('resets a stale fullscreen state, after an exit without fullscreenchange', () => {
+		mockFullscreenApi();
+		new FullscreenControl().addTo(map);
+		map.toggleFullscreen();
+		expect(map.isFullscreen()).to.be.true;
+
+		// e.g. the map was detached, which exits fullscreen; WebKit fires no fullscreenchange in an iframe
+		vi.spyOn(document, 'fullscreenElement', 'get').mockReturnValue(null);
+		map.toggleFullscreen();
+		expect(document.exitFullscreen).not.toHaveBeenCalled();
+		expect(map.isFullscreen()).to.be.false;
+	});
+
 	it('translates the button title', () => {
 		I18n.registerLocale('xx', {'View fullscreen': 'Vollbild anzeigen'});
 		I18n.setLocale('xx');
