@@ -344,7 +344,8 @@ export class LayersControl extends Control {
 		DomEvent.disableScrollPropagation(container);
 
 		const section = this._section = DomUtil.create('fieldset', `${className}-list`);
-		section.setAttribute('aria-label', this._getTitle());
+		// names the group of inputs, visually hidden next to the toggle
+		DomUtil.create('legend', `${className}-legend`, section).textContent = this._getTitle();
 		section.tabIndex = -1;
 
 		let link;
