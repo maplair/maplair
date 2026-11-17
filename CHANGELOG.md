@@ -9,9 +9,45 @@ Maplair Changelog
 
 (changes without author notice are by [@simon04](https://github.com/simon04))
 
+Most of the following changes follow [Modern Web Guidance](https://github.com/GoogleChrome/modern-web-guidance).
+
+#### ❇️ New Features
+
+* `DomUtil.isHTML()`, and `TrustedHTML` content of popups, tooltips and the button, text, legend and layers controls is rendered as HTML, for pages enforcing Trusted Types
+
+#### ✨ Improvements
+
+* The map renders its form controls and scrollbars light (`color-scheme: light`), also on dark pages; a dark theme built with the custom properties sets `color-scheme: dark` along with them
+* Clip the map container with `overflow: clip`, which focus or `scrollIntoView()` can't scroll
+* Keep scrolling in the layers list, the search results, the legend and scrolled popups from chaining to the page
+* Keep the state of elements brought to the front or back (focus, animations, iframes in popups) with `moveBefore()` where supported
+* Remove popups once they have faded out, however long the transition in custom CSS takes
+* MarkerClusterGroup: draw the count in black or white with `contrast-color()`, readable on custom cluster colors
+* VideoOverlay: don't autoplay with reduced motion, show the controls instead
+* SearchControl: turn off text correction of the input, keep iOS from zooming in on it, and leave the keys of an input method (IME) to it
+* MiniMapControl: turn the toggle with the `rotate` property; mix colors in oklab
+
+#### ♿️ Accessibility
+
+* Keyboard shortcuts help: a `<dialog>` named by its heading, with a close button that gets the focus when it opens
+* Popup: put the close button, focused when a popup is opened with the keyboard, before the content
+* Marker: click on the keyup of Space, like a button
+* SearchControl: show a spinner while searching rather than only a color, change the text of the status message instead of showing it, so that screen readers announce it, and use the `<search>` element as the landmark
+* LayersControl: name the list with a visually hidden `<legend>`; LegendControl: keep the list semantics in Safari
+* MiniMapControl: name the toggle 'Overview map', with its state in `aria-expanded`
+* SideBySideControl: move the divider with the other keys of a slider (ArrowUp/Down, PageUp/Down, Home, End)
+
 #### 🐞 Bugfixes
 
 * Tooltip: open at the pointer on a polygon or polyline whose center is out of view, where its tooltip wasn't seen (Leaflet issue https://github.com/Leaflet/Leaflet/issues/7040)
+* Map rotation: keep popups and tooltips with the `overflow` option open on the first rotation
+* Hash: skip malformed layer names instead of throwing
+
+#### 📝 Docs
+
+* Add Subresource Integrity to the CDN snippets, with `build/sri.js` writing the hashes of a release
+* API reference: a skip link to the content
+* Set the font sizes in rem, balance headings, pick the sprite by resolution with `image-set()`
 
 ### Leaflet, since 4.6.0
 
