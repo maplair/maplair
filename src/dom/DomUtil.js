@@ -35,6 +35,20 @@ export function create(tagName, className, container) {
 	return el;
 }
 
+// Moves `node` before `ref` (or to the end) within `parent`, keeping its state (focus, animations, iframes) with
+// moveBefore() where supported
+function moveBefore(parent, node, ref) {
+	if (parent.moveBefore) {
+		try {
+			parent.moveBefore(node, ref);
+			return;
+		} catch {
+			// e.g. across documents, where it throws; inserting works
+		}
+	}
+	parent.insertBefore(node, ref);
+}
+
 /**
  * Makes `el` the last child of its parent, so it renders in front of the other
  * children.
@@ -48,9 +62,9 @@ export function toFront(el) {
 	// re-inserting a hovered node (e.g. bringToFront in a pointerover handler) makes Chromium 144+ fire a repeated
 	// pointerover and lose the next pointerout (#10129), so move the nodes after it instead
 	if (el.matches(':hover')) {
-		while (el.nextSibling) { el.before(el.nextSibling); }
+		while (el.nextSibling) { moveBefore(parent, el.nextSibling, el); }
 	} else {
-		parent.append(el);
+		moveBefore(parent, el, null);
 	}
 }
 
@@ -64,9 +78,9 @@ export function toBack(el) {
 	if (!parent || parent.firstChild === el) { return; }
 
 	if (el.matches(':hover')) { // see toFront
-		while (el.previousSibling) { el.after(el.previousSibling); }
+		while (el.previousSibling) { moveBefore(parent, el.previousSibling, el.nextSibling); }
 	} else {
-		parent.prepend(el);
+		moveBefore(parent, el, parent.firstChild);
 	}
 }
 

@@ -85,6 +85,17 @@ describe('DomUtil', () => {
 			expect([...el.children]).to.eql([a, b, c, elm]);
 			expect(removed).not.to.include(elm);
 		});
+
+		it('keeps the focus of a moved element where moveBefore() is supported', () => {
+			const button = DomUtil.create('button', '', el);
+			DomUtil.create('div', 'test', el);
+			button.focus();
+			DomUtil.toFront(button);
+			expect(el.lastChild).to.equal(button);
+			if ('moveBefore' in Element.prototype) {
+				expect(document.activeElement).to.equal(button);
+			}
+		});
 	});
 
 	describe('#toBack', () => {
