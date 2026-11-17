@@ -233,6 +233,15 @@ describe('Map', () => {
 			container.scrollTop = 50;
 			expect(container.scrollTop).to.equal(0);
 		});
+
+		it('renders its form controls light, also on a dark page', () => {
+			document.documentElement.style.colorScheme = 'dark';
+			try {
+				expect(getComputedStyle(container).colorScheme).to.equal('light');
+			} finally {
+				document.documentElement.style.colorScheme = '';
+			}
+		});
 	});
 
 	describe('#whenReady', () => {

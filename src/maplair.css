@@ -419,6 +419,9 @@ svg.maplair-image-layer.maplair-interactive path {
 
 .maplair-container {
 	background: var(--maplair-background-color-neutral);
+	/* the controls have light colors, so their form controls and scrollbars should too, also on dark pages; set
+	   color-scheme: dark along with dark custom properties */
+	color-scheme: light;
 	outline-offset: 1px;
 	font-family: var(--maplair-font-family-base);
 	font-size: var(--maplair-font-size-x-small);
