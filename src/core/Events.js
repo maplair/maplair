@@ -247,7 +247,10 @@ export class Evented extends Class {
 	off(types, fn, context) {
 
 		if (!arguments.length) {
-			// clear all listeners if called without arguments
+			// clear all listeners if called without arguments, also those of a running fire()
+			for (const type of Object.keys(this._events ?? {})) {
+				this._off(type);
+			}
 			delete this._events;
 			delete this._listenerIndex;
 
