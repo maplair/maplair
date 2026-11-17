@@ -116,6 +116,8 @@
 
 .maplair-container {
 	overflow: hidden;
+	/* clips without being a scroll container, which focus or scrollIntoView() could scroll */
+	overflow: clip;
 	isolation: isolate;
 
 	.maplair-overlay-pane svg,

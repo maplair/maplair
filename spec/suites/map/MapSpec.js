@@ -225,6 +225,16 @@ describe('Map', () => {
 		});
 	});
 
+	describe('container', () => {
+		it('clips its content without being scrollable', () => {
+			container.style.width = container.style.height = '100px';
+			map.setView([0, 0], 1);
+			expect(getComputedStyle(container).overflow).to.equal('clip');
+			container.scrollTop = 50;
+			expect(container.scrollTop).to.equal(0);
+		});
+	});
+
 	describe('#whenReady', () => {
 		describe('when the map has not yet been loaded', () => {
 			it('calls the callback when the map is loaded', () => {
