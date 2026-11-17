@@ -169,13 +169,18 @@ describe('SearchControl', () => {
 		await control.search('nowhere');
 		expect(message.textContent).to.equal('No results');
 		expect(message.hidden).to.be.false;
+		expect(message.offsetHeight).to.be.greaterThan(0);
 
 		search.mockRejectedValueOnce(new Error('offline'));
 		await control.search('nowhere').then(() => expect.fail('resolved'), error => expect(error.message).to.equal('offline'));
 		expect(message.textContent).to.equal('The search failed');
 
 		keydown(control, 'Escape');
-		expect(message.hidden).to.be.true;
+		expect(message.textContent).to.equal('');
+		// still rendered, so that the next message is announced
+		expect(message.hidden).to.be.false;
+		expect(getComputedStyle(message).display).not.to.equal('none');
+		expect(message.offsetHeight).to.equal(0);
 	});
 
 	it('aborts the previous search', async () => {

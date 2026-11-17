@@ -513,8 +513,8 @@ export class SearchControl extends Control {
 			return item;
 		}));
 		this._list.hidden = !results.length;
+		// only the text changes: a live region that is shown rather than changed isn't announced reliably
 		this._message.textContent = results.length ? '' : message;
-		this._message.hidden = !this._message.textContent;
 		this._input.setAttribute('aria-expanded', !!results.length);
 		this._setActive(-1);
 	}
@@ -587,7 +587,7 @@ export class SearchControl extends Control {
 			this._setActive(((this._active < 0 && step < 0 ? n : this._active) + step + n) % n);
 		} else if (e.key === 'Escape') {
 			DomEvent.preventDefault(e);
-			if (n || !this._message.hidden) {
+			if (n || this._message.textContent) {
 				this._showResults([]);
 			} else if (this._input.value) {
 				this.clear();
