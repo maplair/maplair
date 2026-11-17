@@ -187,7 +187,7 @@
 	box-sizing: border-box;
 	z-index: 800;
 	border: var(--maplair-border-width-thick) dotted var(--maplair-border-color-progressive);
-	background: color-mix(in srgb, var(--maplair-background-color-base) 50%, transparent);
+	background: color-mix(in oklab, var(--maplair-background-color-base) 50%, transparent);
 }
 
 .maplair-pane {
@@ -1231,7 +1231,7 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	justify-content: center;
 	border-radius: 50%;
 	background: var(--maplair-cluster-color);
-	box-shadow: 0 0 0 5px color-mix(in srgb, var(--maplair-cluster-color) 40%, transparent);
+	box-shadow: 0 0 0 5px color-mix(in oklab, var(--maplair-cluster-color) 40%, transparent);
 	/* black or white, whichever is readable on a custom --maplair-cluster-color; black on the default ones */
 	color: #000;
 	color: contrast-color(var(--maplair-cluster-color));

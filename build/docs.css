@@ -195,7 +195,7 @@ td {
 }
 
 tr:target {
-	background: color-mix(in srgb, var(--link) 12%, transparent);
+	background: color-mix(in oklab, var(--link) 12%, transparent);
 }
 
 .params {
