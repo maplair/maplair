@@ -3,6 +3,67 @@ Maplair Changelog
 
 (all changes of Leaflet without author notice are by [@mourner](https://github.com/mourner))
 
+## Unreleased
+
+### Maplair
+
+(changes without author notice are by [@simon04](https://github.com/simon04))
+
+#### 🐞 Bugfixes
+
+* Tooltip: open at the pointer on a polygon or polyline whose center is out of view, where its tooltip wasn't seen (Leaflet issue https://github.com/Leaflet/Leaflet/issues/7040)
+
+### Leaflet, since 4.6.0
+
+Ported from Leaflet (changes without author notice are by [@mourner](https://github.com/mourner))
+
+#### ❇️ New Features
+
+* Add `ProjectedCRS`, a base class for CRSs defined by a projection and a list of resolutions, such as national grids and WMTS tile matrix sets, as a successor to Proj4Leaflet, in https://github.com/Leaflet/Leaflet/pull/10591
+
+#### ♿️ Accessibility
+
+* Tooltip: preserve other `aria-describedby` references, adding and removing only its own ID, by [@xiaoyao-666-coder](https://github.com/xiaoyao-666-coder) in https://github.com/Leaflet/Leaflet/pull/10596
+
+#### 🐞 Bugfixes
+
+* Don't call the remaining listeners after `off()` without arguments during `fire()` by [@Chen1098](https://github.com/Chen1098) in https://github.com/Leaflet/Leaflet/pull/10597
+* Don't throw in `GeoJSON#resetStyle()` for layers added with `addLayer()` by [@Chen1098](https://github.com/Chen1098) in https://github.com/Leaflet/Leaflet/pull/10598
+* Disable the handlers in reverse when removing the map, so that a handler re-enabling another one on disable leaves none enabled, in https://github.com/Leaflet/Leaflet/commit/1445e31c46998093701b9aa0edf1fee419f6fa4e
+* Close the open popup when `bindPopup()` replaces it by [@SudeepGowda55](https://github.com/SudeepGowda55) in https://github.com/Leaflet/Leaflet/pull/10606
+* Don't throw on marker autoPan with a padding of 0 by [@SudeepGowda55](https://github.com/SudeepGowda55) in https://github.com/Leaflet/Leaflet/pull/10607
+* FullscreenControl: reset a stale fullscreen state after an exit without `fullscreenchange`, e.g. of a detached map in an iframe in WebKit, in https://github.com/Leaflet/Leaflet/commit/b6c16ec2f0af88bb06a9b9c1931051c88c1b9c74 and https://github.com/Leaflet/Leaflet/commit/d5d3498e3bf8fa9115158bc5eb9b84e84d88c047
+
+#### 📝 Docs
+
+* LayersControl: clarify which layers `autoZIndex` orders by [@deepujain](https://github.com/deepujain) in https://github.com/Leaflet/Leaflet/pull/10594
+
+#### 🧪 Tests
+
+* Tooltip: a `Point` offset is not mirrored in place by [@SudeepGowda55](https://github.com/SudeepGowda55) in https://github.com/Leaflet/Leaflet/pull/10605
+* LatLng: the default margin of `equals()` by [@ksir0601](https://github.com/ksir0601) in https://github.com/Leaflet/Leaflet/pull/10608
+
+### Leaflet pull requests, not yet merged
+
+Adopted from open Leaflet pull requests, some adapted to Maplair
+
+#### ❇️ New Features
+
+* Path: `setClassName()` replaces the custom class names of the path element by [@AntonKhorev](https://github.com/AntonKhorev) in https://github.com/Leaflet/Leaflet/pull/9645
+* Path: `setStyle({interactive})` works like `setInteractive()` by [@yohanboniface](https://github.com/yohanboniface) in https://github.com/Leaflet/Leaflet/pull/9475
+* Control: the positions `topcenter` and `bottomcenter` by [@D4ve-R](https://github.com/D4ve-R) in https://github.com/Leaflet/Leaflet/pull/8615
+* LayerGroup: fires `layeradd` and `layerremove` like `FeatureGroup` (without propagating the events of its layers) by [@alekzvik](https://github.com/alekzvik) in https://github.com/Leaflet/Leaflet/pull/8254
+* Layer: `setPane()` moves a layer to another map pane by [@Falke-Design](https://github.com/Falke-Design) in https://github.com/Leaflet/Leaflet/pull/7388
+* GridLayer: `refresh()` requests all the tiles again, keeping the current ones visible until the new ones have loaded, by [@yuri-karelics](https://github.com/yuri-karelics) in https://github.com/Leaflet/Leaflet/pull/9100
+* Map: `scrollWheelZoom: 'ctrl'` zooms only with the Ctrl key or a pinch, so that scrolling over the map scrolls the page, by [@Falke-Design](https://github.com/Falke-Design) in https://github.com/Leaflet/Leaflet/pull/7925
+* GridLayer: the option `ceilZoom` loads the tiles of the next zoom level at fractional zooms, which keeps them sharp, by [@ij1](https://github.com/ij1) in https://github.com/Leaflet/Leaflet/pull/6505
+* Layer: the option `togglePopupOnClick`, whether clicking a layer again closes its popup, by [@iv-mexx](https://github.com/iv-mexx) in https://github.com/Leaflet/Leaflet/pull/5244
+* Map: the `fitBounds()` option `zoomOffset` by [@dubzdubz](https://github.com/dubzdubz) in https://github.com/Leaflet/Leaflet/pull/6100
+
+#### 📝 Docs
+
+* Show how to change the opacity of an image overlay by [@AwaleSagar](https://github.com/AwaleSagar) in https://github.com/Leaflet/Leaflet/pull/10557
+
 ## 4.6.0 (2026-11-16)
 
 ### Maplair
