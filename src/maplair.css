@@ -319,6 +319,12 @@
 	}
 }
 
+@keyframes maplair-spin {
+	to {
+		rotate: 1turn;
+	}
+}
+
 @keyframes maplair-dash {
 	from {
 		stroke-dashoffset: 0;
@@ -674,9 +680,31 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	position: relative;
 	background: var(--maplair-background-color-base);
 
+	/* a spinner in place of the icon, not only a color */
 	&.maplair-control-search-loading .maplair-control-search-toggle {
+		position: relative;
 		cursor: progress;
-		color: var(--maplair-color-subtle);
+
+		svg {
+			visibility: hidden;
+		}
+
+		&::after {
+			content: "";
+			position: absolute;
+			inset: 0;
+			width: 12px;
+			height: 12px;
+			margin: auto;
+			border: 2px solid currentColor;
+			border-top-color: transparent;
+			border-radius: 50%;
+			animation: maplair-spin 0.8s linear infinite;
+
+			@media (prefers-reduced-motion: reduce) {
+				animation-duration: 3s;
+			}
+		}
 	}
 }
 

@@ -428,7 +428,7 @@ export class SearchControl extends Control {
 		}
 
 		const controller = this._controller = new AbortController();
-		this._container.classList.add('maplair-control-search-loading');
+		this._setLoading(true);
 		try {
 			const results = await this.options.geocoder(query, {signal: controller.signal});
 			if (!controller.signal.aborted) {
@@ -442,7 +442,7 @@ export class SearchControl extends Control {
 		} finally {
 			if (this._controller === controller) {
 				this._controller = null;
-				this._container.classList.remove('maplair-control-search-loading');
+				this._setLoading(false);
 			}
 		}
 	}
@@ -499,7 +499,13 @@ export class SearchControl extends Control {
 		clearTimeout(this._autoCompleteTimeout);
 		this._controller?.abort();
 		this._controller = null;
-		this._container?.classList.remove('maplair-control-search-loading');
+		if (this._container) { this._setLoading(false); }
+	}
+
+	// shown by a spinner instead of the search icon, and as busy results to assistive technologies
+	_setLoading(loading) {
+		this._container.classList.toggle('maplair-control-search-loading', loading);
+		this._list.toggleAttribute('aria-busy', loading);
 	}
 
 	// Shows the results, or the message if there are none

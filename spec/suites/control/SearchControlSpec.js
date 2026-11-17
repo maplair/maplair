@@ -200,11 +200,16 @@ describe('SearchControl', () => {
 
 		control.search('slow');
 		expect(control.getContainer().classList.contains('maplair-control-search-loading')).to.be.true;
+		// a spinner, not only a color, and busy results
+		const toggle = control.getContainer().querySelector('.maplair-control-search-toggle');
+		expect(getComputedStyle(toggle, '::after').animationName).to.equal('maplair-spin');
+		expect(control._list.hasAttribute('aria-busy')).to.be.true;
 		await control.search('fast');
 		expect(signals[0].aborted).to.be.true;
 		expect(signals[1].aborted).to.be.false;
 		expect(items(control)).to.have.length(2);
 		expect(control.getContainer().classList.contains('maplair-control-search-loading')).to.be.false;
+		expect(control._list.hasAttribute('aria-busy')).to.be.false;
 	});
 
 	it('searches while typing with autoComplete', () => {
