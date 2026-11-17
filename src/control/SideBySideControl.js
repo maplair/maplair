@@ -217,15 +217,21 @@ export class SideBySideControl extends Control {
 		DomEvent.off(document, 'pointerup pointercancel', this._onPointerUp, this);
 	}
 
+	// the keys of a slider, with left and down towards 0
 	_onKeyDown(e) {
-		const step = e.shiftKey ? 0.01 : 0.05;
-		if (e.key === 'ArrowLeft') {
-			this.setRatio(this._ratio - step);
-		} else if (e.key === 'ArrowRight') {
-			this.setRatio(this._ratio + step);
-		} else {
-			return;
-		}
+		const step = e.shiftKey ? 0.01 : 0.05,
+		ratio = {
+			ArrowLeft: this._ratio - step,
+			ArrowDown: this._ratio - step,
+			ArrowRight: this._ratio + step,
+			ArrowUp: this._ratio + step,
+			PageDown: this._ratio - 0.25,
+			PageUp: this._ratio + 0.25,
+			Home: 0,
+			End: 1
+		}[e.key];
+		if (ratio === undefined) { return; }
+		this.setRatio(ratio);
 		// not panning the map
 		DomEvent.stop(e);
 	}

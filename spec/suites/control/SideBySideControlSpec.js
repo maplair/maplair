@@ -96,6 +96,20 @@ describe('SideBySideControl', () => {
 		expect(control.getRatio()).to.equal(1);
 	});
 
+	it('moves the divider with the other keys of a slider', () => {
+		const control = new SideBySideControl(left, right).addTo(map);
+		const key = (k) => {
+			UIEventSimulator.fire('keydown', divider(), {key: k});
+			return control.getRatio();
+		};
+		expect(key('Home')).to.equal(0);
+		expect(key('ArrowUp')).to.be.closeTo(0.05, 1e-9);
+		expect(key('PageUp')).to.be.closeTo(0.3, 1e-9);
+		expect(key('PageDown')).to.be.closeTo(0.05, 1e-9);
+		expect(key('ArrowDown')).to.be.closeTo(0, 1e-9);
+		expect(key('End')).to.equal(1);
+	});
+
 	it('clips image overlays', () => {
 		const image = new ImageOverlay('data:image/gif;base64,R0lGODlhAQABAAAAACw=', [[-30, -60], [30, 60]]).addTo(map);
 		new SideBySideControl([], image).addTo(map);
