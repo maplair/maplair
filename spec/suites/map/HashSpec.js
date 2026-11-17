@@ -35,6 +35,10 @@ describe('Hash', () => {
 			expect(Hash.parse('#5.5/1/2/30').bearing).to.equal(30);
 		});
 
+		it('skips malformed layer names instead of throwing', () => {
+			expect(Hash.parse('#13/47/11?layers=%ZZ,OSM').layers).to.eql(['OSM']);
+		});
+
 		it('rejects other hashes', () => {
 			for (const value of ['', '#', '#about', '#1/2', '#1/2/x', '#1//2', '#1/2/3/4/5', '#1/2/3/x']) {
 				expect(Hash.parse(value), value).to.be.undefined;

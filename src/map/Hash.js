@@ -11,7 +11,16 @@ queryParams = ['zoom', 'lat', 'lng', 'bearing', 'layers'];
 // commas, which are encoded), or `undefined` without the parameter
 function parseLayers(query) {
 	const raw = (query ?? '').split('&').find(param => param.startsWith('layers='))?.slice(7);
-	return raw === undefined ? undefined : raw.split(',').filter(Boolean).map(decodeURIComponent);
+	return raw === undefined ? undefined : raw.split(',').filter(Boolean).map(decodeName).filter(name => name !== null);
+}
+
+// a malformed name (e.g. `%ZZ` typed into the address bar) is skipped instead of throwing
+function decodeName(name) {
+	try {
+		return decodeURIComponent(name);
+	} catch {
+		return null;
+	}
 }
 
 // The rounded view of the map and the names of the given layers on it
