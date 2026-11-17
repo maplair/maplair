@@ -35,7 +35,7 @@ so please read the changelog carefully when upgrading to it.
 The latest stable Maplair release is available on several CDNs. To start using it with an [importmap](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script/type/importmap), place the following in the `head` of your HTML code:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplair@{{ site.latest_maplair_version }}/dist/maplair.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplair@{{ site.latest_maplair_version }}/dist/maplair.css" integrity="{{ site.latest_maplair_integrity.css }}" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 <script type="importmap">
 {
@@ -68,7 +68,7 @@ Then, in your script, import the needed Maplair Classes as follows:
 The old (and no longer recommended) way to include Maplair in your project without using modules is by relying on the global variable `L`.
 
 ```html
-<script src="https://unpkg.com/maplair@{{ site.latest_maplair_version }}/dist/maplair-global.js"></script>
+<script src="https://unpkg.com/maplair@{{ site.latest_maplair_version }}/dist/maplair-global.js" integrity="{{ site.latest_maplair_integrity.global }}" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 ```
 
 Maplair is available on the following free CDNs: [jsDelivr](https://www.jsdelivr.com/package/npm/maplair?path=dist), [unpkg](https://unpkg.com/maplair/dist/).

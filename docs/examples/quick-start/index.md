@@ -19,7 +19,7 @@ Maplair is an [ES module](https://developer.mozilla.org/en-US/docs/Web/JavaScrip
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplair@{{ site.latest_maplair_version}}/dist/maplair.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplair@{{ site.latest_maplair_version}}/dist/maplair.css" integrity="{{ site.latest_maplair_integrity.css }}" crossorigin="anonymous" referrerpolicy="no-referrer">
 	<script type="importmap">
 		{"imports": {"maplair": "https://cdn.jsdelivr.net/npm/maplair@{{ site.latest_maplair_version}}/dist/maplair.js"}}
 	</script>
