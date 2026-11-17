@@ -316,7 +316,8 @@ export class SearchControl extends Control {
 	 */
 	onAdd(map) {
 		const className = 'maplair-control-search',
-		container = this._container = DomUtil.create('div', `${className} maplair-bar`),
+		// the search landmark
+		container = this._container = DomUtil.create('search', `${className} maplair-bar`),
 		form = DomUtil.create('form', `${className}-form`, container),
 		toggle = this._toggle = DomUtil.create('button', `${className}-toggle`, form),
 		input = this._input = DomUtil.create('input', `${className}-input`, form),
@@ -325,7 +326,6 @@ export class SearchControl extends Control {
 		listId = `${className}-results-${Util.stamp(this)}`,
 		title = I18n.translate('Search');
 
-		form.role = 'search';
 		toggle.type = 'button';
 		toggle.innerHTML = searchIcon;
 		toggle.title = title;

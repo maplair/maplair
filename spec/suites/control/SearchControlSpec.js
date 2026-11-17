@@ -79,6 +79,12 @@ describe('SearchControl', () => {
 		expect(control._input.getAttribute('aria-expanded')).to.equal('true');
 	});
 
+	it('is a search landmark', () => {
+		const container = new SearchControl({geocoder: geocoder()}).addTo(map).getContainer();
+		expect(container.localName).to.equal('search');
+		expect(container.querySelector('form')).to.be.ok;
+	});
+
 	it('turns off text correction of the input', () => {
 		const input = new SearchControl({geocoder: geocoder()}).addTo(map)._input;
 		expect(input.spellcheck).to.be.false;
