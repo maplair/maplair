@@ -486,7 +486,9 @@ export class Popup extends DivOverlay {
 		this._tip = DomUtil.create('div', `${prefix}-tip`, this._tipContainer);
 
 		if (this.options.closeButton) {
-			const closeButton = this._closeButton = DomUtil.create('button', `${prefix}-close-button`, container);
+			const closeButton = this._closeButton = DomUtil.create('button', `${prefix}-close-button`);
+			// first, so that the content follows the button focused on opening with the keyboard
+			container.prepend(closeButton);
 			closeButton.type = 'button';
 			closeButton.setAttribute('aria-label', I18n.translate('Close popup'));
 

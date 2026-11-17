@@ -465,6 +465,12 @@ describe('Popup', () => {
 			// unlike in Leaflet, onto the close button rather than the first focusable element of the content
 			expect(marker.isPopupOpen()).to.be.true;
 			expect(document.activeElement).to.equal(marker.getPopup()._closeButton);
+			// which comes before the content, so that Tab and screen readers continue into it
+			const link = marker.getPopup().getElement().querySelector('a');
+			expect(document.activeElement.compareDocumentPosition(link) & Node.DOCUMENT_POSITION_FOLLOWING).to.be.ok;
+			// and still on top of the content
+			const rect = document.activeElement.getBoundingClientRect();
+			expect(document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2)).to.equal(document.activeElement);
 		});
 
 		it('moves focus into a popup bound to a group of markers', () => {
