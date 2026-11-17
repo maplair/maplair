@@ -163,7 +163,11 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: false # no caches in release builds
 
-      - run: vp pack
+      # the type declarations in dist/types, which package.json points to, as in `pnpm run build`
+      - run: vp pack && node ./build/types.js
+
+      - name: Check that the package has its type declarations
+        run: test -f dist/types/Maplair.d.ts
 
       # the tag is checked out on a detached HEAD, hence --no-git-checks
       - name: Stage release on npm
