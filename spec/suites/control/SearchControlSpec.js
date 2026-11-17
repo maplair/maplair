@@ -79,6 +79,17 @@ describe('SearchControl', () => {
 		expect(control._input.getAttribute('aria-expanded')).to.equal('true');
 	});
 
+	it('leaves the keys of an input method (IME) to it', async () => {
+		const control = new SearchControl({geocoder: geocoder()}).addTo(map).expand();
+		await control.search('Innsbruck');
+		for (const init of [{isComposing: true}, {keyCode: 229}]) {
+			control._input.dispatchEvent(new KeyboardEvent('keydown', {key: 'ArrowDown', bubbles: true, cancelable: true, ...init}));
+			expect(control._input.hasAttribute('aria-activedescendant')).to.be.false;
+		}
+		control._input.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true, isComposing: true}));
+		expect(items(control).length).to.be.greaterThan(0);
+	});
+
 	it('selects a result with the keyboard', async () => {
 		const control = new SearchControl({geocoder: geocoder()}).addTo(map).expand();
 		const onResult = vi.fn();

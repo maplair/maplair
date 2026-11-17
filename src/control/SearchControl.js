@@ -573,6 +573,8 @@ export class SearchControl extends Control {
 	}
 
 	_onKeyDown(e) {
+		// keys that choose a candidate of an input method (IME) aren't for the results; Safari lacks isComposing
+		if (e.isComposing || e.keyCode === 229) { return; }
 		const n = this._results.length;
 		if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && n) {
 			DomEvent.preventDefault(e);
