@@ -56,6 +56,29 @@ describe('Map: rotation', () => {
 			expect(east.y).to.be.lessThan(center.y - 50);
 		});
 
+		it('keeps overflowing popups and tooltips open on the first rotation', () => {
+			const popup = new Popup({overflow: true}).setLatLng(map.getCenter()).setContent('Popup').openOn(map),
+			tooltip = new Tooltip({overflow: true, permanent: true}).setLatLng(map.getCenter()).setContent('Tooltip')
+				.addTo(map);
+			expect(popup.getElement().matches(':popover-open')).to.be.true;
+
+			map.setBearing(90);
+			expect(popup.getElement().matches(':popover-open')).to.be.true;
+			expect(tooltip.getElement().matches(':popover-open')).to.be.true;
+		});
+
+		it('keeps overflowing popups open without moveBefore()', () => {
+			const {moveBefore} = Element.prototype;
+			delete Element.prototype.moveBefore;
+			try {
+				const popup = new Popup({overflow: true}).setLatLng(map.getCenter()).setContent('Popup').openOn(map);
+				map.setBearing(90);
+				expect(popup.getElement().matches(':popover-open')).to.be.true;
+			} finally {
+				if (moveBefore) { Element.prototype.moveBefore = moveBefore; }
+			}
+		});
+
 		it('normalizes the bearing', () => {
 			map.setBearing(-90);
 			expect(map.getBearing()).to.equal(270);

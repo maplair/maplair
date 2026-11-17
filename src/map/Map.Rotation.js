@@ -174,7 +174,17 @@ const mapRotationMethods = {
 			const rotatePane = this._rotatePane = DomUtil.create('div', 'maplair-rotate-pane');
 			rotatedMaps.set(rotatePane, this);
 			this._mapPane.before(rotatePane);
-			rotatePane.append(this._mapPane);
+			// moving an element closes the popovers in it (e.g. popups with the overflow option), unless moveBefore()
+			// keeps them open, so they are shown again
+			const open = [...this._mapPane.querySelectorAll(':popover-open')];
+			if (rotatePane.moveBefore) {
+				rotatePane.moveBefore(this._mapPane, null);
+			} else {
+				rotatePane.append(this._mapPane);
+			}
+			for (const el of open) {
+				if (!el.matches(':popover-open')) { el.showPopover(); }
+			}
 		}
 		if (bearing === this.getBearing()) { return; }
 
