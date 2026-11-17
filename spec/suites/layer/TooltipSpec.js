@@ -1,5 +1,5 @@
 import {expect, vi} from 'vite-plus/test';
-import {CircleMarker, FeatureGroup, LayerGroup, MaplairMap, Marker, Polygon, Polyline, Rectangle, Tooltip} from 'maplair';
+import {CircleMarker, DomUtil, FeatureGroup, LayerGroup, MaplairMap, Marker, Point, Polygon, Polyline, Rectangle, Tooltip} from 'maplair';
 import UIEventSimulator from 'ui-event-simulator';
 import {createContainer, removeMapContainer, Finger} from '../SpecHelper.js';
 
@@ -326,6 +326,18 @@ describe('Tooltip', () => {
 		expect(spy).not.toHaveBeenCalledOnce();
 		UIEventSimulator.fireAt('click', 130, 160);
 		expect(spy).toHaveBeenCalledOnce();
+	});
+
+	it('does not mirror a Point offset in place', () => {
+		const offset = new Point(20, 0);
+		const layer = new Marker(map.containerPointToLatLng([300, 200])).addTo(map);
+
+		layer.bindTooltip('Tooltip', {permanent: true, offset});
+		expect(offset.x).to.equal(20);
+
+		const pos = DomUtil.getPosition(layer.getTooltip().getElement());
+		layer.getTooltip().update();
+		expect(DomUtil.getPosition(layer.getTooltip().getElement())).to.eql(pos);
 	});
 
 	it('can be forced on top direction', () => {
