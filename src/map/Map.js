@@ -1121,7 +1121,8 @@ export class MaplairMap extends Evented {
 		cancelAnimationFrame(this._idleRequest);
 		this._watchPixelRatio(true);
 
-		for (const handler of this._handlers) {
+		// in reverse, so a plugin handler that re-enables a built-in one on disable (e.g. scrollWheelZoom) goes first
+		for (const handler of this._handlers.toReversed()) {
 			handler.disable();
 		}
 
