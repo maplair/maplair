@@ -583,7 +583,8 @@ path.maplair-interactive:focus:not(:focus-visible) {
 }
 
 .maplair-control-layers-scrollbar {
-	overflow-y: scroll;
+	overflow-y: auto;
+	overscroll-behavior: contain;
 	overflow-x: hidden;
 	padding-right: var(--maplair-spacing-25);
 }
@@ -734,6 +735,7 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	list-style: none;
 	max-height: 50vh;
 	overflow-y: auto;
+	overscroll-behavior: contain;
 	border-top: var(--maplair-border-width-base) solid var(--maplair-border-color-subtle);
 
 	&[hidden] {
@@ -819,6 +821,7 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	line-height: var(--maplair-line-height-small);
 	max-height: 50vh;
 	overflow-y: auto;
+	overscroll-behavior: contain;
 
 	&[hidden] {
 		display: none;
@@ -1209,6 +1212,7 @@ path.maplair-interactive:focus:not(:focus-visible) {
 
 .maplair-popup-scrolled {
 	overflow: auto;
+	overscroll-behavior: contain;
 }
 
 /* div icon */
