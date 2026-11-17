@@ -157,7 +157,8 @@ export class MiniMapControl extends Control {
 		title = collapsed ? I18n.translate('Show the overview map') : I18n.translate('Hide the overview map');
 		container.classList.toggle('maplair-control-minimap-collapsed', collapsed);
 		this._toggle.title = title;
-		this._toggle.setAttribute('aria-label', title);
+		// the state is aria-expanded, which the name shouldn't repeat
+		this._toggle.setAttribute('aria-label', I18n.translate('Overview map'));
 		this._toggle.setAttribute('aria-expanded', !collapsed);
 		if (!collapsed) {
 			this._miniMap.invalidateSize();

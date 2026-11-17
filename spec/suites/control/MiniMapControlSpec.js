@@ -89,6 +89,7 @@ describe('MiniMapControl', () => {
 		expect(control.getContainer().offsetWidth).to.be.lessThan(40);
 		expect(toggle.getAttribute('aria-expanded')).to.equal('false');
 		expect(toggle.title).to.equal('Show the overview map');
+		expect(toggle.getAttribute('aria-label')).to.equal('Overview map');
 
 		map.setView([0, 0], 5);
 		UIEventSimulator.fire('click', toggle);
