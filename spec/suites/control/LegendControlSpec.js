@@ -52,6 +52,7 @@ describe('LegendControl', () => {
 		expect(el.querySelector('.maplair-control-legend-name').textContent).to.equal('Air temperature');
 		expect(el.querySelector('.maplair-control-legend-total').textContent).to.equal('4 features');
 		expect(labels(control)).to.eql(['No data', '< 10 °C3 (75%)', '≥ 10 °C1 (25%)']);
+		expect(el.querySelector('ul').getAttribute('role')).to.equal('list');
 
 		const bar = el.querySelector('.maplair-control-legend-bar');
 		expect(bar.getAttribute('role')).to.equal('img');

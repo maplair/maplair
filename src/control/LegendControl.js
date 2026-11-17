@@ -195,6 +195,8 @@ export class LegendControl extends Control {
 		}
 
 		const list = DomUtil.create('ul', 'maplair-control-legend-items', section);
+		// Safari drops the list semantics of lists without bullets
+		list.role = 'list';
 		for (const item of items) {
 			const li = DomUtil.create('li', '', list);
 			li.append(createPatch(samples.get(item) ?? layers[0], item.symbol, Boolean(samples.get(item))));
