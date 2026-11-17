@@ -140,7 +140,10 @@ const layerPopupMethods = {
 	 */
 	bindPopup(content, options) {
 		// eslint-disable-next-line no-use-before-define -- defined below, used when called
-		this._popup = this._initOverlay(Popup, this._popup, content, options);
+		const popup = this._initOverlay(Popup, this._popup, content, options);
+		// a replaced popup would stay open, unreachable
+		if (popup !== this._popup) { this.closePopup(); }
+		this._popup = popup;
 		this._popup._updateSourceAria(this._popup.isOpen());
 		this.on({
 			click: this._openPopup,
