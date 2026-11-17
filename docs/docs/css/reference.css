@@ -79,11 +79,12 @@ div.accordion.expanded > div.accordion-overflow > div.accordion-content {
 }*/
 
 div.accordion.expanded > label > span.expander {
-    transform: rotate(90deg);
+    rotate: 90deg;
 }
 
 div.accordion > label > span.expander {
-    transition: transform 0.4s ease-out 0s;
+    rotate: 0deg;
+    transition: rotate 0.4s ease-out 0s;
     display: inline-block;
     font-size: 0.75rem;
 }

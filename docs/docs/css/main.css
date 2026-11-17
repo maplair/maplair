@@ -810,6 +810,7 @@ tr:target {
 	line-height: 20px;
 	vertical-align: baseline;
 	background: url(../images/sprite.png) -0px -0px no-repeat;
+	background-image: image-set(url(../images/sprite.png) 1x, url(../images/sprite.svg) 2x);
 	opacity: 0.2;
 	border-radius: 50%;
 	cursor: pointer;
@@ -844,12 +845,6 @@ tr:target {
 
 .api-page h2[id]:hover:before { opacity: 1; }
 
-@media (-webkit-min-device-pixel-ratio: 1.25),(min-resolution: 120dpi) {
-	.api-page h2[id]:before,
-	.api-page tr[id] td:first-child:before {
-		background-image: url(../images/sprite.svg);
-	}
-}
 
 @media screen and (max-width: 767px) {
 	#toc .colborder {
