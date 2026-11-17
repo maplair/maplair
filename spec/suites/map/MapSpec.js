@@ -1781,7 +1781,12 @@ describe('Map', () => {
 				return pos.equals(pos.round()) && map.getPixelOrigin().equals(map.getPixelOrigin().round());
 			}
 
-			it('keeps layers at their exact screen position on every flyTo frame, snapping them at the end', async () => {
+			// frames at a steady rate, which a slow test runner may not draw in time (e.g. WebKit on CI)
+			function fakeFrames() {
+				vi.useFakeTimers({toFake: ['Date', 'requestAnimationFrame', 'cancelAnimationFrame']});
+			}
+
+			it('keeps layers at their exact screen position on every flyTo frame, snapping them at the end', () => {
 				let error = 0, frames = 0;
 				map.on('move', (e) => {
 					if (e.flyTo) {
@@ -1790,27 +1795,37 @@ describe('Map', () => {
 					}
 				});
 
-				await new Promise((resolve) => {
-					map.once('moveend', resolve);
+				const moveend = vi.fn();
+				map.once('moveend', moveend);
+				fakeFrames();
+				try {
 					map.flyTo([50.4502, 30.521], 14, {duration: 0.3, animate: true});
-				});
+					vi.advanceTimersByTime(400);
+				} finally {
+					vi.useRealTimers();
+				}
 
+				expect(moveend).toHaveBeenCalledOnce();
 				expect(frames).to.be.above(5);
 				expect(error).to.be.below(1e-3);
 				expect(isSnapped()).to.be.true;
 			});
 
-			it('snaps layers when a flight is interrupted', async () => {
-				await new Promise((resolve) => {
-					let frames = 0;
-					map.on('move', (e) => {
-						if (e.flyTo && ++frames === 5) {
-							map._stop(); // what dragging does
-							resolve();
-						}
-					});
-					map.flyTo([50.4502, 30.521], 15, {duration: 0.3, animate: true});
+			it('snaps layers when a flight is interrupted', () => {
+				let frames = 0;
+				map.on('move', (e) => {
+					if (e.flyTo && ++frames === 5) {
+						map._stop(); // what dragging does
+					}
 				});
+
+				fakeFrames();
+				try {
+					map.flyTo([50.4502, 30.521], 15, {duration: 0.3, animate: true});
+					vi.advanceTimersByTime(200);
+				} finally {
+					vi.useRealTimers();
+				}
 
 				expect(map.getZoom() % 1).to.not.equal(0);
 				expect(isSnapped()).to.be.true;

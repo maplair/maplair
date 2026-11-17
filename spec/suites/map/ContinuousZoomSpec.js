@@ -125,11 +125,19 @@ describe('Map: continuousZoom', () => {
 		it('zooms smoothly and snaps at the end', async () => {
 			createMap({wheelPxPerZoomLevel: 60});
 			const zooms = recordZooms();
-			const zoomend = nextEvent('zoomend');
-			// 3 lines = 60px = one zoom level each
-			wheel(-3);
-			wheel(-3);
-			await zoomend;
+			const zoomend = vi.fn();
+			map.on('zoomend', zoomend);
+			// frames at a steady rate, which a slow test runner may not draw in time (e.g. WebKit on CI)
+			vi.useFakeTimers({toFake: ['setTimeout', 'clearTimeout', 'Date', 'performance', 'requestAnimationFrame', 'cancelAnimationFrame']});
+			try {
+				// 3 lines = 60px = one zoom level each
+				wheel(-3);
+				wheel(-3);
+				await vi.advanceTimersByTimeAsync(2000);
+			} finally {
+				vi.useRealTimers();
+			}
+			expect(zoomend).toHaveBeenCalled();
 			expect(map.getZoom()).to.equal(7);
 			expect(zooms.filter(z => z > 5 && z < 7).length).to.be.greaterThan(2);
 		});
