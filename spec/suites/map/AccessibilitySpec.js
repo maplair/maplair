@@ -65,14 +65,23 @@ describe('Accessibility', () => {
 			const zoom = map.getZoom();
 			UIEventSimulator.fire('keydown', document, {key: '?', code: 'Slash', shiftKey: true});
 			expect(help().matches(':popover-open')).to.be.true;
-			expect(help().getAttribute('role')).to.equal('dialog');
-			expect(help().getAttribute('aria-label')).to.equal('Keyboard shortcuts');
+			expect(help().localName).to.equal('dialog');
+			expect(document.getElementById(help().getAttribute('aria-labelledby')).textContent).to.equal('Keyboard shortcuts');
+			// the focus moves to the close button
+			expect(document.activeElement).to.equal(help().querySelector('button'));
+			expect(help().querySelector('button').getAttribute('aria-label')).to.equal('Close');
 			expect(help().querySelectorAll('dt').length).to.equal(6);
 			expect(help().textContent).to.contain('Pan the map');
 			// "?" is Shift+Slash, which would zoom out
 			expect(map.getZoom()).to.equal(zoom);
 
 			UIEventSimulator.fire('keydown', document, {key: '?', code: 'Slash', shiftKey: true});
+			expect(help().matches(':popover-open')).to.be.false;
+		});
+
+		it('closes with its close button', () => {
+			UIEventSimulator.fire('keydown', document, {key: '?', code: 'Slash', shiftKey: true});
+			help().querySelector('button').click();
 			expect(help().matches(':popover-open')).to.be.false;
 		});
 

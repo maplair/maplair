@@ -1116,6 +1116,20 @@ path.maplair-interactive:focus:not(:focus-visible) {
 		font-size: var(--maplair-font-size-medium);
 	}
 
+	.maplair-keyboard-help-close {
+		position: absolute;
+		top: var(--maplair-spacing-25);
+		right: var(--maplair-spacing-25);
+		width: 24px;
+		height: 24px;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		color: var(--maplair-color-subtle);
+		font: var(--maplair-font-size-medium)/24px var(--maplair-font-family-base);
+		cursor: pointer;
+	}
+
 	dl {
 		display: grid;
 		grid-template-columns: auto 1fr;

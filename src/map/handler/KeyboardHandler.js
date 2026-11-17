@@ -1,6 +1,7 @@
 import {Handler} from '../../core/Handler.js';
 import {on, off, stop, disableClickPropagation, disableScrollPropagation} from '../../dom/DomEvent.js';
 import * as DomUtil from '../../dom/DomUtil.js';
+import * as Util from '../../core/Util.js';
 import {Point} from '../../geometry/Point.js';
 import {I18n} from '../../core/I18n.js';
 /** @import {MaplairMap} from '../Map.js' */
@@ -112,16 +113,27 @@ export class KeyboardHandler extends Handler {
 	_toggleHelp() {
 		this._help ??= this._createHelp();
 		this._help.togglePopover();
+		// the popover returns the focus to the map when it closes
+		if (this._help.matches(':popover-open')) {
+			this._help.querySelector('.maplair-keyboard-help-close').focus();
+		}
 	}
 
 	_createHelp() {
-		const help = DomUtil.create('div', 'maplair-keyboard-help', this._map._container),
-		title = I18n.translate('Keyboard shortcuts');
+		const help = DomUtil.create('dialog', 'maplair-keyboard-help', this._map._container),
+		heading = DomUtil.create('h2', '', help),
+		close = DomUtil.create('button', 'maplair-keyboard-help-close', help);
 		help.popover = 'auto';
-		help.setAttribute('role', 'dialog');
-		help.setAttribute('aria-label', title);
+		heading.id = `maplair-keyboard-help-${Util.stamp(this)}`;
+		heading.textContent = I18n.translate('Keyboard shortcuts');
+		help.setAttribute('aria-labelledby', heading.id);
 
-		DomUtil.create('h2', '', help).textContent = title;
+		close.type = 'button';
+		close.popoverTargetElement = help;
+		close.popoverTargetAction = 'hide';
+		close.innerHTML = '<span aria-hidden="true">&times;</span>';
+		close.title = I18n.translate('Close');
+		close.setAttribute('aria-label', close.title);
 		const list = DomUtil.create('dl', '', help);
 		for (const [keys, description] of [
 			[['←', '→', '↑', '↓'], I18n.translate('Pan the map')],
