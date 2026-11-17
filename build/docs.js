@@ -623,6 +623,7 @@ ${readFileSync('build/docs.css', 'utf8')}
 </style>
 </head>
 <body>
+<a class="skip-link" href="#content">Skip to the content</a>
 <header class="page-header">
 	<a class="home" href="./">Maplair</a>
 	<h1>API reference</h1>
@@ -632,7 +633,7 @@ ${readFileSync('build/docs.css', 'utf8')}
 <nav class="toc" aria-label="Contents">
 ${nav}
 </nav>
-<main>
+<main id="content">
 ${main}
 </main>
 </div>

@@ -47,6 +47,21 @@ a {
 	}
 }
 
+/* hidden until focused, past the long table of contents */
+.skip-link {
+	position: absolute;
+	left: 0.5rem;
+	top: -3rem;
+	z-index: 1;
+	padding: 0.5rem 1rem;
+	background: var(--background);
+	border: 1px solid var(--border);
+
+	&:focus {
+		top: 0.5rem;
+	}
+}
+
 h1, h2, h3, h4 {
 	text-wrap: balance;
 }
