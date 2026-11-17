@@ -977,7 +977,7 @@ path.maplair-interactive:focus:not(:focus-visible) {
 		}
 
 		.maplair-control-minimap-toggle {
-			transform: none;
+			rotate: none;
 		}
 	}
 }
@@ -1002,7 +1002,7 @@ path.maplair-interactive:focus:not(:focus-visible) {
 	color: var(--maplair-color-base);
 	font: bold var(--maplair-font-size-medium)/var(--maplair-size-control) var(--maplair-font-family-base);
 	cursor: pointer;
-	transform: rotate(180deg);
+	rotate: 180deg;
 
 	&::before {
 		content: "⇱";
