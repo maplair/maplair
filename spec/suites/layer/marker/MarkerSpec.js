@@ -588,7 +588,11 @@ describe('Marker', () => {
 			map.on('click', mapSpy);
 
 			UIEventSimulator.fire('keydown', marker._icon, {key: 'Enter'});
+			expect(spy).toHaveBeenCalledOnce();
+			// like a button, Space clicks on keyup
 			UIEventSimulator.fire('keydown', marker._icon, {key: ' '});
+			expect(spy).toHaveBeenCalledOnce();
+			UIEventSimulator.fire('keyup', marker._icon, {key: ' '});
 
 			expect(spy).toHaveBeenCalledTimes(2);
 			expect(spy.mock.calls[0][0].latlng.equals(marker.getLatLng())).to.be.true;
@@ -602,6 +606,8 @@ describe('Marker', () => {
 
 			UIEventSimulator.fire('keydown', marker._icon, {key: 'a'});
 			UIEventSimulator.fire('keydown', marker._icon, {key: 'Enter', repeat: true});
+			// the keyup of a Space pressed elsewhere
+			UIEventSimulator.fire('keyup', marker._icon, {key: ' '});
 
 			expect(spy).not.toHaveBeenCalled();
 		});

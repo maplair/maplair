@@ -299,7 +299,7 @@ export class Marker extends Layer {
 			if (options.interactive) {
 				icon.setAttribute('role', 'button');
 			}
-			DomEvent.on(icon, 'keydown', this._onKeyDown, this);
+			DomEvent.on(icon, 'keydown keyup', this._onKeyDown, this);
 		}
 
 		this._icon = icon;
@@ -353,7 +353,7 @@ export class Marker extends Layer {
 		if (this.options.autoPanOnFocus) {
 			DomEvent.off(this._icon, 'focus', this._panOnFocus, this);
 		}
-		DomEvent.off(this._icon, 'keydown', this._onKeyDown, this);
+		DomEvent.off(this._icon, 'keydown keyup', this._onKeyDown, this);
 
 		this._icon.remove();
 		this.removeInteractiveTarget(this._icon);
@@ -565,15 +565,27 @@ export class Marker extends Layer {
 		this._updateZIndex(0);
 	}
 
+	// Clicks the marker like a button: on the keydown of Enter, on the keyup of Space
 	_onKeyDown(e) {
 		// a key pressed on a focusable element inside a DivIcon (e.g. a <button>) already clicks it natively
-		if (this.options.interactive && e.target === this._icon && !e.repeat && (e.key === 'Enter' || e.key === ' ')) {
+		if (!this.options.interactive || e.target !== this._icon || e.repeat) { return; }
+		const down = e.type === 'keydown';
+		if (e.key === ' ') {
 			e.preventDefault(); // stop Space from scrolling the page
-			// lets a popup opened by the click take the focus, see Popup.onAdd()
-			this._clickedByKeyboard = true;
-			this._icon.click();
-			this._clickedByKeyboard = false;
+			// a Space pressed elsewhere, e.g. before tabbing to the marker, doesn't click it
+			if (down) {
+				this._spacePressed = true;
+				return;
+			}
+			if (!this._spacePressed) { return; }
+			this._spacePressed = false;
+		} else if (e.key !== 'Enter' || !down) {
+			return;
 		}
+		// lets a popup opened by the click take the focus, see Popup.onAdd()
+		this._clickedByKeyboard = true;
+		this._icon.click();
+		this._clickedByKeyboard = false;
 	}
 
 	_panOnFocus() {

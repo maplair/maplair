@@ -479,6 +479,7 @@ describe('Popup', () => {
 
 			marker._icon.focus();
 			UIEventSimulator.fire('keydown', marker._icon, {key: ' '});
+			UIEventSimulator.fire('keyup', marker._icon, {key: ' '});
 
 			expect(document.activeElement).to.equal(map._popup._closeButton);
 		});
