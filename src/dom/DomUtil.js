@@ -35,6 +35,17 @@ export function create(tagName, className, container) {
 	return el;
 }
 
+/**
+ * Returns `true` if `value` is HTML to set as content: a string, or a `TrustedHTML`
+ * object of a [Trusted Types](https://developer.mozilla.org/docs/Web/API/Trusted_Types_API)
+ * policy, which pages enforcing Trusted Types require.
+ * @param {unknown} value
+ * @returns {boolean}
+ */
+export function isHTML(value) {
+	return typeof value === 'string' || (typeof TrustedHTML !== 'undefined' && value instanceof TrustedHTML);
+}
+
 // Moves `node` before `ref` (or to the end) within `parent`, keeping its state (focus, animations, iframes) with
 // moveBefore() where supported
 function moveBefore(parent, node, ref) {

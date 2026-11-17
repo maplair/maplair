@@ -122,7 +122,7 @@ export class ButtonControl extends Control {
 		const {content, title} = this._state ?? this.options,
 		button = this._button;
 
-		if (typeof content === 'string') {
+		if (DomUtil.isHTML(content)) {
 			button.innerHTML = content;
 		} else {
 			button.replaceChildren(content);

@@ -143,6 +143,12 @@ describe('Popup', () => {
 		}
 	});
 
+	it('renders TrustedHTML content as HTML', () => {
+		const policy = trustedTypes.createPolicy('maplair-spec-popup', {createHTML: s => s});
+		const popup = new Popup().setLatLng(center).setContent(policy.createHTML('<b>Bold</b>')).openOn(map);
+		expect(popup.getElement().querySelector('b').textContent).to.equal('Bold');
+	});
+
 	it('closes the open popup when rebinding with options', () => {
 		const marker = new Marker(center).addTo(map).bindPopup('Popup1').openPopup();
 		const popup = marker.getPopup();

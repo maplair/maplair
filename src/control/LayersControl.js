@@ -356,7 +356,7 @@ export class LayersControl extends Control {
 			link.setAttribute('aria-label', link.title);
 
 			const {toggleContent} = this.options;
-			if (typeof toggleContent === 'string') {
+			if (DomUtil.isHTML(toggleContent)) {
 				link.innerHTML = toggleContent;
 			} else if (toggleContent) {
 				link.replaceChildren(toggleContent);

@@ -155,7 +155,7 @@ export class LegendControl extends Control {
 			const legend = layer.getLegend();
 			if (legend) {
 				const section = DomUtil.create('div', 'maplair-control-legend-section');
-				if (typeof legend === 'string') {
+				if (DomUtil.isHTML(legend)) {
 					section.innerHTML = legend;
 				} else {
 					section.append(legend);

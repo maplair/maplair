@@ -440,7 +440,7 @@ export class DivOverlay extends Layer {
 		const node = this._contentNode;
 		const content = (typeof this._content === 'function') ? this._content(this._source ?? this) : this._content;
 
-		if (typeof content === 'string') {
+		if (DomUtil.isHTML(content)) {
 			node.innerHTML = content;
 		} else if (content instanceof DocumentFragment) {
 			// inserting a fragment empties it, so keep its nodes to insert them again on later updates

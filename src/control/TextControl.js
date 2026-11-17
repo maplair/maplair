@@ -79,7 +79,7 @@ export class TextControl extends Control {
 		{content} = this.options;
 		if (!container) { return; }
 
-		if (typeof content === 'string') {
+		if (DomUtil.isHTML(content)) {
 			container.innerHTML = content;
 		} else {
 			container.replaceChildren(content ?? '');
