@@ -401,6 +401,18 @@ describe('Canvas', () => {
 		});
 	});
 
+	describe('#setStyle', () => {
+		it('makes the whole stroke clickable when it turns the stroke on', () => {
+			const line = new Polyline([p2ll(0, 50), p2ll(100, 50)], {stroke: false, weight: 10}).addTo(map),
+			spy = vi.fn();
+			line.on('click', spy);
+
+			line.setStyle({stroke: true});
+			UIEventSimulator.fireAt('click', 50, 54);
+			expect(spy).toHaveBeenCalledOnce();
+		});
+	});
+
 	describe('#bringToBack', () => {
 		it('is a no-op for layers not on a map', () => {
 			const path = new Polyline([[1, 2], [3, 4], [5, 6]]);
