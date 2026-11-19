@@ -13,6 +13,15 @@ Maplair Changelog
 
 * Dark mode: the colors of controls, popups and tooltips have dark variants (`light-dark()`); maps stay light by default, `.maplair-container { color-scheme: light dark; }` follows the user's preference and `color-scheme: dark` forces it
 
+### Leaflet, since 4.7.0
+
+Ported from Leaflet (changes without author notice are by [@mourner](https://github.com/mourner))
+
+#### 🐞 Bugfixes
+
+* Update the path bounds when `setStyle()` toggles the stroke, so that the whole stroke is clickable by [@SudeepGowda55](https://github.com/SudeepGowda55) in https://github.com/Leaflet/Leaflet/pull/10611
+* Canvas: hit-test circles drawn as ellipses within the ellipse by [@SudeepGowda55](https://github.com/SudeepGowda55) in https://github.com/Leaflet/Leaflet/pull/10610
+
 ## 4.7.0 (2026-11-17)
 
 ### Maplair
