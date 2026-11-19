@@ -3,6 +3,16 @@ Maplair Changelog
 
 (all changes of Leaflet without author notice are by [@mourner](https://github.com/mourner))
 
+## Unreleased
+
+### Maplair
+
+(changes without author notice are by [@simon04](https://github.com/simon04))
+
+#### ❇️ New Features
+
+* Dark mode: the colors of controls, popups and tooltips have dark variants (`light-dark()`); maps stay light by default, `.maplair-container { color-scheme: light dark; }` follows the user's preference and `color-scheme: dark` forces it
+
 ## 4.7.0 (2026-11-17)
 
 ### Maplair

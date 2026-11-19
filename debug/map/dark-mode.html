@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Maplair debug page - Dark mode</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
+		<link rel="stylesheet" href="../../dist/maplair.css" />
+		<link rel="stylesheet" href="../css/screen.css" />
+		<script type="importmap">
+			{
+				"imports": {
+					"maplair": "../../dist/maplair-src.js"
+				}
+			}
+		</script>
+		<style>
+			body {
+				font: 13px/1.4 sans-serif;
+			}
+			fieldset {
+				max-width: 780px;
+				margin: 8px 0;
+			}
+
+			/* the page follows the system, the map only as chosen below */
+			:root {
+				color-scheme: light dark;
+			}
+
+			/* the map's color-scheme, as chosen below */
+			#map[data-scheme="light"].maplair-container {
+				color-scheme: light;
+			}
+			#map[data-scheme="light dark"].maplair-container {
+				color-scheme: light dark;
+			}
+			#map[data-scheme="dark"].maplair-container {
+				color-scheme: dark;
+			}
+			#map[data-scheme="inherit"].maplair-container {
+				color-scheme: inherit;
+			}
+
+			/* dimmed tiles: CSS cannot query the used color-scheme, so they follow either the forced dark scheme or
+			   the system preference along with `color-scheme: light dark` */
+			#map[data-dim-tiles][data-scheme="dark"] .maplair-tile-pane {
+				filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9);
+			}
+			@media (prefers-color-scheme: dark) {
+				#map[data-dim-tiles]:is([data-scheme="light dark"], [data-scheme="inherit"]) .maplair-tile-pane {
+					filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9);
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div id="map" data-scheme="light dark"></div>
+		<fieldset>
+			<legend>color-scheme of .maplair-container</legend>
+			<label><input type="radio" name="scheme" value="light"> light (default)</label>
+			<label><input type="radio" name="scheme" value="light dark" checked> light dark (follows the system)</label>
+			<label><input type="radio" name="scheme" value="dark"> dark</label>
+			<label><input type="radio" name="scheme" value="inherit"> inherit (follows the page)</label>
+		</fieldset>
+		<fieldset>
+			<legend>Page</legend>
+			<label><input type="checkbox" id="pageDark"> Force the page dark (<code>:root { color-scheme: dark }</code>)</label>
+			<label><input type="checkbox" id="dimTiles"> Dim the tiles in dark mode (CSS filter on the tile pane)</label>
+		</fieldset>
+
+		<script type="module">
+			import {DivIcon, LayerGroup, LayersControl, MaplairMap, Marker, ScaleControl, TileLayer} from 'maplair';
+
+			const osmUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+			osmAttrib = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+			osm = new TileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib});
+
+			const map = new MaplairMap('map').setView([50.5, 30.51], 15).addLayer(osm);
+
+			new Marker(map.getCenter()).addTo(map)
+				.bindPopup('<p>A popup with <a href="#">a link</a>.</p><p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</p>')
+				.openPopup();
+			new Marker([50.4965, 30.502]).addTo(map)
+				.bindTooltip('A permanent tooltip', {permanent: true});
+			new Marker([50.498, 30.515], {icon: new DivIcon()}).addTo(map);
+
+			new ScaleControl().addTo(map);
+			const overlays = {Cities: new LayerGroup(), Roads: new LayerGroup()};
+			new LayersControl({OpenStreetMap: osm}, overlays).addTo(map);
+			new LayersControl({OpenStreetMap: osm}, overlays, {collapsed: false}).addTo(map);
+
+			const mapEl = document.getElementById('map');
+			for (const radio of document.querySelectorAll('[name="scheme"]')) {
+				radio.addEventListener('change', () => { mapEl.dataset.scheme = radio.value; });
+			}
+			document.getElementById('pageDark').addEventListener('change', (e) => {
+				document.documentElement.style.colorScheme = e.target.checked ? 'dark' : '';
+			});
+			document.getElementById('dimTiles').addEventListener('change', (e) => {
+				mapEl.toggleAttribute('data-dim-tiles', e.target.checked);
+			});
+		</script>
+	</body>
+</html>

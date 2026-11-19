@@ -1,22 +1,23 @@
 :root {
-	/* colors */
-	--maplair-color-emphasized: #000000;
-	--maplair-color-base: #333333;
-	--maplair-color-subtle: #757575;
-	--maplair-color-disabled: #aaaaaa;
-	--maplair-color-progressive: #006e9d;
+	/* colors: light-dark(light, dark), resolved by the color-scheme of the element that uses them, see
+	   .maplair-container; the dark ones keep the contrast ratios of the light ones (WCAG AA, attribution links) */
+	--maplair-color-emphasized: light-dark(#000000, #ffffff);
+	--maplair-color-base: light-dark(#333333, #e6e6e6);
+	--maplair-color-subtle: light-dark(#757575, #a3a3a3);
+	--maplair-color-disabled: light-dark(#aaaaaa, #737373);
+	--maplair-color-progressive: light-dark(#006e9d, #4a9cd2);
 
-	--maplair-background-color-base: #ffffff;
-	--maplair-background-color-neutral: #dddddd;
-	--maplair-background-color-neutral-subtle: #f4f4f4;
-	--maplair-background-color-interactive-subtle--hover: #f4f4f4;
+	--maplair-background-color-base: light-dark(#ffffff, #1f1f1f);
+	--maplair-background-color-neutral: light-dark(#dddddd, #2b2b2b);
+	--maplair-background-color-neutral-subtle: light-dark(#f4f4f4, #2e2e2e);
+	--maplair-background-color-interactive-subtle--hover: light-dark(#f4f4f4, #2e2e2e);
 	--maplair-background-color-interactive--active: rgba(51, 181, 229, 0.4);
-	--maplair-background-color-disabled-subtle: #f4f4f4;
-	--maplair-background-color-backdrop-light: rgba(255, 255, 255, 0.9);
+	--maplair-background-color-disabled-subtle: light-dark(#f4f4f4, #2b2b2b);
+	--maplair-background-color-backdrop-light: light-dark(rgba(255, 255, 255, 0.9), rgba(31, 31, 31, 0.95));
 
-	--maplair-border-color-base: #777777;
-	--maplair-border-color-subtle: #cccccc;
-	--maplair-border-color-muted: rgba(0, 0, 0, 0.2);
+	--maplair-border-color-base: light-dark(#777777, #8c8c8c);
+	--maplair-border-color-subtle: light-dark(#cccccc, #4d4d4d);
+	--maplair-border-color-muted: light-dark(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4));
 	--maplair-border-color-progressive: #3388ff;
 
 	/* borders */
@@ -425,8 +426,9 @@ svg.maplair-image-layer.maplair-interactive path {
 
 .maplair-container {
 	background: var(--maplair-background-color-neutral);
-	/* the controls have light colors, so their form controls and scrollbars should too, also on dark pages; set
-	   color-scheme: dark along with dark custom properties */
+	/* light by default, also on dark pages, as the tiles of most maps are light; dark mode is opt-in:
+	   `.maplair-container { color-scheme: light dark; }` follows the user's preference, `color-scheme: dark` forces
+	   it; this switches the colors above, form controls and scrollbars */
 	color-scheme: light;
 	outline-offset: 1px;
 	font-family: var(--maplair-font-family-base);
@@ -559,6 +561,8 @@ path.maplair-interactive:focus:not(:focus-visible) {
 .maplair-control-layers-toggle {
 	display: block;
 	background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26'><path fill='%23b9b9b9' d='m.032 17.056 13-8 13 8-13 8z'/><path fill='%23737373' d='m.032 17.056-.032.93 13 8 13-8 .032-.93-13 8z'/><path fill='%23cdcdcd' d='m0 13.076 13-8 13 8-13 8z'/><path fill='%23737373' d='M0 13.076v.91l13 8 13-8v-.91l-13 8z'/><path fill='%23e9e9e9' fill-opacity='.585' stroke='%23797979' stroke-width='.1' d='m0 8.986 13-8 13 8-13 8-13-8'/><path fill='%23737373' d='M0 8.986v1l13 8 13-8v-1l-13 8z'/></svg>");
+	/* images in light-dark() are newer than colors; browsers without them keep the light icon */
+	background-image: light-dark(url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26'><path fill='%23b9b9b9' d='m.032 17.056 13-8 13 8-13 8z'/><path fill='%23737373' d='m.032 17.056-.032.93 13 8 13-8 .032-.93-13 8z'/><path fill='%23cdcdcd' d='m0 13.076 13-8 13 8-13 8z'/><path fill='%23737373' d='M0 13.076v.91l13 8 13-8v-.91l-13 8z'/><path fill='%23e9e9e9' fill-opacity='.585' stroke='%23797979' stroke-width='.1' d='m0 8.986 13-8 13 8-13 8-13-8'/><path fill='%23737373' d='M0 8.986v1l13 8 13-8v-1l-13 8z'/></svg>"), url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26'><path fill='%235a5a5a' d='m.032 17.056 13-8 13 8-13 8z'/><path fill='%23b0b0b0' d='m.032 17.056-.032.93 13 8 13-8 .032-.93-13 8z'/><path fill='%236e6e6e' d='m0 13.076 13-8 13 8-13 8z'/><path fill='%23b0b0b0' d='M0 13.076v.91l13 8 13-8v-.91l-13 8z'/><path fill='%238a8a8a' fill-opacity='.585' stroke='%23b0b0b0' stroke-width='.1' d='m0 8.986 13-8 13 8-13 8-13-8'/><path fill='%23b0b0b0' d='M0 8.986v1l13 8 13-8v-1l-13 8z'/></svg>"));
 	background-position: 50% 50%;
 	background-repeat: no-repeat;
 	/* reset the user agent styles of buttons */

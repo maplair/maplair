@@ -242,6 +242,15 @@ describe('Map', () => {
 				document.documentElement.style.colorScheme = '';
 			}
 		});
+
+		it('switches its colors to dark with color-scheme: dark', () => {
+			map.setView([0, 0], 1);
+			const button = container.querySelector('.maplair-control-zoom-in');
+			expect(getComputedStyle(button).backgroundColor).to.equal('rgb(255, 255, 255)');
+			container.style.colorScheme = 'dark';
+			expect(getComputedStyle(button).backgroundColor).to.equal('rgb(31, 31, 31)');
+			expect(getComputedStyle(button).color).to.equal('rgb(230, 230, 230)');
+		});
 	});
 
 	describe('#whenReady', () => {
