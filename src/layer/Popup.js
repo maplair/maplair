@@ -18,8 +18,8 @@ import {I18n} from '../core/I18n.js';
  * @typedef {object} PopupOptions
  * @property {string} [pane='popupPane'] `Map pane` where the popup will be added.
  * @property {PointExpression} [offset=[0, 7]] The offset of the popup position.
- * @property {number} [maxWidth=300] Max width of the popup, in pixels.
- * @property {number} [minWidth=50] Min width of the popup, in pixels.
+ * @property {number} [maxWidth=300] Max width of the popup content in pixels, measured inside the popup's margins and padding.
+ * @property {number} [minWidth=50] Min width of the popup content in pixels, measured inside the popup's margins and padding.
  * @property {number|null} [maxHeight=null] If set, creates a scrollable container of
  * the given height inside a popup if its content exceeds it. The scrollable container
  * can be styled using the `maplair-popup-scrolled` CSS class selector.
