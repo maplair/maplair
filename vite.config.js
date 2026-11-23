@@ -261,7 +261,10 @@ export default defineConfig({
 		},
 		{...packOptions, entry: {maplair: 'src/Maplair.all.js'}, minify: true},
 		// one module per source file, so that bundlers can drop unused modules (see `sideEffects` in package.json)
-		{...packOptions, entry: ['src/Maplair.js', 'src/map/Map.Rotation.js', 'src/layer/marker/Marker.Move.js', 'src/layer/vector/Path.DashAnimation.js', 'src/layer/vector/Polyline.Decorations.js', 'src/layer/GeoJSON.Load.js', 'src/layer/vector/Path.ZoomStyles.js'], unbundle: true, outDir: 'dist/esm', banner: undefined},
+		{...packOptions, entry: ['src/Maplair.js', 'src/map/Map.Rotation.js', 'src/layer/marker/Marker.Move.js', 'src/layer/vector/Path.DashAnimation.js', 'src/layer/vector/Polyline.Decorations.js', 'src/layer/GeoJSON.Load.js', 'src/layer/vector/Path.ZoomStyles.js', 'src/elements/index.js'], unbundle: true, outDir: 'dist/esm', banner: undefined},
+		// the custom elements with all of Maplair, for script tags of type module
+		{...packOptions, entry: {'maplair-elements-src': 'src/elements/index.js'}},
+		{...packOptions, entry: {'maplair-elements': 'src/elements/index.js'}, minify: true},
 		{...globalPackOptions, entry: {'maplair-global-src': 'build/global.js'}},
 		{...globalPackOptions, entry: {'maplair-global': 'build/global.js'}, minify: true},
 	],
@@ -277,6 +280,7 @@ export default defineConfig({
 			{find: 'maplair/path-decorations', replacement: fileURLToPath(new URL('./src/layer/vector/Polyline.Decorations.js', import.meta.url))},
 			{find: 'maplair/geojson-loading', replacement: fileURLToPath(new URL('./src/layer/GeoJSON.Load.js', import.meta.url))},
 			{find: 'maplair/zoom-styles', replacement: fileURLToPath(new URL('./src/layer/vector/Path.ZoomStyles.js', import.meta.url))},
+			{find: 'maplair/elements', replacement: fileURLToPath(new URL('./src/elements/index.js', import.meta.url))},
 			{find: /^maplair$/, replacement: fileURLToPath(new URL('./src/Maplair.js', import.meta.url))},
 		],
 	},

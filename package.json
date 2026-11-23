@@ -69,6 +69,10 @@
       "types": "./dist/types/layer/vector/Path.ZoomStyles.d.ts",
       "default": "./dist/esm/layer/vector/Path.ZoomStyles.js"
     },
+    "./elements": {
+      "types": "./dist/types/elements/index.d.ts",
+      "default": "./dist/esm/elements/index.js"
+    },
     "./src/": "./src/",
     "./dist/maplair.css": "./dist/maplair.css",
     "./styles.css": "./dist/maplair.css",
@@ -85,13 +89,15 @@
     "./src/layer/vector/Polyline.Decorations.js",
     "./src/layer/GeoJSON.Load.js",
     "./src/layer/vector/Path.ZoomStyles.js",
+    "./src/elements/*.js",
     "./dist/esm/map/Map.js",
     "./dist/esm/map/Map.Rotation.js",
     "./dist/esm/layer/marker/Marker.Move.js",
     "./dist/esm/layer/vector/Path.DashAnimation.js",
     "./dist/esm/layer/vector/Polyline.Decorations.js",
     "./dist/esm/layer/GeoJSON.Load.js",
-    "./dist/esm/layer/vector/Path.ZoomStyles.js"
+    "./dist/esm/layer/vector/Path.ZoomStyles.js",
+    "./dist/esm/elements/*.js"
   ],
   "files": [
     "dist",
