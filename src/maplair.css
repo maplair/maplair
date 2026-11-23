@@ -65,6 +65,7 @@
 .maplair-pane > canvas,
 .maplair-zoom-box,
 .maplair-image-layer,
+.maplair-image-layer-clip,
 .maplair-layer,
 .maplair-tooltip {
 	position: absolute;
@@ -356,6 +357,10 @@
 	}
 }
 
+.maplair-image-layer-clip {
+	will-change: transform;
+}
+
 .maplair-zoom-anim {
 	.maplair-zoom-animated {
 		transition: transform 0.25s cubic-bezier(0, 0, 0.25, 1);
@@ -409,6 +414,7 @@
 .maplair-marker-icon,
 .maplair-marker-shadow,
 .maplair-image-layer,
+.maplair-image-layer-clip,
 .maplair-pane > svg path,
 .maplair-pane > canvas,
 .maplair-tile-container {

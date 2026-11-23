@@ -1,5 +1,5 @@
 import {expect, vi} from 'vite-plus/test';
-import {Canvas, GridLayer, MaplairMap, Marker, Point, Polygon, Popup, SVG, Tooltip} from 'maplair';
+import {Bounds, Canvas, DomUtil, GridLayer, ImageOverlay, MaplairMap, Marker, Point, Polygon, Popup, SVG, Tooltip} from 'maplair';
 import UIEventSimulator from 'ui-event-simulator';
 import {createContainer, removeMapContainer, Finger} from '../SpecHelper.js';
 import {RotateControl} from 'maplair/map-rotation';
@@ -364,6 +364,18 @@ describe('Map: rotation', () => {
 		for (const Renderer of [SVG, Canvas]) {
 			it(`covers the rotated view with the ${Renderer.name} renderer`, () => expectRendererCoversView(Renderer));
 		}
+
+		it('clips image overlays to the rotated view, not the unrotated one', () => {
+			const overlay = new ImageOverlay('', [[-30, -20], [50, 60]], {padding: 0}).addTo(map);
+			map.setBearing(45);
+
+			const clip = overlay._clip,
+			min = DomUtil.getPosition(clip),
+			bounds = new Bounds(min, min.add([clip.offsetWidth, clip.offsetHeight]));
+			for (const corner of [[0, 0], [400, 0], [0, 300], [400, 300]]) {
+				expect(bounds.contains(map.containerPointToLayerPoint(corner).round()), `corner ${corner}`).to.be.true;
+			}
+		});
 	});
 
 	describe('RotateControl', () => {

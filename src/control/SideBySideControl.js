@@ -237,6 +237,7 @@ export class SideBySideControl extends Control {
 	}
 }
 
+// the element positioned in layer pixels: the clip box of image, video and SVG overlays
 function getElement(layer) {
-	return layer.getContainer?.() ?? layer.getElement?.();
+	return layer.getContainer?.() ?? layer._clip ?? layer.getElement?.();
 }

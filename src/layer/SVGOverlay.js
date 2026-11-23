@@ -44,7 +44,7 @@ export class SVGOverlay extends ImageOverlay {
 	_initImage() {
 		const el = this._image = this._url;
 
-		el.classList.add('maplair-image-layer', 'maplair-zoom-animated');
+		el.classList.add('maplair-image-layer');
 		if (this.options.className) { el.classList.add(...Util.splitWords(this.options.className)); }
 	}
 }

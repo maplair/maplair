@@ -1,7 +1,7 @@
 import {Layer} from './Layer.js';
 import * as Util from '../core/Util.js';
 import {LatLngBounds} from '../geo/LatLngBounds.js';
-import {Bounds} from '../geometry/Bounds.js';
+import {Point} from '../geometry/Point.js';
 import * as DomUtil from '../dom/DomUtil.js';
 
 /** @import {InteractiveLayerOptions} from './Layer.js' */
@@ -44,6 +44,10 @@ import * as DomUtil from '../dom/DomUtil.js';
  * image relative to other images of the page, as per the
  * [`fetchpriority` HTML attribute](https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/fetchPriority),
  * e.g. `'high'` for a large overlay that is the main content of the page.
+ * @property {number} [padding=0.5] How much to extend the clip area around the map
+ * view (relative to its size), e.g. 0.5 would be 50% of map view in each direction.
+ * Higher values show less of the overlay's clipped edges when panning or zooming out,
+ * but use more memory, which can crash mobile browsers with many overlays.
  * @extends InteractiveLayerOptions
  */
 
@@ -72,7 +76,8 @@ export class ImageOverlay extends Layer {
 		className: '',
 		pixelated: false,
 		decoding: 'auto',
-		fetchPriority: 'auto'
+		fetchPriority: 'auto',
+		padding: 0.5
 	};
 
 	/**
@@ -99,6 +104,10 @@ export class ImageOverlay extends Layer {
 	onAdd() {
 		if (!this._image) {
 			this._initImage();
+
+			// clips the element to the view, so the browser never composites an element far larger than the screen
+			this._clip = DomUtil.create('div', 'maplair-image-layer-clip maplair-zoom-animated');
+			this._clip.append(this._image);
 			this._updateZIndex();
 
 			if (this.options.opacity < 1) {
@@ -112,7 +121,7 @@ export class ImageOverlay extends Layer {
 		}
 		this._image.classList.toggle('maplair-pixelated', !!this.options.pixelated);
 
-		this.getPane().append(this._image);
+		this.getPane().append(this._clip);
 		this._reset();
 	}
 
@@ -121,7 +130,7 @@ export class ImageOverlay extends Layer {
 	 * @type {(map: MaplairMap) => void}
 	 */
 	onRemove() {
-		this._image.remove();
+		this._clip.remove();
 		if (this.options.interactive) {
 			this.removeInteractiveTarget(this._image);
 		}
@@ -169,7 +178,7 @@ export class ImageOverlay extends Layer {
 	 */
 	bringToFront() {
 		if (this._map) {
-			DomUtil.toFront(this._image);
+			DomUtil.toFront(this._clip);
 		}
 		return this;
 	}
@@ -180,7 +189,7 @@ export class ImageOverlay extends Layer {
 	 */
 	bringToBack() {
 		if (this._map) {
-			DomUtil.toBack(this._image);
+			DomUtil.toBack(this._clip);
 		}
 		return this;
 	}
@@ -221,6 +230,7 @@ export class ImageOverlay extends Layer {
 		return {
 			zoom: this._reset,
 			viewreset: this._reset,
+			moveend: this._reset,
 			zoomanim: this._animateZoom
 		};
 	}
@@ -259,7 +269,7 @@ export class ImageOverlay extends Layer {
 		const wasElementSupplied = this._url instanceof HTMLImageElement;
 		const img = this._image = wasElementSupplied ? this._url : DomUtil.create('img');
 
-		img.classList.add('maplair-image-layer', 'maplair-zoom-animated');
+		img.classList.add('maplair-image-layer');
 		if (this.options.className) { img.classList.add(...Util.splitWords(this.options.className)); }
 
 		img.onload = this.fire.bind(this, 'load');
@@ -285,21 +295,32 @@ export class ImageOverlay extends Layer {
 		const scale = this._map.getZoomScale(e.zoom),
 		offset = this._map._latLngToNewLayerPoint(this._bounds.getNorthWest(), e.zoom, e.center);
 
-		DomUtil.setTransform(this._image, offset, scale);
+		// the element's offset within the clip is the clip corner's offset from the overlay's corner, reversed
+		DomUtil.setTransform(this._clip, offset.subtract(DomUtil.getPosition(this._image).multiplyBy(scale)), scale);
 	}
 
 	_reset() {
 		const image = this._image,
+		clip = this._clip,
 		map = this._map,
-		bounds = new Bounds(
-			map._snapLayerPoint(map.latLngToLayerPoint(this._bounds.getNorthWest())),
-			map._snapLayerPoint(map.latLngToLayerPoint(this._bounds.getSouthEast()))),
-		size = bounds.getSize();
+		min = map._snapLayerPoint(map.latLngToLayerPoint(this._bounds.getNorthWest())),
+		max = map._snapLayerPoint(map.latLngToLayerPoint(this._bounds.getSouthEast())),
+		// the bounding box of the (possibly rotated) view, extended by the padding
+		pixelBounds = map.getPixelBounds(),
+		viewSize = pixelBounds.getSize(),
+		padding = this.options.padding,
+		viewMin = pixelBounds.min.subtract(map.getPixelOrigin()).subtract(viewSize.multiplyBy(padding)).round(),
+		viewMax = viewMin.add(viewSize.multiplyBy(1 + 2 * padding)).round(),
+		clipMin = new Point(Math.max(min.x, viewMin.x), Math.max(min.y, viewMin.y)),
+		clipMax = new Point(Math.min(max.x, viewMax.x), Math.min(max.y, viewMax.y));
 
-		DomUtil.setPosition(image, bounds.min);
+		DomUtil.setPosition(clip, clipMin);
+		clip.style.width  = `${Math.max(0, clipMax.x - clipMin.x)}px`;
+		clip.style.height = `${Math.max(0, clipMax.y - clipMin.y)}px`;
 
-		image.style.width  = `${size.x}px`;
-		image.style.height = `${size.y}px`;
+		DomUtil.setPosition(image, min.subtract(clipMin), true);
+		image.style.width  = `${max.x - min.x}px`;
+		image.style.height = `${max.y - min.y}px`;
 	}
 
 	_updateOpacity() {
@@ -307,8 +328,8 @@ export class ImageOverlay extends Layer {
 	}
 
 	_updateZIndex() {
-		if (this._image && this.options.zIndex != null) {
-			this._image.style.zIndex = `${this.options.zIndex}`;
+		if (this._clip && this.options.zIndex != null) {
+			this._clip.style.zIndex = `${this.options.zIndex}`;
 		}
 	}
 
