@@ -209,7 +209,6 @@ export class GridLayer extends Layer {
 		map._removeZoomLimit(this);
 		this._container = null;
 		this._tileZoom = undefined;
-		clearTimeout(this._pruneTimeout);
 		cancelAnimationFrame(this._fadePruneFrame);
 		this._fadePruneFrame = 0;
 	}
@@ -470,10 +469,7 @@ export class GridLayer extends Layer {
 				this._levels[z].el.style.zIndex = `${maxZoom - Math.abs(zoom - z)}`;
 				this._onUpdateLevel(z);
 			} else {
-				this._levels[z].el.remove();
-				this._removeTilesAtZoom(z);
-				this._onRemoveLevel(z);
-				delete this._levels[z];
+				this._removeLevel(z);
 			}
 		}
 
@@ -497,6 +493,13 @@ export class GridLayer extends Layer {
 		this._level = level;
 
 		return level;
+	}
+
+	_removeLevel(z) {
+		this._levels[z].el.remove();
+		this._removeTilesAtZoom(z);
+		this._onRemoveLevel(z);
+		delete this._levels[z];
 	}
 
 	_onUpdateLevel() {}
@@ -532,6 +535,10 @@ export class GridLayer extends Layer {
 			if (!tile.retain) {
 				this._removeTile(key);
 			}
+		}
+
+		for (const [z, level] of Object.entries(this._levels)) {
+			if (!level.el.children.length && level !== this._level) { this._removeLevel(Number(z)); }
 		}
 	}
 
@@ -631,6 +638,10 @@ export class GridLayer extends Layer {
 	}
 
 	_setView(center, zoom, noPrune, noUpdate) {
+		// during a zoom, tiles are current for its target, so old tiles still on screen around it would be pruned;
+		// pruning waits for the view to settle: a zoom without noPrune, or the moveend after the zoom
+		this._noPrune = !!noPrune;
+
 		const tileZoom = this._getTileZoom(zoom);
 
 		const tileZoomChanged = this.options.updateWhenZooming && (tileZoom !== this._tileZoom);
@@ -651,10 +662,6 @@ export class GridLayer extends Layer {
 			if (!noPrune) {
 				this._pruneTiles();
 			}
-
-			// Flag to prevent finished tile fades from pruning tiles during
-			// a zoom anim or a pinch gesture
-			this._noPrune = !!noPrune;
 		}
 
 		this._setZoomTransforms(center, zoom);
@@ -699,7 +706,8 @@ export class GridLayer extends Layer {
 		];
 	}
 
-	_onMoveEnd() {
+	/** @param {MaplairEvent} [e] */
+	_onMoveEnd(e) {
 		const map = this._map;
 		if (!map || map._animatingZoom) { return; }
 
@@ -707,6 +715,12 @@ export class GridLayer extends Layer {
 		if (this._container.style.transform) { this._setZoomTransforms(map.getCenter(), map.getZoom()); }
 
 		this._update();
+
+		// also called on move, throttled
+		if (e?.type === 'moveend' && this._noPrune) {
+			this._noPrune = false;
+			this._pruneTiles();
+		}
 	}
 
 	_onWorldCopyJump({worlds}) {
@@ -733,7 +747,7 @@ export class GridLayer extends Layer {
 
 	_getTiledPixelBounds(center) {
 		const map = this._map,
-		mapZoom = map._animatingZoom ? Math.max(map._animateToZoom, map.getZoom()) : map.getZoom(),
+		mapZoom = map._animatingZoom ? map._animateToZoom : map.getZoom(),
 		scale = map.getZoomScale(mapZoom, this._tileZoom),
 		pixelCenter = map.project(center, this._tileZoom).floor(),
 		halfSize = map.getSize().divideBy(scale * 2);
@@ -773,7 +787,7 @@ export class GridLayer extends Layer {
 
 		// _update just loads more tiles. If the tile zoom level differs too much
 		// from the map's, let _setView reset levels and prune old tiles.
-		if (Math.abs(zoom - this._tileZoom) > 1) { this._setView(center, zoom); return; }
+		if (Math.abs(zoom - this._tileZoom) > 1) { this._setView(center, zoom, this._noPrune); return; }
 
 		// create a queue of coordinates to load tiles from
 		for (let j = tileRange.min.y; j <= tileRange.max.y; j++) {
@@ -935,7 +949,7 @@ export class GridLayer extends Layer {
 		// fading in with a placeholder would show the map below instead of the placeholder at first
 		if (!this._map._fadeAnimated || this.options.placeholder) {
 			tile.active = true;
-			this._pruneTiles();
+			if (!this._noPrune) { this._pruneTiles(); }
 		} else if (!tile.loaded) { // with errorTileUrl, a tile is ready twice (on error and on fallback load)
 			// while fading, the tile is a compositor layer of its own where plus-lighter would light up its
 			// antialiased edges, so it's blended normally until the fade ends
@@ -958,16 +972,7 @@ export class GridLayer extends Layer {
 			this._loading = false;
 			this.fire('load');
 
-			if (!this._map) { return; } // removed by a load listener
-			this._map._scheduleIdleCheck();
-
-			if (!this._map._fadeAnimated) {
-				requestAnimationFrame(this._pruneTiles.bind(this));
-			} else {
-				// Wait a bit more than 0.2 secs (the duration of the tile fade-in)
-				// to trigger a pruning.
-				this._pruneTimeout = setTimeout(this._pruneTiles.bind(this), 250);
-			}
+			this._map?._scheduleIdleCheck(); // unless removed by a load listener
 		}
 	}
 
