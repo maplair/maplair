@@ -62,7 +62,6 @@ export class Canvas extends Renderer {
 	 */
 	getEvents() {
 		const events = super.getEvents();
-		events.viewprereset = this._onViewPreReset;
 		events.pixelratiochange = this._onPixelRatioChange;
 		return events;
 	}
@@ -71,11 +70,6 @@ export class Canvas extends Renderer {
 	_onPixelRatioChange() {
 		this._resizeContainer();
 		this._update();
-	}
-
-	_onViewPreReset() {
-		// Set a flag so that a viewprereset+moveend+viewreset only updates&redraws once
-		this._postponeUpdatePaths = true;
 	}
 
 	/**
@@ -149,15 +143,6 @@ export class Canvas extends Renderer {
 
 		// Tell paths to redraw themselves
 		this.fire('update');
-	}
-
-	_reset() {
-		super._reset();
-
-		if (this._postponeUpdatePaths) {
-			this._postponeUpdatePaths = false;
-			this._updatePaths();
-		}
 	}
 
 	_initPath(layer) {
