@@ -10,9 +10,9 @@ const handlers = ['dragging', 'scrollWheelZoom', 'doubleClickZoom', 'boxZoom', '
 	'tapDragZoom'];
 
 /**
- * `<maplair-map>`: a map ([`MaplairMap`](#map)), rendered into the element itself, with the
+ * `<maplair-map>`: a map ([`MaplairMap`](#maplairmap)), rendered into the element itself, with the
  * layers and controls of its child elements. Attributes: `center` (`lat,lng`) and `zoom`, or
- * `bounds` (`south,west north,east`), and the [options of the map](#map-option), e.g.
+ * `bounds` (`south,west north,east`), and the [options of the map](#maplairmap-option), e.g.
  * `min-zoom`, `max-bounds`, `crs` (the name of a built-in CRS like `EPSG4326`, or one
  * registered with `registerCRS()`), `bearing`, `scroll-wheel-zoom="false"`.
  *
@@ -27,7 +27,7 @@ const handlers = ['dragging', 'scrollWheelZoom', 'doubleClickZoom', 'boxZoom', '
  * Without `height` in the page's CSS, the map is 400 pixels high. Content other than Maplair
  * elements (e.g. a static image) is the fallback shown until the map is created.
  *
- * Events: `maplair-click`, `maplair-moveend` and the other [events of the map](#map-event).
+ * Events: `maplair-click`, `maplair-moveend` and the other [events of the map](#maplairmap-event).
  */
 export class MapElement extends MaplairElement {
 	static Class = MaplairMap;

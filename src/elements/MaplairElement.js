@@ -475,11 +475,18 @@ maplair-map.maplair-container > :not([class*="maplair-"]) { display: none; }
 let styleAdopted = false;
 
 /**
+ * The custom elements of Maplair, by name.
+ * @type {Map<string, any>}
+ */
+export const elements = new Map();
+
+/**
  * Defines the custom element `name` (if not defined yet), e.g. `maplair-marker`.
  * @param {string} name
- * @param {CustomElementConstructor} Element
+ * @param {any} Element
  */
 export function define(name, Element) {
+	elements.set(name, Element);
 	// not in server-side rendering
 	if (typeof customElements === 'undefined') { return; }
 	if (!styleAdopted) {

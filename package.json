@@ -79,6 +79,7 @@
     "./i18n/*.json": "./i18n/*.json"
   },
   "style": "dist/maplair.css",
+  "customElements": "dist/custom-elements.json",
   "sideEffects": [
     "*.css",
     "./dist/maplair*.js",
@@ -112,7 +113,7 @@
     "test": "vp test run",
     "test:ui": "vp test watch --ui --browser.headless=false",
     "coverage": "vp test run --coverage",
-    "build": "vp pack && node ./build/types.js",
+    "build": "vp pack && node ./build/types.js && node ./build/elements.js",
     "test:tree-shaking": "node ./build/tree-shaking.js",
     "watch": "vp pack --watch",
     "lint": "vp lint",
