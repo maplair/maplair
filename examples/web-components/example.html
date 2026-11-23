@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<base target="_top">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<title>Web Components Example - Maplair</title>
+	
+	<link rel="icon" type="image/svg+xml" href="docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+
+	<style>
+		html, body {
+			height: 100%;
+			margin: 0;
+		}
+		.maplair-container {
+			height: 100%;
+		}
+	</style>
+
+	
+</head>
+<body>
+
+
+
+<script type="module" src="/dist/maplair-elements.js"></script>
+
+<maplair-map center="47.27,11.39" zoom="11">
+	<maplair-tile-layer provider="osm" name="OpenStreetMap" base></maplair-tile-layer>
+	<maplair-tile-layer provider="opentopomap" name="OpenTopoMap" base></maplair-tile-layer>
+
+	<maplair-marker latlng="47.2692,11.4041" name="Innsbruck">
+		<maplair-popup open><b>Innsbruck</b><br>Capital of the Alps</maplair-popup>
+	</maplair-marker>
+
+	<maplair-circle latlng="47.2266,11.3378" radius="1500" color="#c0392b" name="Circle">
+		<maplair-tooltip>A circle of 1.5 km</maplair-tooltip>
+	</maplair-circle>
+
+	<maplair-geojson name="Huts" tooltip="{name} ({ele} m)">
+		<script type="application/geo+json">
+			{"type": "FeatureCollection", "features": [
+				{"type": "Feature", "properties": {"name": "Arzler Alm", "ele": 1067}, "geometry": {"type": "Point", "coordinates": [11.4248, 47.2905]}},
+				{"type": "Feature", "properties": {"name": "Höttinger Alm", "ele": 1487}, "geometry": {"type": "Point", "coordinates": [11.3802, 47.2985]}},
+				{"type": "Feature", "properties": {"name": "Pfeishütte", "ele": 1922}, "geometry": {"type": "Point", "coordinates": [11.4498, 47.3361]}}
+			]}
+		</script>
+	</maplair-geojson>
+
+	<maplair-scale-control></maplair-scale-control>
+	<maplair-layers-control></maplair-layers-control>
+</maplair-map>
+
+
+</body>
+</html>

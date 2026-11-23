@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>Leaflet 2.0 Alpha released - Maplair</title>
+	
+	
+	<meta charset="utf-8" />
+	
+
+	
+
+	<meta name="color-scheme" content="light dark">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="../../../docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="../../../docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="../../../docs/css/normalize.css" />
+	<link rel="stylesheet" href="../../../docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="../../../docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="../../../docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body>
+
+<header>
+	<h1><a href="https://maplair.org/"><picture><source srcset="../../../docs/images/logo-dark.png" media="(prefers-color-scheme: dark)" /><img src="../../../docs/images/logo.png" alt="Maplair" width="300" /></picture></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<a href="../../../index.html">Overview</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../examples.html">Tutorials</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../download.html">Download</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../plugins.html" title="Leaflet plugins, none of which is compatible with Maplair"><s>Plugins</s></a>
+			
+		</li>
+		<li>
+			
+				<a href="../../../blog.html" class="active">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		
+<p><a href="../../../blog.html">← Back to the list of blog posts</a></p>
+
+<h2>Leaflet 2.0 Alpha released</h2>
+
+<p class="post-meta">Posted on 18 May 2025 by <a href="https://github.com/Falke-Design">Florian Bischof</a></p>
+
+<p>After two and a half years of hard work, we’re thrilled to announce the first alpha release of <strong>Leaflet 2.0</strong>!</p>
+<p>This release marks a major modernization of the Leaflet codebase. We’ve dropped support for Internet Explorer, removed legacy methods and polyfills, adopted modern standards like Pointer Events, and now publish Leaflet as an ESM module. The global <code>L</code> is no longer part of the core package (though it’s still available in the bundled version <code>leaflet-global.js</code> for backward compatibility).</p>
+<hr>
+<div class="announcement">August 16, 2025 — The blog has been updated to the alpha.1 release!</div>
+<h2 id="whats-new-in-leaflet-20">What’s New in Leaflet 2.0</h2>
+<ul>
+<li>Fully ESM support</li>
+<li>New renderer superclass: <code>BlanketOverlay</code></li>
+<li>Switched from <code>Mouse</code> and <code>Touch</code> events to <code>PointerEvents</code></li>
+<li><code>Point</code> and <code>LatLng</code> now include a <code>.validate()</code> method</li>
+<li>Automatic OSM attribution if none is provided when using OSM tiles</li>
+<li>Numerous small cleanups and internal improvements</li>
+<li>We replaced <code>layers.png</code> with <code>layers.svg</code> for the Control.Layers. Adjust your bundler configuration if necessary.</li>
+<li>Introduced <code>LeafletMap</code> as an alias for <code>Map</code>.</li>
+</ul>
+<hr>
+<h2 id="migration">Migration</h2>
+<ol>
+<li>Replace all factory methods with constructor calls: <code>L.marker(latlng)</code> ➜ <code>new Marker(latlng)</code></li>
+<li>Change the <code>&lt;script&gt;</code> tag to <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/script#module"><code>module</code></a>: <code>&lt;script type=‘module’&gt;</code>
+<ul>
+<li>To have global access to variables of a <code>module-script</code>, assign them to the <code>window</code> object (Not recommended): <code>window.map = map</code></li>
+</ul>
+</li>
+<li>Replace usage of <code>L</code> with explicit imports from the Leaflet package: <code>import { Marker } from 'leaflet'</code>
+<ul>
+<li>if you are not using a package manager like npm, you can use a <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/script/type/importmap"><code>importmap</code></a>: https://leafletjs.com/examples/quick-start/</li>
+</ul>
+</li>
+<li>Consider <a href="https://github.com/Falke-Design/Leaflet-V1-polyfill">Leaflet V1 Polyfill</a> if you are using outdated plugins</li>
+</ol>
+<h3 id="old-implementation">Old implementation</h3>
+<pre><code class="language-plaintext">&lt;script src=&quot;https://unpkg.com/leaflet@1.9.4/dist/leaflet.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+	const map = L.map('map').setView([51.505, -0.09], 13);
+
+	const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		maxZoom: 19,
+		attribution: '&amp;copy; &lt;a href=&quot;http://www.openstreetmap.org/copyright&quot;&gt;OpenStreetMap&lt;/a&gt;'
+	}).addTo(map);
+&lt;/script&gt;
+</code></pre>
+<h3 id="new-implementation">New implementation</h3>
+<h4 id="module">Module</h4>
+<pre><code class="language-plaintext">&lt;script type=&quot;importmap&quot;&gt;
+	{
+		&quot;imports&quot;: {
+			&quot;leaflet&quot;: &quot;https://unpkg.com/leaflet@2.0.0-alpha.1/dist/leaflet.js&quot;
+		}
+	}
+&lt;/script&gt;
+&lt;script type=&quot;module&quot;&gt;
+	import {LeafletMap, TileLayer, Marker, Circle, Polygon, Popup} from 'leaflet';
+
+	const map = new LeafletMap('map').setView([51.505, -0.09], 13);
+
+	const tiles = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		maxZoom: 19,
+		attribution: '&amp;copy; &lt;a href=&quot;http://www.openstreetmap.org/copyright&quot;&gt;OpenStreetMap&lt;/a&gt;'
+	}).addTo(map);
+&lt;/script&gt;
+</code></pre>
+<h4 id="global-script">Global Script</h4>
+<pre><code class="language-plaintext">&lt;script src=&quot;https://unpkg.com/leaflet@2.0.0-alpha.1/dist/leaflet-global.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+	const map = new L.Map('map').setView([51.505, -0.09], 13);
+
+	const tiles = new L.TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		maxZoom: 19,
+		attribution: '&amp;copy; &lt;a href=&quot;http://www.openstreetmap.org/copyright&quot;&gt;OpenStreetMap&lt;/a&gt;'
+	}).addTo(map);
+&lt;/script&gt;
+</code></pre>
+<hr>
+<h2 id="major-changes--cleanups">Major Changes &amp; Cleanups</h2>
+<h3 id="modules--browser-support">Modules &amp; Browser Support</h3>
+<ul>
+<li>Dropped UMD and global <code>L</code> in favor of modern ESM</li>
+<li>Targeting only <strong>evergreen browsers</strong></li>
+<li>Rewritten using <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes">standardized ES6 classes</a></li>
+<li>Removed legacy <code>SVG.VML</code> renderer</li>
+<li>… as well as various other ES6 features</li>
+</ul>
+<h3 id="browser">Browser</h3>
+<ul>
+<li>Removed detection flags: <code>ie</code>, <code>ielt9</code>, <code>edge</code>, <code>webkit</code>, <code>android</code>, <code>android23</code>, <code>androidStock</code>, <code>opera</code>, <code>gecko</code>, <code>phantom</code>, <code>opera12</code>, <code>win</code>, <code>ie3d</code>, <code>webkit3d</code>, <code>gecko3d</code>, <code>any3d</code>, <code>mobileWebkit</code>, <code>mobileWebkit3d</code>, <code>msPointer</code>, <code>mobileOpera</code>, <code>mobileGecko</code>, <code>passiveEvents</code>, <code>canvas</code>, <code>svg</code>, <code>vml</code>, <code>inlineSvg</code>, <code>touch</code>, <code>touchNative</code></li>
+<li>Flags like <code>L_NO_TOUCH</code> and <code>L_DISABLE_3D</code> are also gone</li>
+</ul>
+<h3 id="domutil">DomUtil</h3>
+<ul>
+<li><code>setPosition</code> and <code>getPosition</code> no longer rely on <code>_leaflet_pos</code></li>
+<li>Removed: <code>getStyle</code>, <code>testProp</code>, <code>empty</code>, <code>remove</code>, <code>TRANSITION</code>, <code>TRANSITION_END</code>, <code>TRANSFORM</code>, <code>removeClass</code>, <code>setOpacity</code>, <code>addClass</code>, <code>setClass</code>, <code>getClass</code>, <code>hasClass</code></li>
+<li><code>enableTextSelection</code> and <code>disableTextSelection</code> now use standard <code>userSelect</code> style (no vendor prefixes anymore)</li>
+<li><code>setTransform</code> drops vendor prefixed style <code>transform</code> too</li>
+</ul>
+<h3 id="util">Util</h3>
+<ul>
+<li>Removed &amp; replaced: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/trim"><code>trim</code></a>, <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create"><code>create</code></a>, <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/isArray"><code>isArray</code></a>, <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind"><code>bind</code></a>, <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame"><code>requestAnimFrame</code></a>, <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/cancelAnimationFrame"><code>cancelAnimFrame</code></a>, <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign"><code>extend</code></a>, <a href="https://developer.mozilla.org/en-US/docs/Web/API/URL/searchParams"><code>getParamString</code></a>.</li>
+</ul>
+<h3 id="domevent">DomEvent</h3>
+<ul>
+<li><code>getMousePosition</code> renamed to <code>getPointerPosition</code></li>
+<li><code>disableClickPropagation</code> no longer supports <code>mouse</code> and <code>touch</code> events</li>
+<li><code>getPropagationPath</code> polyfill for <code>ev.composedPath()</code> removed</li>
+<li><code>getWheelDelta</code> cleaned up from old Firefox/IE quirks</li>
+<li><code>DomEvent.Pointer</code> module has been removed</li>
+<li>Aliases <code>addListener</code> and <code>removeListener</code> have been removed</li>
+</ul>
+<h3 id="map">Map</h3>
+<ul>
+<li>Renamed event mapping methods:<br>
+<code>mouseEventToContainerPoint</code>, <code>mouseEventToLayerPoint</code>, <code>mouseEventToLatLng</code> ➜<br>
+<code>pointerEventToContainerPoint</code>, <code>pointerEventToLayerPoint</code>, <code>pointerEventToLatLng</code></li>
+<li>Removed <code>mouse</code> and <code>touch</code> event support (fully replaced by <code>pointer</code> events)</li>
+<li>Uses <code>ResizeObserver</code> instead of <code>window.onresize</code></li>
+<li>Map container has now the <code>aria-keyshortcuts</code> attribute</li>
+</ul>
+<h3 id="layers">Layers</h3>
+<ul>
+<li><code>bubblingMouseEvents</code> renamed to <code>bubblingPointerEvents</code></li>
+<li>Prevent outline-box on Chromium when clicking a vector with a tooltip</li>
+</ul>
+<h3 id="class">Class</h3>
+<ul>
+<li>Removed <code>Class.__super__</code></li>
+</ul>
+<h3 id="draggable--boxzoom">Draggable &amp; BoxZoom</h3>
+<ul>
+<li>Replaced deprecated button checks:<br>
+<code>(e.which !== 1 &amp;&amp; e.button !== 1)</code> ➜ <code>(e.button !== 0)</code></li>
+<li>Removed old IE-specific <code>correspondingUseElement</code></li>
+<li>Fixed tooltip visibility while panning the map</li>
+</ul>
+<h3 id="css">CSS</h3>
+<ul>
+<li>Tiles no longer inherit the <code>filter</code> CSS property</li>
+</ul>
+<h3 id="layers-control">Layers Control</h3>
+<ul>
+<li>Replaced <code>&lt;section&gt;</code> with <code>&lt;fieldset&gt;</code></li>
+<li>Removed <code>aria-haspopup</code> for IE</li>
+<li>Refocus map after interacting with control</li>
+<li>New option <code>collapseDelay</code></li>
+</ul>
+<h3 id="pinchzoom">PinchZoom</h3>
+<ul>
+<li>Renamed <code>TouchZoom</code> to <code>PinchZoom</code> to better reflect functionality</li>
+<li><code>touchZoom</code> alias remains for backward compatibility</li>
+</ul>
+<h3 id="factory-methods">Factory Methods</h3>
+<ul>
+<li>All factory methods removed — use constructors directly:<br>
+<code>L.marker(latlng)</code> ➜ <code>new Marker(latlng)</code></li>
+<li><code>Point</code>, <code>LatLng</code>, and <code>Bounds</code> constructors no longer return <code>null</code> for invalid inputs</li>
+<li><code>Point</code> and <code>LatLng</code> now include <code>.validate()</code> method</li>
+</ul>
+<h3 id="events">Events</h3>
+<ul>
+<li>Removed deprecated <code>layer</code> property — use <code>propagatedFrom</code> instead</li>
+<li>Cleaned up DOM event listeners when destroying Map’s animation proxy</li>
+<li><code>mozEvent</code> warning removed</li>
+<li>Removed aliases <code>addEventListener</code>, <code>removeEventListener</code>, <code>addOneTimeEventListener</code>, <code>fireEvent</code>, <code>hasEventListeners</code></li>
+</ul>
+<h3 id="icondefault">Icon.Default</h3>
+<ul>
+<li>Image path auto-detection now only runs if <code>IconDefault.imagePath</code> is unset</li>
+</ul>
+<h3 id="circle">Circle</h3>
+<ul>
+<li>Removed support for creating a circle with the radius as second argument <code>L.circle(latlng, radius, options)</code></li>
+</ul>
+<h3 id="gridlayer">GridLayer</h3>
+<ul>
+<li>Now constructs tile URLs with integer {z} even on fractional zoom</li>
+</ul>
+<h3 id="canvas">Canvas</h3>
+<ul>
+<li>Added support for <code>dashOffset</code></li>
+</ul>
+<h3 id="videooverlay">VideoOverlay</h3>
+<ul>
+<li>New option <code>controls</code></li>
+<li>Fixed issue with seek bar in Safari</li>
+</ul>
+<hr>
+<h2 id="want-the-full-details">Want the Full Details?</h2>
+<p>You can explore all changes included in this release through the following resources:</p>
+<ul>
+<li><a href="https://github.com/Leaflet/Leaflet/milestone/39">Leaflet 2.0 Milestone on GitHub</a></li>
+<li><a href="https://github.com/Leaflet/Leaflet/commits/main/">Commit History on the <code>main</code> Branch</a></li>
+</ul>
+<hr>
+<h2 id="need-legacy-support">Need Legacy Support?</h2>
+<p>Check out this polyfill package to help ease the transition for legacy apps:  <a href="https://github.com/Falke-Design/Leaflet-V1-polyfill">Leaflet V1 Polyfill</a></p>
+<hr>
+<p>Thanks to everyone who contributed ideas, code, feedback, and testing over the years. This release is a major step forward for Leaflet, and we can’t wait to see what you build with it!</p>
+<p>Cheers,<br>
+<strong>The Leaflet Team</strong></p>
+
+
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/simon04">Simon Legner</a> and <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="../../../docs/js/docs.js"></script>
+
+</body>
+</html>

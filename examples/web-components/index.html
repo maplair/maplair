@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+
+	
+	<title>Maps in HTML with Web Components - Maplair</title>
+	
+	
+	<meta charset="utf-8" />
+	
+
+	
+
+	<meta name="color-scheme" content="light dark">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	
+
+	<link rel="icon" type="image/svg+xml" href="../../docs/images/favicon.svg" />
+	<link rel="shortcut icon" type="image/x-icon" href="../../docs/images/favicon.ico" />
+
+	<link href="https://maplair.org/atom.xml" type="application/atom+xml" rel="alternate" title="Maplair Dev Blog Atom Feed" />
+
+	<link rel="stylesheet" href="../../docs/css/normalize.css" />
+	<link rel="stylesheet" href="../../docs/css/main.css" />
+	
+
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,300' rel='stylesheet' type='text/css'>
+
+	<script src="../../docs/highlight/highlight.pack.js"></script>
+	<link rel="stylesheet" href="../../docs/highlight/styles/github-gist.css" />
+
+	<!-- Maplair -->
+	<link rel="stylesheet" href="/dist/maplair.css"/>
+	<script type="importmap">
+		{
+			"imports": {
+				"maplair": "/dist/maplair.js"
+			}
+		}
+	</script>
+	
+
+	<script>
+		ACCESS_TOKEN = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+		MB_ATTR = 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+		MB_URL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' + ACCESS_TOKEN;
+		OSM_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+		OSM_ATTRIB = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+	</script>
+</head>
+<body>
+
+<header>
+	<h1><a href="https://maplair.org/"><picture><source srcset="../../docs/images/logo-dark.png" media="(prefers-color-scheme: dark)" /><img src="../../docs/images/logo.png" alt="Maplair" width="300" /></picture></a></h1>
+	<p class="tagline">an open-source JavaScript library<br> for building powerful interactive maps</p>
+</header>
+
+<nav>
+	<ul class="nav">
+		<li>
+			
+				<a href="../../index.html">Overview</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../examples.html" class="active">Tutorials</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../reference.html">Docs</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../download.html">Download</a>
+			
+		</li>
+		<li>
+			
+				<a href="../../plugins.html" title="Leaflet plugins, none of which is compatible with Maplair"><s>Plugins</s></a>
+			
+		</li>
+		<li>
+			
+				<a href="../../blog.html">Blog</a>
+			
+		</li>
+		<li>
+			<a href="https://github.com/maplair/maplair">GitHub</a>
+		</li>
+	</ul>
+</nav>
+
+<main>
+	<div class="container">
+		
+<p class="tutorials-back"><a href="../../examples.html">← Tutorials</a></p>
+
+<h2 id="maps-in-html-with-web-components">Maps in HTML with Web Components</h2>
+<p>Maplair’s custom elements build maps from HTML, without writing JavaScript. They work in plain HTML pages, in content management systems and Markdown that allow HTML, and in every framework that renders HTML: React, Vue, Svelte, Angular and others.</p>
+<figure class="example-frame">
+<iframe src='example.html' title='Example map'
+	style='height: 400px;'></iframe>
+<figcaption><a href='example.html'>See this example stand-alone.</a></figcaption>
+</figure>
+<h3 id="getting-started">Getting started</h3>
+<p>Load Maplair’s CSS and the bundle of the elements, then write the map as elements:</p>
+<pre><code class="language-html">&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/maplair@4.8.0/dist/maplair.css&quot; integrity=&quot;sha384-jeAkE8SEMKKmKelkCVVbczDjpdyrEGugMDahOj1U0kWX78pd+T3GbPlVHy2dUdEy&quot; crossorigin=&quot;anonymous&quot;&gt;
+&lt;script type=&quot;module&quot; src=&quot;https://cdn.jsdelivr.net/npm/maplair@4.8.0/dist/maplair-elements.js&quot;&gt;&lt;/script&gt;
+
+&lt;maplair-map center=&quot;47.27,11.39&quot; zoom=&quot;11&quot;&gt;
+	&lt;maplair-tile-layer provider=&quot;osm&quot;&gt;&lt;/maplair-tile-layer&gt;
+	&lt;maplair-marker latlng=&quot;47.2692,11.4041&quot;&gt;
+		&lt;maplair-popup open&gt;&lt;b&gt;Innsbruck&lt;/b&gt;&lt;br&gt;Capital of the Alps&lt;/maplair-popup&gt;
+	&lt;/maplair-marker&gt;
+&lt;/maplair-map&gt;
+</code></pre>
+<p>With a bundler, import <code>maplair/elements</code> (and <code>maplair/styles.css</code>) instead.</p>
+<p>The map is drawn into <code>&lt;maplair-map&gt;</code> itself. Without a height in your CSS, it’s 400 pixels high. Anything inside it that isn’t a Maplair element, like a paragraph saying that the map needs JavaScript, is shown until the map is ready.</p>
+<h3 id="attributes-are-options">Attributes are options</h3>
+<p>Every element stands for a Maplair class, and its attributes are the <a href="../../reference.html">options</a> of the class, written in kebab-case: the option <code>maxZoom</code> of <code>TileLayer</code> is the attribute <code>max-zoom</code> of <code>&lt;maplair-tile-layer&gt;</code>. Numbers, strings and booleans are written as usual (<code>no-wrap</code>, or <code>scroll-wheel-zoom=&quot;false&quot;</code>), coordinates as <code>lat,lng</code>, lists of coordinates separated by spaces, and bounds as <code>south,west north,east</code>:</p>
+<pre><code class="language-html">&lt;maplair-map bounds=&quot;47.1,11.2 47.4,11.6&quot; max-zoom=&quot;16&quot; scroll-wheel-zoom=&quot;false&quot;&gt;
+	&lt;maplair-polyline latlngs=&quot;47.26,11.39 47.27,11.42 47.30,11.44&quot; color=&quot;#c0392b&quot; weight=&quot;5&quot;&gt;&lt;/maplair-polyline&gt;
+	&lt;maplair-rectangle bounds=&quot;47.2,11.3 47.25,11.35&quot; fill-color=&quot;#2a7ab0&quot;&gt;&lt;/maplair-rectangle&gt;
+&lt;/maplair-map&gt;
+</code></pre>
+<p>Path styles can also come from your CSS, as custom properties on the element or any element around it, e.g. <code>maplair-map { --maplair-path-color: #c0392b; --maplair-path-weight: 4; }</code>; attributes take precedence.</p>
+<p>Changing an attribute changes the map: setting <code>zoom</code> zooms, setting <code>latlng</code> of a marker moves it, and removing an element removes its layer. That’s why the elements work with frameworks: they just render HTML.</p>
+<h3 id="popups-tooltips-and-icons">Popups, tooltips and icons</h3>
+<p>A <code>&lt;maplair-popup&gt;</code> or <code>&lt;maplair-tooltip&gt;</code> inside a layer element belongs to that layer, with the content of the element. <code>open</code> opens a popup and tells whether it’s open; a tooltip with <code>permanent</code> is always shown. Icons are elements inside the marker:</p>
+<pre><code class="language-html">&lt;maplair-marker latlng=&quot;47.3078,11.3797&quot;&gt;
+	&lt;maplair-svg-icon color=&quot;#2a7ab0&quot; glyph=&quot;⛰&quot;&gt;&lt;/maplair-svg-icon&gt;
+	&lt;maplair-tooltip permanent direction=&quot;right&quot;&gt;Hafelekar&lt;/maplair-tooltip&gt;
+&lt;/maplair-marker&gt;
+</code></pre>
+<h3 id="geojson">GeoJSON</h3>
+<p><code>&lt;maplair-geojson&gt;</code> loads data from <code>src</code>, or takes it from a script inside it. The <code>tooltip</code> and <code>popup</code> attributes are templates filled with the properties of each feature:</p>
+<pre><code class="language-html">&lt;maplair-geojson src=&quot;huts.geojson&quot; tooltip=&quot;{name} ({ele} m)&quot; fit-bounds&gt;&lt;/maplair-geojson&gt;
+</code></pre>
+<p>A <code>&lt;maplair-classification&gt;</code> styles the features by a property, and a <code>&lt;maplair-legend-control&gt;</code> explains the colors:</p>
+<pre><code class="language-html">&lt;maplair-geojson src=&quot;regions.geojson&quot;&gt;
+	&lt;maplair-classification property=&quot;danger&quot; name=&quot;Danger level&quot;&gt;
+		&lt;maplair-class value=&quot;1&quot; fill-color=&quot;#ccff66&quot; legend=&quot;low&quot;&gt;&lt;/maplair-class&gt;
+		&lt;maplair-class value=&quot;2&quot; fill-color=&quot;#ffff00&quot; legend=&quot;moderate&quot;&gt;&lt;/maplair-class&gt;
+		&lt;maplair-class lower=&quot;3&quot; fill-color=&quot;#ff9900&quot; legend=&quot;considerable or higher&quot;&gt;&lt;/maplair-class&gt;
+	&lt;/maplair-classification&gt;
+&lt;/maplair-geojson&gt;
+&lt;maplair-legend-control&gt;&lt;/maplair-legend-control&gt;
+</code></pre>
+<h3 id="controls-and-the-layers-control">Controls and the layers control</h3>
+<p>Controls are elements in the map, like <code>&lt;maplair-scale-control&gt;</code>, <code>&lt;maplair-fullscreen-control&gt;</code>, <code>&lt;maplair-search-control&gt;</code> or <code>&lt;maplair-minimap-control&gt;</code>. The layers control lists every layer with a <code>name</code>, those with <code>base</code> as base layers, of which only one is shown; <code>hidden</code> layers are listed but not shown:</p>
+<pre><code class="language-html">&lt;maplair-tile-layer provider=&quot;osm&quot; name=&quot;OpenStreetMap&quot; base&gt;&lt;/maplair-tile-layer&gt;
+&lt;maplair-tile-layer provider=&quot;opentopomap&quot; name=&quot;OpenTopoMap&quot; base&gt;&lt;/maplair-tile-layer&gt;
+&lt;maplair-geojson src=&quot;huts.geojson&quot; name=&quot;Huts&quot; hidden&gt;&lt;/maplair-geojson&gt;
+&lt;maplair-layers-control&gt;&lt;/maplair-layers-control&gt;
+</code></pre>
+<h3 id="events-and-code">Events and code</h3>
+<p>Maplair’s events are dispatched on the elements as DOM events starting with <code>maplair-</code>, and they bubble, so one listener on the map hears the clicks on all its layers. The Maplair event is in <code>detail</code>:</p>
+<pre><code class="language-js">const mapElement = document.querySelector('maplair-map');
+mapElement.addEventListener('maplair-click', (e) =&gt; {
+	console.log(e.target, e.detail.latlng);
+});
+</code></pre>
+<p>Where HTML ends, code takes over: <code>mapElement.map</code> is the <code>MaplairMap</code>, and every layer element has its <code>layer</code> (<code>control</code> for controls). They exist once the element is ready, which <code>whenReady()</code> waits for. Options that are functions go to the <code>options</code> property:</p>
+<pre><code class="language-js">const huts = document.querySelector('maplair-geojson');
+huts.options = {pointToLayer: (feature, latlng) =&gt; new CircleMarker(latlng, {radius: 6})};
+const layer = await huts.whenReady();
+</code></pre>
+<h3 id="a-location-picker-for-forms">A location picker for forms</h3>
+<p>With <code>name</code> and <code>pick</code>, a map is a form field: clicking the map places a marker, which can be dragged, and the form sends its position as <code>lat,lng</code>. <code>required</code> and resetting the form work as with any input:</p>
+<pre><code class="language-html">&lt;form&gt;
+	&lt;maplair-map name=&quot;location&quot; pick required center=&quot;47.27,11.39&quot; zoom=&quot;10&quot;&gt;
+		&lt;maplair-tile-layer provider=&quot;osm&quot;&gt;&lt;/maplair-tile-layer&gt;
+	&lt;/maplair-map&gt;
+	&lt;button&gt;Send&lt;/button&gt;
+&lt;/form&gt;
+</code></pre>
+<figure class="example-frame">
+<iframe src='example-form.html' title='Example map'
+	style='height: 400px;'></iframe>
+<figcaption><a href='example-form.html'>See this example stand-alone.</a></figcaption>
+</figure>
+<p>All elements and their attributes are listed in the <a href="../../reference.html#maplairelement">reference</a>.</p>
+
+	</div>
+</main>
+
+<footer class="container">
+	<div class="footer">
+		<p>© 2026 <a href="https://github.com/simon04">Simon Legner</a> and <a href="https://github.com/maplair/maplair/graphs/contributors">Maplair contributors</a>.
+		Based on <a href="https://leafletjs.com">Leaflet</a> © 2010–2026 <a href="https://agafonkin.com">Volodymyr Agafonkin</a>.
+		Licensed under the <a href="https://github.com/maplair/maplair/blob/main/LICENSE">BSD 2-Clause License</a>.
+		Maps © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</p>
+	</div>
+
+	<button id="back-to-top" title="Scroll back to top">
+		<svg viewBox="0 0 16 16">
+			<path d="M7.3,3.3c0.4-0.4,1-0.4,1.4,0l6,6c0.4,0.4,0.4,1,0,1.4s-1,0.4-1.4,0L8,5.4l-5.3,5.3c-0.4,0.4-1,0.4-1.4,0s-0.4-1,0-1.4L7.3,3.3L7.3,3.3z"/>
+		</svg>
+	</button>
+</footer>
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push([ '_setAccount', 'UA-4147697-4' ]);
+	_gaq.push([ '_trackPageview' ]);
+
+	(function() {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl'
+				: 'http://www')
+				+ '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+<script src="../../docs/js/docs.js"></script>
+
+</body>
+</html>
