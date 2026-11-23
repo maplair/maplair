@@ -39,6 +39,99 @@ describe('GridLayer', () => {
 			map.setZoom(3, {animate: false});
 			expect(grid._tileZoom).to.equal(3);
 		});
+
+		describe('keeping the old tiles', () => {
+			let grid, pending, fakeTimers = false;
+
+			// tiles load only when the spec says so
+			class ManualGridLayer extends GridLayer {
+				createTile(coords, done) {
+					const tile = document.createElement('div');
+					pending.push(() => done(null, tile));
+					return tile;
+				}
+			}
+
+			function loadAll() {
+				const callbacks = pending;
+				pending = [];
+				for (const fn of callbacks) { fn(); }
+			}
+
+			const tileEls = () => [...grid._container.querySelectorAll('.maplair-tile')];
+
+			beforeEach(() => {
+				pending = [];
+				map.remove();
+				map = new MaplairMap(container, {fadeAnimation: false}).setView([0, 0], 10);
+				grid = new ManualGridLayer().addTo(map);
+				loadAll();
+			});
+
+			afterEach(() => {
+				if (fakeTimers) { restoreClock(); fakeTimers = false; }
+			});
+
+			it('keeps them under the new ones until each new tile loads', () => {
+				const oldEls = tileEls(), unloaded = [];
+				grid.on('tileunload', e => unloaded.push(e.tile));
+
+				grid.redraw();
+				expect(tileEls()).to.have.length(oldEls.length * 2);
+				expect(oldEls.every(el => el.isConnected)).to.be.true;
+				expect(unloaded).to.have.length(0);
+
+				pending.shift()();
+				expect(unloaded).to.eql([oldEls[0]]);
+				expect(oldEls[0].isConnected).to.be.false;
+
+				loadAll();
+				expect(unloaded).to.have.length(oldEls.length);
+				expect(tileEls()).to.have.length(oldEls.length);
+			});
+
+			it('keeps the loaded tiles on repeated redraws', () => {
+				const oldEls = tileEls();
+
+				grid.redraw();
+				grid.redraw();
+				expect(tileEls()).to.have.length(oldEls.length * 2);
+				expect(oldEls.every(el => el.isConnected)).to.be.true;
+
+				loadAll();
+				expect(tileEls()).to.have.length(oldEls.length);
+				expect(oldEls.some(el => el.isConnected)).to.be.false;
+			});
+
+			it('removes them with the new tiles that leave the view', () => {
+				const oldEls = tileEls();
+
+				grid.redraw();
+				map.panBy([2000, 0], {animate: false});
+				loadAll();
+				expect(oldEls.some(el => el.isConnected)).to.be.false;
+				expect(tileEls()).to.have.length(Object.keys(grid._tiles).length);
+			});
+
+			it('removes them when the new tiles fade in', () => {
+				createClock();
+				fakeTimers = true;
+				map.remove();
+				map = new MaplairMap(container).setView([0, 0], 10);
+				grid = new ManualGridLayer().addTo(map);
+				loadAll();
+				vi.advanceTimersByTime(250);
+				const oldEls = tileEls();
+
+				grid.redraw();
+				loadAll();
+				expect(oldEls.every(el => el.isConnected)).to.be.true;
+
+				vi.advanceTimersByTime(250);
+				expect(oldEls.some(el => el.isConnected)).to.be.false;
+				expect(tileEls()).to.have.length(oldEls.length);
+			});
+		});
 	});
 
 	describe('#setOpacity', () => {

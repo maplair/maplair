@@ -203,7 +203,6 @@ export class GridLayer extends Layer {
 	 * @param {MaplairMap} map
 	 */
 	onRemove(map) {
-		this._removeKeptLevel();
 		this._removeAllTiles();
 		this._container.remove();
 		map._removeZoomLimit(this);
@@ -277,29 +276,51 @@ export class GridLayer extends Layer {
 	}
 
 	/**
-	 * Requests all the tiles again, e.g. of live data, keeping the current tiles visible
-	 * until the new ones have loaded, unlike [`redraw`](#gridlayer-redraw). Note that
-	 * the browser may answer requests of the same URL from its cache.
+	 * Requests all the tiles again, e.g. of live data, the same as [`redraw`](#gridlayer-redraw).
+	 * Note that the browser may answer requests of the same URL from its cache.
 	 * @returns {this}
 	 */
 	refresh() {
-		this._keepCurrentTiles();
 		return this.redraw();
 	}
 
 	/**
-	 * Causes the layer to clear all the tiles and request them again.
+	 * Causes the layer to request all the tiles again. The old tiles stay on screen until
+	 * the new ones replace them.
 	 * @returns {this}
 	 */
 	redraw() {
 		if (this._map) {
+			const tileZoom = this._getTileZoom(this._map.getZoom()),
+			stale = {};
+
+			for (const [key, tile] of Object.entries(this._tiles)) {
+				// on repeated redraws, the tile that's on screen is the stale one until the newer tile loads
+				if (tile.stale) {
+					stale[key] = {el: tile.stale, coords: tile.coords};
+					tile.stale = undefined;
+				} else if (tile.loaded && tile.coords.z === tileZoom) {
+					stale[key] = tile;
+					delete this._tiles[key];
+				}
+			}
 			this._removeAllTiles();
-			const tileZoom = this._getTileZoom(this._map.getZoom());
+
 			if (tileZoom !== this._tileZoom) {
 				this._tileZoom = tileZoom;
 				this._updateLevels();
 			}
 			this._update();
+
+			for (const [key, {el, coords}] of Object.entries(stale)) {
+				const tile = this._tiles[key];
+				if (tile && !tile.active) {
+					tile.stale = el;
+				} else {
+					el.remove();
+					this.fire('tileunload', {tile: el, coords});
+				}
+			}
 		}
 		return this;
 	}
@@ -402,58 +423,6 @@ export class GridLayer extends Layer {
 		}
 
 		this.getPane().append(this._container);
-	}
-
-	// Keeps the loaded tiles of the current level visible below the tiles loaded
-	// next (e.g. after changing the URL), until these have loaded, to avoid flickering.
-	_keepCurrentTiles() {
-		const zoom = this._tileZoom,
-		level = this._levels?.[zoom];
-		// keep the first level if the next one has not loaded yet
-		if (!this._map || !level || this._keptLevel) { return; }
-
-		const tiles = [];
-		for (const [key, tile] of Object.entries(this._tiles)) {
-			if (tile.coords.z === zoom && tile.loaded) {
-				tiles.push(tile);
-				delete this._tiles[key];
-			}
-		}
-		delete this._levels[zoom];
-		level.el.style.zIndex = -1;
-		this._keptLevel = {level, tiles};
-		// new level for the next tiles
-		this._updateLevels();
-
-		this.on('load', this._onLoadKeptLevel, this);
-		this._map.on('zoomstart viewprereset', this._removeKeptLevel, this);
-	}
-
-	_onLoadKeptLevel() {
-		if (this._map._fadeAnimated) {
-			// after the new tiles faded in
-			clearTimeout(this._keptLevelTimeout);
-			this._keptLevelTimeout = setTimeout(this._removeKeptLevel.bind(this), 250);
-		} else {
-			this._removeKeptLevel();
-		}
-	}
-
-	_removeKeptLevel() {
-		if (!this._keptLevel) { return; }
-		const {level, tiles} = this._keptLevel;
-		this._keptLevel = null;
-		clearTimeout(this._keptLevelTimeout);
-		this.off('load', this._onLoadKeptLevel, this);
-		this._map.off('zoomstart viewprereset', this._removeKeptLevel, this);
-
-		level.el.remove();
-		for (const tile of tiles) {
-			this.fire('tileunload', {
-				tile: tile.el,
-				coords: tile.coords
-			});
-		}
 	}
 
 	_updateLevels() {
@@ -737,7 +706,9 @@ export class GridLayer extends Layer {
 			// tiles can't be shifted by a fraction of a column, so leave those to be reloaded
 			if (dx % tileSize.x === 0) {
 				coords.x -= dx / tileSize.x;
-				DomUtil.setPosition(el, DomUtil.getPosition(el).subtract([dx, 0]), true);
+				const pos = DomUtil.getPosition(el).subtract([dx, 0]);
+				DomUtil.setPosition(el, pos, true);
+				if (tile.stale) { DomUtil.setPosition(tile.stale, pos, true); }
 			}
 			tiles[this._tileCoordsToKey(coords)] = tile;
 		}
@@ -875,6 +846,7 @@ export class GridLayer extends Layer {
 		if (!tile) { return; }
 
 		tile.el.remove();
+		this._removeStaleTile(tile);
 
 		delete this._tiles[key];
 
@@ -882,6 +854,15 @@ export class GridLayer extends Layer {
 			tile: tile.el,
 			coords: tile.coords
 		});
+	}
+
+	// removes the tile that a redraw left under this one
+	_removeStaleTile(tile) {
+		const el = tile.stale;
+		if (!el) { return; }
+		tile.stale = undefined;
+		el.remove();
+		this.fire('tileunload', {tile: el, coords: tile.coords});
 	}
 
 	_initTile(tile) {
@@ -949,6 +930,7 @@ export class GridLayer extends Layer {
 		// fading in with a placeholder would show the map below instead of the placeholder at first
 		if (!this._map._fadeAnimated || this.options.placeholder) {
 			tile.active = true;
+			this._removeStaleTile(tile);
 			if (!this._noPrune) { this._pruneTiles(); }
 		} else if (!tile.loaded) { // with errorTileUrl, a tile is ready twice (on error and on fallback load)
 			// while fading, the tile is a compositor layer of its own where plus-lighter would light up its
@@ -982,6 +964,7 @@ export class GridLayer extends Layer {
 		if (this._tiles[this._tileCoordsToKey(tile.coords)] !== tile) { return; }
 
 		tile.active = true;
+		this._removeStaleTile(tile);
 		this._onOpaqueTile(tile);
 
 		// one prune for all the tiles that finish fading in the same frame

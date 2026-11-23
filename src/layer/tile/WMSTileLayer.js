@@ -205,7 +205,6 @@ export class WMSTileLayer extends TileLayer {
 		if (this._map) { this._updateCrs(); }
 
 		if (!noRedraw) {
-			this._keepCurrentTiles();
 			this.redraw();
 		}
 

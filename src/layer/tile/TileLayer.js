@@ -232,7 +232,6 @@ export class TileLayer extends GridLayer {
 		this._url = url;
 
 		if (!noRedraw) {
-			this._keepCurrentTiles();
 			this.redraw();
 		}
 		return this;
@@ -393,6 +392,7 @@ export class TileLayer extends GridLayer {
 					tile.setAttribute('src', '');
 					const coords = this._tiles[i].coords;
 					tile.remove();
+					this._removeStaleTile(this._tiles[i]);
 					delete this._tiles[i];
 					this.fire('tileabort', {
 						tile,

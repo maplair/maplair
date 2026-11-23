@@ -65,10 +65,11 @@ describe('TileLayer: flicker-free setUrl and placeholder', () => {
 			layer.setUrl('https://b.example.com/{z}/{x}/{y}.png');
 			expect(pending.length).to.equal(oldTiles.length);
 			expect(pending.every(r => r.url.startsWith('https://b.'))).to.be.true;
-			// both old and new tiles are in the DOM, the old ones below
+			// both old and new tiles are in the DOM, the new ones above, i.e. after the old ones
+			const newTiles = tileImages(layer).filter(tile => !oldTiles.includes(tile));
 			for (const tile of oldTiles) {
 				expect(tile.isConnected).to.be.true;
-				expect(Number(tile.parentNode.style.zIndex)).to.equal(-1);
+				expect(tile.compareDocumentPosition(newTiles[0]) & Node.DOCUMENT_POSITION_FOLLOWING).to.be.ok;
 			}
 			expect(tileImages(layer).length).to.equal(oldTiles.length * 2);
 
@@ -136,7 +137,6 @@ describe('TileLayer: flicker-free setUrl and placeholder', () => {
 			for (const tile of oldTiles) {
 				expect(tile.isConnected).to.be.false;
 			}
-			expect(layer._keptLevel).to.equal(null);
 		});
 
 		it('removes the kept tiles after the new ones faded in', async () => {
