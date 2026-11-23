@@ -2346,11 +2346,14 @@ export class MaplairMap extends Evented {
 
 		this._moveEnd(true);
 
-		// read after moveend, since its listeners may have queued a newer view or stopped the map
+		// read after moveend, since its listeners may have queued a newer view or stopped the map; applied a frame later, as
+		// transitionend fires before this frame's rAF callbacks, so a zoom started now would transition from the old end state
 		const view = this._pendingView;
 		if (view) {
-			this._pendingView = null;
-			this.setView(view.center, view.zoom, view.options);
+			this._zoomAnimFrame = requestAnimationFrame(() => {
+				this._pendingView = null;
+				this.setView(view.center, view.zoom, view.options);
+			});
 		}
 	}
 }

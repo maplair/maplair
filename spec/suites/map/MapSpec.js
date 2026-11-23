@@ -328,7 +328,7 @@ describe('Map', () => {
 		describe('during a zoom animation', () => {
 			beforeEach(() => {
 				map.setView([0, 0], 13);
-				vi.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']});
+				vi.useFakeTimers({toFake: ['setTimeout', 'clearTimeout', 'requestAnimationFrame', 'cancelAnimationFrame']});
 				map._animateZoom(new LatLng(0.0005, 0.0005), 14);
 			});
 
@@ -339,14 +339,14 @@ describe('Map', () => {
 			it('applies the latest view after the animation', () => {
 				map.setView([0.001, 0.001], 15, {animate: false});
 				map.setView([0.002, 0.002], 16, {animate: false});
-				vi.advanceTimersByTime(1000);
+				vi.advanceTimersByTime(1100);
 				expect(map.getZoom()).to.equal(16);
 				expect(map.getCenter()).to.be.nearLatLng([0.002, 0.002]);
 			});
 
 			it('applies a new center after the animation', () => {
 				map.setView([0.001, 0.001], undefined, {animate: false});
-				vi.advanceTimersByTime(1000);
+				vi.advanceTimersByTime(1100);
 				expect(map.getZoom()).to.equal(14);
 				expect(map.getCenter()).to.be.nearLatLng([0.001, 0.001]);
 			});
@@ -357,6 +357,22 @@ describe('Map', () => {
 				vi.advanceTimersByTime(250);
 				expect(map.getZoom()).to.equal(14);
 				expect(map.getCenter()).to.be.nearLatLng([0.0005, 0.0005]);
+			});
+
+			it('applies the waiting view a frame after the animation ends', () => {
+				map.setView([0.001, 0.001], 15, {animate: false});
+				map._onZoomTransitionEnd();
+				expect(map.getZoom()).to.equal(14);
+				vi.advanceTimersByTime(20);
+				expect(map.getZoom()).to.equal(15);
+			});
+
+			it('drops the waiting view when stopped after the animation ends', () => {
+				map.setView([0.001, 0.001], 15, {animate: false});
+				map._onZoomTransitionEnd();
+				map.stop();
+				vi.advanceTimersByTime(20);
+				expect(map.getZoom()).to.equal(14);
 			});
 		});
 	});
