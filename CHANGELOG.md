@@ -3,6 +3,17 @@ Maplair Changelog
 
 (all changes of Leaflet without author notice are by [@mourner](https://github.com/mourner))
 
+## Unreleased
+
+### Maplair
+
+(changes without author notice are by [@simon04](https://github.com/simon04))
+
+#### ❇️ New Features
+
+* Web components: maps built from HTML, without JavaScript, with custom elements like `<maplair-map>`, `<maplair-tile-layer>`, `<maplair-marker>`, `<maplair-popup>`, `<maplair-geojson>` and `<maplair-layers-control>`, for all layers, popups, tooltips, icons and controls (`maplair/elements`, or `dist/maplair-elements.js` for script tags); attributes are the options in kebab-case and update the map when changed, events are dispatched as `maplair-click` etc., `<maplair-map name pick>` is a form field picking a location; see the tutorial "Maps in HTML with Web Components" and [WEB-COMPONENTS.md](WEB-COMPONENTS.md)
+* `dist/custom-elements.json`, a Custom Elements Manifest, and `HTMLElementTagNameMap` types of the elements
+
 ## 4.8.0 (2026-11-23)
 
 ### Maplair
