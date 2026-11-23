@@ -1,10 +1,10 @@
-Maplair as Web Components (draft)
-=================================
+Maplair as Web Components
+=========================
 
 Maps written in HTML, without JavaScript:
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/npm/maplair/dist/elements.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/maplair/dist/maplair-elements.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplair/dist/maplair.css">
 
 <maplair-map center="47.26,11.39" zoom="10" style="height: 400px">
@@ -124,7 +124,7 @@ escaped as text; a `<template>` child allows HTML templates.
 
   ```html
   <maplair-geojson src="districts.geojson">
-  	<maplair-classification property="danger" legend-control>
+  	<maplair-classification property="danger" name="Danger">
   		<maplair-class value="1" fill-color="#ccff66" legend="low"></maplair-class>
   		<maplair-class value="2" fill-color="#ffff00" legend="moderate"></maplair-class>
   		<maplair-class lower="3" fill-color="#ff9900" legend="considerable or higher"></maplair-class>
@@ -168,7 +168,7 @@ keyboard support. Possibly also `pick="bounds"` (box) and `pick="polygon"` later
 ## What stays in JavaScript (the other 20%)
 
 - Function options: `pointToLayer`, `style` and `filter` functions of GeoJSON, `onEachFeature`, `formatTime`,
-  custom search providers. Set them as properties (`el.style = feature => ({...})`), which frameworks do anyway; the
+  custom search providers. Set them with the `options` property (`el.options = {style: feature => ({...})}`), which frameworks do anyway; the
   property templates and classification cover the common cases declaratively.
 - Custom CRSs (`ProjectedCRS` with a proj4 projection): registered once in JS (`registerCRS('EPSG:2056', MyCRS)`),
   then used by name in `crs`.
@@ -227,13 +227,35 @@ define('maplair-marker', class extends MaplairElement {
    Custom Elements Manifest and types.
 4. Docs: an "HTML" tab on every example, a playground (IDEAS.md), a WordPress/Markdown guide.
 
-## Open questions
+## Decisions
 
-- Element prefix: `maplair-` (clear, long) or a shorter `ml-` (risk of clashes)?
-- Should `<maplair-map>` reflect the view into its attributes by default? Convenient for debugging and for
-  serializing the page, but it causes attribute mutations on every move.
-- Inline coordinates in `lat,lng` order (as the API) or `lng,lat` (as GeoJSON)? `lat,lng` matches Maplair's API
-  and Leaflet habits.
-- Shadow DOM for controls only? It would isolate the controls' CSS, but break theming with page CSS and the dark
-  mode custom properties; light DOM seems the better trade-off.
-- Server-side rendering: emit the fallback (a static map image) from the same attributes?
+- Prefix `maplair-`: clear, and no risk of clashes.
+- `<maplair-map>` reflects its view into `center` and `zoom` only with `reflect-view`, to avoid attribute
+  mutations on every move.
+- Coordinates in `lat,lng` order, as in Maplair's API.
+- Light DOM everywhere, for theming with the page's CSS and the dark mode.
+
+## Status
+
+Implemented in `src/elements/` (`maplair/elements`, and the bundle `dist/maplair-elements.js` for script tags,
+which also exports all of Maplair), with a tutorial (`docs/examples/web-components/`), the debug page
+`debug/map/elements.html`, specs in `spec/suites/elements/`, a Custom Elements Manifest
+(`dist/custom-elements.json`) and `HTMLElementTagNameMap` types (`build/elements.js`). The bundle adds about
+4.5 kB gzipped to all of Maplair.
+
+Differences from the draft:
+
+- Options that are functions go to the `options` property (`el.options = {pointToLayer}`), as `el.style` is the
+  element's CSS.
+- `<maplair-legend-control>` shows all classifications of the map; no `legend-control` attribute.
+- `<maplair-button-control>` takes its content from the element and dispatches `maplair-click`;
+  `<maplair-context-menu>` items dispatch `maplair-select` on their `<button>`, with the `latlng` in `detail`.
+- One module per group of elements (`layers.js`, `content.js`, `controls.js`) rather than one per element.
+
+Not yet done:
+
+- Path styles from CSS custom properties (`--maplair-path-color`).
+- `<maplair-zoom-style>` children for zoom-dependent styles (the `options` property works).
+- Layers in the URL hash (`hash` keeps the view only).
+- A static fallback image from server-side rendering.
+- An "HTML" tab on every example, a playground, a WordPress/Markdown guide.
