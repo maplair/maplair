@@ -138,6 +138,7 @@ import {LatLngBounds} from '../../geo/LatLngBounds.js';
  * @fires tileunload {TileEvent} Fired when a tile is removed (e.g. when a tile goes off
  * the screen).
  * @fires tileloadstart {TileEvent} Fired when a tile is requested and starts loading.
+ * Register the listener before adding the layer to the map to receive events for the initial tiles.
  * @fires tileerror {TileErrorEvent} Fired when there is an error loading a tile.
  * @fires tileload {TileEvent} Fired when a tile loads.
  * @fires load {MaplairEvent} Fired when the grid layer loaded all visible tiles.
