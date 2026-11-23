@@ -2,8 +2,8 @@
 	"latest_maplair_version": "4.8.0",
 	"cartocdn_key": "cb1_2i38_1_bb6349bf813f7d7c3fe79a8c",
 	"latest_maplair_integrity": {
-		"css": "sha384-qF/IFhd9+c+BjXpM5oMd+1kUwj4U0j5OWbGwmxXD7ZhF8czvCTMpmniNwy9LB14Y",
-		"js": "sha384-PsSxCtC675BbCZ0avZyASDoQObnaB6b11RahC/OCYNQoGlV7Atku5lHOP5EC8pcE",
-		"global": "sha384-n7hJ4VgDQBRYEY7vKagJykqXKI7pBiUKJD6w/0Ae7DVRnfD2TcQ8KToN2ecd5RUX"
+		"css": "sha384-jeAkE8SEMKKmKelkCVVbczDjpdyrEGugMDahOj1U0kWX78pd+T3GbPlVHy2dUdEy",
+		"js": "sha384-gK8Flv0QXC6ZYG5NSGo+8aSye/dPK7RpMx8WYx2up01IUfAmnZmA9q7Cczz5ajbO",
+		"global": "sha384-gvpjztcHMOKog2OrHcVzc2q4jkoGS7m4u+q02z2JIM7jvcLwAogv09pYy4ylA9j4"
 	}
 }
