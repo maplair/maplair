@@ -17,10 +17,27 @@ Maplair Changelog
 
 Ported from Leaflet (changes without author notice are by [@mourner](https://github.com/mourner))
 
+#### ✨ Improvements
+
+* Tiles: `redraw()` keeps each old tile on screen until its new tile has loaded, also for `setUrl()` and WMS `setParams()`, replacing Maplair's mechanism that kept the whole old level until all new tiles had loaded; `refresh()` is now the same as `redraw()`, fixing https://github.com/Leaflet/Leaflet/issues/6659, https://github.com/Leaflet/Leaflet/issues/3005
+* Tiles: less flicker on zoom out, as pruning waits for the view to settle, and tiles load only at the zoom an animation heads to
+* Image, video and SVG overlays are clipped to the (rotated) view, extended by the new option `padding`, so browsers don't composite elements far larger than the screen, in https://github.com/Leaflet/Leaflet/pull/10613
+* Renderers project and update the paths once on a view reset, instead of up to three times, by [@b84330808](https://github.com/b84330808) in https://github.com/Leaflet/Leaflet/pull/10618
+
 #### 🐞 Bugfixes
 
+* A view set during a zoom animation is applied a frame after it ends, so the next zoom doesn't start from the old end state
+* `Util.throttle()`: calls made by the throttled function itself are deferred to the end of the interval by [@charan-rathore](https://github.com/charan-rathore) in https://github.com/Leaflet/Leaflet/pull/10614
+* GeoJSON: skip Points with empty coordinates (e.g. PostGIS `POINT EMPTY`) instead of throwing by [@thejesh23](https://github.com/thejesh23) in https://github.com/Leaflet/Leaflet/pull/10624
+* Circle: use the radius `R` of the CRS, so that circles match `map.distance()` on CRSs with their own radius by [@thejesh23](https://github.com/thejesh23) in https://github.com/Leaflet/Leaflet/pull/10625
 * Update the path bounds when `setStyle()` toggles the stroke, so that the whole stroke is clickable by [@SudeepGowda55](https://github.com/SudeepGowda55) in https://github.com/Leaflet/Leaflet/pull/10611
 * Canvas: hit-test circles drawn as ellipses within the ellipse by [@SudeepGowda55](https://github.com/SudeepGowda55) in https://github.com/Leaflet/Leaflet/pull/10610
+
+#### 📝 Docs
+
+* `CRS` and `EarthCRS` are described as base classes to extend
+* GridLayer: the number of tiles below `minNativeZoom`, and registering `tileloadstart` listeners before adding the layer by [@haranishi](https://github.com/haranishi) in https://github.com/Leaflet/Leaflet/pull/10615
+* Popup: `maxWidth` and `minWidth` measure the content by [@wozhenbang2004](https://github.com/wozhenbang2004) in https://github.com/Leaflet/Leaflet/pull/10619
 
 ## 4.7.0 (2026-11-17)
 
