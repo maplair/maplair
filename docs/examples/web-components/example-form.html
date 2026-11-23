@@ -1,0 +1,22 @@
+---
+layout: tutorial_frame
+title: Web Components Form Example
+customMapContainer: "true"
+css: "form { height: 100%; display: flex; flex-direction: column; } maplair-map { flex: 1; } p { margin: 8px; font: 14px sans-serif; }"
+---
+<script type="module" src="/dist/maplair-elements.js"></script>
+
+<form>
+	<maplair-map name="location" pick required center="47.27,11.39" zoom="10" aria-label="Location of the meeting point">
+		<maplair-tile-layer provider="osm"></maplair-tile-layer>
+	</maplair-map>
+	<p><button>Send</button> <output></output></p>
+</form>
+
+<script type="module">
+	const form = document.querySelector('form');
+	form.addEventListener('submit', (e) => {
+		e.preventDefault();
+		form.querySelector('output').value = `location=${new FormData(form).get('location')}`;
+	});
+</script>

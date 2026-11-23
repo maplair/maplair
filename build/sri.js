@@ -7,15 +7,18 @@ import {readFileSync, writeFileSync} from 'node:fs';
 const file = 'build/site.json',
 site = JSON.parse(readFileSync(file, 'utf8')),
 version = site.latest_maplair_version,
-files = {css: 'maplair.css', js: 'maplair.js', global: 'maplair-global.js'};
+files = {css: 'maplair.css', js: 'maplair.js', global: 'maplair-global.js', elements: 'maplair-elements.js'},
+// files new in later versions
+optional = new Set(['elements']);
 
-site.latest_maplair_integrity = Object.fromEntries(await Promise.all(Object.entries(files).map(async ([key, name]) => {
+site.latest_maplair_integrity = Object.fromEntries((await Promise.all(Object.entries(files).map(async ([key, name]) => {
 	const url = `https://cdn.jsdelivr.net/npm/maplair@${version}/dist/${name}`,
 	response = await fetch(url);
+	if (response.status === 404 && optional.has(key)) { return null; }
 	if (!response.ok) { throw new Error(`${url}: ${response.status}`); }
 	const hash = createHash('sha384').update(Buffer.from(await response.arrayBuffer())).digest('base64');
 	return [key, `sha384-${hash}`];
-})));
+}))).filter(Boolean));
 
 writeFileSync(file, `${JSON.stringify(site, null, '\t')}\n`);
 console.log(`Wrote the integrity hashes of maplair@${version} to ${file}`);

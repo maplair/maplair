@@ -18,6 +18,14 @@ description="A simple step-by-step guide that will quickly get you started with 
 
 
 {% include tutorial_link.html
+page="web-components/"
+thumbnail="web-components/thumbnail.jpg"
+title="Maps in HTML with Web Components"
+description="Build maps from HTML elements like &lt;maplair-map&gt; and &lt;maplair-marker&gt;, without writing JavaScript: for plain pages, content management systems and every framework."
+%}
+
+
+{% include tutorial_link.html
 page="mobile/"
 thumbnail="mobile/thumbnail.png"
 title="Maplair on Mobile"
