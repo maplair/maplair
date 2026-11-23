@@ -863,6 +863,73 @@ The danger rating layer is drawn with `globalCompositeOperation = "multiply"` ov
 the basemap. Works with CSS `mix-blend-mode: multiply` on the layer's pane; a
 layer option (`blendMode`) would make it explicit.
 
+## Round 6: Maplair as the better alternative to Leaflet
+
+Maplair is "Leaflet 2, available today": Leaflet's fixes are ported within days, open Leaflet pull requests are
+shipped before Leaflet merges them, and much of what Leaflet needs plugins for is built in. These ideas make that
+visible. The features above are what is already built.
+
+### Positioning
+
+- [ ] **"Why Maplair?" page** with a comparison table against Leaflet 1.9, Leaflet 2 beta, OpenLayers and MapLibre:
+  bundle size, built-in features (rotation, clustering, heatmap, search, vector tiles, dark mode, time control),
+  accessibility, TypeScript types, how fast fixes arrive.
+- [ ] **"Ahead of Leaflet" page**, generated from the git history: each Leaflet change ported, with how many days
+  after it landed upstream, and the open Leaflet pull requests Maplair already ships.
+- [ ] **Plugin coverage page**: "you no longer need Leaflet.markercluster, leaflet-heat, leaflet-hash, Leaflet.Sync,
+  leaflet-side-by-side, leaflet-control-geocoder, Proj4Leaflet…", each with a before/after snippet.
+- [ ] **Migration codemod**, `npx maplair-migrate`, rewriting `L.map(...)`, `L.tileLayer(...)` and plugin calls to
+  Maplair's API, to remove the main reason not to switch.
+- [ ] **Tagline**, e.g. "Leaflet's simplicity, without the plugin hunt."
+
+### Features
+
+- [ ] **Globe view at low zoom**: a vertical-perspective projection that switches to Mercator when zooming in. Leaflet
+  will never have it, and it makes a striking first impression.
+- [ ] **Measure and draw tools**: distances, areas, editing polygons, snapping. Leaflet.draw and leaflet-geoman are
+  among Leaflet's most-used plugins, and Leaflet.draw is unmaintained.
+- [ ] **Offline maps**: a helper that stores the tiles of an area and zoom range in the Cache API, for Progressive Web
+  Apps.
+- [ ] **WebGL point layer** for 100k+ markers or points, which Leaflet's DOM and canvas layers can't handle.
+- [ ] **Elevation profile control** for GPX/GeoJSON tracks, popular with outdoor and sports sites.
+- [ ] **Tiles that follow dark mode**: a `darkUrl` option or automatic dimming, completing the dark mode of 4.8.0.
+- [ ] **View Transitions** between map states, for app-like page changes.
+- [ ] **`<maplair-map>` web component**, configured with HTML attributes and no JavaScript, for CMS users and
+  Leaflet's "easy" audience.
+- [ ] **Printing and image export**: export the map as PNG or PDF, with a print stylesheet, replacing another
+  common plugin.
+
+### Developer experience
+
+- [ ] **Advertise the TypeScript types** on npm (shipped since 4.8.0), a real gap of Leaflet 1.
+- [ ] **Interactive playground** on the website (edit code, see the map) with shareable links, and an "Open in
+  playground" button on each example.
+- [ ] **Official thin wrappers** for React, Vue and Svelte, released with each Maplair release (react-leaflet lags
+  behind Leaflet versions).
+- [ ] **`llms.txt` and a machine-readable API reference**, so AI coding assistants write correct Maplair code
+  instead of guessing from Leaflet.
+- [ ] **Bundle size calculator** on the website: tick the features used, see the gzipped size, showing off
+  tree-shaking.
+
+### Credibility and community
+
+- [ ] **Accessibility statement**: WCAG 2.2 conformance, keyboard shortcuts and screen reader notes, ideally with an
+  external audit. No other web map library offers this, and public bodies need it to meet accessibility law (e.g.
+  the European Accessibility Act).
+- [ ] **Performance benchmarks** in CI (10k markers, 1000 polygons, pan and zoom frame times) against Leaflet,
+  published on a dashboard.
+- [ ] **Showcase gallery** of real sites using Maplair, starting with our own, such as the avalanche bulletin map.
+- [ ] **Regular release cadence and a blog post per release** with short videos; the changelog content is strong and
+  mainly needs presenting.
+- [ ] **"Good first issue" labels and a sponsorship page** (GitHub Sponsors or Open Collective), to signal that the
+  project will stay.
+
+### Priorities
+
+1. The "Why Maplair?" comparison and the plugin coverage pages: cheap, and the content already exists.
+2. The migration codemod: it removes the switching cost.
+3. Globe view or a WebGL point layer: the headline feature Leaflet can't match.
+
 ## Also implemented
 
 Features done in this fork besides the ideas above:
