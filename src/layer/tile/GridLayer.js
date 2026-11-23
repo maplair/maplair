@@ -40,7 +40,8 @@ import {LatLngBounds} from '../../geo/LatLngBounds.js';
  * loaded from `maxNativeZoom` level and auto-scaled.
  * @property {number} [minNativeZoom] Minimum zoom number the tile source has available.
  * If it is specified, the tiles on all zoom levels lower than `minNativeZoom` will be
- * loaded from `minNativeZoom` level and auto-scaled.
+ * loaded from `minNativeZoom` level and auto-scaled. Each zoom level below `minNativeZoom`
+ * loads 4 times as many tiles, so set `minZoom` to limit how far out the layer is shown.
  * @property {boolean} [ceilZoom=false] Whether to load the tiles of the next zoom level
  * at fractional zooms (e.g. 3 at zoom 2.2) instead of the nearest one, so that tiles are
  * never scaled up, which keeps them sharp but loads up to four times as many.
