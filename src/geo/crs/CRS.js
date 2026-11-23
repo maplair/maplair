@@ -10,21 +10,18 @@ import * as Util from '../../core/Util.js';
 /** @import {Projection} from '../projection/index.js' */
 
 /**
- * Object that defines coordinate reference systems for projecting
- * geographical points into pixel (screen) coordinates and back (and to
- * coordinates in other units for [WMS](https://en.wikipedia.org/wiki/Web_Map_Service)
- * services). See
+ * The base class for coordinate reference systems, which project geographical
+ * points into pixel (screen) coordinates and back (and to coordinates in other
+ * units for [WMS](https://en.wikipedia.org/wiki/Web_Map_Service) services). See
  * [spatial reference system](https://en.wikipedia.org/wiki/Spatial_reference_system).
  *
- * Maplair defines the most usual CRSs by default. If you want to use a
- * CRS not defined by default, extend `CRS` with a projection of your own, e.g.
- * based on [Proj4js](https://github.com/proj4js/proj4js), or `ProjectedCRS` for a
- * projection with a list of resolutions (instead of the Leaflet plugin
- * [Proj4Leaflet](https://github.com/kartena/Proj4Leaflet), which doesn't work with Maplair).
- *
- * The CRSs are classes with static properties and methods only; they are not
- * instantiated, the class itself is passed as the CRS, e.g. to the `crs` option of the
- * map. Maplair's CRSs extend `CRS` (`EarthCRS` for the global ones).
+ * A CRS has only static members, so you pass the class itself to the map, as in
+ * `{crs: EPSG4326}`. Maplair defines the most common ones below. To define another,
+ * extend `EarthCRS` for one that covers the whole earth like the built-in ones, or
+ * `ProjectedCRS` for national grids and other CRSs with their own zoom levels, e.g.
+ * with a projection based on [Proj4js](https://github.com/proj4js/proj4js) (instead
+ * of the Leaflet plugin [Proj4Leaflet](https://github.com/kartena/Proj4Leaflet),
+ * which doesn't work with Maplair).
  *
  * Besides the properties and methods below, a CRS may define:
  *
