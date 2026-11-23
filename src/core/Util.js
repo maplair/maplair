@@ -36,8 +36,9 @@ export function throttle(fn, time, context) {
 		// reset lock and call if queued
 		lock = false;
 		if (queuedArgs) {
-			wrapperFn.apply(context, queuedArgs);
+			const args = queuedArgs;
 			queuedArgs = false;
+			wrapperFn.apply(context, args);
 		}
 	}
 
@@ -48,9 +49,9 @@ export function throttle(fn, time, context) {
 
 		} else {
 			// call and lock until later
-			fn.apply(context, args);
-			setTimeout(later, time);
 			lock = true;
+			setTimeout(later, time);
+			fn.apply(context, args);
 		}
 	}
 
