@@ -40,6 +40,8 @@ Every element stands for a Maplair class, and its attributes are the [options](.
 </maplair-map>
 ```
 
+Path styles can also come from your CSS, as custom properties on the element or any element around it, e.g. `maplair-map { --maplair-path-color: #c0392b; --maplair-path-weight: 4; }`; attributes take precedence.
+
 Changing an attribute changes the map: setting `zoom` zooms, setting `latlng` of a marker moves it, and removing an element removes its layer. That's why the elements work with frameworks: they just render HTML.
 
 ### Popups, tooltips and icons

@@ -226,6 +226,26 @@ describe('Elements', () => {
 			expect(click.mock.calls[0][0].target).to.equal(el.querySelector('maplair-marker'));
 		});
 
+		it('takes path styles from CSS custom properties, overridden by attributes', () => {
+			const el = render(`<maplair-map center="0,0" zoom="2" style="--maplair-path-color: #c0392b; --maplair-path-weight: 7">
+				<maplair-polyline latlngs="0,0 1,1"></maplair-polyline>
+				<maplair-polyline latlngs="0,0 1,1" color="blue"></maplair-polyline>
+			</maplair-map>`);
+			const [a, b] = Array.from(el.querySelectorAll('maplair-polyline'), e => e.layer);
+			expect(a.options.color).to.equal('#c0392b');
+			expect(a.options.weight).to.equal(7);
+			expect(b.options.color).to.equal('blue');
+		});
+
+		it('takes zoom-dependent styles as JSON', () => {
+			const el = render('<maplair-map center="0,0" zoom="4"><maplair-polyline latlngs="0,0 1,1" weight=\'{"2": 1, "6": 5}\'></maplair-polyline></maplair-map>');
+			const line = el.querySelector('maplair-polyline').layer;
+			// the highest stop not above the zoom
+			expect(line._path.getAttribute('stroke-width')).to.equal('1');
+			el.map.setZoom(6, {animate: false});
+			expect(line._path.getAttribute('stroke-width')).to.equal('5');
+		});
+
 		it('merges options set in JavaScript', () => {
 			const el = render('<maplair-map center="0,0" zoom="2"><maplair-geojson></maplair-geojson></maplair-map>');
 			const geojsonEl = el.querySelector('maplair-geojson');

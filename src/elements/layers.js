@@ -15,7 +15,7 @@ import {HeatLayer} from '../layer/HeatLayer.js';
 import {ImageOverlay} from '../layer/ImageOverlay.js';
 import {VideoOverlay} from '../layer/VideoOverlay.js';
 import {SVGOverlay} from '../layer/SVGOverlay.js';
-import {MaplairElement, camelCase, defaultsOf, define, parseOption} from './MaplairElement.js';
+import {MaplairElement, camelCase, defaultsOf, define, kebabCase, parseOption} from './MaplairElement.js';
 import {MapElement} from './MapElement.js';
 
 const layerEvents = ['click', 'dblclick', 'contextmenu', 'pointerover', 'pointerout', 'popupopen', 'popupclose',
@@ -151,6 +151,10 @@ Object.assign(LayerGroupElement.prototype, groupMethods);
 export class FeatureGroupElement extends LayerElement {
 	static Class = FeatureGroup;
 
+	getOptions() {
+		return getPathOptions.call(this);
+	}
+
 	createInstance() {
 		return new FeatureGroup([], this.getOptions());
 	}
@@ -253,7 +257,32 @@ export class MarkerElement extends LayerElement {
 
 // Vectors: the path options (e.g. `color`) are applied with `setStyle()`
 
+/**
+ * Returns the path options set by CSS custom properties on the element (or inherited from
+ * its ancestors), e.g. `--maplair-path-color: #c0392b` or `--maplair-path-fill-opacity: 0.5`.
+ * @param {Element} el
+ * @returns {Object}
+ */
+export function cssPathStyle(el) {
+	const style = getComputedStyle(el),
+	options = {};
+	for (const key of Object.keys(Path.defaultOptions)) {
+		const value = style.getPropertyValue(`--maplair-path-${kebabCase(key)}`).trim();
+		if (value) { options[key] = parseOption(key, value, Path.defaultOptions[key]); }
+	}
+	return options;
+}
+
+// path options from CSS custom properties, overridden by the attributes
+function getPathOptions() {
+	return {...cssPathStyle(this), ...LayerElement.prototype.getOptions.call(this)};
+}
+
 class PathElement extends LayerElement {
+	getOptions() {
+		return getPathOptions.call(this);
+	}
+
 	update(name, value) {
 		const key = camelCase(name);
 		if (key in Path.defaultOptions) {
@@ -352,6 +381,10 @@ export class GeoJSONElement extends LayerElement {
 	static Class = GeoJSON;
 	static args = ['src', 'tooltip', 'popup'];
 	static events = [...layerEvents, 'loading', 'load', 'error'];
+
+	getOptions() {
+		return getPathOptions.call(this);
+	}
 
 	createInstance() {
 		const options = this.getOptions(),

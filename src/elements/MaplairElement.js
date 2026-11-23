@@ -443,6 +443,11 @@ export function parseOption(key, value, def) {
 	if (key === 'latlngs') { return parseLatLngs(value); }
 	if (boundsOptions.has(key)) { return parseBounds(value); }
 	if (key === 'crs') { return crsByName[value] ?? crsByName[value.replace(':', '')]; }
+	// e.g. zoom-dependent styles, `weight='{"5": 1, "12": 4}'` (with `maplair/zoom-styles`)
+	const trimmed = value.trim();
+	if (typeof def !== 'string' && (trimmed.startsWith('{') || trimmed.startsWith('['))) {
+		try { return JSON.parse(trimmed); } catch { /* not JSON after all */ }
+	}
 	switch (typeof def) {
 	case 'number': return value === '' ? def : Number(value);
 	case 'boolean': return value !== 'false';

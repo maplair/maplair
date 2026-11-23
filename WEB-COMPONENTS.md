@@ -251,11 +251,13 @@ Differences from the draft:
 - `<maplair-button-control>` takes its content from the element and dispatches `maplair-click`;
   `<maplair-context-menu>` items dispatch `maplair-select` on their `<button>`, with the `latlng` in `detail`.
 - One module per group of elements (`layers.js`, `content.js`, `controls.js`) rather than one per element.
+- Zoom-dependent styles are JSON attributes (`weight='{"5": 1, "12": 4}'`) instead of `<maplair-zoom-style>`
+  children.
+- Path styles from CSS custom properties are read when a layer is created (`--maplair-path-color` on the element
+  or an ancestor), not updated when the CSS changes.
 
 Not yet done:
 
-- Path styles from CSS custom properties (`--maplair-path-color`).
-- `<maplair-zoom-style>` children for zoom-dependent styles (the `options` property works).
 - Layers in the URL hash (`hash` keeps the view only).
 - A static fallback image from server-side rendering.
 - An "HTML" tab on every example, a playground, a WordPress/Markdown guide.
